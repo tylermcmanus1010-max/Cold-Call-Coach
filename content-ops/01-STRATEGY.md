@@ -71,19 +71,38 @@ five platforms, under a separate handle, entertainment-first. Use it as the
 laboratory: test hooks there where nothing is at stake, port the winners to the
 money account. Speed and volume on the lab account, precision on the primary.
 
-## Positioning (fill once locked)
+## Positioning — LOCKED
 
-- **Who it's for:**
-- **What they get in 30 seconds:**
-- **The point of view** (what do we believe that others in this niche don't):
-- **The enemy** (what practice/belief are we against):
-- **Proof** (why should anyone believe us):
-- **The CTA** (what's the one thing we want them to do):
+**Name:** Cold Open — the film term for starting a scene mid-action with no
+setup. Simultaneously what a cold call is, and the thesis of the page.
 
-The "point of view" and "enemy" lines are not branding fluff — they are what
-makes tension renewable instead of manufactured (see `04-ATTENTION-AND-SHOCK.md`).
-A page with a defensible position never runs out of things to say and never has
-to fake a conflict to get engagement.
+**Who it's for:** SDRs and BDRs, 22-30, 0-3 years in, B2B SaaS/services, US,
+40-100 dials a day. Secondary: their managers, who buy for teams and will find us
+through their reps. Tertiary: solo founders doing their own outbound.
+
+**What they get in 30 seconds:** one mechanic they can use on their next call.
+Not a principle, not a mindset — a specific sentence, a specific pause, a
+specific order of operations.
+
+**The point of view:** Cold calling is a set of learnable mechanics that live
+almost entirely in the first 8 seconds. It is not a personality trait and it is
+not a mindset problem.
+
+**The enemy:** Motivational sales content. The grindset guys selling belief
+instead of technique. "Just dial more." Every piece we make is an implicit
+argument that the mechanics are knowable, and that telling someone to believe in
+themselves is what people say when they don't know the mechanics.
+
+**Proof:** real call audio, real numbers including the failures, and public
+serialized attempts where the score is visible whether it's good or not.
+
+**The CTA:** the Objection Pack — 12 objections and the exact words that beat
+them. Email capture. Six of the twelve are already written in `BATCH-01.md`.
+
+Why this positioning holds up: the enemy is real, we're right about it, and it is
+inexhaustible. Every motivational sales post on the internet is a prompt. That is
+what makes the tension renewable rather than manufactured — we never have to
+invent a conflict, because we're already in one.
 
 ## Success metrics — first 90 days
 

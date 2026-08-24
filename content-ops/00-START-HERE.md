@@ -45,10 +45,12 @@ credentials. That is the legitimate automation path. Bot-created accounts are no
 
 ## Status
 
-- [ ] Niche locked
+- [x] Niche locked — cold calling / B2B sales (see `01-STRATEGY.md`)
+- [x] Brand decided — **Cold Open**, positioning locked, brand kit specified
+- [x] First 30 scripts banked — `scripts/BATCH-01.md`
 - [ ] Handles secured across all 5 platforms
 - [ ] Accounts created
-- [ ] Brand kit (avatar, banner, bio, font/color system)
-- [ ] First 30 scripts banked
+- [ ] Brand assets produced (avatar, banner — specs in `07-ACCOUNT-SETUP.md`)
+- [ ] Link-in-bio page live with email capture
 - [ ] Posting cadence live
 - [ ] Tracker running

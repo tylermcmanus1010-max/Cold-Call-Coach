@@ -16,7 +16,13 @@ function emailBody(ctx) {
 
 ${intro} I build websites for ${b.address?.city || 'local'} businesses.
 
-${noSite
+${b.pitchOpener
+  ? `${b.pitchOpener}
+
+It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : noSite
   ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
 So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
@@ -69,7 +75,7 @@ module.exports = function pitch(b, pricing) {
   // Only claim what the attached page actually delivers. Promising "hours
   // listed" when the hours section is empty gets noticed the moment they open it.
   const delivers = {
-    hours:    (b.hours || []).length > 0,
+    hours:    (b.hours || []).some((h) => h.schema),
     address:  Boolean(b.address?.street),
     services: (b.services || []).some((x) => x.price),
     reviews:  (b.reviews || []).length > 0,
@@ -83,7 +89,9 @@ module.exports = function pitch(b, pricing) {
 
   const notYet = failed.filter((c) => !shipped(c));
 
-  const subject = noSite
+  const subject = b.pitchOpener
+    ? "You don't have a website of your own — I built you one"
+    : noSite
     ? 'Your domain is showing a blank hosting page — I built you a website'
     : 'Rebuilt your website — take a look before you say no';
   const body = emailBody({ b, from, owner, noSite, host, money, tier, care, pricing, emailFixes });
@@ -113,13 +121,19 @@ ${notYet.length ? `> **Fill these in before you send.** The page does not yet sh
 
 ## Email to send
 
-**Subject:** ${noSite ? 'Your domain is showing a blank hosting page — I built you a website' : 'Rebuilt your website — take a look before you say no'}
+**Subject:** ${subject}
 
 Hi ${owner},
 
 I'm ${from.name}${fromBiz ? `, I run ${fromBiz}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
 
-${noSite
+${b.pitchOpener
+  ? `${b.pitchOpener}
+
+It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : noSite
   ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
 So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}

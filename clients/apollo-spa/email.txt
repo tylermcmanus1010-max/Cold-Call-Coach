@@ -1,12 +1,14 @@
-Subject: Rebuilt your website — take a look before you say no
+Subject: You don't have a website of your own — I built you one
 
 Hi there,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for El Cajon businesses.
 
-I looked at your website and rebuilt it. It's attached — open it on your phone.
+I went looking for your website and could not find one. There is a small page for you on somebody else's domain — apollo.grouppayless.com — but you do not own that address, and nobody searching for a massage in El Cajon is going to land on it. So I built you a real one, on your own name.
 
-What I changed:
+It's attached — open it on your phone.
+
+What's on it:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile

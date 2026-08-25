@@ -8,6 +8,8 @@
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
+//   ./cc export [slug]      copy built pages to send/ named by business,
+//                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
 //
 // scout options:
@@ -200,6 +202,25 @@ function cmdTried(slug, note) {
   if (b.attempts >= 4) console.log('  Four tries is enough. ./cc status ' + slug + ' dead and move on.');
 }
 
+// Every build writes clients/<slug>/index.html. Attaching six of those to six
+// emails means six files called index.html — export names them by business.
+function cmdExport(slug) {
+  const SEND = path.join(ROOT, 'send');
+  const list = slug ? [slug] : all();
+  fs.mkdirSync(SEND, { recursive: true });
+  let n = 0;
+  for (const s of list) {
+    const html = path.join(dir(s), 'index.html');
+    if (!fs.existsSync(html)) continue;
+    fs.copyFileSync(html, path.join(SEND, `${s}.html`));
+    const email = path.join(dir(s), 'email.txt');
+    if (fs.existsSync(email)) fs.copyFileSync(email, path.join(SEND, `${s}-email.txt`));
+    n++;
+  }
+  console.log(`✓ ${n} page${n === 1 ? '' : 's'} → send/`);
+  console.log('  each named after the business, so they do not collide in a downloads folder');
+}
+
 function cmdStatus(slug, status) {
   if (!STATUSES.includes(status)) die(`Status must be one of: ${STATUSES.join(', ')}`);
   const b = load(slug);
@@ -239,6 +260,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
+    case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {

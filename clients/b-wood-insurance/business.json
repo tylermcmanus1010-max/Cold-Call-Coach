@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "family-interiors",
-  "name": "Family Interiors",
-  "category": "floorer",
+  "slug": "b-wood-insurance",
+  "name": "B Wood Insurance",
+  "category": "insurance",
   "owner": "",
-  "currentSite": "https://familyinteriors.com/",
+  "currentSite": "https://c3insurance.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,13 +12,13 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-697-5969",
+  "phone": "+1-619-298-7361",
   "email": "",
   "address": {
-    "street": "1350 Hill Street",
-    "city": "El Cajon",
+    "street": "4032 Wabaska Drive",
+    "city": "San Diego",
     "state": "CA",
-    "zip": "92020"
+    "zip": "92107"
   },
   "serviceArea": [],
   "license": "",
@@ -98,7 +98,7 @@
     "score": 137,
     "gaps": 12,
     "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 337,
+    "loadMs": 544,
     "pageKb": 0,
     "builder": null,
     "copyrightYear": null

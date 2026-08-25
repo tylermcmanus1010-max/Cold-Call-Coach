@@ -1,24 +1,24 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "family-interiors",
-  "name": "Family Interiors",
-  "category": "floorer",
+  "slug": "estrella-dental-implant-and-cosmetic-center",
+  "name": "Estrella Dental Implant & Cosmetic Center",
+  "category": "dentist",
   "owner": "",
-  "currentSite": "https://familyinteriors.com/",
+  "currentSite": "https://www.hugedomains.com/domain_profile.cfm?d=estrelladental.com",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
   "headline": "",
   "subhead": "",
-  "tagline": "",
+  "tagline": "Get a new domain name for your startup. Quick and professional service. Seamless domain transfers.",
   "heroNote": "",
-  "phone": "+1-619-697-5969",
+  "phone": "+1-619-397-4111",
   "email": "",
   "address": {
-    "street": "1350 Hill Street",
-    "city": "El Cajon",
+    "street": "2452 Fenton Street",
+    "city": "Chula Vista",
     "state": "CA",
-    "zip": "92020"
+    "zip": "91914"
   },
   "serviceArea": [],
   "license": "",
@@ -98,9 +98,9 @@
     "score": 137,
     "gaps": 12,
     "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 337,
-    "pageKb": 0,
-    "builder": null,
-    "copyrightYear": null
+    "loadMs": 437,
+    "pageKb": 44,
+    "builder": "GoDaddy builder",
+    "copyrightYear": 2026
   }
 }

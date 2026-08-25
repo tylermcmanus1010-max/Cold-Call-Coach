@@ -1,0 +1,48 @@
+{
+  "_howto": "Retarget the whole tool by editing this file. bbox is [south, west, north, east]. Trades are the business types worth cold-calling: local, phone-driven, and usually neglected online.",
+
+  "area": {
+    "name": "San Diego, CA",
+    "bbox": [32.53, -117.28, 33.05, -116.88],
+    "centers": [
+      { "name": "Downtown / East Village", "lat": 32.7157, "lng": -117.1611 },
+      { "name": "North Park / Normal Heights", "lat": 32.7480, "lng": -117.1300 },
+      { "name": "Hillcrest / Mission Hills", "lat": 32.7480, "lng": -117.1660 },
+      { "name": "Pacific Beach / Bay Park", "lat": 32.7970, "lng": -117.2360 },
+      { "name": "Clairemont / Kearny Mesa", "lat": 32.8330, "lng": -117.1600 },
+      { "name": "Mira Mesa / Miramar", "lat": 32.9160, "lng": -117.1420 },
+      { "name": "La Mesa / Lemon Grove", "lat": 32.7680, "lng": -117.0230 },
+      { "name": "El Cajon / Santee", "lat": 32.7950, "lng": -116.9620 },
+      { "name": "Chula Vista", "lat": 32.6400, "lng": -117.0840 },
+      { "name": "National City / Barrio Logan", "lat": 32.6780, "lng": -117.1000 },
+      { "name": "Point Loma / Ocean Beach", "lat": 32.7420, "lng": -117.2400 },
+      { "name": "Encinitas / Oceanside", "lat": 33.1500, "lng": -117.3200 }
+    ],
+    "radiusMeters": 4500
+  },
+
+  "osmTags": {
+    "craft": ["plumber", "electrician", "hvac", "roofer", "carpenter", "painter", "gardener", "locksmith", "tiler", "floorer", "upholsterer", "window_construction", "metal_construction", "caterer"],
+    "shop": ["car_repair", "tyres", "car_parts", "hairdresser", "beauty", "massage", "dry_cleaning", "laundry", "bakery", "butcher", "florist", "optician", "pet_grooming", "shoe_repair", "tailor", "hardware", "appliance", "furniture", "garden_centre"],
+    "amenity": ["dentist", "veterinary", "doctors", "driving_school", "car_wash"],
+    "office": ["lawyer", "accountant", "insurance", "estate_agent", "financial_advisor"],
+    "leisure": ["fitness_centre"]
+  },
+
+  "placesTypes": [
+    "plumber", "electrician", "roofing_contractor", "general_contractor", "painter",
+    "car_repair", "auto_parts_store", "car_wash", "hair_salon", "barber_shop",
+    "nail_salon", "beauty_salon", "dentist", "veterinary_care", "laundry",
+    "pet_store", "florist", "moving_company", "storage", "gym"
+  ],
+
+  "filters": {
+    "_note": "A lead has to be worth calling: enough reviews that they clearly have demand, a good enough rating that they are not a dumpster fire, and at least this many failed checks on their current site.",
+    "minReviews": 15,
+    "minRating": 3.8,
+    "minGaps": 5
+  },
+
+  "concurrency": 8,
+  "timeoutMs": 12000
+}

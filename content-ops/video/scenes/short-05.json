@@ -1,0 +1,39 @@
+{
+  "name": "short-05-the-silence",
+  "notes": "BATCH-01 script #16. PSYCH pillar. Hook: contradiction. Contains a real four-second silence.",
+  "scenes": [
+    { "type": "title", "duration": 3.8, "reveal": 0.5,
+      "text": "The best thing to say after your ask is nothing.",
+      "highlight": ["nothing."],
+      "vo": "The best thing you can say after your ask is nothing. For four full seconds." },
+
+    { "type": "line", "duration": 2.8,
+      "text": "Most reps last about one.",
+      "vo": "Most reps last about one." },
+
+    { "type": "line", "duration": 3.0,
+      "text": "Here's four. Don't skip.",
+      "highlight": ["four."],
+      "vo": "Here's what four actually feels like. Don't skip." },
+
+    { "type": "counter", "duration": 4.0, "value": 4, "label": "SECONDS" },
+
+    { "type": "line", "duration": 3.4,
+      "text": "Uncomfortable, right? That's the point.",
+      "highlight": ["point."],
+      "vo": "Uncomfortable, right? That discomfort is the entire mechanism." },
+
+    { "type": "line", "duration": 3.6,
+      "text": "Filling it undoes the ask. You negotiate against yourself.",
+      "vo": "Filling that silence undoes your ask. You start negotiating against yourself before they've said a word." },
+
+    { "type": "script", "duration": 4.2, "label": "THE RULE",
+      "text": "After the ask, whoever speaks first loses. Let it be them.",
+      "vo": "After the ask, whoever speaks first loses. Let it be them." },
+
+    { "type": "title", "duration": 2.6, "reveal": 0.3,
+      "text": "Four seconds.",
+      "highlight": ["four"],
+      "vo": "Four seconds. Practice it." }
+  ]
+}

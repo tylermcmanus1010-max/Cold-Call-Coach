@@ -1,0 +1,39 @@
+{
+  "name": "short-04-talk-less",
+  "notes": "BATCH-01 script #26. CONTRARIAN pillar. Hook: specificity. Counter-led structure.",
+  "scenes": [
+    { "type": "counter", "duration": 3.4, "value": 43, "label": "PERCENT",
+      "vo": "On the best performing cold calls, the rep talks forty three percent of the time." },
+
+    { "type": "counter", "duration": 3.0, "value": 70, "label": "MOST REPS",
+      "vo": "Most reps talk seventy percent or more." },
+
+    { "type": "title", "duration": 3.0, "reveal": 0.4,
+      "text": "That gap is the whole job.",
+      "highlight": ["whole", "job."],
+      "vo": "That gap is the whole job." },
+
+    { "type": "line", "duration": 3.4,
+      "text": "Talking feels productive. It isn't.",
+      "highlight": ["isn't."],
+      "vo": "Talking feels productive. It isn't. Every sentence you add is one they didn't say." },
+
+    { "type": "line", "duration": 3.2,
+      "text": "You can't diagnose anything while you're pitching.",
+      "vo": "You can't diagnose anything while you're pitching." },
+
+    { "type": "script", "duration": 4.6, "label": "THE DRILL",
+      "text": "Count to two before you respond. Every time. Out loud in your head.",
+      "vo": "Here's the drill. Count to two before you respond. Every single time." },
+
+    { "type": "line", "duration": 3.4,
+      "text": "It feels unbearable for about a week.",
+      "highlight": ["unbearable"],
+      "vo": "It feels unbearable for about a week. Then your close rate moves." },
+
+    { "type": "title", "duration": 2.6, "reveal": 0.3,
+      "text": "Shut up. On purpose.",
+      "highlight": ["purpose."],
+      "vo": "Shut up. On purpose." }
+  ]
+}

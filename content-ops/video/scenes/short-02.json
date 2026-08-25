@@ -1,0 +1,42 @@
+{
+  "name": "short-02-same-skill",
+  "notes": "BATCH-01 script #3. PSYCH pillar. Hook: contradiction. The thesis post - pin this one.",
+  "scenes": [
+    { "type": "title", "duration": 3.5, "reveal": 0.5,
+      "text": "Cold calling and going viral are the same skill.",
+      "highlight": ["same", "skill."],
+      "vo": "Cold calling and going viral are the same skill. Nobody says this." },
+
+    { "type": "line", "duration": 3.0,
+      "text": "Both are a stranger deciding whether to keep paying attention.",
+      "highlight": ["stranger"],
+      "vo": "Both are a stranger deciding whether to keep paying attention." },
+
+    { "type": "counter", "duration": 3.0, "value": 8, "label": "SECONDS ON A CALL",
+      "vo": "On a call, you get about eight seconds." },
+
+    { "type": "counter", "duration": 3.0, "value": 3, "label": "SECONDS ON A FEED",
+      "vo": "On a feed, you get three." },
+
+    { "type": "line", "duration": 3.2,
+      "text": "Both die from the exact same thing.",
+      "vo": "Both die from the exact same thing." },
+
+    { "type": "title", "duration": 2.8, "reveal": 0.3,
+      "text": "Preamble.", "highlight": ["preamble."],
+      "vo": "Preamble." },
+
+    { "type": "line", "duration": 3.4,
+      "text": "\"Hey, how's your day going?\" is the same mistake as \"hey guys, welcome back.\"",
+      "vo": "Hey, how's your day going, is the same mistake as, hey guys welcome back." },
+
+    { "type": "script", "duration": 5.0, "label": "THE FIX",
+      "text": "Open mid-motion. No throat-clearing, no permission, no warm-up. Start where it's already interesting.",
+      "vo": "The fix is the same too. Open mid motion. No throat clearing, no permission, no warm up. Start where it's already interesting." },
+
+    { "type": "line", "duration": 3.0,
+      "text": "Every good opener is a cold open.",
+      "highlight": ["cold", "open."],
+      "vo": "Every good opener is a cold open." }
+  ]
+}

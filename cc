@@ -171,8 +171,12 @@ function cmdBuild(slug) {
     }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
+    const p = pitch(b, pricing);
     fs.writeFileSync(path.join(dir(s), 'index.html'), render(b));
-    fs.writeFileSync(path.join(dir(s), 'pitch.md'), pitch(b, pricing));
+    fs.writeFileSync(path.join(dir(s), 'pitch.md'), p.sheet);
+    // Ready to paste: subject on the first line, body underneath, no markdown.
+    fs.writeFileSync(path.join(dir(s), 'email.txt'),
+      `Subject: ${p.subject}\n\n${p.body}\n`);
     const failed = checks.filter((c) => (b.audit || {})[c.key] !== true).length;
     console.log(`✓ ${s} — index.html + pitch.md  (${checks.length - failed}/${checks.length} passing, ${failed} gaps to sell)`);
   }

@@ -62,8 +62,19 @@ first views are sound-off. It is weak on YouTube.
 | `title` | Hooks. Word-by-word reveal. | `text`, `highlight`, `reveal` |
 | `line` | A single statement. Fade and rise. | `text`, `highlight` |
 | `script` | The exact words. Red rule, staggered reveal. | `text`, `label` |
-| `counter` | Animated number for data reveals. | `value`, `label` |
+| `counter` | Animated number counting up. | `value`, `label` |
 | `waveform` | Stands in for call-audio moments. | `caption` |
+| `split` | Wrong vs right. Top struck through, bottom in white. | `top`, `bottom`, `top_label`, `bottom_label` |
+| `timer` | Counts **down** with a draining ring. | `seconds`, `label` |
+| `chat` | Message thread. Left is them, right is you. | `messages: [{from, text}]` |
+| `ranked` | Numbered list building in, one entry called out. | `items`, `highlight_index`, `label` |
+| `transcript` | Call transcript with one line flagged + annotated. | `lines: [{who, text}]`, `flag_index`, `note` |
+
+![scene types](scene-types.png)
+
+Ten types is a range, not a template. Rotate them — the inauthentic-content
+policy targets near-identical output, and a channel where every video is a
+`title` → `line` → `script` chain will start to read that way by video 40.
 
 Every scene takes `vo` (the narration line), `duration` (overwritten by the VO
 pass), and `pad` (silence after the line, default 0.45s).

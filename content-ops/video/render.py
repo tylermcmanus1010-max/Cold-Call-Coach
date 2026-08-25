@@ -86,6 +86,18 @@ def fit_lines(text, fname, max_w, max_h, start, floor=44, lh=1.14):
     return f, wrap(text, f, max_w)
 
 
+def measure(text, f, tracking=0):
+    """Width of text including per-character tracking."""
+    return f.getlength(text) + tracking * (len(text) - 1) if text else 0
+
+
+def draw_tracked(d, x, y, text, f, fill, tracking=0):
+    """Letter-spaced label text drawn from a top-left origin."""
+    for ch in text:
+        d.text((x, y), ch, font=f, fill=fill)
+        x += f.getlength(ch) + tracking
+
+
 def draw_block(d, lines, f, cy, fill, alpha=1.0, dy=0, lh=1.14, highlight=None):
     """Centred multi-line block. `highlight` recolours matching words."""
     line_h = f.size * lh
@@ -200,8 +212,186 @@ def s_waveform(d, sc, t):
         draw_block(d, lines, f, cy + 380, MUTED, alpha=ease_out(clamp01(t / .3)))
 
 
+
+
+def _wrapped(d, text, fname, size, box_w, x, y, fill, lh=1.28, alpha=1.0):
+    """Draw wrapped text from a top-left origin. Returns height consumed."""
+    f = font(fname, size)
+    lines = wrap(text, f, box_w)
+    col = tuple(int(c * alpha + BG[i] * (1 - alpha)) for i, c in enumerate(fill))
+    for ln in lines:
+        d.text((x, y), ln, font=f, fill=col)
+        y += size * lh
+    return len(lines) * size * lh
+
+
+def s_split(d, sc, t):
+    """Stacked comparison. Wrong on top, struck through; right below in white."""
+    lt = sc.get("top_label", "MOST REPS")
+    lb = sc.get("bottom_label", "INSTEAD")
+    box = W - SAFE * 2
+    fl = font(INTS, 42)
+    LABEL_GAP, HALF_GAP = 34, 120
+
+    ft, lines_t = fit_lines(sc["top"], INTS, box, 420, 76)
+    fb, lines_b = fit_lines(sc["bottom"], INTS, box, 460, 80)
+    ht = len(lines_t) * ft.size * 1.22
+    hb = len(lines_b) * fb.size * 1.22
+
+    # Centre the whole comparison, not each half independently.
+    total = LABEL_GAP + ht + HALF_GAP + LABEL_GAP + hb
+    y = H / 2 - total / 2 + LABEL_GAP
+
+    a1 = ease_out(clamp01(t / .22))
+    draw_tracked(d, SAFE, y - LABEL_GAP, lt, fl,
+                 tuple(int(c * a1 + BG[i] * (1 - a1)) for i, c in enumerate(MUTED)), 5)
+    top_y = y
+    for ln in lines_t:
+        d.text((SAFE, y + (1 - a1) * 20), ln, font=ft,
+               fill=tuple(int(c * a1 * .62 + BG[i] * (1 - a1 * .62))
+                          for i, c in enumerate(TEXT)))
+        y += ft.size * 1.22
+
+    sw = ease_out(clamp01((t - .3) / .3))
+    if sw > 0:
+        sy = top_y + ht / 2
+        d.rounded_rectangle([SAFE, sy - 3, SAFE + box * sw, sy + 3], radius=3, fill=ACCENT)
+
+    a2 = ease_out(clamp01((t - .42) / .26))
+    if a2 > 0:
+        y += HALF_GAP
+        draw_tracked(d, SAFE, y - LABEL_GAP, lb, fl,
+                     tuple(int(c * a2 + BG[i] * (1 - a2)) for i, c in enumerate(ACCENT)), 5)
+        for ln in lines_b:
+            d.text((SAFE, y + (1 - a2) * 22), ln, font=fb,
+                   fill=tuple(int(c * a2 + BG[i] * (1 - a2)) for i, c in enumerate(TEXT)))
+            y += fb.size * 1.22
+
+
+def s_timer(d, sc, t):
+    """Counts DOWN with a draining ring. For 'you have N seconds' beats."""
+    total = sc.get("seconds", 8)
+    remaining = max(0, total * (1 - t))
+    shown = int(math.ceil(remaining - 1e-6)) if remaining > 0 else 0
+    cx, cy, r = W / 2, H / 2, 300
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(38, 38, 42), width=16)
+    sweep = 360 * (remaining / total)
+    if sweep > 0.5:
+        d.arc([cx - r, cy - r, cx + r, cy + r], start=-90, end=-90 + sweep,
+              fill=ACCENT, width=16)
+    fbig = font(MONO, 260)
+    d.text((cx, cy + 20), str(shown), font=fbig, fill=TEXT, anchor="mm")
+    lab = sc.get("label", "SECONDS")
+    fl = font(ARCH, 54)
+    lw = measure(lab, fl, 8)
+    draw_tracked(d, cx - lw / 2, cy + r + 120, lab, fl, MUTED, 8)
+
+
+def s_chat(d, sc, t):
+    """Message thread. Left bubbles are them, right bubbles are you."""
+    msgs = sc["messages"]           # [{"from":"them"|"you","text":...}]
+    box_max = W - SAFE * 2 - 150
+    fb = font(INTS, 52)
+    pad, gap, radius = 34, 26, 30
+
+    laid = []
+    total_h = 0
+    for m in msgs:
+        lines = wrap(m["text"], fb, box_max)
+        wdt = max(fb.getlength(l) for l in lines) + pad * 2
+        hgt = len(lines) * fb.size * 1.26 + pad * 2
+        laid.append((m, lines, wdt, hgt))
+        total_h += hgt + gap
+
+    y = H / 2 - (total_h - gap) / 2
+    for i, (m, lines, wdt, hgt) in enumerate(laid):
+        a = ease_out(clamp01((t - i * .16) / .22))
+        if a <= 0:
+            break
+        mine = m["from"] == "you"
+        x = (W - SAFE - wdt) if mine else SAFE
+        fill = ACCENT if mine else (32, 32, 36)
+        fill = tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate(fill))
+        oy = (1 - a) * 26
+        d.rounded_rectangle([x, y + oy, x + wdt, y + hgt + oy], radius=radius, fill=fill)
+        ty = y + pad + oy
+        for ln in lines:
+            d.text((x + pad, ty), ln, font=fb,
+                   fill=tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate(TEXT)))
+            ty += fb.size * 1.26
+        y += hgt + gap
+
+
+def s_ranked(d, sc, t):
+    """Numbered list building in, with one entry called out in red."""
+    items = sc["items"]
+    hi = sc.get("highlight_index", -1)
+    fn = font(MONO, 58)
+    ft = font(INTS, 60)
+    row_h = 150
+    y = H / 2 - (len(items) * row_h) / 2
+    title = sc.get("label")
+    if title:
+        fl = font(ARCH, 52)
+        lw = measure(title, fl, 6)
+        la = ease_out(clamp01(t / .2))
+        draw_tracked(d, (W - lw) / 2, y - 90, title, fl,
+                     tuple(int(c * la + BG[i] * (1 - la)) for i, c in enumerate(MUTED)), 6)
+    for i, item in enumerate(items):
+        a = ease_out(clamp01((t - .12 - i * .13) / .24))
+        if a <= 0:
+            break
+        on = (i == hi)
+        col = ACCENT if on else TEXT
+        num = tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate(ACCENT if on else MUTED))
+        d.text((SAFE, y + (1 - a) * 18), f"{i + 1}", font=fn, fill=num)
+        f2, lines = fit_lines(item, INTS, W - SAFE * 2 - 110, row_h, 60)
+        yy = y + (1 - a) * 18
+        for ln in lines:
+            d.text((SAFE + 100, yy), ln, font=f2,
+                   fill=tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate(col)))
+            yy += f2.size * 1.16
+        y += row_h
+
+
+def s_transcript(d, sc, t):
+    """Call transcript with one line flagged and annotated."""
+    lines_in = sc["lines"]          # [{"who":"REP"|"THEM","text":...}]
+    flag = sc.get("flag_index", -1)
+    note = sc.get("note")
+    fw = font(MONO, 34)
+    ft = font(INTS, 52)
+    box = W - SAFE * 2 - 130
+    y = TOP_SAFE + 120
+
+    for i, ln in enumerate(lines_in):
+        a = ease_out(clamp01((t - i * .12) / .2))
+        if a <= 0:
+            break
+        flagged = (i == flag) and t > .45
+        who = ln["who"]
+        d.text((SAFE, y), who, font=fw,
+               fill=tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate(
+                   ACCENT if flagged else MUTED)))
+        col = TEXT if not flagged else ACCENT
+        h = _wrapped(d, ln["text"], INTS, 52, box, SAFE + 130, y - 6, col, alpha=a)
+        if flagged:
+            d.rounded_rectangle([SAFE - 26, y - 18, SAFE - 20, y + h - 4],
+                                radius=3, fill=ACCENT)
+        y += h + 44
+
+    if note and t > .62:
+        a = ease_out(clamp01((t - .62) / .24))
+        fn = font(INTS, 46)
+        ny = y + 40
+        d.rounded_rectangle([SAFE, ny, W - SAFE, ny + 8], radius=4,
+                            fill=tuple(int(c * a + BG[j] * (1 - a)) for j, c in enumerate((38, 38, 42))))
+        _wrapped(d, note, INTS, 46, W - SAFE * 2, SAFE, ny + 44, MUTED, alpha=a)
+
 RENDERERS = {"title": s_title, "line": s_line, "script": s_script,
-             "counter": s_counter, "waveform": s_waveform}
+             "counter": s_counter, "waveform": s_waveform,
+             "split": s_split, "timer": s_timer, "chat": s_chat,
+             "ranked": s_ranked, "transcript": s_transcript}
 
 
 def brand_mark(d, t_global):

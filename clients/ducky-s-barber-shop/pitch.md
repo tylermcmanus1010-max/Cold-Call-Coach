@@ -1,6 +1,6 @@
 # Ducky's Barbershop — pitch sheet
 
-**Current site:** https://duckysbarbershop.com/
+**Current site:** https://duckys-barbershop.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
 **Score:** 0/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
@@ -39,6 +39,8 @@
 - Written page title, description and social preview card
 - Open Graph tags so the link previews properly when shared
 
+> **Fill these in before you send.** The page does not yet show: hours listed, services and pricing, reviews on the page. They are on their Google listing — the email does not promise them until they are on the page.
+
 ---
 
 ## Email to send
@@ -47,9 +49,9 @@
 
 Hi there,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for local businesses.
+I'm Tyler McManus, I run McManus Web Co. I build websites for El Cajon businesses.
 
-I went looking for your website and duckysbarbershop.com is showing a hosting placeholder page — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
+I went looking for your website and duckys-barbershop.com is showing a hosting placeholder page — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
 So I built you one. It's attached — open it on your phone.
 
@@ -58,7 +60,7 @@ What's on it:
 - HTTPS with a free auto-renewing certificate
 - Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Hours listed on-page and marked up for Google
+- Address with a one-tap Google Maps link
 
 Nothing is live. This is just so you can see what it would look like.
 

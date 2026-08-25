@@ -155,18 +155,30 @@ Next:
 function cmdBuild(slug) {
   const list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
+  const skipped = [];
   for (const s of list) {
     const b = load(s);
-    if (!b.name || !b.tagline) die(
-      `clients/${s}/business.json is missing ${!b.name ? '"name"' : '"tagline"'}.\n` +
-      `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
-      `  they are the two lines that actually sell the page.`);
+    if (!b.name || !b.tagline) {
+      // Building every client should not stop at the first unfinished one —
+      // that silently left the others on a stale template for a whole session.
+      const missing = !b.name ? '"name"' : '"tagline"';
+      if (slug) die(
+        `clients/${s}/business.json is missing ${missing}.\n` +
+        `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
+        `  they are the two lines that actually sell the page.`);
+      skipped.push(`${s} (missing ${missing})`);
+      continue;
+    }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
     fs.writeFileSync(path.join(dir(s), 'index.html'), render(b));
     fs.writeFileSync(path.join(dir(s), 'pitch.md'), pitch(b, pricing));
     const failed = checks.filter((c) => (b.audit || {})[c.key] !== true).length;
     console.log(`✓ ${s} — index.html + pitch.md  (${checks.length - failed}/${checks.length} passing, ${failed} gaps to sell)`);
+  }
+  if (skipped.length) {
+    console.log(`\n  ${skipped.length} not built yet — write a headline and tagline for each:`);
+    skipped.forEach((s) => console.log(`    · ${s}`));
   }
   if (list.length === 1) console.log(`\n  open clients/${list[0]}/index.html   ← check it on a phone first`);
 }

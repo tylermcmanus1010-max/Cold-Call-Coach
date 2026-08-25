@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a smog and repair shop and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a smog and repair shop and are an ASSUMPTION — check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "superior-smog-and-tune",
   "name": "Superior Smog & Tune",
   "category": "Smog check & auto repair",
   "owner": "",
   "currentSite": "http://superiorsmog.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Smog checks and tune-ups in Lemon Grove.",
   "subhead": "On Broadway. In and out without an appointment battle.",
@@ -103,5 +103,10 @@
     "pageKb": 13,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: vented about previous web guy ($1800, went no-contact), hung up before pitch"
+  ]
 }

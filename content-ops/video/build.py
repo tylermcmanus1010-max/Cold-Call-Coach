@@ -66,6 +66,9 @@ def main():
     ap.add_argument("--backend", choices=["gemini", "espeak", "elevenlabs"])
     ap.add_argument("--silent", action="store_true",
                     help="skip voiceover; keep the durations already in the spec")
+    ap.add_argument("--force", action="store_true", help="regenerate cached voice clips")
+    ap.add_argument("--degrade", action="store_true",
+                    help="fill quota-blocked scenes with espeak instead of stopping")
     a = ap.parse_args()
 
     spec = json.load(open(a.spec))
@@ -74,7 +77,7 @@ def main():
 
     if not a.silent and has_vo:
         print("VOICEOVER")
-        clips, backend = V.scene_voice(a.spec, a.backend)
+        clips, backend = V.scene_voice(a.spec, a.backend, force=a.force, fallback=a.degrade)
         track = build_audio_track(a.spec, clips, os.path.join(OUT, f"{name}.wav"))
         spec = json.load(open(a.spec))
         spec["audio"] = track

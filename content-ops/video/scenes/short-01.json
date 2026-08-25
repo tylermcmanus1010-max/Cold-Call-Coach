@@ -4,7 +4,7 @@
   "scenes": [
     {
       "type": "title",
-      "duration": 4.03,
+      "duration": 4.19,
       "text": "\"Not interested\" isn't an objection. It's a reflex.",
       "highlight": [
         "reflex."
@@ -14,7 +14,7 @@
     },
     {
       "type": "line",
-      "duration": 2.56,
+      "duration": 2.5,
       "text": "It fires in under two seconds.",
       "highlight": [
         "two",
@@ -24,19 +24,19 @@
     },
     {
       "type": "line",
-      "duration": 3.23,
+      "duration": 2.94,
       "text": "Before they've processed a single word you said.",
       "vo": "Before they've processed a single word you said."
     },
     {
       "type": "waveform",
-      "duration": 2.39,
+      "duration": 2.13,
       "caption": "they're not rejecting your offer",
       "vo": "They're not rejecting your offer."
     },
     {
       "type": "line",
-      "duration": 2.5,
+      "duration": 2.16,
       "text": "They're rejecting an interruption.",
       "highlight": [
         "interruption."
@@ -45,26 +45,26 @@
     },
     {
       "type": "line",
-      "duration": 2.87,
+      "duration": 2.45,
       "text": "So don't argue with it. Agree.",
       "vo": "So don't argue with it. Agree."
     },
     {
       "type": "script",
-      "duration": 8.26,
+      "duration": 6.66,
       "label": "SAY THIS",
       "text": "\"Totally fair \u2014 you have no idea who I am yet. You've got four SDRs and no call recording. Is that roughly right?\"",
       "vo": "Totally fair. You have no idea who I am yet. You've got four SDRs and no call recording. Is that roughly right?"
     },
     {
       "type": "line",
-      "duration": 3.41,
+      "duration": 2.92,
       "text": "\"Totally fair\" removes the thing to push against.",
       "vo": "Totally fair removes the thing to push against."
     },
     {
       "type": "line",
-      "duration": 6.14,
+      "duration": 5.0,
       "text": "The specific detail proves you did homework \u2014 the only credential on a cold call.",
       "highlight": [
         "homework"
@@ -73,7 +73,7 @@
     },
     {
       "type": "line",
-      "duration": 3.48,
+      "duration": 2.93,
       "text": "Never say \"just give me 30 seconds.\"",
       "highlight": [
         "never"
@@ -82,7 +82,7 @@
     },
     {
       "type": "title",
-      "duration": 1.9,
+      "duration": 1.73,
       "text": "You already took them.",
       "reveal": 0.35,
       "vo": "You already took them."

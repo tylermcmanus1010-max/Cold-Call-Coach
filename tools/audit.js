@@ -196,7 +196,7 @@ async function audit(rawUrl, { timeout = 12000 } = {}) {
   if (SERVER_DEFAULT.test(page.html)) {
     return { url: bare, finalUrl: page.finalUrl, reachable: true, verified: true,
              reason: 'no website — hosting default page', ms: page.ms, kb: Math.round(page.bytes / 1024),
-             checks: allFalse(), gaps: CHECKS.length, info: {}, serverDefault: true };
+             checks: allFalse(), gaps: CHECKS.length, info: {}, serverDefault: true, placeholder: true };
   }
 
   const info = extract(page.html);
@@ -205,7 +205,7 @@ async function audit(rawUrl, { timeout = 12000 } = {}) {
   if (looksParked(page.html, page.bytes, !!info.phone)) {
     return { url: bare, finalUrl: page.finalUrl, reachable: true, verified: true,
              reason: 'parked or placeholder page', ...stats,
-             checks: allFalse(), gaps: CHECKS.length, info };
+             checks: allFalse(), gaps: CHECKS.length, info, placeholder: true };
   }
 
   const checks = score(page.html, page, httpsWorked);

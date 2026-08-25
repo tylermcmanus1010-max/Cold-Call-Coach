@@ -252,6 +252,11 @@ function fromFile(file) {
 // or that they closed — so it ranks below anything we could actually open.
 function tierOf(lead) {
   const a = lead.auditResult;
+  // A placeholder on the listed domain is NOT proof they have no website. Twice
+  // it has meant the business moved and the directory record rotted: Convoy
+  // Dental now trades as Convoy Dental Arts, and duckysbarbershop.com is a
+  // placeholder while duckys-barbershop.com is their real, working site.
+  if (a.placeholder) return 'placeholder';
   if (a.reachable && a.gaps > 0) return 'live';
   if (!lead.website) return 'unlisted';
   return 'dead';
@@ -259,8 +264,10 @@ function tierOf(lead) {
 
 function rank(lead) {
   const a = lead.auditResult;
+  const tier = tierOf(lead);
   let s = a.gaps * 6;
-  if (tierOf(lead) === 'live') s += 40;
+  if (tier === 'live') s += 40;          // we opened it and measured what is wrong
+  if (tier === 'placeholder') s += 10;   // worth a look, but verify the domain first
   if (!lead.website) {
     // Google knows whether a business has a website; OpenStreetMap only knows
     // whether a volunteer typed one in. Only trust the former.
@@ -413,7 +420,8 @@ function toMarkdown(leads, area) {
   ].join('\n');
 
   const live = leads.filter((b) => b.tier === 'live');
-  const rest = leads.filter((b) => b.tier !== 'live');
+  const placeholder = leads.filter((b) => b.tier === 'placeholder');
+  const rest = leads.filter((b) => b.tier !== 'live' && b.tier !== 'placeholder');
   const out = [`## ${leads.length} ${leads.length === 1 ? 'lead' : 'leads'} — ${area}`, '',
     '**Tap a business name** to open its Google listing. Check it is still trading and',
     'still has no decent website before you call — these come from OpenStreetMap, which',
@@ -426,6 +434,16 @@ function toMarkdown(leads, area) {
       'Their site works, so the business is definitely open. You can hold your page',
       'next to theirs on the phone, which is the easier of the two conversations.', '',
       table(live.slice(0, 25).map(row)), '');
+  }
+
+  if (placeholder.length) {
+    out.push(
+      `### ${placeholder.length} whose listed domain shows a placeholder`, '',
+      '**Check Google for their real site before calling these.** A placeholder on the',
+      'listed domain usually means the business moved and the directory record rotted,',
+      'not that they have no website. Ducky\'s Barbershop looked like this and turned out',
+      'to have a working site on a slightly different domain.', '',
+      table(placeholder.slice(0, 15).map(row)), '');
   }
 
   if (rest.length) {

@@ -1,12 +1,12 @@
 {
-  "_howto": "Rating, review count, 'closes 6 PM', wheelchair access and online booking are REAL, read off their Google listing. Phone is from OpenStreetMap \u2014 dial it once to confirm. The service list is the standard scope of a barbershop and is an ASSUMPTION. Street address and full weekly hours are unknown and left empty on purpose.",
+  "_howto": "DO NOT SEND. They have a working website at duckys-barbershop.com with a published price list and online booking. OpenStreetMap listed duckysbarbershop.com (no hyphen), which is a placeholder \u2014 that is what the audit scored. Not a lead: someone is already maintaining their site. Confirmed real: 941 Broadway Unit L, El Cajon CA 92021, (619) 456-3232, 4.7 stars from 286 reviews.",
   "slug": "ducky-s-barber-shop",
   "name": "Ducky's Barbershop",
   "category": "Barber shop",
   "owner": "",
-  "currentSite": "https://duckysbarbershop.com/",
+  "currentSite": "https://duckys-barbershop.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "A proper barbershop, and the reviews to prove it.",
   "subhead": "4.7 stars across 286 reviews. Book ahead or call the shop.",
@@ -15,10 +15,10 @@
   "phone": "(619) 456-3232",
   "email": "",
   "address": {
-    "street": "",
-    "city": "",
+    "street": "941 Broadway Unit L",
+    "city": "El Cajon",
     "state": "CA",
-    "zip": ""
+    "zip": "92021"
   },
   "serviceArea": [],
   "license": "",

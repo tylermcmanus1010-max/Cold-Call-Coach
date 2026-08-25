@@ -243,7 +243,8 @@ def _is_cached(d, i, line, voice):
     meta = p + ".key"
     if not (os.path.exists(p) and os.path.exists(meta) and os.path.getsize(p) > 1000):
         return False
-    return open(meta).read().strip().lstrip("espeak:") == _cache_key(line, voice)
+    stored = open(meta).read().strip()
+    return stored.removeprefix("espeak:") == _cache_key(line, voice)
 
 
 def scene_voice(spec_path, backend=None, force=False, fallback=True):
@@ -269,9 +270,13 @@ def scene_voice(spec_path, backend=None, force=False, fallback=True):
              if force or not _is_cached(d, i, spec["scenes"][i]["vo"], voice)]
     if len(stale) > 1 and not force:
         lines = [spec["scenes"][i]["vo"] for i in vo_idx]
-        batched, bused = batch_synth(lines, d, voice=voice, backend=backend)
+        try:
+            batched, bused = batch_synth(lines, d, voice=voice, backend=backend)
+        except Exception as e:                      # noqa: BLE001 - never fatal
+            print(f"  batch failed ({str(e)[:70]}), falling back to per-scene")
+            batched = None
         if batched:
-            for n, i in enumerate(vo_idx):
+            for i in vo_idx:
                 open(os.path.join(d, f"{i:02d}.wav.key"), "w").write(
                     _cache_key(spec["scenes"][i]["vo"], voice))
             used = bused

@@ -273,7 +273,7 @@ function rank(lead) {
     // whether a volunteer typed one in. Only trust the former.
     s += lead.source === 'places' ? 30 : 2;
   }
-  if (lead.website && !a.reachable) s += 25;        // we fetched it and it is dead
+  if (lead.website && !a.reachable) s += 25;        // ordering within the dead tier only
   if (a.stale) s += 10;                             // visibly abandoned
   if (!a.checks.mobile) s += 12;                    // the one that actually costs them calls
   if (!a.checks.https) s += 8;
@@ -337,7 +337,16 @@ async function scout(cfg, opts) {
     `${blocked.length} sites blocked our check (Cloudflare and similar) — skipped, since we cannot prove anything is wrong with them.\n`);
 
   const qualified = leads.filter((b) => !b.auditResult.blocked && b.auditResult.gaps >= f.minGaps);
-  qualified.sort((a, b) => rank(b) - rank(a));
+
+  // Sort by evidence first, score only within a tier. Ranking everything by one
+  // number kept letting ambiguous leads outrank measured ones on arithmetic:
+  // a dead domain scoring 12 gaps beat a live site scoring 10, even though only
+  // the live one can be pitched without guessing. "Does not resolve" and
+  // "placeholder" both usually mean the directory record rotted — which is what
+  // Convoy Dental and Ducky's Barbershop each turned out to be.
+  const TIER_ORDER = { live: 0, placeholder: 1, dead: 2, unlisted: 3 };
+  qualified.sort((a, b) =>
+    (TIER_ORDER[tierOf(a)] - TIER_ORDER[tierOf(b)]) || (rank(b) - rank(a)));
   qualified.forEach((b) => { b.score = rank(b); b.tier = tierOf(b); });
   const liveCount = qualified.filter((b) => b.tier === 'live').length;
   process.stderr.write(`${liveCount} of them have a site that loads and is bad — call those first.\n`);

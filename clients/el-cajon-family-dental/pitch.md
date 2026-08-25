@@ -43,7 +43,7 @@
 
 **Subject:** Rebuilt your website — take a look before you say no
 
-Hi there,
+Hi Dr. Mechael,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for El Cajon businesses.
 
@@ -70,7 +70,7 @@ tylermcmanus1010@gmail.com
 
 ## Follow-up text (day 3, if no reply)
 
-> Hi there, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
+> Hi Dr. Mechael, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
 
 ## If they ask "why so cheap / what's the catch"
 

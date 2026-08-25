@@ -1,9 +1,9 @@
 {
-  "_howto": "Address, phone and the practice description are REAL, scraped from their own site. Their site is current (copyright 2026) \u2014 the pitch is that it has no HTTPS and does not work on a phone, NOT that it is abandoned. Services are the standard scope of a general and cosmetic practice and are an ASSUMPTION. Hours, reviews and rating are empty until confirmed from their Google listing.",
+  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) \u2014 the pitch is no HTTPS and no mobile, not that it is abandoned. STILL MISSING: weekly hours (tap the hours dropdown on Google) and any published pricing.",
   "slug": "el-cajon-family-dental",
   "name": "El Cajon Family Dental",
   "category": "Dental practice",
-  "owner": "",
+  "owner": "Dr. Mechael",
   "currentSite": "http://elcajonfamilydental.com/",
   "liveUrl": "",
   "status": "new",
@@ -11,7 +11,7 @@
   "headline": "General and cosmetic dentistry in El Cajon.",
   "subhead": "Dependable, caring care for the whole family \u2014 on Fletcher Parkway in El Cajon.",
   "tagline": "General and cosmetic dentistry in El Cajon, CA. Call (619) 466-1292.",
-  "heroNote": "Secure site \u00b7 Works on any phone \u00b7 One tap to call",
+  "heroNote": "Payment plans \u00b7 Sedation dentistry \u00b7 Pediatric care",
   "phone": "(619) 466-1292",
   "email": "",
   "address": {
@@ -30,7 +30,24 @@
   "license": "",
   "priceRange": "$$",
   "hours": [],
-  "highlights": [],
+  "highlights": [
+    {
+      "value": "4.4\u2605",
+      "label": "From 247 reviews"
+    },
+    {
+      "value": "Payment",
+      "label": "Plans available"
+    },
+    {
+      "value": "Sedation",
+      "label": "For nervous patients"
+    },
+    {
+      "value": "Kids",
+      "label": "Pediatric care"
+    }
+  ],
   "servicesHeading": "What we do",
   "servicesLede": "General and cosmetic dentistry for adults and children.",
   "services": [
@@ -40,13 +57,18 @@
       "price": ""
     },
     {
-      "name": "Fillings",
-      "desc": "Tooth-coloured fillings that match your smile.",
+      "name": "Pediatric care",
+      "desc": "Children are welcome here, and treated like it.",
       "price": ""
     },
     {
-      "name": "Crowns & bridges",
-      "desc": "Restoring damaged and missing teeth.",
+      "name": "Sedation dentistry",
+      "desc": "If the dentist makes you anxious, we can help with that.",
+      "price": ""
+    },
+    {
+      "name": "Fillings & crowns",
+      "desc": "Tooth-coloured repairs that match your smile.",
       "price": ""
     },
     {
@@ -55,29 +77,44 @@
       "price": ""
     },
     {
-      "name": "Teeth whitening",
-      "desc": "Professional whitening, done safely.",
-      "price": ""
-    },
-    {
       "name": "Cosmetic dentistry",
-      "desc": "Veneers and smile work.",
+      "desc": "Whitening, veneers and smile work.",
       "price": ""
     }
   ],
   "aboutHeading": "A family practice on Fletcher Parkway",
-  "about": "El Cajon Family Dental is a general and cosmetic dentistry practice serving families across El Cajon and the East County.\n\nWe see adults and children, we explain what we find before we do anything about it, and you will speak to a person when you call.",
+  "about": "El Cajon Family Dental is a general and cosmetic practice serving families across El Cajon and the East County, with 247 reviews and a 4.4-star rating on Google.\n\nWe see adults and children, we offer sedation for patients who need it, and we have payment plans so cost is not the reason you put off treatment.",
   "points": [
-    "General and cosmetic dentistry",
-    "Adults and children welcome",
+    "Payment plans available",
+    "Sedation dentistry for anxious patients",
+    "Pediatric care \u2014 children welcome",
     "On Fletcher Parkway, with parking"
   ],
   "rating": {
-    "value": "",
-    "count": "",
+    "value": "4.4",
+    "count": "247",
     "source": "Google"
   },
-  "reviews": [],
+  "reviews": [
+    {
+      "text": "Great service. Dr. Mechael is really sweet and professional. I'm looking forward to my next cleaning in 6 months. Thank you",
+      "author": "Ivan",
+      "source": "Google",
+      "stars": 5
+    },
+    {
+      "text": "Thank you to Dr. Mechael, Lila and the entire staff, it is a pleasure to see everyone at cleaning intervals. Best dentist we've ever had! They make beautiful repairs and make everything look even better than the original.",
+      "author": "Katrina Dickison",
+      "source": "Google",
+      "stars": 5
+    },
+    {
+      "text": "Excellent family dental office. They are professional and friendly, and they show a lot of care for your health and well-being.",
+      "author": "Daniel Donahue",
+      "source": "Google",
+      "stars": 5
+    }
+  ],
   "ctaHeading": "Book your next visit",
   "ctaLede": "Call the office and speak to someone who can get you on the schedule.",
   "cta": {
@@ -110,5 +147,6 @@
     "pageKb": 25,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "reviewsHeading": "What patients say"
 }

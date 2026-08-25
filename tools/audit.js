@@ -34,7 +34,27 @@ const BUILDERS = [
   [/webs\.com|homestead|networksolutions|yellowpages\.com\/website/i, 'legacy builder'],
 ];
 
-const PARKED = /this domain (is|may be) for sale|parked (free )?courtesy|godaddy\.com\/domainsearch|domain( name)? expired|coming soon|under construction|site temporarily unavailable/i;
+// Unambiguous: only a parked or expired domain says these.
+const PARKED_STRONG = /this domain (is|may be) for sale|buy this domain|parked (free )?courtesy|godaddy\.com\/domainsearch|sedoparking|hugedomains|domain( name)? (has )?expired|this site is temporarily unavailable/i;
+
+// Ambiguous: a real shop says "coming soon" about a product and "under
+// construction" about a remodel. Only treat it as a placeholder when it is the
+// headline of a page that has nowhere to go.
+const PARKED_WEAK = /coming soon|under construction|site temporarily unavailable|website (is )?(under|being) (built|developed)/i;
+
+function looksParked(html, bytes, hasPhone) {
+  if (PARKED_STRONG.test(html)) return true;
+
+  const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '';
+  const headings = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || []).join(' ');
+  const links = (html.match(/<a\s[^>]*href=/gi) || []).length;
+
+  // A placeholder announces itself in the title or the one heading, and has
+  // essentially nothing to click.
+  if (PARKED_WEAK.test(title + ' ' + headings) && links < 5) return true;
+
+  return bytes < 600 && !hasPhone;
+}
 
 async function grab(url, timeoutMs) {
   const ctl = new AbortController();
@@ -171,7 +191,7 @@ async function audit(rawUrl, { timeout = 12000 } = {}) {
   const info = extract(page.html);
   const stats = { ms: page.ms, kb: Math.round(page.bytes / 1024) };
 
-  if (PARKED.test(page.html) || (page.bytes < 600 && !info.phone)) {
+  if (looksParked(page.html, page.bytes, !!info.phone)) {
     return { url: bare, finalUrl: page.finalUrl, reachable: true, verified: true,
              reason: 'parked or placeholder page', ...stats,
              checks: allFalse(), gaps: CHECKS.length, info };

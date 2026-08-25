@@ -44,7 +44,7 @@ jobs:
           set -o pipefail
           ARGS="--source ${{ inputs.source }}"
           [ -n "${{ inputs.limit }}" ] && ARGS="$ARGS --limit ${{ inputs.limit }}"
-          [ "${{ inputs.make }}" != "0" ] && ARGS="$ARGS --make ${{ inputs.make }}"
+          [ "${{ inputs.make }}" != "0" ] && ARGS="$ARGS --make ${{ inputs.make }} --refresh"
           echo "Running: ./cc scout $ARGS"
           ./cc scout $ARGS 2>&1 | tee scout.log
 

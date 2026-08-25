@@ -16,6 +16,8 @@ module.exports = function pitch(b, pricing) {
   const from = pricing.from;
   const care = pricing.tiers.care;
   const owner = b.owner || 'there';
+  // "McManus Web Co." already ends in a period; let it serve as the sentence's.
+  const fromBiz = (from.businessName || '').replace(/\.\s*$/, '');
 
   const table = scored.map((c) =>
     `| ${c.pass ? '✅' : '❌'} | ${c.label} | ${c.pass ? '—' : c.gap} |`).join('\n');
@@ -54,7 +56,7 @@ ${fixes}
 
 Hi ${owner},
 
-I'm ${from.name}${from.businessName ? `, I run ${from.businessName}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
+I'm ${from.name}${fromBiz ? `, I run ${fromBiz}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
 
 I looked at ${b.currentSite ? 'your website' : "your listing online"} and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
 

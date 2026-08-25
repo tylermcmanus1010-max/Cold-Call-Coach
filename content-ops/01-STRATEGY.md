@@ -106,16 +106,20 @@ invent a conflict, because we're already in one.
 
 ## Success metrics — first 90 days
 
-Ignore follower count. Track these:
+**Revenue model: ad/watchtime.** The scoreboard is watch hours and subscribers,
+not followers and not email signups.
 
 | Metric | Day 30 | Day 60 | Day 90 |
 |---|---|---|---|
-| Posts published | 150+ | 350+ | 550+ |
-| Median 3s retention | 45% | 55% | 62% |
-| Follows per 1k views | 3 | 6 | 10 |
-| Posts over 50k views | 1 | 5 | 15 |
-| Email/link captures | 25 | 150 | 500 |
+| Long-form uploads | 8 | 17 | 26 |
+| YouTube subscribers | 100 | 400 | 1,000 |
+| Watch hours (rolling 12mo) | 150 | 600 | 1,500 |
+| Median long-form retention | 35% | 42% | 48% |
+| Short-form posts | 150+ | 350+ | 550+ |
 
-**Follows per 1k views is the real number.** It's the only metric that separates
-a hook that earned attention from a hook that stole it. `tools/analyze.mjs`
-computes it and ranks every post by it.
+**Watch hours is the real number.** 4,000 in 12 months unlocks monetization, and
+at an 11-minute video with 45% retention that is roughly 48,500 long-form views,
+or about 930 a week. `tools/revenue.mjs` models it against your own assumptions.
+
+Subscribers matter because they are the other half of the threshold and because
+subscribers watch long-form. Followers on TikTok do not pay.

@@ -6,11 +6,15 @@ and penalizes obvious re-uploads (visible watermarks especially).
 
 ## The role of each platform
 
+**Revenue model: ad/watchtime. YouTube long-form is the business; everything
+else feeds it.** See `08-LONGFORM-ENGINE.md` for the full playbook.
+
 | Platform | Job in the funnel | Why |
 |---|---|---|
-| **TikTok** | Discovery + audience research | Highest cold-reach for unknown accounts. Comments are free market research. |
-| **Instagram Reels** | Conversion + community | Best follow-through and DM conversation. Where a follower becomes a relationship. |
-| **YouTube Shorts** | Search + longevity + revenue | Only platform where content compounds. Shorts feed a long-form channel. Highest RPM path. |
+| **YouTube long-form** | **The revenue** | $7-11 RPM in this niche. 20-50x any short-form view. Mid-rolls over 8 min. |
+| **YouTube Shorts** | Subscriber acquisition | Subs are half the monetization requirement, and subs watch long-form. |
+| **TikTok** | Discovery + hook testing | Highest cold-reach. Comments are free market research. Small direct payout. |
+| **Instagram Reels** | Reach | Near-zero marginal cost once the clip exists. |
 | **X** | Text-native leverage + credibility | Repurpose scripts as threads. Cheapest place to test *ideas* before spending production on them. |
 | **Facebook** | Volume + underrated payout | Least competition per view. Older demographic, high reach on Reels, genuinely worth the 5 minutes of cross-posting. |
 
@@ -54,25 +58,31 @@ hundred dollars. Platform payouts are not the business. They're a scoreboard.
 
 ## Where the money actually is
 
-Ranked by realistic yield for a faceless page:
+Ad and watchtime revenue, ranked by realistic yield:
 
-1. **Your own product/service** — highest margin by an order of magnitude, and
-   the audience is qualified by the content itself
-2. **Affiliate** — works well in high-intent niches (software, tools, gear)
-3. **Sponsorships** — needs ~10k+ engaged followers; brand-safety matters here,
-   which is the concrete cost of a shock-heavy strategy
-4. **Platform ad revenue** — last, and CPM varies ~50x by niche. Finance/B2B
-   ($25–50 CPM) vs. gaming/entertainment ($1–4). **Niche choice determines
-   earnings more than any other single decision** — more than volume, more than
-   quality.
+1. **YouTube long-form ad revenue** — $7-11 RPM in the B2B/sales niche, which is
+   the top tier on the platform. This is the business.
+2. **TikTok Creator Rewards** — ~$0.40-1.00 per 1,000 qualified views. Requires
+   10k followers, 100k views/30 days, and **content over 1 minute**. Worth
+   collecting, not worth optimising for.
+3. **Facebook Reels / in-stream** — least competition per view, meaningful at
+   volume, near-zero marginal effort once the clip exists.
+4. **YouTube Shorts ad revenue** — $0.15-0.25 RPM here. Shorts are a subscriber
+   engine, not an income stream.
+
+Brand safety still matters even on a pure ad model: advertiser demand is what
+sets your RPM, and a brand-unsafe channel gets filled with cheap inventory. The
+green/yellow/red lines in `04-ATTENTION-AND-SHOCK.md` are now a revenue
+protection, not just a policy one.
 
 ## Posting cadence
 
 | Platform | Daily target | Notes |
 |---|---|---|
+| **YouTube long-form** | **2 per week** | The revenue. 9-14 min, mid-roll eligible. |
 | TikTok | 2–3 | Highest volume tolerance; test hooks here |
 | Reels | 1–2 | Over-posting suppresses; quality-weighted |
-| Shorts | 1–2 | Plus 1 long-form/week |
+| Shorts | 1–2 | Cut from long-form. Drives subs. |
 | X | 3–5 posts + 1 thread | Text is cheap; ideas tested here first |
 | FB Reels | 1–2 | Straight cross-post from Reels is acceptable here |
 

@@ -4,9 +4,12 @@ Last updated: 2026-08-24
 
 ## What this is
 
-An operating system for running a daily faceless short-form content brand across
-X, Instagram, Facebook, TikTok, and YouTube Shorts. It is built to be run every
-day by one person plus an AI collaborator.
+An operating system for a daily faceless content brand across YouTube, TikTok,
+Instagram, Facebook, and X. Built to be run every day by one person plus an AI
+collaborator.
+
+**Revenue model: ad and watchtime revenue.** YouTube long-form is the business;
+short-form feeds it. Start with `08-LONGFORM-ENGINE.md`.
 
 ## Read in this order
 
@@ -20,6 +23,7 @@ day by one person plus an AI collaborator.
 | `05-CREATOR-TEARDOWNS.md` | MrBeast, IShowSpeed, Kai Cenat, Andrew Tate — mechanics, not worship. |
 | `06-DAILY-SOP.md` | The everyday grind. 90-minute production block. |
 | `07-ACCOUNT-SETUP.md` | The human checklist. Handles, bios, verification order. |
+| `08-LONGFORM-ENGINE.md` | **The revenue engine.** YouTube long-form: the math, formats, 20 concepts, packaging. |
 
 ## Division of labor
 

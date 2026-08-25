@@ -253,4 +253,24 @@ function toBusinessJson(lead, tplPath) {
   };
 }
 
-module.exports = { scout, toCsv, toBusinessJson, rank, slugify };
+// Markdown so the list is readable straight off a phone screen.
+function toMarkdown(leads, area) {
+  const rows = leads.slice(0, 40).map((b, i) => {
+    const a = b.auditResult;
+    const site = !b.website ? (b.source === 'osm' ? '**no site listed** _(verify)_' : '**no website**')
+      : !a.reachable ? `**${a.reason || 'unreachable'}**`
+      : (a.reason ? `${a.reason}` : `[live](${a.finalUrl || 'https://' + a.url})`);
+    const rev = b.reviewCount != null ? `${b.rating ?? '–'}★ / ${b.reviewCount}` : '–';
+    return `| ${i + 1} | **${b.name}** | ${b.category || '–'} | ${b.phone || '–'} | ${a.gaps}/12 | ${rev} | ${site} |`;
+  });
+  return [
+    `## ${leads.length} leads worth calling — ${area}`, '',
+    '| # | Business | Type | Phone | Gaps | Rating | Current site |',
+    '|---|---|---|---|---|---|---|',
+    ...rows, '',
+    leads.length > 40 ? `_Showing the top 40 of ${leads.length}. Full list in the leads.csv artifact._` : '',
+    '', 'Pick one and reply with its number.',
+  ].join('\n');
+}
+
+module.exports = { scout, toCsv, toMarkdown, toBusinessJson, rank, slugify };

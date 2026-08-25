@@ -66,6 +66,19 @@ website" or just "nobody mapped it yet." Those rows are marked
 `no website listed - verify` — spend the 30 seconds to check before you call.
 Google Places doesn't have this problem.
 
+### Running it from a phone
+
+`Actions` tab → `Scout leads` → `Run workflow`. It runs on GitHub's servers, so
+you need no terminal and no laptop. The ranked list appears in the run summary
+(readable on a phone), the full CSV is attached to the run as a download, and
+`make` will scaffold the top N as clients and commit them back.
+
+The workflow file has to be on the default branch before the Run workflow button
+appears — that's a GitHub rule, not a setting.
+
+For `--source places` from Actions, add your key as a repository secret named
+`GOOGLE_MAPS_API_KEY` (Settings → Secrets and variables → Actions).
+
 ### Retargeting
 
 Everything about *where* and *what* lives in `config/scout.json` — the bounding

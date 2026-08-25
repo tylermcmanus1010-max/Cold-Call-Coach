@@ -56,7 +56,7 @@ function flags(argv) {
 }
 
 async function cmdScout(argv) {
-  const { scout, toCsv, toBusinessJson } = require('./tools/scout');
+  const { scout, toCsv, toMarkdown, toBusinessJson } = require('./tools/scout');
   const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/scout.json'), 'utf8'));
   const o = flags(argv);
   const source = o.source || 'osm';
@@ -75,6 +75,7 @@ async function cmdScout(argv) {
   fs.mkdirSync(LEADS, { recursive: true });
   fs.writeFileSync(path.join(LEADS, 'leads.csv'), toCsv(leads));
   fs.writeFileSync(path.join(LEADS, 'leads.json'), JSON.stringify(leads, null, 2) + '\n');
+  fs.writeFileSync(path.join(LEADS, 'leads.md'), toMarkdown(leads, cfg.area.name) + '\n');
 
   const w = Math.min(34, Math.max(12, ...leads.slice(0, 25).map((l) => (l.name || '').length)));
   console.log(`\n   #  ${'BUSINESS'.padEnd(w)}  GAPS  ★ / REVIEWS   CURRENT SITE`);

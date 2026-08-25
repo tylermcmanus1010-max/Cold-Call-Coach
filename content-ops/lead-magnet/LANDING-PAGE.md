@@ -17,23 +17,109 @@ $19/yr and you embed the Kit form into it. The copy below ports unchanged.
 
 ---
 
-## Setup, in order
+## Setup — click by click
 
-1. **kit.com → sign up free.** Use the Cold Open Gmail.
-2. **Grow → Landing Pages & Forms → Create → Landing Page.** Pick any minimal
-   template — you're replacing all the copy anyway. Recommended: a plain
-   centered one, no stock photography.
-3. **Style it to brand:** background `#0B0B0C`, text `#FAFAFA`, button
-   `#FF3B30` with `#FAFAFA` text. Headline font: pick the heaviest sans in the
-   list. Upload `assets/brand/avatar-400.png` as the logo.
-4. **Paste the copy below.**
-5. **Grow → Incentive email:** turn ON "Send incentive email", upload
-   `The-Objection-Pack.pdf` as the download, paste the email copy below.
-6. **Settings → the page URL.** Set the slug to `objection-pack`. You'll get
-   something like `coldopen.kit.com/objection-pack`.
-7. **Put that URL in all five bios.**
+Kit's UI shifts, so each step says what you're looking for as well as where it
+was. If a label differs, the goal is the thing to match.
+
+### Phase 1 — Account (2 min)
+
+1. Go to **kit.com** → **Get started free**
+2. Sign up with the Cold Open Gmail
+3. Onboarding asks what you do — any answer is fine, it only sets defaults
+4. If it pushes a paid trial, decline. You want the free **Newsletter** plan.
+
+### Phase 2 — Create the page (2 min)
+
+5. Left sidebar → **Grow** → **Landing Pages & Forms**
+6. **+ Create new** → choose **Landing Page** (not Form)
+7. Template gallery. Pick a **minimal, centered, text-only** template — no stock
+   photography, no split-screen hero. You're replacing everything anyway, and a
+   template with a big photo slot fights you the whole way.
+
+### Phase 3 — Copy (4 min)
+
+8. Click each text block on the canvas and replace it with the copy below.
+   Delete any block you don't have copy for — empty placeholder blocks are the
+   #1 thing that makes these pages look unfinished.
+9. Blocks you want, in order: headline, subhead, the four bullets, email field,
+   button, small print. Nothing else.
+
+### Phase 4 — Style (3 min)
+
+10. Open the styling panel (usually a paintbrush or **Styles** in the left
+    panel) and set:
+    - Background `#0B0B0C`
+    - Text `#FAFAFA`
+    - Button background `#FF3B30`, button text `#FAFAFA`
+    - Headline font: the heaviest sans available
+11. Upload `assets/brand/avatar-400.png` as the logo, top-centered, small.
+
+### Phase 5 — The incentive email (4 min) — the important one
+
+**In Kit, the incentive email IS the confirmation email.** One email confirms
+the subscriber and delivers the file. There is no separate welcome email to set
+up. If you go hunting for one you'll wire up something redundant.
+
+12. In the editor, open the **Settings** tab (top of the left panel)
+13. Find **Incentive email** (sometimes under **Confirmation email**)
+14. Toggle **Send incentive email** ON
+15. Set **Subject**: `12 objections, 12 scripts`
+16. Paste the email body below
+17. Find the button setting → choose **Download** (not "Link to a URL")
+18. **Choose a file** → upload `The-Objection-Pack.pdf` → wait for it to finish
+19. Set the **button text**: `Download the pack`
+20. Save
+
+Because this is a double opt-in, the subscriber has to click that button to
+both confirm and get the file. That's why the button text matters — it has to
+read as the reward, not as a chore.
+
+### Phase 6 — URL and publish (2 min)
+
+21. **Settings** → **General** → name the page `Objection Pack`
+22. Set the URL slug to `objection-pack`. Your link becomes something like
+    `coldopen.kit.com/objection-pack`
+23. **Save & Publish**
+
+### Phase 7 — Test it end to end (3 min) — do not skip
+
+24. Open the live URL in a private/incognito window
+25. Sign up with an email you control that is **not** the Cold Open Gmail
+26. Confirm you receive the incentive email. **Check Promotions and Spam** — if
+    it landed outside the primary inbox, that's real information about how
+    subscribers will experience it
+27. Click the download button. Confirm the PDF opens and is the right file
+28. In Kit, check the subscriber appeared under **Subscribers**
+
+If any of those four fail, fix it before the link goes anywhere.
+
+### Phase 8 — Ship the link
+
+29. Put the URL in all five bios (see `07-ACCOUNT-SETUP.md` for the bio copy)
 
 ---
+
+## Free-tier limits to respect
+
+You get **one** landing page, **one** form, and **one** automation. Don't create
+throwaway pages to experiment — you only have the one slot, and deleting and
+recreating loses the URL. Build it once, properly.
+
+Kit appends its own branding to sends on free. Acceptable; it disappears if you
+ever upgrade.
+
+---
+
+## If something goes wrong
+
+| Symptom | Cause |
+|---|---|
+| No email arrives | Check Promotions/Spam first. Then confirm the incentive toggle is actually ON — it defaults off. |
+| Email arrives, no download button | The button is set to "Link" instead of "Download", or the file upload didn't finish. |
+| Download gives the wrong file | You uploaded before the previous file finished. Re-upload and wait for the confirmation. |
+| Subscriber never appears | They didn't click the confirm button. Unconfirmed subscribers don't count — that's how double opt-in works. |
+| Page looks unfinished | Leftover empty template blocks. Delete every block you didn't fill. |
 
 ## Landing page copy
 

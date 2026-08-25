@@ -238,13 +238,21 @@ def _cache_key(line, voice):
     return hashlib.sha256(f"{voice}|{line}".encode()).hexdigest()[:16]
 
 
-def _is_cached(d, i, line, voice):
+def _is_cached(d, i, line, voice, allow_degraded=True):
+    """True when scene i has a usable clip for this exact line and voice.
+
+    A clip produced by the espeak fallback is a draft, not a final. When a
+    better backend is available it is treated as stale so the scene gets
+    upgraded instead of shipping degraded audio forever.
+    """
     p = os.path.join(d, f"{i:02d}.wav")
     meta = p + ".key"
     if not (os.path.exists(p) and os.path.exists(meta) and os.path.getsize(p) > 1000):
         return False
     stored = open(meta).read().strip()
-    return stored.removeprefix("espeak:") == _cache_key(line, voice)
+    if stored.startswith("espeak:"):
+        return allow_degraded and stored.removeprefix("espeak:") == _cache_key(line, voice)
+    return stored == _cache_key(line, voice)
 
 
 def scene_voice(spec_path, backend=None, force=False, fallback=True):
@@ -266,8 +274,11 @@ def scene_voice(spec_path, backend=None, force=False, fallback=True):
     # One request for the whole script beats one per scene: free tier meters
     # requests, not audio length. Only worth it when several scenes are stale.
     vo_idx = [i for i, sc in enumerate(spec["scenes"]) if sc.get("vo")]
+    # If a real backend is reachable, espeak drafts are stale and get upgraded.
+    keep_drafts = not (backend in (None, "gemini") and gemini_available())
     stale = [i for i in vo_idx
-             if force or not _is_cached(d, i, spec["scenes"][i]["vo"], voice)]
+             if force or not _is_cached(d, i, spec["scenes"][i]["vo"], voice,
+                                        allow_degraded=keep_drafts)]
     if len(stale) > 1 and not force:
         lines = [spec["scenes"][i]["vo"] for i in vo_idx]
         try:
@@ -289,9 +300,8 @@ def scene_voice(spec_path, backend=None, force=False, fallback=True):
         p = os.path.join(d, f"{i:02d}.wav")
         meta = p + ".key"
         want = _cache_key(line, voice)
-        have = open(meta).read().strip() if os.path.exists(meta) else None
 
-        if not force and have == want and os.path.exists(p) and os.path.getsize(p) > 1000:
+        if not force and _is_cached(d, i, line, voice, allow_degraded=keep_drafts):
             dur = wav_duration(p)
             sc["duration"] = round(dur + sc.get("pad", 0.45), 2)
             clips.append(p)

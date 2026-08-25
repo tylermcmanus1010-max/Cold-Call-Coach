@@ -149,7 +149,7 @@ def tts(text, out_wav, voice=None, model=None, style=None):
             break
         except RuntimeError as e:
             last = e
-            if "429" not in str(e):
+            if "429" not in str(e) and "no audio" not in str(e):
                 raise
             _exhausted.add(m)
             short = m.split("/")[-1]
@@ -165,8 +165,17 @@ def tts(text, out_wav, voice=None, model=None, style=None):
             break
     else:
         raise last
-    part = d["candidates"][0]["content"]["parts"][0]
-    inline = part["inlineData"]
+    # A response can come back well-formed but empty (safety stop, empty
+    # candidate). Treat that as a failure for this model so rotation moves on
+    # rather than crashing the whole render on a KeyError.
+    try:
+        part = d["candidates"][0]["content"]["parts"][0]
+        inline = part["inlineData"]
+        if not inline.get("data"):
+            raise KeyError("empty audio")
+    except (KeyError, IndexError, TypeError):
+        reason = (d.get("candidates") or [{}])[0].get("finishReason", "unknown")
+        raise RuntimeError(f"no audio in response (finishReason={reason})") from None
     pcm = base64.b64decode(inline["data"])
     # mimeType looks like: audio/L16;codec=pcm;rate=24000
     rate = 24000

@@ -236,9 +236,21 @@ function fromFile(file) {
 
 // Rank by opportunity, not just by how broken the site is: a shop with 400
 // reviews and no mobile site is worth ten with 20 reviews.
+// A site that loads and is bad is the best call you can make: the business is
+// demonstrably alive, and you can put your page next to theirs on the phone.
+// A dead domain is weaker — it may mean they moved and nobody updated the map,
+// or that they closed — so it ranks below anything we could actually open.
+function tierOf(lead) {
+  const a = lead.auditResult;
+  if (a.reachable && a.gaps > 0) return 'live';
+  if (!lead.website) return 'unlisted';
+  return 'dead';
+}
+
 function rank(lead) {
   const a = lead.auditResult;
   let s = a.gaps * 6;
+  if (tierOf(lead) === 'live') s += 40;
   if (!lead.website) {
     // Google knows whether a business has a website; OpenStreetMap only knows
     // whether a volunteer typed one in. Only trust the former.
@@ -272,6 +284,16 @@ async function scout(cfg, opts) {
     process.stderr.write(`${leads.length} pass the ${f.minReviews}+ reviews / ${f.minRating}+ stars filter (dropped ${before - leads.length}).\n`);
   }
 
+  // The same business is often mapped more than once, which put "My Plumber CA"
+  // on the list twice.
+  const seenIdentity = new Set();
+  leads = leads.filter((b) => {
+    const key = normName(b.name) + '|' + String(b.phone || '').replace(/\D/g, '');
+    if (seenIdentity.has(key)) return false;
+    seenIdentity.add(key);
+    return true;
+  });
+
   const chains = cfg.excludeNames?.names || [];
   if (chains.length) {
     const before = leads.length;
@@ -299,7 +321,9 @@ async function scout(cfg, opts) {
 
   const qualified = leads.filter((b) => !b.auditResult.blocked && b.auditResult.gaps >= f.minGaps);
   qualified.sort((a, b) => rank(b) - rank(a));
-  qualified.forEach((b) => { b.score = rank(b); });
+  qualified.forEach((b) => { b.score = rank(b); b.tier = tierOf(b); });
+  const liveCount = qualified.filter((b) => b.tier === 'live').length;
+  process.stderr.write(`${liveCount} of them have a site that loads and is bad — call those first.\n`);
 
   process.stderr.write(`${qualified.length} leads have ${f.minGaps}+ gaps and are worth calling.\n`);
   return qualified;
@@ -361,24 +385,46 @@ function toBusinessJson(lead, tplPath) {
 // shift every cell after it into the wrong column.
 const mdCell = (v) => String(v == null ? '' : v).replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
-// Markdown so the list is readable straight off a phone screen.
+// Markdown so the list is readable straight off a phone screen. Split into
+// two groups, because they need two different opening lines on the phone.
 function toMarkdown(leads, area) {
-  const rows = leads.slice(0, 40).map((b, i) => {
+  const row = (b, i) => {
     const a = b.auditResult;
     const site = !b.website ? (b.source === 'osm' ? '**no site listed** _(verify)_' : '**no website**')
-      : !a.reachable ? `**${a.reason || 'unreachable'}**`
-      : (a.reason ? `${mdCell(a.reason)}` : `[live](${a.finalUrl || 'https://' + a.url})`);
+      : !a.reachable ? `**${mdCell(a.reason || 'unreachable')}**`
+      : (a.reason ? mdCell(a.reason) : `[loads](${a.finalUrl || 'https://' + a.url})`);
     const rev = b.reviewCount != null ? `${b.rating ?? '–'}★ / ${b.reviewCount}` : '–';
-    return `| ${i + 1} | **${mdCell(b.name)}** | ${mdCell(b.category) || '–'} | ${mdCell(b.phone) || '–'} | ${a.gaps}/12 | ${rev} | ${mdCell(site)} |`;
-  });
-  return [
-    `## ${leads.length} leads worth calling — ${area}`, '',
+    return `| ${i + 1} | **${mdCell(b.name)}** | ${mdCell(b.category) || '–'} | ${mdCell(b.phone) || '–'} | ${a.gaps}/12 | ${rev} | ${site} |`;
+  };
+  const table = (rows) => [
     '| # | Business | Type | Phone | Gaps | Rating | Current site |',
     '|---|---|---|---|---|---|---|',
-    ...rows, '',
-    leads.length > 40 ? `_Showing the top 40 of ${leads.length}. Full list in the leads.csv artifact._` : '',
-    '', 'Pick one and reply with its number.',
+    ...rows,
   ].join('\n');
+
+  const live = leads.filter((b) => b.tier === 'live');
+  const rest = leads.filter((b) => b.tier !== 'live');
+  const out = [`## ${leads.length} leads — ${area}`, ''];
+
+  if (live.length) {
+    out.push(
+      `### Call these first — ${live.length} ${live.length === 1 ? 'site that loads and is bad' : 'sites that load and are bad'}`, '',
+      'Their site works, so the business is definitely open. You can hold your page',
+      'next to theirs on the phone, which is the easier of the two conversations.', '',
+      table(live.slice(0, 25).map(row)), '');
+  }
+
+  if (rest.length) {
+    out.push(
+      `### ${rest.length} with a dead or unlisted web address`, '',
+      'Worth a call, but check they are still trading first — a dead domain can also',
+      'mean they moved to a new one, or closed.', '',
+      table(rest.slice(0, 15).map(row)), '');
+  }
+
+  out.push(`_Full list of ${leads.length} in the leads.csv artifact attached to this run._`, '',
+           'Pick one and reply with its name.');
+  return out.join('\n');
 }
 
 module.exports = { scout, toCsv, toMarkdown, toBusinessJson, rank, slugify };

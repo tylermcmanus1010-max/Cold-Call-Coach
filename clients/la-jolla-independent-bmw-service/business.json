@@ -1,17 +1,17 @@
 {
-  "_howto": "Address, phone and the '50 years of in-house BMW technical experience' line are REAL, scraped from their own site (bimmerdoc.com). Their site is current \u2014 WordPress, copyright 2026 \u2014 so the pitch is no HTTPS and no mobile layout, not that it is abandoned. Services are the standard scope of an independent BMW specialist and are an ASSUMPTION; their site does list services, so check them. Rating, reviews and hours still needed from their Google listing.",
+  "_howto": "Address, phone and the '50 years of in-house BMW technical experience' line are REAL, scraped from their own site (bimmerdoc.com). Their site is current — WordPress, copyright 2026 — so the pitch is no HTTPS and no mobile layout, not that it is abandoned. Services are the standard scope of an independent BMW specialist and are an ASSUMPTION; their site does list services, so check them. Rating, reviews and hours still needed from their Google listing.",
   "slug": "la-jolla-independent-bmw-service",
   "name": "La Jolla Independent BMW Service",
   "category": "Independent BMW specialist",
   "owner": "",
   "currentSite": "http://www.bimmerdoc.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Independent BMW service in La Jolla.",
-  "subhead": "Over 50 years of in-house BMW technical experience \u2014 without dealership prices.",
+  "subhead": "Over 50 years of in-house BMW technical experience — without dealership prices.",
   "tagline": "Independent BMW service and repair in La Jolla, CA. Call (858) 488-1555.",
-  "heroNote": "On La Jolla Boulevard \u00b7 Independent, not a dealership",
+  "heroNote": "On La Jolla Boulevard · Independent, not a dealership",
   "phone": "(858) 488-1555",
   "email": "",
   "address": {
@@ -39,7 +39,7 @@
     }
   ],
   "servicesHeading": "What we work on",
-  "servicesLede": "BMW only \u2014 diagnostics, maintenance and repair.",
+  "servicesLede": "BMW only — diagnostics, maintenance and repair.",
   "services": [
     {
       "name": "Scheduled maintenance",
@@ -76,7 +76,7 @@
   "about": "La Jolla Independent BMW Service has over 50 years of in-house BMW technical experience. We work on BMWs and only BMWs, which is why we find things a general shop misses.\n\nYou get told what is wrong and what it costs before anything is touched, and you talk to the person doing the work.",
   "points": [
     "Over 50 years of in-house BMW technical experience",
-    "BMW specialists \u2014 not a general repair shop",
+    "BMW specialists — not a general repair shop",
     "Independent, so no dealership markup",
     "On La Jolla Boulevard"
   ],
@@ -118,5 +118,10 @@
     "pageKb": 19,
     "builder": "WordPress",
     "copyrightYear": 2026
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: not interested, hung up"
+  ]
 }

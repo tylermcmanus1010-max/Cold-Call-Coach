@@ -1,5 +1,5 @@
 {
-  "_howto": "DRAFT. Real: name, phone, current site URL, audit. The services list below is the standard scope of general dentistry and is an ASSUMPTION \u2014 confirm it against their site before this goes anywhere. Hours, address, reviews and years in practice are deliberately empty: those sections simply do not render until they are filled.",
+  "_howto": "DRAFT. convoydental.com serves a Plesk 'no Web site at this address' placeholder \u2014 they have a domain and hosting and no website. The earlier '\u00a9 1999' was Plesk's own footer, not theirs. Services below are the standard scope of general dentistry and are an ASSUMPTION. Hours, address, reviews and rating stay empty until confirmed.",
   "slug": "convoy-dental",
   "name": "Convoy Dental",
   "category": "Dental practice",
@@ -9,7 +9,7 @@
   "status": "new",
   "tier": "onepage",
   "headline": "General and family dentistry in San Diego.",
-  "subhead": "Same practice, same phone number \u2014 now on a website that works on your phone.",
+  "subhead": "A website for the practice \u2014 so patients who look you up find you, not a blank hosting page.",
   "tagline": "General and family dentistry in San Diego. Call (858) 223-9632.",
   "heroNote": "",
   "phone": "(858) 223-9632",
@@ -95,10 +95,11 @@
   "_scout": {
     "score": 141,
     "gaps": 11,
-    "currentSiteStatus": "\u00a9 1999",
+    "currentSiteStatus": "no website \u2014 hosting default page (Plesk)",
     "loadMs": 272,
     "pageKb": 2,
     "builder": null,
-    "copyrightYear": 1999
+    "copyrightYear": null,
+    "serverDefault": true
   }
 }

@@ -19,6 +19,12 @@ module.exports = function pitch(b, pricing) {
   // "McManus Web Co." already ends in a period; let it serve as the sentence's.
   const fromBiz = (from.businessName || '').replace(/\.\s*$/, '');
 
+  // "I rebuilt your website" is the wrong opening line for someone who does not
+  // have one. A domain showing a hosting placeholder needs to be named plainly.
+  const status = b._scout?.currentSiteStatus || '';
+  const noSite = !b.currentSite || /no website|does not resolve|parked|placeholder/i.test(status);
+  const host = String(b.currentSite || '').replace(/^https?:\/\/(www\.)?/i, '').replace(/\/+$/, '');
+
   const table = scored.map((c) =>
     `| ${c.pass ? '✅' : '❌'} | ${c.label} | ${c.pass ? '—' : c.gap} |`).join('\n');
 
@@ -52,20 +58,26 @@ ${fixes}
 
 ## Email to send
 
-**Subject:** Rebuilt your website — take a look before you say no
+**Subject:** ${noSite ? 'Your domain is showing a blank hosting page — I built you a website' : 'Rebuilt your website — take a look before you say no'}
 
 Hi ${owner},
 
 I'm ${from.name}${fromBiz ? `, I run ${fromBiz}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
 
-I looked at ${b.currentSite ? 'your website' : "your listing online"} and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+${noSite
+  ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
-What I changed:
+So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : `I looked at your website and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What I changed:`}
 ${emailFixes}
 
 Nothing is live. This is just so you can see what it would look like.
 
-${money(tier)} for the ${tier.label.toLowerCase()}, live on your domain in ${tier.includes.find((i) => /live in/i.test(i))?.replace(/live in /i, '') || 'about a week'}.${care ? ` ${money(care)} after that if you want me hosting it and making changes for you.` : ''} ${pricing.guarantee}
+${money(tier)} for the ${noSite ? tier.label.toLowerCase().replace('rebuild', 'website') : tier.label.toLowerCase()}, live on your domain in ${tier.includes.find((i) => /live in/i.test(i))?.replace(/live in /i, '') || 'about a week'}.${care ? ` ${money(care)} after that if you want me hosting it and making changes for you.` : ''} ${pricing.guarantee}
 
 Worth a 10-minute call?
 
@@ -76,13 +88,13 @@ ${from.phone ? from.phone + '\n' : ''}${from.email}
 
 ## Follow-up text (day 3, if no reply)
 
-> Hi ${owner}, ${from.name} here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
+> Hi ${owner}, ${from.name} here — I sent over ${noSite ? 'a website I built for you' : 'a rebuilt version of your website'} earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
 
 ## If they ask "why so cheap / what's the catch"
 
 > No catch. I already built it — you're paying me to put it on your domain and keep it working. If you don't like it, you don't pay, and you keep the file.
 
-## What's included at ${money(tier)}
+## What's included at ${money(tier)} — ${noSite ? 'they have no site at all, so this is a build, not a rebuild' : tier.label}
 
 ${tier.includes.map((i) => `- ${i}`).join('\n')}
 `;

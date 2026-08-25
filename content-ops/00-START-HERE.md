@@ -48,9 +48,11 @@ credentials. That is the legitimate automation path. Bot-created accounts are no
 - [x] Niche locked — cold calling / B2B sales (see `01-STRATEGY.md`)
 - [x] Brand decided — **Cold Open**, positioning locked, brand kit specified
 - [x] First 30 scripts banked — `scripts/BATCH-01.md`
-- [ ] Handles secured across all 5 platforms
-- [ ] Accounts created
-- [ ] Brand assets produced (avatar, banner — specs in `07-ACCOUNT-SETUP.md`)
-- [ ] Link-in-bio page live with email capture
+- [x] Accounts created on all 5 platforms (IG is `runcoldopen`, others `coldopen`)
+- [x] Brand assets generated — `assets/brand/`
+- [x] Lead magnet built — `lead-magnet/The-Objection-Pack.pdf`
+- [ ] Avatar + banners uploaded to all 5 profiles
+- [ ] Link-in-bio page live, serving the Objection Pack
+- [ ] 7-day warm-up started
 - [ ] Posting cadence live
 - [ ] Tracker running

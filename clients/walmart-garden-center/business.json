@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "le-parfait-paris",
-  "name": "Le Parfait Paris",
-  "category": "bakery",
+  "slug": "walmart-garden-center",
+  "name": "Walmart Garden Center",
+  "category": "garden centre",
   "owner": "",
-  "currentSite": "http://www.leparfaitparis.com/",
+  "currentSite": "https://www.walmart.com/blocked?url=L3N0b3JlLzI0Nzkvc2FuLWRpZWdvLWNh&uuid=8e5314a4-a0bb-11f1-90bd-d295e57f72c4&vid=&g=b",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,13 +12,13 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-245-4457",
+  "phone": "+1-619-858-0071",
   "email": "",
   "address": {
-    "street": "555 G Street",
+    "street": "3412 College Avenue",
     "city": "San Diego",
     "state": "CA",
-    "zip": "92101"
+    "zip": "92115"
   },
   "serviceArea": [],
   "license": "",
@@ -81,7 +81,7 @@
     "heroImage": ""
   },
   "audit": {
-    "https": false,
+    "https": true,
     "mobile": true,
     "speed": true,
     "phoneTap": false,
@@ -95,11 +95,11 @@
     "social": false
   },
   "_scout": {
-    "score": 113,
-    "gaps": 10,
+    "score": 99,
+    "gaps": 9,
     "currentSiteStatus": "live",
-    "loadMs": 62,
-    "pageKb": 3,
+    "loadMs": 1082,
+    "pageKb": 15,
     "builder": null,
     "copyrightYear": null
   }

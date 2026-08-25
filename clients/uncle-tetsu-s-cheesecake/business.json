@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "le-parfait-paris",
-  "name": "Le Parfait Paris",
+  "slug": "uncle-tetsu-s-cheesecake",
+  "name": "Uncle Tetsu's Cheesecake",
   "category": "bakery",
   "owner": "",
-  "currentSite": "http://www.leparfaitparis.com/",
+  "currentSite": "https://www.uncletetsu-us.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,13 +12,13 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-245-4457",
+  "phone": "+1 858-292-6638",
   "email": "",
   "address": {
-    "street": "555 G Street",
+    "street": "4609 Convoy Street",
     "city": "San Diego",
     "state": "CA",
-    "zip": "92101"
+    "zip": "92111"
   },
   "serviceArea": [],
   "license": "",
@@ -81,7 +81,7 @@
     "heroImage": ""
   },
   "audit": {
-    "https": false,
+    "https": true,
     "mobile": true,
     "speed": true,
     "phoneTap": false,
@@ -95,10 +95,10 @@
     "social": false
   },
   "_scout": {
-    "score": 113,
-    "gaps": 10,
+    "score": 99,
+    "gaps": 9,
     "currentSiteStatus": "live",
-    "loadMs": 62,
+    "loadMs": 467,
     "pageKb": 3,
     "builder": null,
     "copyrightYear": null

@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "le-parfait-paris",
-  "name": "Le Parfait Paris",
-  "category": "bakery",
+  "slug": "municipal-gymnasium",
+  "name": "Municipal Gymnasium",
+  "category": "fitness centre",
   "owner": "",
-  "currentSite": "http://www.leparfaitparis.com/",
+  "currentSite": "https://www.sandiego.gov/park-and-recreation/centers/recctr/munigym",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,10 +12,10 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-245-4457",
+  "phone": "+1-619-525-8262",
   "email": "",
   "address": {
-    "street": "555 G Street",
+    "street": "2111 Pan American Plaza",
     "city": "San Diego",
     "state": "CA",
     "zip": "92101"
@@ -81,7 +81,7 @@
     "heroImage": ""
   },
   "audit": {
-    "https": false,
+    "https": true,
     "mobile": true,
     "speed": true,
     "phoneTap": false,
@@ -95,12 +95,12 @@
     "social": false
   },
   "_scout": {
-    "score": 113,
-    "gaps": 10,
-    "currentSiteStatus": "live",
-    "loadMs": 62,
-    "pageKb": 3,
+    "score": 109,
+    "gaps": 9,
+    "currentSiteStatus": "© 2002",
+    "loadMs": 388,
+    "pageKb": 184,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": 2002
   }
 }

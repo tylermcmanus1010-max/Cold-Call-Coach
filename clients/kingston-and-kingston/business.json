@@ -1,0 +1,106 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "kingston-and-kingston",
+  "name": "Kingston and Kingston",
+  "category": "lawyer",
+  "owner": "",
+  "currentSite": "https://www.kingstonandkingston.com/",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "headline": "",
+  "subhead": "",
+  "tagline": "",
+  "heroNote": "",
+  "phone": "+1-619-421-1133",
+  "email": "",
+  "address": {
+    "street": "",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": ""
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "name": "",
+      "desc": "",
+      "price": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "https": true,
+    "mobile": true,
+    "speed": true,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  },
+  "_scout": {
+    "score": 99,
+    "gaps": 9,
+    "currentSiteStatus": "WordPress",
+    "loadMs": 1777,
+    "pageKb": 11,
+    "builder": "WordPress",
+    "copyrightYear": 2026
+  }
+}

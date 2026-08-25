@@ -1,0 +1,106 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "paradise-nails-and-spa",
+  "name": "Paradise Nails and Spa",
+  "category": "beauty",
+  "owner": "",
+  "currentSite": "http://www.paradisenails.com/",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "headline": "",
+  "subhead": "",
+  "tagline": "Paradise Nails - Come, Escape The Ordinary from luxurious pedicures & heavenly massages to rejuvenating facials, we aim to please. Serving La Mesa and San Diego with strict adherence to current health and safety standards give peace of mind while you enjoy the personal care of our beauty therapy.",
+  "heroNote": "",
+  "phone": "+1-619-469-8899",
+  "email": "",
+  "address": {
+    "street": "5500 Grossmont Center Drive",
+    "city": "La Mesa",
+    "state": "CA",
+    "zip": "91942"
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "name": "",
+      "desc": "",
+      "price": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "https": false,
+    "mobile": true,
+    "speed": true,
+    "phoneTap": false,
+    "hours": true,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": true,
+    "social": false
+  },
+  "_scout": {
+    "score": 101,
+    "gaps": 8,
+    "currentSiteStatus": "live",
+    "loadMs": 1224,
+    "pageKb": 10,
+    "builder": null,
+    "copyrightYear": null
+  }
+}

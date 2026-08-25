@@ -1,0 +1,106 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "walmart-garden-center",
+  "name": "Walmart Garden Center",
+  "category": "garden centre",
+  "owner": "",
+  "currentSite": "https://www.walmart.com/blocked?url=L3N0b3JlLzI0Nzkvc2FuLWRpZWdvLWNh&uuid=8e5314a4-a0bb-11f1-90bd-d295e57f72c4&vid=&g=b",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "headline": "",
+  "subhead": "",
+  "tagline": "",
+  "heroNote": "",
+  "phone": "+1-619-858-0071",
+  "email": "",
+  "address": {
+    "street": "3412 College Avenue",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": "92115"
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "name": "",
+      "desc": "",
+      "price": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "https": true,
+    "mobile": true,
+    "speed": true,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  },
+  "_scout": {
+    "score": 99,
+    "gaps": 9,
+    "currentSiteStatus": "live",
+    "loadMs": 1082,
+    "pageKb": 15,
+    "builder": null,
+    "copyrightYear": null
+  }
+}

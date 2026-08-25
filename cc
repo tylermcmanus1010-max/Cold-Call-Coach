@@ -16,6 +16,8 @@
 //   --source file --file leads/urls.txt    a list you gathered yourself
 //   --limit N               only audit the first N (start with 50 to test)
 //   --make N                scaffold client folders for the top N leads
+//   --refresh               with --make, re-audit clients that already exist
+//                           (updates the audit, keeps the copy you wrote)
 
 const fs = require('fs');
 const path = require('path');
@@ -92,14 +94,27 @@ async function cmdScout(argv) {
 
   const make = o.make ? Number(o.make) : 0;
   if (make) {
-    let made = 0;
+    let made = 0, refreshed = 0;
     for (const l of leads.slice(0, make)) {
-      if (!l.slug || fs.existsSync(dir(l.slug))) continue;
-      fs.mkdirSync(dir(l.slug), { recursive: true });
-      save(l.slug, toBusinessJson(l, TPL));
-      made++;
+      if (!l.slug) continue;
+      const fresh = toBusinessJson(l, TPL);
+
+      if (!fs.existsSync(dir(l.slug))) {
+        fs.mkdirSync(dir(l.slug), { recursive: true });
+        save(l.slug, fresh);
+        made++;
+      } else if (o.refresh) {
+        // Re-audit an existing client without touching the copy you wrote.
+        // Pitching from a stale audit is how you end up telling someone their
+        // working site is broken.
+        const existing = load(l.slug);
+        save(l.slug, { ...existing, audit: fresh.audit, _scout: fresh._scout, currentSite: fresh.currentSite });
+        refreshed++;
+      }
     }
-    console.log(`✓ scaffolded ${made} client folder${made === 1 ? '' : 's'}, pre-filled with name, phone, address and audit`);
+    console.log(`✓ scaffolded ${made} new client folder${made === 1 ? '' : 's'}` +
+      (refreshed ? `, re-audited ${refreshed} existing` : '') + ', pre-filled with name, phone, address and audit');
+    if (!o.refresh && made < make) console.log('  (some already existed — pass --refresh to re-audit them)');
     console.log(`  next: add headline + services + reviews, then ./cc build`);
   } else {
     console.log(`  next: ./cc scout --make 10   to scaffold the top 10 straight into clients/`);

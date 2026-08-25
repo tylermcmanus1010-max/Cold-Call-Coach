@@ -29,6 +29,14 @@ BASE = "https://generativelanguage.googleapis.com/v1beta"
 # Narrator candidates, best fit for this brand first. Direct, unfussy, credible.
 VOICE_PREFERENCE = ["Charon", "Orus", "Algenib", "Iapetus", "Kore"]
 
+# Each TTS model carries its own free-tier quota, so an exhausted one rolls to
+# the next rather than failing the render. Order is cheapest-viable first.
+TTS_FALLBACK = [
+    "models/gemini-2.5-flash-preview-tts",
+    "models/gemini-3.1-flash-tts-preview",
+    "models/gemini-2.5-pro-preview-tts",
+]
+
 
 def key():
     k = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -37,16 +45,39 @@ def key():
     return k
 
 
-def _req(url, body=None, method=None, timeout=180):
+def _retry_after(detail, attempt):
+    """Free tier answers 429 with a suggested delay; honour it when present."""
+    import re
+    m = re.search(r"retry in ([0-9.]+)s", detail)
+    if m:
+        return min(float(m.group(1)) + 2, 90)
+    return min(2 ** attempt * 5, 60)
+
+
+def _req(url, body=None, method=None, timeout=180, retries=6):
     data = json.dumps(body).encode() if body is not None else None
-    r = urllib.request.Request(url, data=data, method=method or ("POST" if data else "GET"),
-                               headers={"Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(r, timeout=timeout) as resp:
-            return json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        detail = e.read().decode()[:500]
-        raise RuntimeError(f"HTTP {e.code}: {detail}") from None
+    for attempt in range(retries):
+        r = urllib.request.Request(url, data=data,
+                                   method=method or ("POST" if data else "GET"),
+                                   headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(r, timeout=timeout) as resp:
+                return json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode()[:600]
+            # 429 = free-tier rate limit (3 req/min on TTS). 5xx = transient.
+            if e.code in (429, 500, 502, 503) and attempt < retries - 1:
+                wait = _retry_after(detail, attempt)
+                print(f"    {e.code}, waiting {wait:.0f}s (attempt {attempt+1}/{retries})")
+                time.sleep(wait)
+                continue
+            raise RuntimeError(f"HTTP {e.code}: {detail}") from None
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt < retries - 1:
+                time.sleep(min(2 ** attempt * 4, 45))
+                continue
+            raise RuntimeError(f"network: {e}") from None
+    raise RuntimeError("exhausted retries")
 
 
 def list_models():
@@ -81,7 +112,6 @@ def pick_model(substr, methods=None):
 
 # ---------------- TTS ----------------
 def tts(text, out_wav, voice=None, model=None, style=None):
-    model = model or pick_model("tts", ["generateContent"])
     voice = voice or os.environ.get("GEMINI_VOICE") or VOICE_PREFERENCE[0]
     prompt = f"{style}: {text}" if style else text
     body = {
@@ -93,8 +123,22 @@ def tts(text, out_wav, voice=None, model=None, style=None):
             },
         },
     }
-    d = _req(f"{BASE}/{model.split('models/')[-1] and model}:generateContent?key={key()}"
-             .replace(f"{BASE}/models/", f"{BASE}/models/"), body)
+    candidates = [model] if model else TTS_FALLBACK
+    last = None
+    for i, m in enumerate(candidates):
+        try:
+            # short retry per model: a per-minute limit is worth waiting out,
+            # a daily quota is not, so move on quickly rather than stalling.
+            d = _req(f"{BASE}/{m}:generateContent?key={key()}", body, retries=2)
+            break
+        except RuntimeError as e:
+            last = e
+            if "429" in str(e) and i < len(candidates) - 1:
+                print(f"    quota on {m.split('/')[-1]}, falling back")
+                continue
+            raise
+    else:
+        raise last
     part = d["candidates"][0]["content"]["parts"][0]
     inline = part["inlineData"]
     pcm = base64.b64decode(inline["data"])

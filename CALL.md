@@ -65,6 +65,22 @@ trusting.
 - Never touch anyone's domain or DNS the same day
 - Never quote a number other than the ones in `config/pricing.json`
 
+## They will not give you an email
+
+Common with restaurants, bakeries and retail — whoever answers is not allowed
+to hand out contact details, and that is not a no. In order of what works:
+
+1. **Ask for a name.** "Who runs the place? When's a quiet time to catch them?"
+   Call back then and ask for them by name. A named person is a different call.
+2. **Walk in at a quiet hour.** For anywhere with a counter, this beats email
+   outright. Mid-afternoon, buy something, show the page **on your phone** and
+   say "I built this for you, have a look." They can see it in ten seconds, and
+   nobody hangs up on a person standing there.
+3. **Instagram.** Cafés, salons and bakeries answer DMs faster than email
+   because that is where their customers are. Send the live link, not a file.
+4. **The contact form on their own site.** Last resort — you cannot attach the
+   page, so use it only to ask for an email address.
+
 ## Nobody picked up
 
 Do not leave a voicemail. Cold voicemails are rarely returned and you lose the

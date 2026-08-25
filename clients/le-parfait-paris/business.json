@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a French bakery and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a French bakery and are an ASSUMPTION — check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "le-parfait-paris",
   "name": "Le Parfait Paris",
   "category": "French bakery & patisserie",
@@ -103,5 +103,10 @@
     "pageKb": 3,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: spoke to staff, would not give email"
+  ]
 }

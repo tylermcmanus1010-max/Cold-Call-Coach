@@ -30,6 +30,14 @@ Take it straight from `pitch.md`. One fact, said plainly, no jargon:
 
 One is enough. Listing five sounds like an attack.
 
+## Ask this in the first ten seconds
+
+> "Are you independent, or part of a franchise?"
+
+A franchise manager cannot buy a website — corporate owns it, and the call is
+over before it starts. FS Cut & Color, O'Reilly and Uncle Tetsu's all cost a
+call before this question got asked. Names do not always give it away, so ask.
+
 ## If they say
 
 **"How much?"** → "$750 if you want it. But look at it first — what's the best email?"

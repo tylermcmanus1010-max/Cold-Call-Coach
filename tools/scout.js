@@ -311,6 +311,24 @@ async function scout(cfg, opts) {
     return true;
   });
 
+  // A name list can never know every regional franchise. But when several
+  // businesses in one run share a registrable domain, or sit on a corporate
+  // domain under a per-location path, that is a franchise showing itself in
+  // the data — flag it so a call is not wasted on a manager who cannot buy.
+  const domainOf = (u) => {
+    const h = String(u || '').replace(/^https?:\/\//i, '').split('/')[0].replace(/^www\./i, '');
+    return h.split('.').slice(-2).join('.');
+  };
+  const domCount = {};
+  for (const b of leads) if (b.website) domCount[domainOf(b.website)] = (domCount[domainOf(b.website)] || 0) + 1;
+  for (const b of leads) {
+    const shared = b.website && domCount[domainOf(b.website)] > 1;
+    const perLocation = /\/(locations?|stores?|branch(es)?)\//i.test(b.website || '');
+    if (shared || perLocation) b.franchiseSuspect = true;
+  }
+  const flagged = leads.filter((b) => b.franchiseSuspect).length;
+  if (flagged) process.stderr.write(`${flagged} look like franchise locations (shared or per-location domain) — ask before pitching.\n`);
+
   const chains = cfg.excludeNames?.names || [];
   if (chains.length) {
     const before = leads.length;

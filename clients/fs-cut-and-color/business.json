@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a hair salon and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a hair salon and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "fs-cut-and-color",
   "name": "FS Cut & Color",
   "category": "Hair salon",
   "owner": "",
   "currentSite": "https://fsmiramesa.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Cut and colour in Mira Mesa.",
   "subhead": "On Mira Mesa Boulevard. Call and book with a stylist.",
@@ -103,5 +103,10 @@
     "pageKb": 9,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: franchise — corporate owns the website"
+  ]
 }

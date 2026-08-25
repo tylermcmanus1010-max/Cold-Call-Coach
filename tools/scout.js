@@ -73,6 +73,21 @@ async function overpassQuery(query, label) {
 }
 const PLACES = 'https://places.googleapis.com/v1/places:searchNearby';
 
+// "Great Clips #1234" is a chain; "Chase's Barber Shop" is not. Normalising
+// strips punctuation, so a possessive never collides with a bank.
+// Drop apostrophes before anything else so a possessive collapses into one
+// word: "Chase's" becomes "chases", which can never match the bank "chase".
+const normName = (s) => String(s || '').toLowerCase()
+  .replace(/['’]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+function isChain(name, list) {
+  const n = normName(name);
+  return list.some((raw) => {
+    const c = normName(raw);
+    return n === c || n.startsWith(c + ' ');
+  });
+}
+
 const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
 
@@ -224,8 +239,12 @@ function fromFile(file) {
 function rank(lead) {
   const a = lead.auditResult;
   let s = a.gaps * 6;
-  if (!lead.website) s += 30;                       // no site at all
-  if (!a.reachable) s += 25;                        // site is down or parked
+  if (!lead.website) {
+    // Google knows whether a business has a website; OpenStreetMap only knows
+    // whether a volunteer typed one in. Only trust the former.
+    s += lead.source === 'places' ? 30 : 2;
+  }
+  if (lead.website && !a.reachable) s += 25;        // we fetched it and it is dead
   if (a.stale) s += 10;                             // visibly abandoned
   if (!a.checks.mobile) s += 12;                    // the one that actually costs them calls
   if (!a.checks.https) s += 8;
@@ -253,6 +272,20 @@ async function scout(cfg, opts) {
     process.stderr.write(`${leads.length} pass the ${f.minReviews}+ reviews / ${f.minRating}+ stars filter (dropped ${before - leads.length}).\n`);
   }
 
+  const chains = cfg.excludeNames?.names || [];
+  if (chains.length) {
+    const before = leads.length;
+    leads = leads.filter((b) => !isChain(b.name, chains));
+    if (before - leads.length) process.stderr.write(`Dropped ${before - leads.length} chain locations.\n`);
+  }
+
+  const withSite = leads.filter((b) => b.website);
+  const withoutSite = leads.filter((b) => !b.website);
+  process.stderr.write(`${withSite.length} have a website listed, ${withoutSite.length} do not.\n`);
+
+  // Auditable businesses first: a site we can fetch and prove broken is a real
+  // lead, where a missing OSM website tag is only a maybe.
+  leads = [...withSite, ...withoutSite];
   if (opts.limit) leads = leads.slice(0, opts.limit);
 
   process.stderr.write(`Auditing ${leads.length} websites, ${cfg.concurrency} at a time…\n`);
@@ -320,15 +353,19 @@ function toBusinessJson(lead, tplPath) {
   };
 }
 
+// A business name containing "|" would otherwise break the table row and
+// shift every cell after it into the wrong column.
+const mdCell = (v) => String(v == null ? '' : v).replace(/\|/g, '\\|').replace(/\n/g, ' ');
+
 // Markdown so the list is readable straight off a phone screen.
 function toMarkdown(leads, area) {
   const rows = leads.slice(0, 40).map((b, i) => {
     const a = b.auditResult;
     const site = !b.website ? (b.source === 'osm' ? '**no site listed** _(verify)_' : '**no website**')
       : !a.reachable ? `**${a.reason || 'unreachable'}**`
-      : (a.reason ? `${a.reason}` : `[live](${a.finalUrl || 'https://' + a.url})`);
+      : (a.reason ? `${mdCell(a.reason)}` : `[live](${a.finalUrl || 'https://' + a.url})`);
     const rev = b.reviewCount != null ? `${b.rating ?? '–'}★ / ${b.reviewCount}` : '–';
-    return `| ${i + 1} | **${b.name}** | ${b.category || '–'} | ${b.phone || '–'} | ${a.gaps}/12 | ${rev} | ${site} |`;
+    return `| ${i + 1} | **${mdCell(b.name)}** | ${mdCell(b.category) || '–'} | ${mdCell(b.phone) || '–'} | ${a.gaps}/12 | ${rev} | ${mdCell(site)} |`;
   });
   return [
     `## ${leads.length} leads worth calling — ${area}`, '',

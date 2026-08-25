@@ -1,48 +1,247 @@
 {
   "_howto": "Retarget the whole tool by editing this file. bbox is [south, west, north, east]. Trades are the business types worth cold-calling: local, phone-driven, and usually neglected online.",
-
   "area": {
     "name": "San Diego, CA",
-    "bbox": [32.53, -117.28, 33.05, -116.88],
+    "bbox": [
+      32.53,
+      -117.28,
+      33.05,
+      -116.88
+    ],
     "centers": [
-      { "name": "Downtown / East Village", "lat": 32.7157, "lng": -117.1611 },
-      { "name": "North Park / Normal Heights", "lat": 32.7480, "lng": -117.1300 },
-      { "name": "Hillcrest / Mission Hills", "lat": 32.7480, "lng": -117.1660 },
-      { "name": "Pacific Beach / Bay Park", "lat": 32.7970, "lng": -117.2360 },
-      { "name": "Clairemont / Kearny Mesa", "lat": 32.8330, "lng": -117.1600 },
-      { "name": "Mira Mesa / Miramar", "lat": 32.9160, "lng": -117.1420 },
-      { "name": "La Mesa / Lemon Grove", "lat": 32.7680, "lng": -117.0230 },
-      { "name": "El Cajon / Santee", "lat": 32.7950, "lng": -116.9620 },
-      { "name": "Chula Vista", "lat": 32.6400, "lng": -117.0840 },
-      { "name": "National City / Barrio Logan", "lat": 32.6780, "lng": -117.1000 },
-      { "name": "Point Loma / Ocean Beach", "lat": 32.7420, "lng": -117.2400 },
-      { "name": "Encinitas / Oceanside", "lat": 33.1500, "lng": -117.3200 }
+      {
+        "name": "Downtown / East Village",
+        "lat": 32.7157,
+        "lng": -117.1611
+      },
+      {
+        "name": "North Park / Normal Heights",
+        "lat": 32.748,
+        "lng": -117.13
+      },
+      {
+        "name": "Hillcrest / Mission Hills",
+        "lat": 32.748,
+        "lng": -117.166
+      },
+      {
+        "name": "Pacific Beach / Bay Park",
+        "lat": 32.797,
+        "lng": -117.236
+      },
+      {
+        "name": "Clairemont / Kearny Mesa",
+        "lat": 32.833,
+        "lng": -117.16
+      },
+      {
+        "name": "Mira Mesa / Miramar",
+        "lat": 32.916,
+        "lng": -117.142
+      },
+      {
+        "name": "La Mesa / Lemon Grove",
+        "lat": 32.768,
+        "lng": -117.023
+      },
+      {
+        "name": "El Cajon / Santee",
+        "lat": 32.795,
+        "lng": -116.962
+      },
+      {
+        "name": "Chula Vista",
+        "lat": 32.64,
+        "lng": -117.084
+      },
+      {
+        "name": "National City / Barrio Logan",
+        "lat": 32.678,
+        "lng": -117.1
+      },
+      {
+        "name": "Point Loma / Ocean Beach",
+        "lat": 32.742,
+        "lng": -117.24
+      },
+      {
+        "name": "Encinitas / Oceanside",
+        "lat": 33.15,
+        "lng": -117.32
+      }
     ],
     "radiusMeters": 4500
   },
-
   "osmTags": {
-    "craft": ["plumber", "electrician", "hvac", "roofer", "carpenter", "painter", "gardener", "locksmith", "tiler", "floorer", "upholsterer", "window_construction", "metal_construction", "caterer"],
-    "shop": ["car_repair", "tyres", "car_parts", "hairdresser", "beauty", "massage", "dry_cleaning", "laundry", "bakery", "butcher", "florist", "optician", "pet_grooming", "shoe_repair", "tailor", "hardware", "appliance", "furniture", "garden_centre"],
-    "amenity": ["dentist", "veterinary", "doctors", "driving_school", "car_wash"],
-    "office": ["lawyer", "accountant", "insurance", "estate_agent", "financial_advisor"],
-    "leisure": ["fitness_centre"]
+    "craft": [
+      "plumber",
+      "electrician",
+      "hvac",
+      "roofer",
+      "carpenter",
+      "painter",
+      "gardener",
+      "locksmith",
+      "tiler",
+      "floorer",
+      "upholsterer",
+      "window_construction",
+      "metal_construction",
+      "caterer"
+    ],
+    "shop": [
+      "car_repair",
+      "tyres",
+      "car_parts",
+      "hairdresser",
+      "beauty",
+      "massage",
+      "dry_cleaning",
+      "laundry",
+      "bakery",
+      "butcher",
+      "florist",
+      "optician",
+      "pet_grooming",
+      "shoe_repair",
+      "tailor",
+      "hardware",
+      "appliance",
+      "furniture",
+      "garden_centre"
+    ],
+    "amenity": [
+      "dentist",
+      "veterinary",
+      "doctors",
+      "driving_school",
+      "car_wash"
+    ],
+    "office": [
+      "lawyer",
+      "accountant",
+      "insurance",
+      "estate_agent",
+      "financial_advisor"
+    ],
+    "leisure": [
+      "fitness_centre"
+    ]
   },
-
   "placesTypes": [
-    "plumber", "electrician", "roofing_contractor", "general_contractor", "painter",
-    "car_repair", "auto_parts_store", "car_wash", "hair_salon", "barber_shop",
-    "nail_salon", "beauty_salon", "dentist", "veterinary_care", "laundry",
-    "pet_store", "florist", "moving_company", "storage", "gym"
+    "plumber",
+    "electrician",
+    "roofing_contractor",
+    "general_contractor",
+    "painter",
+    "car_repair",
+    "auto_parts_store",
+    "car_wash",
+    "hair_salon",
+    "barber_shop",
+    "nail_salon",
+    "beauty_salon",
+    "dentist",
+    "veterinary_care",
+    "laundry",
+    "pet_store",
+    "florist",
+    "moving_company",
+    "storage",
+    "gym"
   ],
-
   "filters": {
     "_note": "A lead has to be worth calling: enough reviews that they clearly have demand, a good enough rating that they are not a dumpster fire, and at least this many failed checks on their current site.",
     "minReviews": 15,
     "minRating": 3.8,
     "minGaps": 5
   },
-
   "concurrency": 8,
-  "timeoutMs": 12000
+  "timeoutMs": 12000,
+  "excludeNames": {
+    "_note": "National and regional chains. They have corporate websites and the local manager cannot buy one from you. Matched case-insensitively against the whole name, or the start of it followed by a space, so 'Chase's Barber Shop' survives while 'Chase Bank' does not. Add any you spot.",
+    "names": [
+      "great clips",
+      "supercuts",
+      "sport clips",
+      "sports clip",
+      "sports clips",
+      "fantastic sams",
+      "cost cutters",
+      "regis salon",
+      "sally beauty",
+      "ulta",
+      "drybar",
+      "lasheslaser",
+      "laser away",
+      "laseraway",
+      "european wax center",
+      "massage envy",
+      "massage heights",
+      "hand and stone",
+      "24 hour fitness",
+      "planet fitness",
+      "la fitness",
+      "crunch fitness",
+      "orangetheory",
+      "anytime fitness",
+      "f45 training",
+      "equinox",
+      "chuze fitness",
+      "jiffy lube",
+      "valvoline",
+      "midas",
+      "meineke",
+      "aamco",
+      "firestone",
+      "pep boys",
+      "discount tire",
+      "america's tire",
+      "big o tires",
+      "les schwab",
+      "mavis",
+      "take 5",
+      "grease monkey",
+      "oil changers",
+      "brakes plus",
+      "tint world",
+      "state farm",
+      "allstate",
+      "farmers insurance",
+      "geico",
+      "progressive",
+      "aaa insurance",
+      "edward jones",
+      "ameriprise",
+      "h&r block",
+      "jackson hewitt",
+      "liberty tax",
+      "aspen dental",
+      "western dental",
+      "comfort dental",
+      "bright now dental",
+      "smile brands",
+      "sonrisa dental",
+      "banfield",
+      "banfield pet hospital",
+      "vca",
+      "vca animal hospital",
+      "petco",
+      "petsmart",
+      "pet supplies plus",
+      "the ups store",
+      "ups store",
+      "fedex office",
+      "postal annex",
+      "kumon",
+      "sylvan learning",
+      "mathnasium",
+      "chase bank",
+      "wells fargo",
+      "bank of america",
+      "us bank",
+      "citibank",
+      "navy federal"
+    ]
+  }
 }

@@ -40,10 +40,16 @@ was. If a label differs, the goal is the thing to match.
 ### Phase 3 — Copy (4 min)
 
 8. Click each text block on the canvas and replace it with the copy below.
-   Delete any block you don't have copy for — empty placeholder blocks are the
-   #1 thing that makes these pages look unfinished.
-9. Blocks you want, in order: headline, subhead, the four bullets, email field,
-   button, small print. Nothing else.
+9. **Scroll the whole page and delete every section you did not write.** Kit's
+   templates ship with a full demo newsletter underneath the hero — filler
+   paragraphs, a value-prop section in the template's accent colour, and a
+   testimonial with a stock photo of a person who does not exist. That last one
+   is the dangerous one: a fabricated endorsement on a faceless brand's capture
+   page is a fake receipt, it is on the red list in `04-ATTENTION-AND-SHOCK.md`,
+   and it destroys credibility the moment anyone looks closely.
+10. When you are done the page should be **one screen**: headline, subhead, the
+    four bullets, email field, button, small print. Nothing else. Lead magnet
+    pages convert better short — every extra section is another chance to leave.
 
 ### Phase 4 — Style (3 min)
 

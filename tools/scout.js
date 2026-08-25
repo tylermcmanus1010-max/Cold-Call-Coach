@@ -88,6 +88,16 @@ function isChain(name, list) {
   });
 }
 
+// One tap from the list to their Google listing. Without Places we cannot
+// confirm a business is still trading, so make the ten-second manual check
+// trivial instead — and it lands you on the page with the rating, reviews,
+// hours and address you need to finish the page anyway.
+function googleCheck(lead) {
+  const where = [lead.address?.street, lead.address?.city || 'San Diego', lead.address?.state || 'CA']
+    .filter(Boolean).join(' ');
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(`${lead.name} ${where}`);
+}
+
 const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
 
@@ -335,14 +345,14 @@ const csvCell = (v) => {
 };
 
 function toCsv(leads) {
-  const head = ['score', 'name', 'category', 'phone', 'website', 'status', 'gaps', 'rating', 'reviews', 'city', 'slug', 'failing'];
+  const head = ['score', 'name', 'category', 'phone', 'website', 'status', 'gaps', 'rating', 'reviews', 'city', 'slug', 'verify_on_google', 'failing'];
   const rows = leads.map((b) => {
     const a = b.auditResult;
     return [
       b.score, b.name, b.category, b.phone, b.website || '(none)',
       !b.website ? (b.source === 'osm' ? 'no website listed - verify' : 'no website')
         : !a.reachable ? (a.reason || 'unreachable') : (a.reason || 'live'),
-      a.gaps, b.rating ?? '', b.reviewCount ?? '', b.address?.city || '', b.slug,
+      a.gaps, b.rating ?? '', b.reviewCount ?? '', b.address?.city || '', b.slug, googleCheck(b),
       CHECKS.filter((c) => !a.checks[c.key]).map((c) => c.key).join(' '),
     ].map(csvCell).join(',');
   });
@@ -394,7 +404,7 @@ function toMarkdown(leads, area) {
       : !a.reachable ? `**${mdCell(a.reason || 'unreachable')}**`
       : (a.reason ? mdCell(a.reason) : `[loads](${a.finalUrl || 'https://' + a.url})`);
     const rev = b.reviewCount != null ? `${b.rating ?? '–'}★ / ${b.reviewCount}` : '–';
-    return `| ${i + 1} | **${mdCell(b.name)}** | ${mdCell(b.category) || '–'} | ${mdCell(b.phone) || '–'} | ${a.gaps}/12 | ${rev} | ${site} |`;
+    return `| ${i + 1} | **[${mdCell(b.name)}](${googleCheck(b)})** | ${mdCell(b.category) || '–'} | ${mdCell(b.phone) || '–'} | ${a.gaps}/12 | ${rev} | ${site} |`;
   };
   const table = (rows) => [
     '| # | Business | Type | Phone | Gaps | Rating | Current site |',
@@ -404,7 +414,11 @@ function toMarkdown(leads, area) {
 
   const live = leads.filter((b) => b.tier === 'live');
   const rest = leads.filter((b) => b.tier !== 'live');
-  const out = [`## ${leads.length} leads — ${area}`, ''];
+  const out = [`## ${leads.length} ${leads.length === 1 ? 'lead' : 'leads'} — ${area}`, '',
+    '**Tap a business name** to open its Google listing. Check it is still trading and',
+    'still has no decent website before you call — these come from OpenStreetMap, which',
+    'does not know when a business closes or rebrands. That page also has the rating,',
+    'reviews, hours and address needed to finish the rebuilt site.', ''];
 
   if (live.length) {
     out.push(

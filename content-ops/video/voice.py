@@ -281,16 +281,30 @@ def scene_voice(spec_path, backend=None, force=False, fallback=True):
                                         allow_degraded=keep_drafts)]
     if len(stale) > 1 and not force:
         lines = [spec["scenes"][i]["vo"] for i in vo_idx]
+        quota_out = False
         try:
             batched, bused = batch_synth(lines, d, voice=voice, backend=backend)
         except Exception as e:                      # noqa: BLE001 - never fatal
-            print(f"  batch failed ({str(e)[:70]}), falling back to per-scene")
             batched = None
+            quota_out = "429" in str(e)
+            if quota_out:
+                print("  quota exhausted on the batch request — per-scene would "
+                      "fire one doomed request per line, so skipping it")
+            else:
+                print(f"  batch failed ({str(e)[:70]}), falling back to per-scene")
         if batched:
             for i in vo_idx:
                 open(os.path.join(d, f"{i:02d}.wav.key"), "w").write(
                     _cache_key(spec["scenes"][i]["vo"], voice))
             used = bused
+        elif quota_out:
+            if not fallback:
+                raise SystemExit(
+                    "\nTTS quota exhausted on every model. Nothing generated.\n"
+                    "Re-run when quota resets, or enable billing on the project.\n"
+                    "Pass --degrade to build espeak drafts in the meantime.")
+            backend = "espeak"      # stop trying Gemini for the rest of this run
+            print("  building espeak drafts for every scene")
 
     for i, sc in enumerate(spec["scenes"]):
         line = sc.get("vo")

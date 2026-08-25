@@ -1,0 +1,106 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "re-modern",
+  "name": "RE Modern",
+  "category": "furniture",
+  "owner": "",
+  "currentSite": "https://remodernliving.com/",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "headline": "",
+  "subhead": "",
+  "tagline": "A great store to buy modern and contemporary European furniture in San Diego for living room, bedroom, kitchen, dining room and outdoor space",
+  "heroNote": "",
+  "phone": "+1-858-242-4030",
+  "email": "",
+  "address": {
+    "street": "9484 Black Mountain Road",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": "92126"
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "name": "",
+      "desc": "",
+      "price": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  },
+  "_scout": {
+    "score": 137,
+    "gaps": 12,
+    "currentSiteStatus": "parked or placeholder page",
+    "loadMs": 527,
+    "pageKb": 512,
+    "builder": "WordPress",
+    "copyrightYear": 2024
+  }
+}

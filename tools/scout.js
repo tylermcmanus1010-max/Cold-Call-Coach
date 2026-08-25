@@ -10,11 +10,67 @@ const path = require('path');
 const { audit, CHECKS } = require('./audit');
 
 // Overpass instances go down and rate-limit independently; try them in turn.
-const OVERPASS_MIRRORS = [
+const OVERPASS_MIRRORS = (process.env.OVERPASS_MIRRORS || '').split(',').map((x) => x.trim()).filter(Boolean);
+if (!OVERPASS_MIRRORS.length) OVERPASS_MIRRORS.push(
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
-  'https://overpass.osm.jp/api/interpreter',
-];
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.osm.ch/api/interpreter',
+);
+
+// OSM's usage policy requires a descriptive User-Agent. Without one,
+// overpass-api.de answers 406 and refuses to look at the query at all.
+const OSM_UA = 'cold-call-coach/1.0 (local business lead scout; https://github.com/tylermcmanus1010-max/Cold-Call-Coach)';
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Overpass explains itself in the response body — a "remark" naming the real
+// problem. Surface it instead of leaving you with a bare status code.
+function explain(status, body) {
+  const remark = (body.match(/<remark>([\s\S]*?)<\/remark>/i) || body.match(/(Error: [^<\n]{0,200})/i) || [])[1];
+  const cleaned = (remark || body).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180);
+  const hint =
+    status === 406 ? 'refused the request outright — usually a User-Agent it does not accept' :
+    status === 429 ? 'rate limited — this mirror wants you to wait' :
+    status === 504 ? 'query timed out on their side — the area or trade list is too big' :
+    status === 500 ? 'server error, often a query too heavy for this mirror' :
+    status === 403 ? 'refused — usually a proxy or firewall between you and it' : '';
+  return [hint, cleaned && `said: "${cleaned}"`].filter(Boolean).join('; ');
+}
+
+async function overpassQuery(query, label) {
+  const failures = [];
+
+  for (const mirror of OVERPASS_MIRRORS) {
+    const host = new URL(mirror).host;
+
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res = await fetch(mirror, {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded', 'user-agent': OSM_UA, accept: 'application/json' },
+          body: new URLSearchParams({ data: query }),
+        });
+        if (res.ok) return (await res.json()).elements || [];
+
+        const body = await res.text().catch(() => '');
+        failures.push(`${host}: HTTP ${res.status} ${explain(res.status, body)}`);
+        // A heavy query or a busy mirror can come good on a second try; a refusal will not.
+        if (![429, 500, 502, 503, 504].includes(res.status) || attempt === 2) break;
+        await sleep(3000);
+      } catch (e) {
+        const code = e.cause?.code || e.message;
+        failures.push(`${host}: ${code}` + (String(code).includes('CERT') ? ' (their TLS certificate is expired — nothing you can do)' : ''));
+        break;
+      }
+    }
+    process.stderr.write(`  [${label}] ${failures[failures.length - 1]}\n`);
+  }
+
+  const err = new Error(`every mirror failed for ${label}`);
+  err.failures = failures;
+  throw err;
+}
 const PLACES = 'https://places.googleapis.com/v1/places:searchNearby';
 
 const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ')
@@ -37,43 +93,49 @@ async function pool(items, limit, fn, onTick) {
 async function fromOsm(cfg) {
   const [s, w, n, e] = cfg.area.bbox;
   const bbox = `(${s},${w},${n},${e})`;
-  const clauses = Object.entries(cfg.osmTags)
-    .map(([k, vals]) => `  nwr["${k}"~"^(${vals.join('|')})$"]${bbox};`).join('\n');
-  const q = `[out:json][timeout:120];\n(\n${clauses}\n);\nout tags center;`;
+  const clause = (k, vals) => `  nwr["${k}"~"^(${vals.join('|')})$"]${bbox};`;
+  const wrap = (body, secs) => `[out:json][timeout:${secs}];\n(\n${body}\n);\nout tags center;`;
 
-  const failures = [];
-  let elements = null;
+  const categories = Object.entries(cfg.osmTags);
+  const combined = wrap(categories.map(([k, v]) => clause(k, v)).join('\n'), 90);
 
-  for (const mirror of OVERPASS_MIRRORS) {
-    const host = new URL(mirror).host;
-    try {
-      const res = await fetch(mirror, {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ data: q }),
-      });
-      if (res.ok) { ({ elements = [] } = await res.json()); break; }
+  // One request for everything is fastest when it works.
+  try {
+    return toLeads(await overpassQuery(combined, 'all trades'));
+  } catch (bigErr) {
+    process.stderr.write('  combined query failed — retrying one trade group at a time…\n');
 
-      failures.push(`${host}: HTTP ${res.status}` + (
-        res.status === 429 ? ' (rate limited — this mirror wants you to wait a minute)' :
-        res.status === 504 ? ' (mirror overloaded or the query timed out — try a smaller bbox)' :
-        res.status === 403 ? ' (refused — usually a network policy or proxy between you and it, not Overpass itself)' :
-        ''));
-    } catch (e) {
-      failures.push(`${host}: ${e.cause?.code || e.message} (could not connect)`);
+    // Smaller queries are far likelier to survive a busy mirror, and a group
+    // that fails only costs us that group instead of the whole run.
+    const collected = [];
+    const failed = [];
+    for (const [k, vals] of categories) {
+      try {
+        const els = await overpassQuery(wrap(clause(k, vals), 60), k);
+        collected.push(...els);
+        process.stderr.write(`  ${k}: ${els.length}\n`);
+      } catch (e) {
+        failed.push(`${k} (${(e.failures || []).join(' | ')})`);
+      }
     }
-    const isLast = mirror === OVERPASS_MIRRORS[OVERPASS_MIRRORS.length - 1];
-    process.stderr.write(`  ${failures[failures.length - 1]}\n${isLast ? '' : '  trying next mirror…\n'}`);
+
+    if (collected.length) {
+      if (failed.length) process.stderr.write(`  note: no results for ${failed.length} of ${categories.length} trade groups\n`);
+      return toLeads(collected);
+    }
+
+    throw new Error(
+      'Could not reach any Overpass mirror.\n  ' + (bigErr.failures || []).join('\n  ') +
+      (failed.length ? '\n\n  Per-trade retries also failed:\n  ' + failed.join('\n  ') : '') +
+      '\n\n  Overpass is a free volunteer service and does go down. Options:\n' +
+      '    - wait 10 minutes and run it again\n' +
+      '    - ./cc scout --source places      (needs GOOGLE_MAPS_API_KEY, and gives review counts)\n' +
+      '    - ./cc scout --source file --file leads/urls.txt');
   }
+}
 
-  if (elements === null) throw new Error(
-    'Could not reach any Overpass mirror.\n  ' + failures.join('\n  ') +
-    '\n\n  If every mirror returned 403 or failed to connect, something between you and the\n' +
-    "  internet is blocking them — a corporate proxy, a VPN, or a firewall. Node's fetch\n" +
-    '  ignores HTTPS_PROXY, so a proxy you use elsewhere will not apply here.\n' +
-    '  Fall back to:  ./cc scout --source places      (needs GOOGLE_MAPS_API_KEY)\n' +
-    '             or:  ./cc scout --source file --file leads/urls.txt');
-
+function toLeads(elements) {
+  const seen = new Set();
   return elements.map((el) => {
     const t = el.tags || {};
     const category = t.craft || t.shop || t.amenity || t.office || t.leisure || '';
@@ -91,7 +153,12 @@ async function fromOsm(cfg) {
       },
       rating: null, reviewCount: null,
     };
-  }).filter((b) => b.name);
+  }).filter((b) => {
+    // The per-trade fallback can return the same place under two tags.
+    if (!b.name || seen.has(b.id)) return false;
+    seen.add(b.id);
+    return true;
+  });
 }
 
 async function fromPlaces(cfg, key) {

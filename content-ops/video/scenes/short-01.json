@@ -1,0 +1,92 @@
+{
+  "name": "short-01-not-interested",
+  "notes": "BATCH-01 script #2. Objection pillar. Hook family: contradiction.",
+  "scenes": [
+    {
+      "type": "title",
+      "duration": 4.03,
+      "text": "\"Not interested\" isn't an objection. It's a reflex.",
+      "highlight": [
+        "reflex."
+      ],
+      "reveal": 0.5,
+      "vo": "Not interested isn't an objection. It's a reflex."
+    },
+    {
+      "type": "line",
+      "duration": 2.56,
+      "text": "It fires in under two seconds.",
+      "highlight": [
+        "two",
+        "seconds."
+      ],
+      "vo": "It fires in under two seconds."
+    },
+    {
+      "type": "line",
+      "duration": 3.23,
+      "text": "Before they've processed a single word you said.",
+      "vo": "Before they've processed a single word you said."
+    },
+    {
+      "type": "waveform",
+      "duration": 2.39,
+      "caption": "they're not rejecting your offer",
+      "vo": "They're not rejecting your offer."
+    },
+    {
+      "type": "line",
+      "duration": 2.5,
+      "text": "They're rejecting an interruption.",
+      "highlight": [
+        "interruption."
+      ],
+      "vo": "They're rejecting an interruption."
+    },
+    {
+      "type": "line",
+      "duration": 2.87,
+      "text": "So don't argue with it. Agree.",
+      "vo": "So don't argue with it. Agree."
+    },
+    {
+      "type": "script",
+      "duration": 8.26,
+      "label": "SAY THIS",
+      "text": "\"Totally fair \u2014 you have no idea who I am yet. You've got four SDRs and no call recording. Is that roughly right?\"",
+      "vo": "Totally fair. You have no idea who I am yet. You've got four SDRs and no call recording. Is that roughly right?"
+    },
+    {
+      "type": "line",
+      "duration": 3.41,
+      "text": "\"Totally fair\" removes the thing to push against.",
+      "vo": "Totally fair removes the thing to push against."
+    },
+    {
+      "type": "line",
+      "duration": 6.14,
+      "text": "The specific detail proves you did homework \u2014 the only credential on a cold call.",
+      "highlight": [
+        "homework"
+      ],
+      "vo": "The specific detail proves you did homework. That's the only credential on a cold call."
+    },
+    {
+      "type": "line",
+      "duration": 3.48,
+      "text": "Never say \"just give me 30 seconds.\"",
+      "highlight": [
+        "never"
+      ],
+      "vo": "And never say, just give me thirty seconds."
+    },
+    {
+      "type": "title",
+      "duration": 1.9,
+      "text": "You already took them.",
+      "reveal": 0.35,
+      "vo": "You already took them."
+    }
+  ],
+  "audio": "/home/user/Cold-Call-Coach/content-ops/video/out/short-01-not-interested.wav"
+}

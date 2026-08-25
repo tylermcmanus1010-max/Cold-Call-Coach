@@ -29,13 +29,29 @@ BASE = "https://generativelanguage.googleapis.com/v1beta"
 # Narrator candidates, best fit for this brand first. Direct, unfussy, credible.
 VOICE_PREFERENCE = ["Charon", "Orus", "Algenib", "Iapetus", "Kore"]
 
-# Each TTS model carries its own free-tier quota, so an exhausted one rolls to
-# the next rather than failing the render. Order is cheapest-viable first.
-TTS_FALLBACK = [
+# Each TTS model carries its own free-tier quota — both per-minute and per-day.
+# Requests round-robin across them so no single model is hammered into its
+# rate limit, which roughly triples free-tier throughput. A model that reports
+# a quota error is parked and skipped for the rest of the run.
+TTS_MODELS = [
     "models/gemini-2.5-flash-preview-tts",
     "models/gemini-3.1-flash-tts-preview",
     "models/gemini-2.5-pro-preview-tts",
 ]
+
+_rr = {"i": 0}
+_exhausted = set()
+
+
+def _ring():
+    """Models to try this call, starting at the next in rotation."""
+    live = [m for m in TTS_MODELS if m not in _exhausted]
+    if not live:                       # everything parked: clear and retry once
+        _exhausted.clear()
+        live = list(TTS_MODELS)
+    start = _rr["i"] % len(live)
+    _rr["i"] += 1
+    return live[start:] + live[:start]
 
 
 def key():
@@ -123,20 +139,30 @@ def tts(text, out_wav, voice=None, model=None, style=None):
             },
         },
     }
-    candidates = [model] if model else TTS_FALLBACK
+    candidates = [model] if model else _ring()
     last = None
     for i, m in enumerate(candidates):
         try:
-            # short retry per model: a per-minute limit is worth waiting out,
-            # a daily quota is not, so move on quickly rather than stalling.
-            d = _req(f"{BASE}/{m}:generateContent?key={key()}", body, retries=2)
+            # One attempt per model: with rotation the next model is almost
+            # always free, so moving on beats waiting out a rate limit.
+            d = _req(f"{BASE}/{m}:generateContent?key={key()}", body, retries=1)
             break
         except RuntimeError as e:
             last = e
-            if "429" in str(e) and i < len(candidates) - 1:
-                print(f"    quota on {m.split('/')[-1]}, falling back")
+            if "429" not in str(e):
+                raise
+            _exhausted.add(m)
+            short = m.split("/")[-1]
+            if i < len(candidates) - 1:
+                print(f"    {short} rate-limited, rotating")
                 continue
-            raise
+            # every model refused this pass: wait out the shortest window once
+            wait = _retry_after(str(e), 0)
+            print(f"    all models rate-limited, waiting {wait:.0f}s")
+            time.sleep(wait)
+            _exhausted.clear()
+            d = _req(f"{BASE}/{candidates[0]}:generateContent?key={key()}", body, retries=3)
+            break
     else:
         raise last
     part = d["candidates"][0]["content"]["parts"][0]

@@ -9,7 +9,12 @@ const fs = require('fs');
 const path = require('path');
 const { audit, CHECKS } = require('./audit');
 
-const OVERPASS = 'https://overpass-api.de/api/interpreter';
+// Overpass instances go down and rate-limit independently; try them in turn.
+const OVERPASS_MIRRORS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.osm.jp/api/interpreter',
+];
 const PLACES = 'https://places.googleapis.com/v1/places:searchNearby';
 
 const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ')
@@ -36,13 +41,38 @@ async function fromOsm(cfg) {
     .map(([k, vals]) => `  nwr["${k}"~"^(${vals.join('|')})$"]${bbox};`).join('\n');
   const q = `[out:json][timeout:120];\n(\n${clauses}\n);\nout tags center;`;
 
-  const res = await fetch(OVERPASS, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ data: q }),
-  });
-  if (!res.ok) throw new Error(`Overpass returned ${res.status}. It rate-limits; wait a minute and retry.`);
-  const { elements = [] } = await res.json();
+  const failures = [];
+  let elements = null;
+
+  for (const mirror of OVERPASS_MIRRORS) {
+    const host = new URL(mirror).host;
+    try {
+      const res = await fetch(mirror, {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ data: q }),
+      });
+      if (res.ok) { ({ elements = [] } = await res.json()); break; }
+
+      failures.push(`${host}: HTTP ${res.status}` + (
+        res.status === 429 ? ' (rate limited — this mirror wants you to wait a minute)' :
+        res.status === 504 ? ' (mirror overloaded or the query timed out — try a smaller bbox)' :
+        res.status === 403 ? ' (refused — usually a network policy or proxy between you and it, not Overpass itself)' :
+        ''));
+    } catch (e) {
+      failures.push(`${host}: ${e.cause?.code || e.message} (could not connect)`);
+    }
+    const isLast = mirror === OVERPASS_MIRRORS[OVERPASS_MIRRORS.length - 1];
+    process.stderr.write(`  ${failures[failures.length - 1]}\n${isLast ? '' : '  trying next mirror…\n'}`);
+  }
+
+  if (elements === null) throw new Error(
+    'Could not reach any Overpass mirror.\n  ' + failures.join('\n  ') +
+    '\n\n  If every mirror returned 403 or failed to connect, something between you and the\n' +
+    "  internet is blocking them — a corporate proxy, a VPN, or a firewall. Node's fetch\n" +
+    '  ignores HTTPS_PROXY, so a proxy you use elsewhere will not apply here.\n' +
+    '  Fall back to:  ./cc scout --source places      (needs GOOGLE_MAPS_API_KEY)\n' +
+    '             or:  ./cc scout --source file --file leads/urls.txt');
 
   return elements.map((el) => {
     const t = el.tags || {};
@@ -84,7 +114,11 @@ async function fromPlaces(cfg, key) {
       calls++;
       if (!res.ok) {
         const body = await res.text();
-        throw new Error(`Places returned ${res.status} after ${calls} calls: ${body.slice(0, 300)}`);
+        const hint =
+          res.status === 403 ? '\n  The key is valid but not authorized. Enable "Places API (New)" in your Google Cloud project.' :
+          res.status === 400 ? '\n  Check placesTypes in config/scout.json — one of them is not a valid Places type.' :
+          res.status === 429 ? '\n  Quota exceeded. Trim config/scout.json → area.centers or placesTypes and rerun.' : '';
+        throw new Error(`Places returned ${res.status} after ${calls} calls: ${body.slice(0, 300)}${hint}`);
       }
       for (const p of (await res.json()).places || []) {
         if (p.businessStatus && p.businessStatus !== 'OPERATIONAL') continue;

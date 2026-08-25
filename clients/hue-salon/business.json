@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a hair salon and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "hue-salon",
   "name": "Hue Salon",
-  "category": "hairdresser",
+  "category": "Hair salon",
   "owner": "",
   "currentSite": "http://www.huesalonsandiego.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "Hue Salon San Diego",
+  "headline": "Colour and cuts in San Diego.",
+  "subhead": "A neighbourhood salon on Wabaska Drive. Call and speak to a stylist.",
+  "tagline": "Hair salon in San Diego, CA. Call (619) 520-7077.",
   "heroNote": "",
-  "phone": "+1-619-520-7077",
+  "phone": "(619) 520-7077",
   "email": "",
   "address": {
     "street": "4028 Wabaska Drive",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "In the chair",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Haircuts",
+      "desc": "Cut and finish for all hair types.",
+      "price": ""
+    },
+    {
+      "name": "Colour",
+      "desc": "Full colour, root touch-ups and toners.",
+      "price": ""
+    },
+    {
+      "name": "Highlights & balayage",
+      "desc": "Hand-painted and foil work.",
+      "price": ""
+    },
+    {
+      "name": "Blowouts & styling",
+      "desc": "For an event or just because.",
+      "price": ""
+    },
+    {
+      "name": "Conditioning treatments",
+      "desc": "Repair for colour-treated hair.",
+      "price": ""
+    },
+    {
+      "name": "Bridal & events",
+      "desc": "Hair for the day itself and the trial before it.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On Wabaska Drive, San Diego",
+    "Call to book with a stylist"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 520-7077"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#8c4a63",
     "ink": "#12181c",
     "heroImage": ""
   },

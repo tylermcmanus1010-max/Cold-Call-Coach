@@ -1,8 +1,8 @@
-# Hue Salon — pitch sheet
+# Apollo Spa — pitch sheet
 
-**Current site:** http://www.huesalonsandiego.com/
+**Current site:** http://apollo.grouppayless.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 4/12
+**Score:** 1/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -16,13 +16,13 @@
 | ✅ | Loads in under 2 seconds | — |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
 | ❌ | Hours listed | Hours are missing or out of date |
-| ✅ | Address + directions | — |
+| ❌ | Address + directions | No address or one-tap directions |
 | ❌ | Services and pricing | Services are vague and no pricing is shown, so people call competitors |
 | ❌ | Reviews on the page | Your good reviews are stuck on Yelp instead of on your own site |
 | ❌ | Clear call to action | No obvious next step — visitors land and leave |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
-| ✅ | Title + description | — |
-| ✅ | Shareable link preview | — |
+| ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
+| ❌ | Shareable link preview | Link looks blank when shared in a text or on Facebook |
 
 ## What the rebuild fixes
 
@@ -30,10 +30,13 @@
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile
 - Hours listed on-page and marked up for Google
+- Address with a one-tap Google Maps link
 - Every service listed with a starting price
 - Best reviews pulled onto the homepage
 - One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
+- Written page title, description and social preview card
+- Open Graph tags so the link previews properly when shared
 
 > **Fill these in before you send.** The page does not yet show: hours listed, services and pricing, reviews on the page. They are on their Google listing — the email does not promise them until they are on the page.
 
@@ -45,7 +48,7 @@
 
 Hi there,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
+I'm Tyler McManus, I run McManus Web Co. I build websites for El Cajon businesses.
 
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
@@ -53,8 +56,8 @@ What I changed:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile
+- Address with a one-tap Google Maps link
 - One clear action above the fold on every screen size
-- LocalBusiness schema so Google can read hours, phone, rating and location
 
 Nothing is live. This is just so you can see what it would look like.
 

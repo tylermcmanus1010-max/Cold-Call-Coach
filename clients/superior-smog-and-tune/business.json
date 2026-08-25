@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a smog and repair shop and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "superior-smog-and-tune",
   "name": "Superior Smog & Tune",
-  "category": "car repair",
+  "category": "Smog check & auto repair",
   "owner": "",
   "currentSite": "http://superiorsmog.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Smog checks and tune-ups in Lemon Grove.",
+  "subhead": "On Broadway. In and out without an appointment battle.",
+  "tagline": "Smog check & auto repair in Lemon Grove, CA. Call (619) 469-2112.",
   "heroNote": "",
-  "phone": "+1-619-469-2112",
+  "phone": "(619) 469-2112",
   "email": "",
   "address": {
     "street": "7319 Broadway",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we do",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Smog check & certificate",
+      "desc": "Test and certificate for registration.",
+      "price": ""
+    },
+    {
+      "name": "Smog test only",
+      "desc": "For vehicles that need a test-only station.",
+      "price": ""
+    },
+    {
+      "name": "Tune-ups",
+      "desc": "Plugs, filters and the things that get skipped.",
+      "price": ""
+    },
+    {
+      "name": "Oil & filter service",
+      "desc": "While you wait.",
+      "price": ""
+    },
+    {
+      "name": "Check engine light",
+      "desc": "Codes read and explained before any work.",
+      "price": ""
+    },
+    {
+      "name": "Brakes",
+      "desc": "Pads, rotors and inspection.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On Broadway in Lemon Grove",
+    "Call ahead and we will tell you the wait"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 469-2112"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#b04a2a",
     "ink": "#12181c",
     "heroImage": ""
   },

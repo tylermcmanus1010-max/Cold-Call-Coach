@@ -2,7 +2,7 @@ Subject: Rebuilt your website — take a look before you say no
 
 Hi there,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
+I'm Tyler McManus, I run McManus Web Co. I build websites for Spring Valley businesses.
 
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
@@ -10,8 +10,8 @@ What I changed:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile
+- Address with a one-tap Google Maps link
 - One clear action above the fold on every screen size
-- LocalBusiness schema so Google can read hours, phone, rating and location
 
 Nothing is live. This is just so you can see what it would look like.
 

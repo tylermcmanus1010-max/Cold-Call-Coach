@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a French bakery and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "le-parfait-paris",
   "name": "Le Parfait Paris",
-  "category": "bakery",
+  "category": "French bakery & patisserie",
   "owner": "",
   "currentSite": "http://www.leparfaitparis.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "A French bakery in downtown San Diego.",
+  "subhead": "On G Street. Baked here, every morning.",
+  "tagline": "French bakery & patisserie in San Diego, CA. Call (619) 245-4457.",
   "heroNote": "",
-  "phone": "+1-619-245-4457",
+  "phone": "(619) 245-4457",
   "email": "",
   "address": {
     "street": "555 G Street",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "From the counter",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Croissants & viennoiserie",
+      "desc": "Baked fresh each morning.",
+      "price": ""
+    },
+    {
+      "name": "Macarons",
+      "desc": "Made in-house, by the piece or the box.",
+      "price": ""
+    },
+    {
+      "name": "Cakes & entremets",
+      "desc": "For birthdays and for no reason at all.",
+      "price": ""
+    },
+    {
+      "name": "Breads",
+      "desc": "Baguettes and country loaves.",
+      "price": ""
+    },
+    {
+      "name": "Coffee",
+      "desc": "Espresso to sit in with, or take away.",
+      "price": ""
+    },
+    {
+      "name": "Catering & events",
+      "desc": "Platters and pastry for meetings and parties.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On G Street, downtown San Diego",
+    "Baked on site every morning"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 245-4457"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#23386b",
     "ink": "#12181c",
     "heroImage": ""
   },

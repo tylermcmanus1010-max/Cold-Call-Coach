@@ -135,7 +135,27 @@ def elevenlabs_wav(text, path, voice_id=None, model="eleven_turbo_v2_5"):
 
 
 # ---------------- dispatch ----------------
+def gemini_available():
+    return bool(os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"))
+
+
+def gemini_wav(text, path, voice=None):
+    """Gemini TTS. The API is reachable from this container; only a key is missing."""
+    import gemini
+    raw = path + ".raw.wav"
+    gemini.tts(text, raw, voice=voice)
+    import imageio_ffmpeg
+    ff = imageio_ffmpeg.get_ffmpeg_exe()
+    subprocess.run([ff, "-y", "-loglevel", "error", "-i", raw,
+                    "-af", "loudnorm=I=-16:TP=-1.5:LRA=11",
+                    "-ar", "24000", "-ac", "1", path], check=True)
+    os.remove(raw)
+    return path
+
+
 def synth(text, path, backend=None):
+    if backend == "gemini" or (backend is None and gemini_available()):
+        return gemini_wav(text, path), "gemini"
     if backend == "elevenlabs" or (backend is None and elevenlabs_available()):
         return elevenlabs_wav(text, path), "elevenlabs"
     return espeak_wav(text, path), "espeak"
@@ -175,7 +195,7 @@ def main():
     ap.add_argument("--text")
     ap.add_argument("--out", default="/tmp/vo.wav")
     ap.add_argument("--scenes")
-    ap.add_argument("--backend", choices=["espeak", "elevenlabs"])
+    ap.add_argument("--backend", choices=["gemini", "espeak", "elevenlabs"])
     a = ap.parse_args()
     if a.scenes:
         scene_voice(a.scenes, a.backend)

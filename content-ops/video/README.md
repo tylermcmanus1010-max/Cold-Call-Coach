@@ -27,18 +27,29 @@ sync, ever.
 
 | Backend | When it runs | Quality |
 |---|---|---|
-| `elevenlabs` | `ELEVENLABS_API_KEY` set *and* the API reachable | Ship quality |
+| `gemini` | `GEMINI_API_KEY` set. **Reachable from this container.** | Ship quality |
+| `elevenlabs` | `ELEVENLABS_API_KEY` set *and* API reachable | Ship quality |
 | `espeak` | Always. Local, offline, no weights | Robotic placeholder |
 
-Selection is automatic — ElevenLabs if available, espeak otherwise. Force it
-with `--backend`.
+Selection is automatic in that order. Force one with `--backend`.
 
-**In this container espeak is the only option.** Every hosted TTS endpoint
-(ElevenLabs, OpenAI, Deepgram, Replicate, fal, HuggingFace) is refused by the
-environment's egress policy, and no PyPI package ships usable neural weights.
-The ElevenLabs adapter is written and correct; it starts working the moment it
-runs somewhere with network access, or the policy allows it. Nothing else in
-the pipeline changes.
+### Reachability, tested
+
+| Host | Result |
+|---|---|
+| `generativelanguage.googleapis.com` | **Reachable** — real API errors, not proxy blocks |
+| `aiplatform.googleapis.com` | **Reachable** |
+| ElevenLabs, OpenAI, Deepgram | 403 at proxy |
+| Replicate, fal.run, Together, Kling, MiniMax, Volces | Blocked |
+| HuggingFace | 403 at proxy |
+
+**The Gemini API is the open door.** One key unlocks both ship-quality
+voiceover and Veo video generation from inside this container — no local
+running, no second machine. Get one at `aistudio.google.com/apikey` and set
+`GEMINI_API_KEY`.
+
+Until then espeak is the working backend: fine for reviewing pacing and
+timing, not for publishing.
 
 `--silent` skips voice entirely and keeps whatever durations are in the spec.
 Caption-led silent video is genuinely viable on TikTok and Reels, where most
@@ -88,6 +99,24 @@ to stay real:
 
 Treat the renderer the way an editor treats After Effects: it executes the
 production. It does not supply the originality.
+
+## Veo video generation
+
+`gemini.py` also drives Veo for generated footage — the same API family, the
+same key.
+
+```
+python3 content-ops/video/gemini.py --veo "prompt here" --aspect 9:16 --out clip.mp4
+```
+
+It submits a long-running operation, polls to completion, and downloads the
+result. Model IDs are discovered from the live models list rather than
+hard-coded, so an upstream rename does not break it.
+
+Veo clips are short (single-shot, seconds long) and generated with native
+audio. They are b-roll and cutaways inside a structured video, not a substitute
+for one. Cost is per-generation and adds up fast — budget it against the RPM
+model in `tools/revenue.mjs` before generating at volume.
 
 ## Render cost
 

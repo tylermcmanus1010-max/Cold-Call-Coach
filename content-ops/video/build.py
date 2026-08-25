@@ -63,7 +63,7 @@ def build_audio_track(spec_path, clips, out_wav):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("spec")
-    ap.add_argument("--backend", choices=["espeak", "elevenlabs"])
+    ap.add_argument("--backend", choices=["gemini", "espeak", "elevenlabs"])
     ap.add_argument("--silent", action="store_true",
                     help="skip voiceover; keep the durations already in the spec")
     a = ap.parse_args()

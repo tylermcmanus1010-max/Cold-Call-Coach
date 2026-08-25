@@ -38,7 +38,25 @@ One is enough. Listing five sounds like an attack.
 
 **"Send it to info@..."** → Fine. Read it back and send it.
 
-**"Not interested."** → "Understood, thanks for your time." Hang up. Next.
+**"Not interested."** → "No problem — can I send it anyway? Delete it if it's not useful. What's the best email?" If still no: "Understood, thanks for your time." Hang up. Next.
+
+**"We paid someone before and got burned."** → The warmest lead you will get.
+They already believe a website is worth money; they were let down, not
+overcharged. Answer the injury directly:
+
+> "That's exactly why I do it this way. You don't pay until you've seen it and
+> you like it. It's one file — no plugins, no database, nothing that breaks on
+> its own. And you own it: if I vanish tomorrow you still have the site,
+> because I send you the file."
+
+Then ask the question that matters more than the sale:
+
+> "Who owns your domain name — is it registered in your name, or was it in his?"
+
+If the previous provider registered it in their own name and went quiet, the
+business does not control its own web address. That is a real problem they
+probably do not know they have, and finding it makes you the person worth
+trusting.
 
 ## Never
 

@@ -45,7 +45,7 @@
 
 Hi Ray,
 
-I'm Tyler McManus, I run Cold Call Coach. I build websites for San Diego businesses.
+I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
 
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
@@ -63,6 +63,7 @@ $750 for the one-page rebuild, live on your domain in 5 business days. $60/month
 Worth a 10-minute call?
 
 Tyler McManus
+302-649-6600
 tylermcmanus1010@gmail.com
 
 ---

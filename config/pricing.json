@@ -1,0 +1,45 @@
+{
+  "from": {
+    "name": "Tyler McManus",
+    "email": "tylermcmanus1010@gmail.com",
+    "phone": "302-649-6600",
+    "businessName": "McManus Web Co."
+  },
+  "currency": "$",
+  "defaultTier": "onepage",
+  "tiers": {
+    "onepage": {
+      "label": "One-page rebuild",
+      "price": 750,
+      "includes": [
+        "Everything on this page, live on your domain",
+        "Mobile, tablet and desktop",
+        "Google business markup so your hours and rating show in search",
+        "Two rounds of changes",
+        "Live in 5 business days"
+      ]
+    },
+    "plus": {
+      "label": "Rebuild + booking",
+      "price": 1500,
+      "includes": [
+        "Everything in the one-page rebuild",
+        "Separate pages per service for local search",
+        "Online booking or quote form wired to your email",
+        "Photo gallery",
+        "Live in 10 business days"
+      ]
+    },
+    "care": {
+      "label": "Hosting and updates",
+      "price": 60,
+      "unit": "/month",
+      "includes": [
+        "Hosting, SSL and backups",
+        "Unlimited small text and price changes",
+        "Cancel any time"
+      ]
+    }
+  },
+  "guarantee": "If you don't like it, you don't pay. You keep the page either way."
+}

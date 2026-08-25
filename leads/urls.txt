@@ -1,0 +1,7 @@
+# Paste your own leads here, one per line, then:
+#   ./cc scout --source file --file leads/urls.txt --make 10
+#
+# Format:  Business Name,https://theirsite.com
+#     or:  https://theirsite.com
+#
+# Business names containing a comma need the URL first.

@@ -1,0 +1,84 @@
+{
+  "_howto": "DEMO CLIENT — this business is invented, to show what a filled-in file produces. Delete this folder once you have real ones.",
+
+  "slug": "example-bayview-plumbing",
+  "name": "Bayview Plumbing Co.",
+  "category": "Plumber",
+  "owner": "Ray",
+  "currentSite": "http://example-bayview-plumbing.example.com",
+  "status": "new",
+  "tier": "onepage",
+
+  "headline": "Same-day plumbing repair across San Diego.",
+  "subhead": "Family-run since 2003. We answer the phone, we show up when we say we will, and you get the price before we start.",
+  "tagline": "Same-day plumbing repair across San Diego. Family-run since 2003.",
+  "heroNote": "Emergency calls answered 24/7 · Licensed & bonded",
+
+  "phone": "(619) 555-0142",
+  "email": "ray@bayviewplumbing.example",
+  "address": { "street": "3417 Adams Ave", "city": "San Diego", "state": "CA", "zip": "92116" },
+  "serviceArea": ["North Park", "Normal Heights", "Kensington", "La Mesa", "Hillcrest", "Mission Valley"],
+  "license": "CA Lic. #000000",
+  "priceRange": "$$",
+
+  "hours": [
+    { "days": "Mon–Fri", "time": "7:00 AM – 6:00 PM", "schema": "Mo-Fr 07:00-18:00" },
+    { "days": "Saturday", "time": "8:00 AM – 3:00 PM", "schema": "Sa 08:00-15:00" },
+    { "days": "Sunday", "time": "Emergency calls only" }
+  ],
+
+  "highlights": [
+    { "value": "22 yrs", "label": "Serving San Diego" },
+    { "value": "4.8★", "label": "Across 260+ reviews" },
+    { "value": "Same day", "label": "On most repairs" },
+    { "value": "Upfront", "label": "Flat-rate pricing" }
+  ],
+
+  "servicesHeading": "What we fix",
+  "servicesLede": "Flat-rate pricing quoted before we start. No hourly surprises.",
+  "services": [
+    { "name": "Drain & sewer cleaning", "desc": "Kitchen, bath, main line. Camera inspection included on main-line calls.", "price": "from $129" },
+    { "name": "Water heater repair & install", "desc": "Tank and tankless. Most replacements done same day.", "price": "from $285" },
+    { "name": "Leak detection", "desc": "Slab, wall and underground leaks found without tearing up your house.", "price": "from $195" },
+    { "name": "Toilet & faucet repair", "desc": "Running, leaking, or won't flush. Usually a one-visit fix.", "price": "from $95" },
+    { "name": "Repipe & new fixtures", "desc": "Copper and PEX repipes for older San Diego homes.", "price": "free estimate" },
+    { "name": "Emergency calls", "desc": "Burst pipe or no water? We answer 24/7 and dispatch in under an hour.", "price": "24/7" }
+  ],
+
+  "aboutHeading": "Two trucks, one family, twenty-two years",
+  "about": "Bayview Plumbing has been fixing San Diego homes since 2003. Ray started with one truck and a phone number written on the door; today it's still small enough that the person who answers is the person who shows up.\n\nWe don't sell you a repipe when you need a washer. You get a flat price before any work starts, and if we can't fix it, you don't pay for the visit.",
+  "points": [
+    "Licensed, bonded and insured",
+    "Flat-rate pricing quoted before work starts",
+    "Same-day service on most repairs",
+    "One-year warranty on parts and labor"
+  ],
+
+  "rating": { "value": "4.8", "count": "260", "source": "Google" },
+  "reviews": [
+    { "text": "Called at 7am with water coming through the ceiling. Ray was here by 9 and had it stopped in twenty minutes. Charged exactly what he quoted.", "author": "Denise M.", "source": "Google", "stars": 5 },
+    { "text": "Third plumber I called and the only one who actually explained what was wrong instead of just handing me a number. Water heater replaced same day.", "author": "Marcus T.", "source": "Yelp", "stars": 5 },
+    { "text": "Been using them for both my rentals for six years. Never once had to call them back for the same problem.", "author": "Ana R.", "source": "Google", "stars": 5 }
+  ],
+
+  "ctaHeading": "Got a leak? Let's get it handled today.",
+  "ctaLede": "Call and you'll get Ray or someone on his crew — not a call center.",
+  "cta": { "primary": "Call (619) 555-0142" },
+
+  "theme": { "accent": "#0d5f8a", "ink": "#12181c" },
+
+  "audit": {
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": true,
+    "address": true,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  }
+}

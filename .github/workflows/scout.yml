@@ -1,0 +1,85 @@
+# Run the lead scout on GitHub's servers instead of your own machine.
+# Actions tab -> Scout leads -> Run workflow. Results appear in the run summary,
+# readable on a phone, with the full CSV attached as a download.
+
+name: Scout leads
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'How many websites to audit (blank = all of them)'
+        required: false
+        default: '100'
+      source:
+        description: 'Where to pull businesses from'
+        required: true
+        default: 'osm'
+        type: choice
+        options: [osm, places]
+      make:
+        description: 'Also scaffold the top N as clients and commit them (0 = no)'
+        required: false
+        default: '0'
+
+permissions:
+  contents: write
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Scout
+        id: scout
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: |
+          set -o pipefail
+          ARGS="--source ${{ inputs.source }}"
+          [ -n "${{ inputs.limit }}" ] && ARGS="$ARGS --limit ${{ inputs.limit }}"
+          [ "${{ inputs.make }}" != "0" ] && ARGS="$ARGS --make ${{ inputs.make }}"
+          echo "Running: ./cc scout $ARGS"
+          ./cc scout $ARGS 2>&1 | tee scout.log
+
+      - name: Put the list in the run summary
+        if: always()
+        run: |
+          if [ -f leads/leads.md ]; then
+            cat leads/leads.md >> $GITHUB_STEP_SUMMARY
+          else
+            {
+              echo "## Scout failed"
+              echo ""
+              echo '```'
+              tail -30 scout.log 2>/dev/null || echo "no output"
+              echo '```'
+            } >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Attach the full list
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: leads
+          path: |
+            leads/leads.csv
+            leads/leads.json
+            leads/leads.md
+          if-no-files-found: ignore
+
+      - name: Commit any scaffolded clients
+        if: inputs.make != '0'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add clients/ || true
+          git diff --cached --quiet && echo "nothing new to commit" && exit 0
+          git commit -m "Scaffold top ${{ inputs.make }} leads from scout run"
+          git push

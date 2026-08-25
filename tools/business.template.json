@@ -1,0 +1,70 @@
+{
+  "_howto": "Fill this from their current site, Google Business listing and Yelp. Delete any section you don't have — the page adapts. Set audit.* to true ONLY for things their CURRENT site already does right; everything left false becomes a selling point in pitch.md.",
+
+  "slug": "",
+  "name": "",
+  "category": "",
+  "owner": "",
+  "currentSite": "",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+
+  "headline": "",
+  "subhead": "",
+  "tagline": "",
+  "heroNote": "",
+
+  "phone": "",
+  "email": "",
+  "address": { "street": "", "city": "San Diego", "state": "CA", "zip": "" },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+
+  "hours": [
+    { "days": "Mon–Fri", "time": "8:00 AM – 5:00 PM", "schema": "Mo-Fr 08:00-17:00" },
+    { "days": "Saturday", "time": "9:00 AM – 2:00 PM", "schema": "Sa 09:00-14:00" },
+    { "days": "Sunday", "time": "Closed" }
+  ],
+
+  "highlights": [
+    { "value": "", "label": "" }
+  ],
+
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    { "name": "", "desc": "", "price": "" }
+  ],
+
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+
+  "rating": { "value": "", "count": "", "source": "Yelp" },
+  "reviews": [
+    { "text": "", "author": "", "source": "Yelp", "stars": 5 }
+  ],
+
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": { "primary": "" },
+
+  "theme": { "accent": "#0f6b5c", "ink": "#12181c", "heroImage": "" },
+
+  "audit": {
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  }
+}

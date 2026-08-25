@@ -47,6 +47,27 @@ One is enough. Listing five sounds like an attack.
 - Never touch anyone's domain or DNS the same day
 - Never quote a number other than the ones in `config/pricing.json`
 
+## Nobody picked up
+
+Do not leave a voicemail. Cold voicemails are rarely returned and you lose the
+live conversation you were calling for. Log it and move down the list:
+
+```
+./cc tried hue-salon "no answer"
+```
+
+Best times to catch a small business, roughly:
+
+| | Try | Avoid |
+|---|---|---|
+| Salons, barbers, spas | Tue–Thu 10–11am | Fri, Sat, and lunchtime |
+| Trades — plumbers, roofers, auto | 7–8am, or 4–5pm | Mid-morning, they are on a job |
+| Dentists, medical | 9–11am, 2–4pm | Monday morning, lunch |
+| Restaurants, bakeries | 2–4pm | Any mealtime |
+
+Four attempts is enough. `./cc status <slug> dead` and spend the time on a
+business that answers the phone.
+
 ## After
 
 1. Attach `index.html`, paste the email from `pitch.md`, send

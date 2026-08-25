@@ -5,6 +5,7 @@
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc build [slug]       render index.html + pitch.md (all clients if no slug)
+//   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
 //   ./cc list               show the pipeline
@@ -187,6 +188,18 @@ function cmdBuild(slug) {
   if (list.length === 1) console.log(`\n  open clients/${list[0]}/index.html   ← check it on a phone first`);
 }
 
+// A cold-call list needs to remember who you rang and when, or you call the
+// same shop twice on the same afternoon and never ring the other half.
+function cmdTried(slug, note) {
+  const b = load(slug);
+  b.attempts = (b.attempts || 0) + 1;
+  b.lastTried = new Date().toISOString().slice(0, 10);
+  if (note) b.callNotes = [...(b.callNotes || []), `${b.lastTried}: ${note}`];
+  save(slug, b);
+  console.log(`✓ ${slug} — attempt ${b.attempts} logged${note ? ` (${note})` : ''}`);
+  if (b.attempts >= 4) console.log('  Four tries is enough. ./cc status ' + slug + ' dead and move on.');
+}
+
 function cmdStatus(slug, status) {
   if (!STATUSES.includes(status)) die(`Status must be one of: ${STATUSES.join(', ')}`);
   const b = load(slug);
@@ -202,14 +215,15 @@ function cmdList() {
     const gaps = checks.filter((c) => (b.audit || {})[c.key] !== true).length;
     const tier = pricing.tiers[b.tier || pricing.defaultTier];
     return { slug: s, status: b.status || 'new', gaps, sent: b.sentOn || '',
+             tries: b.attempts ? `${b.attempts}× ${b.lastTried}` : '',
              value: tier ? pricing.currency + tier.price.toLocaleString('en-US') : '' };
   });
   if (!rows.length) return console.log('No clients yet. Run: ./cc scout --make 10');
   const ws = Math.max(8, ...rows.map((r) => r.slug.length));
-  console.log(`\n${'BUSINESS'.padEnd(ws)}  STATUS    GAPS  QUOTE     SENT`);
-  console.log('─'.repeat(ws + 34));
+  console.log(`\n${'BUSINESS'.padEnd(ws)}  STATUS    GAPS  QUOTE     CALLED         SENT`);
+  console.log('─'.repeat(ws + 49));
   for (const r of rows) {
-    console.log(`${r.slug.padEnd(ws)}  ${r.status.padEnd(8)}  ${String(r.gaps).padStart(4)}  ${r.value.padEnd(8)}  ${r.sent}`);
+    console.log(`${r.slug.padEnd(ws)}  ${r.status.padEnd(8)}  ${String(r.gaps).padStart(4)}  ${r.value.padEnd(8)}  ${r.tries.padEnd(13)}  ${r.sent}`);
   }
   const open = rows.filter((r) => ['new', 'sent', 'replied'].includes(r.status));
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
@@ -222,6 +236,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'audit': await cmdAudit(args[0]); break;
     case 'new': cmdNew(args[0]); break;
     case 'build': cmdBuild(args[0]); break;
+    case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
     case 'list': cmdList(); break;

@@ -1,5 +1,5 @@
 {
-  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) \u2014 the pitch is no HTTPS and no mobile, not that it is abandoned. STILL MISSING: weekly hours (tap the hours dropdown on Google) and any published pricing.",
+  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) \u2014 the pitch is no HTTPS and no mobile, not that it is abandoned. Weekly hours confirmed from Google. STILL MISSING: any published pricing \u2014 worth asking on the call.",
   "slug": "el-cajon-family-dental",
   "name": "El Cajon Family Dental",
   "category": "Dental practice",
@@ -29,7 +29,22 @@
   ],
   "license": "",
   "priceRange": "$$",
-  "hours": [],
+  "hours": [
+    {
+      "days": "Mon \u2013 Thu",
+      "time": "8:00 AM \u2013 5:00 PM",
+      "schema": "Mo-Th 08:00-17:00"
+    },
+    {
+      "days": "Friday",
+      "time": "7:30 AM \u2013 4:30 PM",
+      "schema": "Fr 07:30-16:30"
+    },
+    {
+      "days": "Sat \u2013 Sun",
+      "time": "Closed"
+    }
+  ],
   "highlights": [
     {
       "value": "4.4\u2605",

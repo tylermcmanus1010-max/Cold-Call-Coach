@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a florist and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a florist and are an ASSUMPTION — check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "jamul-flowers",
   "name": "Jamul Flowers",
   "category": "Florist",
   "owner": "",
   "currentSite": "http://www.jamulflowers.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Fresh flowers, arranged the same day.",
   "subhead": "On Campo Road in Spring Valley, serving East County.",
@@ -63,7 +63,7 @@
   "about": "",
   "points": [
     "On Campo Road, Spring Valley",
-    "Call before you order online \u2014 we answer"
+    "Call before you order online — we answer"
   ],
   "rating": {
     "value": "",
@@ -98,10 +98,15 @@
   "_scout": {
     "score": 129,
     "gaps": 9,
-    "currentSiteStatus": "\u00a9 2013",
+    "currentSiteStatus": "© 2013",
     "loadMs": 207,
     "pageKb": 50,
     "builder": null,
     "copyrightYear": 2013
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: number not in service / wrong number"
+  ]
 }

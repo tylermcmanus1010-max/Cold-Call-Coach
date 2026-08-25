@@ -1,17 +1,17 @@
 {
-  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) \u2014 the pitch is no HTTPS and no mobile, not that it is abandoned. Weekly hours confirmed from Google. STILL MISSING: any published pricing \u2014 worth asking on the call.",
+  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) — the pitch is no HTTPS and no mobile, not that it is abandoned. Weekly hours confirmed from Google. STILL MISSING: any published pricing — worth asking on the call.",
   "slug": "el-cajon-family-dental",
   "name": "El Cajon Family Dental",
   "category": "Dental practice",
   "owner": "Dr. Mechael",
   "currentSite": "http://elcajonfamilydental.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "General and cosmetic dentistry in El Cajon.",
-  "subhead": "Dependable, caring care for the whole family \u2014 on Fletcher Parkway in El Cajon.",
+  "subhead": "Dependable, caring care for the whole family — on Fletcher Parkway in El Cajon.",
   "tagline": "General and cosmetic dentistry in El Cajon, CA. Call (619) 466-1292.",
-  "heroNote": "Payment plans \u00b7 Sedation dentistry \u00b7 Pediatric care",
+  "heroNote": "Payment plans · Sedation dentistry · Pediatric care",
   "phone": "(619) 466-1292",
   "email": "",
   "address": {
@@ -31,23 +31,23 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon \u2013 Thu",
-      "time": "8:00 AM \u2013 5:00 PM",
+      "days": "Mon – Thu",
+      "time": "8:00 AM – 5:00 PM",
       "schema": "Mo-Th 08:00-17:00"
     },
     {
       "days": "Friday",
-      "time": "7:30 AM \u2013 4:30 PM",
+      "time": "7:30 AM – 4:30 PM",
       "schema": "Fr 07:30-16:30"
     },
     {
-      "days": "Sat \u2013 Sun",
+      "days": "Sat – Sun",
       "time": "Closed"
     }
   ],
   "highlights": [
     {
-      "value": "4.4\u2605",
+      "value": "4.4★",
       "label": "From 247 reviews"
     },
     {
@@ -102,7 +102,7 @@
   "points": [
     "Payment plans available",
     "Sedation dentistry for anxious patients",
-    "Pediatric care \u2014 children welcome",
+    "Pediatric care — children welcome",
     "On Fletcher Parkway, with parking"
   ],
   "rating": {
@@ -163,5 +163,6 @@
     "builder": null,
     "copyrightYear": 2026
   },
-  "reviewsHeading": "What patients say"
+  "reviewsHeading": "What patients say",
+  "sentOn": "2026-08-25"
 }

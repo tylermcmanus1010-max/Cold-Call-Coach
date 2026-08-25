@@ -32,8 +32,22 @@ module.exports = function pitch(b, pricing) {
     ? failed.map((c) => `- ${c.fixed}`).join('\n')
     : checks.slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
 
-  const emailFixes = (failed.length ? failed : checks).slice(0, 5)
-    .map((c) => `- ${c.fixed}`).join('\n');
+  // Only claim what the attached page actually delivers. Promising "hours
+  // listed" when the hours section is empty gets noticed the moment they open it.
+  const delivers = {
+    hours:    (b.hours || []).length > 0,
+    address:  Boolean(b.address?.street),
+    services: (b.services || []).some((x) => x.price),
+    reviews:  (b.reviews || []).length > 0,
+    phoneTap: Boolean(b.phone),
+    cta:      Boolean(b.phone),
+  };
+  const shipped = (c) => delivers[c.key] !== false;
+
+  const emailFixes = (failed.length ? failed : checks)
+    .filter(shipped).slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
+
+  const notYet = failed.filter((c) => !shipped(c));
 
   return `# ${b.name} — pitch sheet
 
@@ -54,7 +68,9 @@ ${table}
 
 ${fixes}
 
----
+${notYet.length ? `> **Fill these in before you send.** The page does not yet show: ${notYet.map((c) => c.label.toLowerCase()).join(', ')}. They are on their Google listing — the email does not promise them until they are on the page.
+
+` : ''}---
 
 ## Email to send
 

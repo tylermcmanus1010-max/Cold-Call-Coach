@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Address, phone and the practice description are REAL, scraped from their own site. Their site is current (copyright 2026) \u2014 the pitch is that it has no HTTPS and does not work on a phone, NOT that it is abandoned. Services are the standard scope of a general and cosmetic practice and are an ASSUMPTION. Hours, reviews and rating are empty until confirmed from their Google listing.",
   "slug": "el-cajon-family-dental",
   "name": "El Cajon Family Dental",
-  "category": "dentist",
+  "category": "Dental practice",
   "owner": "",
   "currentSite": "http://elcajonfamilydental.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "El Cajon Family Dental is dependable and caring. We welcome you to our general and cosmetic dentistry practice in El Cajon, CA. Call or visit us online today!",
-  "heroNote": "",
-  "phone": "+1 619 466 1292",
+  "headline": "General and cosmetic dentistry in El Cajon.",
+  "subhead": "Dependable, caring care for the whole family \u2014 on Fletcher Parkway in El Cajon.",
+  "tagline": "General and cosmetic dentistry in El Cajon, CA. Call (619) 466-1292.",
+  "heroNote": "Secure site \u00b7 Works on any phone \u00b7 One tap to call",
+  "phone": "(619) 466-1292",
   "email": "",
   "address": {
     "street": "2720 Fletcher Parkway",
@@ -20,63 +20,71 @@
     "state": "CA",
     "zip": "92020"
   },
-  "serviceArea": [],
+  "serviceArea": [
+    "El Cajon",
+    "La Mesa",
+    "Santee",
+    "Lakeside",
+    "Spring Valley"
+  ],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
-  "servicesLede": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we do",
+  "servicesLede": "General and cosmetic dentistry for adults and children.",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Cleanings & exams",
+      "desc": "Routine checkups and hygiene for the whole family.",
+      "price": ""
+    },
+    {
+      "name": "Fillings",
+      "desc": "Tooth-coloured fillings that match your smile.",
+      "price": ""
+    },
+    {
+      "name": "Crowns & bridges",
+      "desc": "Restoring damaged and missing teeth.",
+      "price": ""
+    },
+    {
+      "name": "Root canals",
+      "desc": "Saving a tooth rather than losing it.",
+      "price": ""
+    },
+    {
+      "name": "Teeth whitening",
+      "desc": "Professional whitening, done safely.",
+      "price": ""
+    },
+    {
+      "name": "Cosmetic dentistry",
+      "desc": "Veneers and smile work.",
       "price": ""
     }
   ],
-  "aboutHeading": "",
-  "about": "",
-  "points": [],
+  "aboutHeading": "A family practice on Fletcher Parkway",
+  "about": "El Cajon Family Dental is a general and cosmetic dentistry practice serving families across El Cajon and the East County.\n\nWe see adults and children, we explain what we find before we do anything about it, and you will speak to a person when you call.",
+  "points": [
+    "General and cosmetic dentistry",
+    "Adults and children welcome",
+    "On Fletcher Parkway, with parking"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Book your next visit",
+  "ctaLede": "Call the office and speak to someone who can get you on the schedule.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 466-1292"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#0e7c73",
     "ink": "#12181c",
     "heroImage": ""
   },

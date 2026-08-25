@@ -83,7 +83,7 @@ async function cmdScout(argv) {
   leads.slice(0, 25).forEach((l, i) => {
     const a = l.auditResult;
     const state = !l.website ? (l.source === 'osm' ? 'NO SITE LISTED (verify)' : 'NO WEBSITE')
-      : !a.reachable ? (a.reason || 'unreachable').slice(0, 22) : (a.reason || l.website).slice(0, 30);
+      : !a.reachable ? (a.reason || 'unreachable').slice(0, 30) : (a.reason || l.website).slice(0, 30);
     const rev = l.reviewCount != null ? `${l.rating ?? '–'} / ${l.reviewCount}` : '–';
     console.log(`  ${String(i + 1).padStart(2)}  ${(l.name || '').slice(0, w).padEnd(w)}  ${String(a.gaps).padStart(4)}  ${rev.padEnd(12)}  ${state}`);
   });
@@ -112,7 +112,10 @@ async function cmdAudit(url) {
   const r = await audit(url);
   console.log(`\n${r.finalUrl || url}`);
   const stats = r.ms != null ? `loaded in ${r.ms}ms · ${r.kb}KB` : 'no page';
-  console.log(r.reachable ? `  ${stats}${r.reason ? ' · ' + r.reason : ''}` : `  UNREACHABLE — ${r.reason}`);
+  console.log(r.blocked ? `  COULD NOT CHECK — ${r.reason}`
+    : r.reachable ? `  ${stats}${r.reason ? ' · ' + r.reason : ''}`
+    : `  UNREACHABLE — ${r.reason}`);
+  if (r.blocked) return console.log('\n  Not a lead. We were refused, so we cannot say anything is wrong with it —\n  and a site behind a firewall usually has someone already maintaining it.\n');
   console.log();
   for (const c of checks) console.log(`  ${r.checks[c.key] ? '✅' : '❌'}  ${c.label}`);
   console.log(`\n  ${r.gaps}/${checks.length} failing — ${r.gaps >= 5 ? 'worth a rebuild' : 'probably not worth your time'}\n`);

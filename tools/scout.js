@@ -293,7 +293,11 @@ async function scout(cfg, opts) {
     (done, total) => { if (done % 25 === 0 || done === total) process.stderr.write(`  ${done}/${total}\n`); });
 
   leads.forEach((b, i) => { b.auditResult = audits[i]; b.slug = slugify(b.name); });
-  const qualified = leads.filter((b) => b.auditResult.gaps >= f.minGaps);
+  const blocked = leads.filter((b) => b.auditResult.blocked);
+  if (blocked.length) process.stderr.write(
+    `${blocked.length} sites blocked our check (Cloudflare and similar) — skipped, since we cannot prove anything is wrong with them.\n`);
+
+  const qualified = leads.filter((b) => !b.auditResult.blocked && b.auditResult.gaps >= f.minGaps);
   qualified.sort((a, b) => rank(b) - rank(a));
   qualified.forEach((b) => { b.score = rank(b); });
 

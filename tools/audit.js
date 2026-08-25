@@ -2,7 +2,27 @@
 // This is the part that used to take you ten minutes per lead.
 
 const CHECKS = require('./checks');
-const UA = 'Mozilla/5.0 (compatible; site-audit/1.0)';
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+const BROWSER_HEADERS = {
+  'user-agent': UA,
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'accept-language': 'en-US,en;q=0.9',
+  'upgrade-insecure-requests': '1',
+};
+
+// Statuses that mean "we were not allowed to look", not "their site is broken".
+// Never pitch off one of these: the owner will open the site on his phone,
+// see it working, and the call is over.
+const BLOCKED_STATUS = new Set([401, 403, 405, 406, 418, 429, 503]);
+
+function connectionReason(code) {
+  if (/ENOTFOUND|EAI_AGAIN/.test(code)) return { reason: 'domain does not resolve', proven: true };
+  if (/ECONNREFUSED/.test(code)) return { reason: 'server refuses connections', proven: true };
+  if (/CERT_HAS_EXPIRED/.test(code)) return { reason: 'expired SSL certificate', proven: true };
+  if (/DEPTH_ZERO_SELF_SIGNED_CERT|SELF_SIGNED|ERR_TLS|ALT_NAME/.test(code)) return { reason: 'broken SSL certificate', proven: true };
+  if (/timeout|ETIMEDOUT|UND_ERR_CONNECT_TIMEOUT/i.test(code)) return { reason: 'timed out — too slow to load', proven: true };
+  return { reason: `could not connect (${code})`, proven: false };
+}
 
 const BUILDERS = [
   [/wix\.com|_wixCssImports|X-Wix-/i, 'Wix'],
@@ -21,14 +41,12 @@ async function grab(url, timeoutMs) {
   const t = setTimeout(() => ctl.abort(), timeoutMs);
   const started = Date.now();
   try {
-    const res = await fetch(url, {
-      redirect: 'follow', signal: ctl.signal,
-      headers: { 'user-agent': UA, accept: 'text/html,*/*' },
-    });
+    const res = await fetch(url, { redirect: 'follow', signal: ctl.signal, headers: BROWSER_HEADERS });
     const html = await res.text();
     return { ok: true, status: res.status, finalUrl: res.url, html, ms: Date.now() - started, bytes: html.length };
   } catch (e) {
-    return { ok: false, error: e.name === 'AbortError' ? `timeout after ${timeoutMs}ms` : e.message, ms: Date.now() - started };
+    const code = e.name === 'AbortError' ? 'timeout' : (e.cause?.code || e.message);
+    return { ok: false, code, error: String(code), ms: Date.now() - started };
   } finally { clearTimeout(t); }
 }
 
@@ -102,30 +120,61 @@ function score(html, page, httpsWorked) {
 const allFalse = () => Object.fromEntries(CHECKS.map((c) => [c.key, false]));
 
 async function audit(rawUrl, { timeout = 12000 } = {}) {
-  if (!rawUrl) return { url: null, reachable: false, reason: 'no website', checks: allFalse(), gaps: CHECKS.length, info: {} };
-
-  const bare = String(rawUrl).replace(/^https?:\/\//i, '').replace(/\/+$/, '');
-  const https = await grab('https://' + bare, timeout);
-  let page = https, httpsWorked = https.ok && https.status < 400;
-
-  if (!httpsWorked) {
-    const http = await grab('http://' + bare, timeout);
-    if (http.ok && http.status < 400) { page = http; httpsWorked = false; }
+  if (!rawUrl) {
+    return { url: null, reachable: false, verified: false, reason: 'no website',
+             checks: allFalse(), gaps: CHECKS.length, info: {} };
   }
 
-  if (!page.ok || page.status >= 400) {
-    return {
-      url: bare, reachable: false,
-      reason: page.ok ? `HTTP ${page.status}` : page.error,
-      checks: allFalse(), gaps: CHECKS.length, info: {},
-    };
+  const bare = String(rawUrl).replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+  const root = bare.split('/')[0];
+
+  // Try HTTPS, then plain HTTP. A site that only answers on HTTP is a real
+  // finding; one that answers on neither needs explaining before we call it dead.
+  let page = await grab('https://' + bare, timeout);
+  let httpsWorked = page.ok && page.status < 400;
+
+  if (!httpsWorked) {
+    const insecure = await grab('http://' + bare, timeout);
+    if (insecure.ok && insecure.status < 400) page = insecure;
+    else if (!page.ok && insecure.ok) page = insecure;
+  }
+
+  // The listed URL is often a deep link that has rotted while the site itself
+  // is fine. Check the root before accusing anyone of a dead website.
+  if (page.ok && page.status === 404 && bare !== root) {
+    for (const scheme of ['https://', 'http://']) {
+      const home = await grab(scheme + root, timeout);
+      if (home.ok && home.status < 400) { page = home; httpsWorked = scheme === 'https://'; break; }
+    }
+  }
+
+  if (page.ok && BLOCKED_STATUS.has(page.status)) {
+    // Cloudflare and friends. We learned nothing about their site, so this is
+    // not a lead — and a site behind a WAF usually has someone maintaining it.
+    return { url: bare, reachable: null, verified: false, blocked: true,
+             reason: `blocked our check (HTTP ${page.status})`,
+             checks: allFalse(), gaps: 0, info: {} };
+  }
+
+  if (!page.ok) {
+    const { reason, proven } = connectionReason(page.code);
+    return { url: bare, reachable: false, verified: proven, blocked: !proven,
+             reason, checks: allFalse(), gaps: proven ? CHECKS.length : 0, info: {} };
+  }
+
+  if (page.status >= 400) {
+    return { url: bare, reachable: false, verified: true,
+             reason: `returns HTTP ${page.status}`, ms: page.ms,
+             checks: allFalse(), gaps: CHECKS.length, info: {} };
   }
 
   const info = extract(page.html);
   const stats = { ms: page.ms, kb: Math.round(page.bytes / 1024) };
+
   if (PARKED.test(page.html) || (page.bytes < 600 && !info.phone)) {
-    return { url: bare, finalUrl: page.finalUrl, reachable: true, reason: 'parked or placeholder page',
-             ...stats, checks: allFalse(), gaps: CHECKS.length, info };
+    return { url: bare, finalUrl: page.finalUrl, reachable: true, verified: true,
+             reason: 'parked or placeholder page', ...stats,
+             checks: allFalse(), gaps: CHECKS.length, info };
   }
 
   const checks = score(page.html, page, httpsWorked);
@@ -133,8 +182,7 @@ async function audit(rawUrl, { timeout = 12000 } = {}) {
   const stale = info.copyrightYear && info.copyrightYear < new Date().getFullYear() - 2;
 
   return {
-    url: bare, finalUrl: page.finalUrl, reachable: true,
-    ms: page.ms, kb: Math.round(page.bytes / 1024),
+    url: bare, finalUrl: page.finalUrl, reachable: true, verified: true, ...stats,
     checks, gaps, info, stale,
     reason: [stale && `© ${info.copyrightYear}`, info.builder].filter(Boolean).join(', ') || null,
   };

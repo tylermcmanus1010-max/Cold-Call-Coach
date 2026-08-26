@@ -155,7 +155,23 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
     }
 
     const platformHtml = await page.content().catch(() => '');
+
+    // A credit line in the footer — "Design By Online Ethos", "Site by ..." —
+    // means an agency is being paid to look after it. Korel Dentistry carried
+    // one, along with hours listed twice, reviews, photos and a current
+    // copyright. Walking into that is walking into a fight.
+    const credit = (p.text.match(
+      /\b(?:design(?:ed)?|site|website|web\s*design|developed|built|maintained)\s+by\s+([A-Z][\w&'.-]*(?:\s+[A-Z][\w&'.-]*){0,3})/i) || [])[1];
+    const platformCredit = credit && /wordpress|shopify|wix|squarespace|weebly|godaddy|duda|webflow|bloomnation/i.test(credit);
+    const agency = credit && !platformCredit ? credit.trim() : null;
+
     const managed = MANAGED.find(([re]) => re.test(platformHtml));
+    if (agency) {
+      return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
+               managed: 'an agency — ' + agency, ms, kb: Math.round(p.bytes / 1024),
+               reason: `credited to ${agency} — already maintained`,
+               checks: Object.fromEntries(CHECKS.map((c) => [c.key, true])), gaps: 0, info: {} };
+    }
     if (managed) {
       return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
                managed: managed[1], ms, kb: Math.round(p.bytes / 1024),

@@ -103,6 +103,7 @@
     "pageKb": 33,
     "builder": null,
     "copyrightYear": 2014,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 4
   }
 }

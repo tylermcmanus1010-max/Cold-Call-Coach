@@ -72,7 +72,8 @@
     "pageKb": 11,
     "builder": null,
     "copyrightYear": 2026,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 4
   },
   "attempts": 1,
   "lastTried": "2026-08-26",

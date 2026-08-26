@@ -2,10 +2,15 @@
 
 **Current site:** https://www.crowsalon.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 7/12
+**Score:** 9/12 — UNVERIFIED, read the warning below
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
+
+> **Do not send yet.** These findings come from the served HTML, not a rendered page.
+> If this site builds itself with JavaScript, its hours, phone link and mobile layout may all be
+> there and simply invisible to that check. Re-run the scout with a browser, or open the site
+> yourself, before claiming any of this to the owner.
 
 ## What's wrong with the site they have
 
@@ -15,24 +20,17 @@
 | ✅ | Secure (HTTPS) | — |
 | ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
-| ✅ | Hours listed | — |
-| ✅ | Address + directions | — |
-| ❌ | Services and pricing | Services are vague and no pricing is shown, so people call competitors |
-| ❌ | Reviews on the page | Your good reviews are stuck on Yelp instead of on your own site |
-| ✅ | Clear call to action | — |
 | ✅ | Google business markup | — |
 | ✅ | Title + description | — |
 | ✅ | Shareable link preview | — |
+
+_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: services and pricing, reviews on the page._
 
 ## What the rebuild fixes
 
 - Rebuilt mobile-first; tested down to a 320px screen
 - Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Every service listed with a starting price
-- Best reviews pulled onto the homepage
-
-> **Fill these in before you send.** The page does not yet show: services and pricing. They are on their Google listing — the email does not promise them until they are on the page.
 
 ---
 
@@ -50,7 +48,6 @@ What I changed:
 - Rebuilt mobile-first; tested down to a 320px screen
 - Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Best reviews pulled onto the homepage
 
 Nothing is live. This is just so you can see what it would look like.
 

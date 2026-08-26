@@ -102,6 +102,7 @@
     "pageKb": 31,
     "builder": null,
     "copyrightYear": 2023,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 5
   }
 }

@@ -102,6 +102,7 @@
     "pageKb": 148,
     "builder": null,
     "copyrightYear": 2022,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 4
   }
 }

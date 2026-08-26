@@ -12,8 +12,8 @@ What's on it:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile
-- One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
+- Written page title, description and social preview card
 
 Nothing is live. This is just so you can see what it would look like.
 

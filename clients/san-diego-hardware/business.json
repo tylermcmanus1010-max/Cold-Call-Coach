@@ -102,6 +102,7 @@
     "pageKb": 593,
     "builder": "Shopify",
     "copyrightYear": 2026,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 7
   }
 }

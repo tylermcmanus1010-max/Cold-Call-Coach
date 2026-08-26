@@ -102,6 +102,7 @@
     "pageKb": 512,
     "builder": "WordPress",
     "copyrightYear": 2024,
-    "rendered": true
+    "rendered": false,
+    "hardGaps": 7
   }
 }

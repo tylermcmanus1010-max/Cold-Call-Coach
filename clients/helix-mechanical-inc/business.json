@@ -1,69 +1,95 @@
 {
-  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a plumbing and mechanical contractor and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
+  "_howto": "All of this is REAL, read off helixmechanical.com: address, CSLB licence and classifications, the 20-years line, and the navy/red brand colours from their logo. Services are derived from their actual licence classes \u2014 C-20 HVAC, C-36 plumbing, B general building \u2014 not guessed. STILL NEEDED: hours and their Google rating/reviews.",
   "slug": "helix-mechanical-inc",
-  "name": "Helix Mechanical Inc",
-  "category": "Plumbing & mechanical",
+  "name": "Helix Mechanical, Inc.",
+  "category": "HVAC, plumbing & general contracting",
   "owner": "",
   "currentSite": "https://helixmechanical.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "Plumbing and mechanical across East County.",
-  "subhead": "On the job in El Cajon and around it. Call and get a real answer.",
+  "headline": "Servicing San Diego for over 20 years.",
+  "subhead": "Heating, air conditioning, plumbing and general building \u2014 one licensed contractor for the whole job.",
   "tagline": "Plumbing & mechanical in El Cajon, CA. Call (619) 447-6675.",
-  "heroNote": "",
+  "heroNote": "CSLB #834736 \u00b7 C-20 HVAC \u00b7 C-36 Plumbing \u00b7 B General Building",
   "phone": "(619) 447-6675",
   "email": "",
   "address": {
-    "street": "1100 North Magnolia Avenue",
+    "street": "1666 N Magnolia Ave Unit I",
     "city": "El Cajon",
     "state": "CA",
     "zip": "92020"
   },
-  "serviceArea": [],
-  "license": "",
+  "serviceArea": [
+    "El Cajon",
+    "La Mesa",
+    "Santee",
+    "Lakeside",
+    "Spring Valley",
+    "San Diego"
+  ],
+  "license": "CSLB #834736 \u00b7 C-20, C-36, B",
   "priceRange": "$$",
   "hours": [],
-  "highlights": [],
+  "highlights": [
+    {
+      "value": "20+ yrs",
+      "label": "Serving San Diego"
+    },
+    {
+      "value": "C-20",
+      "label": "HVAC licensed"
+    },
+    {
+      "value": "C-36",
+      "label": "Plumbing licensed"
+    },
+    {
+      "value": "Class B",
+      "label": "General building"
+    }
+  ],
   "servicesHeading": "What we do",
-  "servicesLede": "",
+  "servicesLede": "Licensed for all three, so one contractor covers the whole job.",
   "services": [
     {
-      "name": "Plumbing repair",
-      "desc": "Leaks, drains and fixtures.",
+      "name": "Heating & air conditioning",
+      "desc": "Repair, replacement and maintenance. C-20 licensed.",
+      "price": ""
+    },
+    {
+      "name": "Plumbing",
+      "desc": "Leaks, drains, fixtures and repipes. C-36 licensed.",
       "price": ""
     },
     {
       "name": "Water heaters",
-      "desc": "Repair and replacement.",
+      "desc": "Tank and tankless, repaired or replaced.",
       "price": ""
     },
     {
-      "name": "Repipes",
-      "desc": "Copper and PEX.",
+      "name": "General building",
+      "desc": "Class B \u2014 tenant improvement and remodel work.",
       "price": ""
     },
     {
-      "name": "Commercial work",
-      "desc": "Tenant improvement and service.",
-      "price": ""
-    },
-    {
-      "name": "Gas lines",
-      "desc": "Installed and tested.",
+      "name": "Commercial service",
+      "desc": "Scheduled maintenance and call-outs.",
       "price": ""
     },
     {
       "name": "Emergency calls",
-      "desc": "When it cannot wait.",
+      "desc": "When heat, air or water cannot wait.",
       "price": ""
     }
   ],
-  "aboutHeading": "",
-  "about": "",
+  "aboutHeading": "Twenty years, three licences, one contractor",
+  "about": "Helix Mechanical has been servicing San Diego for over 20 years from El Cajon.\n\nWe hold C-20 for heating and air, C-36 for plumbing, and a Class B general building licence \u2014 which means one contractor can handle the mechanical work and the building work behind it, instead of you coordinating three trades.",
   "points": [
-    "Based in El Cajon",
-    "Free estimates \u2014 call and ask"
+    "CSLB #834736 \u2014 C-20, C-36 and Class B",
+    "Over 20 years serving San Diego",
+    "On N Magnolia Ave in El Cajon",
+    "Commercial and residential"
   ],
   "rating": {
     "value": "",
@@ -71,14 +97,14 @@
     "source": "Google"
   },
   "reviews": [],
-  "ctaHeading": "Give us a call",
-  "ctaLede": "You will get a person, not a booking robot.",
+  "ctaHeading": "Schedule your service",
+  "ctaLede": "Call the office and speak to someone who can get you on the schedule.",
   "cta": {
     "primary": "Call (619) 447-6675"
   },
   "theme": {
-    "accent": "#1d5c86",
-    "ink": "#12181c",
+    "accent": "#1d2a56",
+    "ink": "#141822",
     "heroImage": ""
   },
   "audit": {

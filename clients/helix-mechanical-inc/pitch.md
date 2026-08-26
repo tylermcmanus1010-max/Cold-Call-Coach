@@ -1,4 +1,4 @@
-# Helix Mechanical Inc — pitch sheet
+# Helix Mechanical, Inc. — pitch sheet
 
 **Current site:** https://helixmechanical.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)

@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>In the chair</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Haircuts</h3>
-        <p>Cut and finish for every hair type.</p>
-        
-      </div><div class="card">
-        <h3>Colour</h3>
-        <p>Full colour, roots and toners.</p>
-        
-      </div><div class="card">
-        <h3>Highlights &amp; balayage</h3>
-        <p>Foil and hand-painted work.</p>
-        
-      </div><div class="card">
-        <h3>Blowouts</h3>
-        <p>For an event or a Friday.</p>
-        
-      </div><div class="card">
-        <h3>Treatments</h3>
-        <p>Repair for colour-treated hair.</p>
-        
-      </div><div class="card">
-        <h3>Consultations</h3>
-        <p>Free, before you commit to a change.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Haircuts">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Haircuts</span>
+                <span class="svc-desc">Cut and finish for every hair type.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Colour">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Colour</span>
+                <span class="svc-desc">Full colour, roots and toners.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Highlights &amp; balayage">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Highlights &amp; balayage</span>
+                <span class="svc-desc">Foil and hand-painted work.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Blowouts">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Blowouts</span>
+                <span class="svc-desc">For an event or a Friday.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Treatments">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Treatments</span>
+                <span class="svc-desc">Repair for colour-treated hair.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Consultations">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Consultations</span>
+                <span class="svc-desc">Free, before you commit to a change.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:8585309005">Call (858) 530-9005</a>

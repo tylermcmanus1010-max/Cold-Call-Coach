@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>What we arrange</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Same-day bouquets</h3>
-        <p>Ordered this morning, delivered this afternoon.</p>
-        
-      </div><div class="card">
-        <h3>Sympathy &amp; funeral</h3>
-        <p>Sprays, wreaths and casket flowers.</p>
-        
-      </div><div class="card">
-        <h3>Weddings</h3>
-        <p>Bouquets, buttonholes and ceremony work.</p>
-        
-      </div><div class="card">
-        <h3>Birthdays &amp; anniversaries</h3>
-        <p>Better than a supermarket bunch.</p>
-        
-      </div><div class="card">
-        <h3>Plants &amp; gifts</h3>
-        <p>Orchids, houseplants and baskets.</p>
-        
-      </div><div class="card">
-        <h3>Local delivery</h3>
-        <p>Point Loma, Ocean Beach and nearby.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Same-day bouquets">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Same-day bouquets</span>
+                <span class="svc-desc">Ordered this morning, delivered this afternoon.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Sympathy &amp; funeral">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Sympathy &amp; funeral</span>
+                <span class="svc-desc">Sprays, wreaths and casket flowers.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Weddings">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Weddings</span>
+                <span class="svc-desc">Bouquets, buttonholes and ceremony work.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Birthdays &amp; anniversaries">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Birthdays &amp; anniversaries</span>
+                <span class="svc-desc">Better than a supermarket bunch.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Plants &amp; gifts">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Plants &amp; gifts</span>
+                <span class="svc-desc">Orchids, houseplants and baskets.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Local delivery">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Local delivery</span>
+                <span class="svc-desc">Point Loma, Ocean Beach and nearby.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6192227646">Call (619) 222-7646</a>

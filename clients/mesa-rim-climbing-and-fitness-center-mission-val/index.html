@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>On the floor</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Bouldering</h3>
-        <p>No ropes, no partner needed.</p>
-        
-      </div><div class="card">
-        <h3>Rope climbing</h3>
-        <p>Top rope and lead.</p>
-        
-      </div><div class="card">
-        <h3>Day passes</h3>
-        <p>First time? Start here.</p>
-        
-      </div><div class="card">
-        <h3>Memberships</h3>
-        <p>Monthly, no long contract.</p>
-        
-      </div><div class="card">
-        <h3>Intro classes</h3>
-        <p>Learn to belay and tie in.</p>
-        
-      </div><div class="card">
-        <h3>Youth programs</h3>
-        <p>Classes and camps for kids.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Bouldering">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Bouldering</span>
+                <span class="svc-desc">No ropes, no partner needed.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Rope climbing">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Rope climbing</span>
+                <span class="svc-desc">Top rope and lead.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Day passes">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Day passes</span>
+                <span class="svc-desc">First time? Start here.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Memberships">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Memberships</span>
+                <span class="svc-desc">Monthly, no long contract.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Intro classes">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Intro classes</span>
+                <span class="svc-desc">Learn to belay and tie in.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Youth programs">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Youth programs</span>
+                <span class="svc-desc">Classes and camps for kids.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6199081911">Call (619) 908-1911</a>

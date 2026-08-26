@@ -98,7 +98,6 @@ function render(b) {
   const v = VOICES[voiceOf(b)];
 
   // A menu earns its layout only when there is something to choose between.
-  const priced = (b.services || []).some((s) => s.price || s.duration);
   const cents = (p) => {
     const m = String(p || '').match(/(\d+(?:\.\d{1,2})?)/);
     return m ? Math.round(parseFloat(m[1]) * 100) : 0;
@@ -444,9 +443,11 @@ ${b.services?.length ? `
     <div class="eyebrow">Services</div>
     <h2>${esc(b.servicesHeading || 'What we do')}</h2>
     ${b.servicesLede ? `<p class="lede">${esc(b.servicesLede)}</p>` : ''}
-    ${priced
-      // A priced list is a menu people choose from, not a row of cards.
-      ? `<div class="menu">${groups.map(([name, items]) => `
+    ${''/* Every service list is a menu people choose from, not a row of cards.
+           Prices and durations show when the business has given them; when it
+           has not, the choosing and the request still work. We never invent a
+           number to fill the column. */}
+    ${`<div class="menu">${groups.map(([name, items]) => `
         <div class="mgroup">
           ${name ? `<h3>${esc(name)}</h3>` : ''}
           <div class="rows">
@@ -462,14 +463,7 @@ ${b.services?.length ? `
               </span>
             </button>`).join('')}
           </div>
-        </div>`).join('')}</div>`
-      : `<div class="grid">
-      ${b.services.map((s) => `<div class="card">
-        <h3>${esc(s.name)}</h3>
-        ${s.desc ? `<p>${esc(s.desc)}</p>` : ''}
-        ${s.price ? `<span class="price">${esc(s.price)}</span>` : ''}
-      </div>`).join('')}
-    </div>`}
+        </div>`).join('')}</div>`}
   </div>
 </section>` : ''}
 
@@ -561,7 +555,7 @@ ${b.reviews?.length ? `
   </div>
 </footer>
 
-${priced ? `<div class="basket" id="basket" hidden>
+${b.services?.length ? `<div class="basket" id="basket" hidden>
   <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
   <button type="button" class="clear" id="bkClear">Clear</button>
   <a class="btn" id="bkGo" href="#">Request</a>

@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>What we do</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Diagnostics</h3>
-        <p>Codes read and explained first.</p>
-        
-      </div><div class="card">
-        <h3>Brakes</h3>
-        <p>Pads, rotors and inspection.</p>
-        
-      </div><div class="card">
-        <h3>Engine repair</h3>
-        <p>From tune-ups to major work.</p>
-        
-      </div><div class="card">
-        <h3>Suspension</h3>
-        <p>Struts, shocks and alignment.</p>
-        
-      </div><div class="card">
-        <h3>Oil &amp; service</h3>
-        <p>Scheduled maintenance.</p>
-        
-      </div><div class="card">
-        <h3>Pre-purchase checks</h3>
-        <p>Before you buy a used car.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Diagnostics">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Diagnostics</span>
+                <span class="svc-desc">Codes read and explained first.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Brakes">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Brakes</span>
+                <span class="svc-desc">Pads, rotors and inspection.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Engine repair">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Engine repair</span>
+                <span class="svc-desc">From tune-ups to major work.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Suspension">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Suspension</span>
+                <span class="svc-desc">Struts, shocks and alignment.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Oil &amp; service">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Oil &amp; service</span>
+                <span class="svc-desc">Scheduled maintenance.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Pre-purchase checks">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Pre-purchase checks</span>
+                <span class="svc-desc">Before you buy a used car.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6192652099">Call (619) 265-2099</a>

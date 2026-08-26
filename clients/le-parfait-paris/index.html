@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>From the counter</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Croissants &amp; viennoiserie</h3>
-        <p>Baked fresh each morning.</p>
-        
-      </div><div class="card">
-        <h3>Macarons</h3>
-        <p>Made in-house, by the piece or the box.</p>
-        
-      </div><div class="card">
-        <h3>Cakes &amp; entremets</h3>
-        <p>For birthdays and for no reason at all.</p>
-        
-      </div><div class="card">
-        <h3>Breads</h3>
-        <p>Baguettes and country loaves.</p>
-        
-      </div><div class="card">
-        <h3>Coffee</h3>
-        <p>Espresso to sit in with, or take away.</p>
-        
-      </div><div class="card">
-        <h3>Catering &amp; events</h3>
-        <p>Platters and pastry for meetings and parties.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Croissants &amp; viennoiserie">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Croissants &amp; viennoiserie</span>
+                <span class="svc-desc">Baked fresh each morning.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Macarons">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Macarons</span>
+                <span class="svc-desc">Made in-house, by the piece or the box.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Cakes &amp; entremets">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Cakes &amp; entremets</span>
+                <span class="svc-desc">For birthdays and for no reason at all.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Breads">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Breads</span>
+                <span class="svc-desc">Baguettes and country loaves.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Coffee">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Coffee</span>
+                <span class="svc-desc">Espresso to sit in with, or take away.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Catering &amp; events">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Catering &amp; events</span>
+                <span class="svc-desc">Platters and pastry for meetings and parties.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6192454457">Call (619) 245-4457</a>

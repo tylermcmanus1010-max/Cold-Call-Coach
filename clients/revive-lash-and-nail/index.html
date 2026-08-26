@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>On the menu</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Lash extensions</h3>
-        <p>Classic, hybrid and volume sets.</p>
-        
-      </div><div class="card">
-        <h3>Lash fills</h3>
-        <p>Every two to three weeks.</p>
-        
-      </div><div class="card">
-        <h3>Manicures</h3>
-        <p>Classic and gel.</p>
-        
-      </div><div class="card">
-        <h3>Pedicures</h3>
-        <p>Spa and deluxe.</p>
-        
-      </div><div class="card">
-        <h3>Dip &amp; acrylic</h3>
-        <p>Full sets and fills.</p>
-        
-      </div><div class="card">
-        <h3>Brow shaping</h3>
-        <p>Wax and tint.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Lash extensions">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Lash extensions</span>
+                <span class="svc-desc">Classic, hybrid and volume sets.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Lash fills">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Lash fills</span>
+                <span class="svc-desc">Every two to three weeks.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Manicures">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Manicures</span>
+                <span class="svc-desc">Classic and gel.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Pedicures">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Pedicures</span>
+                <span class="svc-desc">Spa and deluxe.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Dip &amp; acrylic">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Dip &amp; acrylic</span>
+                <span class="svc-desc">Full sets and fills.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Brow shaping">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Brow shaping</span>
+                <span class="svc-desc">Wax and tint.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6194666854">Call (619) 466-6854</a>

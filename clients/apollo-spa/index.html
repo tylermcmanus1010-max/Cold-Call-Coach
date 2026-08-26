@@ -332,33 +332,74 @@
     <div class="eyebrow">Services</div>
     <h2>On the menu</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Swedish massage</h3>
-        <p>Relaxation, full body.</p>
-        
-      </div><div class="card">
-        <h3>Deep tissue</h3>
-        <p>For knots and long-standing tension.</p>
-        
-      </div><div class="card">
-        <h3>Hot stone</h3>
-        <p>Heat worked through the back and shoulders.</p>
-        
-      </div><div class="card">
-        <h3>Foot reflexology</h3>
-        <p>Pressure-point work on the feet.</p>
-        
-      </div><div class="card">
-        <h3>Couples massage</h3>
-        <p>Two therapists, one room.</p>
-        
-      </div><div class="card">
-        <h3>Chair massage</h3>
-        <p>Short sessions, neck and shoulders.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Swedish massage">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Swedish massage</span>
+                <span class="svc-desc">Relaxation, full body.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Deep tissue">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Deep tissue</span>
+                <span class="svc-desc">For knots and long-standing tension.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Hot stone">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Hot stone</span>
+                <span class="svc-desc">Heat worked through the back and shoulders.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Foot reflexology">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Foot reflexology</span>
+                <span class="svc-desc">Pressure-point work on the feet.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Couples massage">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Couples massage</span>
+                <span class="svc-desc">Two therapists, one room.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-name="Chair massage">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Chair massage</span>
+                <span class="svc-desc">Short sessions, neck and shoulders.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
 
@@ -394,7 +435,11 @@
   </div>
 </footer>
 
-
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6193897773">Call (619) 389-7773</a>

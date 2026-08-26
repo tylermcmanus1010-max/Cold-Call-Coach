@@ -1,17 +1,17 @@
 {
-  "_howto": "All of this is REAL, read off helixmechanical.com: address, CSLB licence and classifications, the 20-years line, and the navy/red brand colours from their logo. Services are derived from their actual licence classes \u2014 C-20 HVAC, C-36 plumbing, B general building \u2014 not guessed. Hours (Mon-Fri 7-4) and service@helixmechanical.com are from their contact page. Weekend hours were cut off in the screenshot and are deliberately not shown. NO GOOGLE REVIEWS FOUND \u2014 the reviews section stays off rather than being invented.",
+  "_howto": "All of this is REAL, read off helixmechanical.com: address, CSLB licence and classifications, the 20-years line, and the navy/red brand colours from their logo. Services are derived from their actual licence classes — C-20 HVAC, C-36 plumbing, B general building — not guessed. Hours (Mon-Fri 7-4) and service@helixmechanical.com are from their contact page. Weekend hours were cut off in the screenshot and are deliberately not shown. NO GOOGLE REVIEWS FOUND — the reviews section stays off rather than being invented.",
   "slug": "helix-mechanical-inc",
   "name": "Helix Mechanical, Inc.",
   "category": "HVAC, plumbing & general contracting",
   "owner": "",
   "currentSite": "https://helixmechanical.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "Servicing San Diego for over 20 years.",
-  "subhead": "Heating, air conditioning, plumbing and general building \u2014 one licensed contractor for the whole job.",
+  "subhead": "Heating, air conditioning, plumbing and general building — one licensed contractor for the whole job.",
   "tagline": "Plumbing & mechanical in El Cajon, CA. Call (619) 447-6675.",
-  "heroNote": "CSLB #834736 \u00b7 C-20 HVAC \u00b7 C-36 Plumbing \u00b7 B General Building",
+  "heroNote": "CSLB #834736 · C-20 HVAC · C-36 Plumbing · B General Building",
   "phone": "(619) 447-6675",
   "email": "service@helixmechanical.com",
   "address": {
@@ -28,12 +28,12 @@
     "Spring Valley",
     "San Diego"
   ],
-  "license": "CSLB #834736 \u00b7 C-20, C-36, B",
+  "license": "CSLB #834736 · C-20, C-36, B",
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon \u2013 Fri",
-      "time": "7:00 AM \u2013 4:00 PM",
+      "days": "Mon – Fri",
+      "time": "7:00 AM – 4:00 PM",
       "schema": "Mo-Fr 07:00-16:00"
     }
   ],
@@ -75,7 +75,7 @@
     },
     {
       "name": "General building",
-      "desc": "Class B \u2014 tenant improvement and remodel work.",
+      "desc": "Class B — tenant improvement and remodel work.",
       "price": ""
     },
     {
@@ -90,9 +90,9 @@
     }
   ],
   "aboutHeading": "Twenty years, three licences, one contractor",
-  "about": "Helix Mechanical has been servicing San Diego for over 20 years from El Cajon.\n\nWe hold C-20 for heating and air, C-36 for plumbing, and a Class B general building licence \u2014 which means one contractor can handle the mechanical work and the building work behind it, instead of you coordinating three trades.",
+  "about": "Helix Mechanical has been servicing San Diego for over 20 years from El Cajon.\n\nWe hold C-20 for heating and air, C-36 for plumbing, and a Class B general building licence — which means one contractor can handle the mechanical work and the building work behind it, instead of you coordinating three trades.",
   "points": [
-    "CSLB #834736 \u2014 C-20, C-36 and Class B",
+    "CSLB #834736 — C-20, C-36 and Class B",
     "Over 20 years serving San Diego",
     "On N Magnolia Ave in El Cajon",
     "Commercial and residential"
@@ -137,5 +137,6 @@
     "copyrightYear": 2025,
     "rendered": false,
     "hardGaps": 3
-  }
+  },
+  "sentOn": "2026-08-26"
 }

@@ -98,7 +98,10 @@ module.exports = function pitch(b, pricing) {
 
   const notYet = failed.filter((c) => !shipped(c));
 
-  const subject = b.pitchOpener
+  // A custom opener does not imply anything about their current site — only an
+  // explicit pitchSubject, or the no-site case, changes the subject line.
+  const subject = b.pitchSubject ? b.pitchSubject
+    : (b.pitchOpener && noSite)
     ? "You don't have a website of your own — I built you one"
     : noSite
     ? 'Your domain is showing a blank hosting page — I built you a website'

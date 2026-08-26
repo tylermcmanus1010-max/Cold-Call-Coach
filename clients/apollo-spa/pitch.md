@@ -39,7 +39,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## Email to send
 
-**Subject:** You don't have a website of your own — I built you one
+**Subject:** Rebuilt your website — take a look before you say no
 
 Hi there,
 

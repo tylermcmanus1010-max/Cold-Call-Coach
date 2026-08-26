@@ -3,7 +3,7 @@
   "slug": "korel-family-dentistry",
   "name": "Korel Family Dentistry",
   "category": "Family dentistry",
-  "owner": "",
+  "owner": "there",
   "currentSite": "https://dentistelcajon.com/",
   "liveUrl": "",
   "status": "new",
@@ -104,5 +104,7 @@
     "copyrightYear": 2026,
     "rendered": false,
     "hardGaps": 5
-  }
+  },
+  "pitchOpener": "Thanks for taking my call just now. As promised \u2014 I build one free sample site a week for a local business I'd like to work with, and this week I did yours.",
+  "pitchSubject": "The sample site I mentioned on the phone"
 }

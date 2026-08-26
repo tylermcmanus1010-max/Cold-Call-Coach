@@ -380,7 +380,12 @@ async function scout(cfg, opts) {
 
   // Only provable findings count toward a lead's score. Text-derived checks are
   // recorded for your own eyes but never make a business look worse than it is.
-  const hardGaps = (a) => CHECKS.filter((c) => !c.soft && !a.checks[c.key]).length;
+  // A placeholder, a dead domain or an unreadable page sets every check false.
+  // That is one finding — "there is no readable site" — not seven measured
+  // failures, and must never be presented as seven.
+  const hardGaps = (a) => (a.placeholder || !a.reachable)
+    ? 1
+    : CHECKS.filter((c) => !c.soft && !a.checks[c.key]).length;
   for (const b of leads) b.auditResult.hardGaps = hardGaps(b.auditResult);
 
   const qualified = leads.filter((b) =>

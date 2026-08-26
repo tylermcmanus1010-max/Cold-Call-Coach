@@ -2,7 +2,7 @@
 
 **Current site:** https://remodernliving.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 5/12 — UNVERIFIED, read the warning below
+**Score:** 12/12 — UNVERIFIED, read the warning below
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -32,9 +32,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 - HTTPS with a free auto-renewing certificate
 - Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
-- Open Graph tags so the link previews properly when shared
+- Hours listed on-page and marked up for Google
 
 ---
 

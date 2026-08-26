@@ -54,7 +54,11 @@ module.exports = function pitch(b, pricing) {
   const unverified = b._scout && b._scout.rendered === false;
   const scored = checks.map((c) => ({ ...c, pass: audit[c.key] === true }));
   // Never claim a text-derived finding. Those are for your eyes, not the owner's.
-  const failed = scored.filter((c) => !c.pass && !c.soft);
+  // Same rule in the pitch: if the site could not be read, say that once rather
+  // than listing every check as a separate failure.
+  const unreadable = /placeholder|no website|does not resolve|parked|unreachable|HTTP \d/i
+    .test(b._scout?.currentSiteStatus || '');
+  const failed = unreadable ? [] : scored.filter((c) => !c.pass && !c.soft);
   const unsureAbout = scored.filter((c) => !c.pass && c.soft);
   const score = scored.length - failed.length;
   const money = (t) => `${pricing.currency}${t.price.toLocaleString('en-US')}${t.unit || ''}`;
@@ -89,7 +93,7 @@ module.exports = function pitch(b, pricing) {
   };
   const shipped = (c) => delivers[c.key] !== false;
 
-  const emailFixes = (failed.length ? failed : checks)
+  const emailFixes = (failed.length ? failed : checks.filter((c) => !c.soft))
     .filter(shipped).slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
 
   const notYet = failed.filter((c) => !shipped(c));

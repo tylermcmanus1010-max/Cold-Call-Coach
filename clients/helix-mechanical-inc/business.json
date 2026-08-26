@@ -1,5 +1,5 @@
 {
-  "_howto": "All of this is REAL, read off helixmechanical.com: address, CSLB licence and classifications, the 20-years line, and the navy/red brand colours from their logo. Services are derived from their actual licence classes \u2014 C-20 HVAC, C-36 plumbing, B general building \u2014 not guessed. STILL NEEDED: hours and their Google rating/reviews.",
+  "_howto": "All of this is REAL, read off helixmechanical.com: address, CSLB licence and classifications, the 20-years line, and the navy/red brand colours from their logo. Services are derived from their actual licence classes \u2014 C-20 HVAC, C-36 plumbing, B general building \u2014 not guessed. Hours (Mon-Fri 7-4) and service@helixmechanical.com are from their contact page. Weekend hours were cut off in the screenshot and are deliberately not shown. NO GOOGLE REVIEWS FOUND \u2014 the reviews section stays off rather than being invented.",
   "slug": "helix-mechanical-inc",
   "name": "Helix Mechanical, Inc.",
   "category": "HVAC, plumbing & general contracting",
@@ -13,7 +13,7 @@
   "tagline": "Plumbing & mechanical in El Cajon, CA. Call (619) 447-6675.",
   "heroNote": "CSLB #834736 \u00b7 C-20 HVAC \u00b7 C-36 Plumbing \u00b7 B General Building",
   "phone": "(619) 447-6675",
-  "email": "",
+  "email": "service@helixmechanical.com",
   "address": {
     "street": "1666 N Magnolia Ave Unit I",
     "city": "El Cajon",
@@ -30,7 +30,13 @@
   ],
   "license": "CSLB #834736 \u00b7 C-20, C-36, B",
   "priceRange": "$$",
-  "hours": [],
+  "hours": [
+    {
+      "days": "Mon \u2013 Fri",
+      "time": "7:00 AM \u2013 4:00 PM",
+      "schema": "Mo-Fr 07:00-16:00"
+    }
+  ],
   "highlights": [
     {
       "value": "20+ yrs",

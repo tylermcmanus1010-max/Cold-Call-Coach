@@ -14,6 +14,7 @@
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
+//   ./cc sheet              rebuild the call sheet dashboard from clients/
 //
 // scout options:
 //   --source osm            OpenStreetMap (default, free, no key)
@@ -161,19 +162,23 @@ Next:
 function cmdBuild(slug) {
   const list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
-  const skipped = [];
+  const skipped = [], generic = [];
   for (const s of list) {
     const b = load(s);
-    if (!b.name || !b.tagline) {
-      // Building every client should not stop at the first unfinished one —
-      // that silently left the others on a stale template for a whole session.
-      const missing = !b.name ? '"name"' : '"tagline"';
-      if (slug) die(
-        `clients/${s}/business.json is missing ${missing}.\n` +
-        `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
-        `  they are the two lines that actually sell the page.`);
-      skipped.push(`${s} (missing ${missing})`);
+    if (!b.name) {
+      if (slug) die(`clients/${s}/business.json is missing "name" — nothing can be built without it.`);
+      skipped.push(`${s} (missing "name")`);
       continue;
+    }
+    // A missing tagline used to block the build entirely, which left vetted
+    // leads with no page and nothing to call about. Derive a plain, true one
+    // from what we already know and note it, rather than refusing to work.
+    // Nothing here is a claim about the business — only what it is and where.
+    if (!b.tagline) {
+      const where = b.address?.city || 'San Diego';
+      const what = (b.category || '').trim();
+      b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
+      generic.push(s);
     }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
@@ -187,8 +192,13 @@ function cmdBuild(slug) {
     console.log(`✓ ${s} — index.html + pitch.md  (${checks.length - failed}/${checks.length} passing, ${failed} gaps to sell)`);
   }
   if (skipped.length) {
-    console.log(`\n  ${skipped.length} not built yet — write a headline and tagline for each:`);
+    console.log(`\n  ${skipped.length} not built:`);
     skipped.forEach((s) => console.log(`    · ${s}`));
+  }
+  if (generic.length) {
+    console.log(`\n  ${generic.length} built with a placeholder tagline — fine to call on, worth`);
+    console.log('  a better line before you send: ' + generic.slice(0, 6).join(', ')
+      + (generic.length > 6 ? `, +${generic.length - 6} more` : ''));
   }
   if (list.length === 1) console.log(`\n  open clients/${list[0]}/index.html   ← check it on a phone first`);
 }
@@ -313,6 +323,27 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+function cmdSheet() {
+  const build = require('./tools/call-sheet');
+  const { html, state, skipped } = build();
+  const out = path.join(__dirname, 'call-sheet.html');
+  fs.writeFileSync(out, html);
+
+  const by = state.leads.reduce((m, l) => (m[l.status] = (m[l.status] || 0) + 1, m), {});
+  const ready = state.leads.filter((l) => ['new', 'tried'].includes(l.status) && l.built).length;
+  console.log(`\n✓ call-sheet.html — ${state.leads.length} leads`);
+  console.log(`  ${ready} ready to call · ${by.sent || 0} awaiting reply · ${by.won || 0} won · ${by.dead || 0} dead`);
+
+  const thin = state.leads.filter((l) => ['new', 'tried'].includes(l.status) && l.needs.length >= 3);
+  if (thin.length) {
+    console.log(`\n  ${thin.length} pages are still thin — screenshot their Google listing first:`);
+    for (const l of thin.slice(0, 8)) console.log(`    · ${l.name} — needs ${l.needs.join(', ')}`);
+    if (thin.length > 8) console.log(`    · …and ${thin.length - 8} more`);
+  }
+  if (skipped.length) console.log(`\n  Left off: ${skipped.join(', ')}`);
+  console.log('');
+}
+
 const [cmd, ...args] = process.argv.slice(2);
 (async () => {
   switch (cmd) {
@@ -327,6 +358,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'check': await cmdCheck(args[0]); break;
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
+    case 'sheet': cmdSheet(); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a lash and nail studio and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a lash and nail studio and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "revive-lash-and-nail",
   "name": "Revive Lash & Nail",
   "category": "Lash & nail studio",
   "owner": "",
   "currentSite": "https://revivelashandnail.com/lander",
   "liveUrl": "",
-  "status": "dead",
+  "status": "new",
   "tier": "onepage",
   "headline": "Lashes and nails, done properly.",
   "subhead": "Call the studio and book with a tech.",
@@ -97,7 +97,7 @@
   "_scout": {
     "score": 115,
     "gaps": 10,
-    "currentSiteStatus": "\u00a9 1999",
+    "currentSiteStatus": "© 1999",
     "loadMs": 8847,
     "pageKb": 25,
     "builder": null,
@@ -105,5 +105,5 @@
     "rendered": false,
     "hardGaps": 5
   },
-  "_verifiedByEye": "Not a lead. On Bukkii \u2014 a salon booking platform with a photo gallery, a full priced service menu with durations, per-technician booking, online booking, hours and social links. Better than what we offer a salon. Do not pitch."
+  "_verifiedByEye": "Not a lead. On Bukkii — a salon booking platform with a photo gallery, a full priced service menu with durations, per-technician booking, online booking, hours and social links. Better than what we offer a salon. Do not pitch."
 }

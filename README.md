@@ -120,6 +120,26 @@ purpose.
 Every other section is optional — delete what you don't have and the page adapts.
 No empty blocks, no lorem ipsum.
 
+## Photos, for businesses whose work is the product
+
+```bash
+./cc photo <slug> photo1.jpg photo2.jpg
+```
+
+Resized to 1400px and embedded as data URIs, so the page still opens with no
+internet and still arrives as one file. A 4MB phone photo lands around 400KB.
+
+This matters more than it sounds. A nail salon, a bakery or a barber is selling
+something visual, and a text-only page cannot compete with a booking platform
+that has a gallery — Revive Lash & Nail is on Bukkii with a photo grid, a priced
+menu and per-technician booking, and their page beats anything we would send.
+
+**Where a one-page rebuild actually wins:** trades, contractors, dental and
+professional services. There the site is a brochure — who you are, what you are
+licensed for, how to reach you — and being fast, secure and readable on a phone
+is the whole job. Helix Mechanical's licence classes did more work than any
+photograph would have.
+
 ## 4. Check our own page before we sell an audit
 
 ```bash

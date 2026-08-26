@@ -101,6 +101,7 @@ module.exports = function render(b) {
 
   const nav = [
     b.services?.length && ['Services', '#services'],
+    b.photos?.length && ['Work', '#work'],
     b.about && ['About', '#about'],
     b.reviews?.length && ['Reviews', '#reviews'],
     ['Contact', '#contact'],
@@ -225,6 +226,14 @@ ${jsonld(b)}
   ul.ticks li{padding-left:28px;position:relative;color:var(--muted)}
   ul.ticks li::before{content:"\\2713";position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;
     background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+
+  /* gallery — for businesses whose work IS the product */
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:28px}
+  .shots figure{margin:0;border-radius:var(--radius);overflow:hidden;background:var(--soft);
+    border:1px solid var(--line);aspect-ratio:1/1}
+  .shots img{width:100%;height:100%;object-fit:cover;display:block}
+  .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  @media (max-width:520px){ .shots figure:first-child{grid-column:span 2;grid-row:auto} }
 
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
@@ -369,6 +378,18 @@ ${b.services?.length ? `
         ${s.desc ? `<p>${esc(s.desc)}</p>` : ''}
         ${s.price ? `<span class="price">${esc(s.price)}</span>` : ''}
       </div>`).join('')}
+    </div>
+  </div>
+</section>` : ''}
+
+${b.photos?.length ? `
+<section id="work">
+  <div class="wrap">
+    <div class="eyebrow">${esc(b.galleryEyebrow || 'Our work')}</div>
+    <h2>${esc(b.galleryHeading || 'Recent work')}</h2>
+    ${b.galleryLede ? `<p class="lede">${esc(b.galleryLede)}</p>` : ''}
+    <div class="shots">
+      ${b.photos.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 1))}" loading="lazy"></figure>`).join('')}
     </div>
   </div>
 </section>` : ''}

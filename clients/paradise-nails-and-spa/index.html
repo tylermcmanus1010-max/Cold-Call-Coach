@@ -163,6 +163,14 @@
   ul.ticks li::before{content:"\2713";position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;
     background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
 
+  /* gallery — for businesses whose work IS the product */
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:28px}
+  .shots figure{margin:0;border-radius:var(--radius);overflow:hidden;background:var(--soft);
+    border:1px solid var(--line);aspect-ratio:1/1}
+  .shots img{width:100%;height:100%;object-fit:cover;display:block}
+  .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  @media (max-width:520px){ .shots figure:first-child{grid-column:span 2;grid-row:auto} }
+
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
   .quote{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff}
@@ -328,6 +336,8 @@
     </div>
   </div>
 </section>
+
+
 
 
 <section id="about">

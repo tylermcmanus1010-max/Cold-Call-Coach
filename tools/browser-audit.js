@@ -25,7 +25,15 @@ const MANAGED = [
   [/squarespace|static1\.squarespace/i, 'Squarespace'], [/wix\.com|_wixCssImports|wixstatic/i, 'Wix'],
   [/webflow/i, 'Webflow'], [/duda(one)?|dudamobile/i, 'Duda'], [/godaddy.*websites|w\.sitey/i, 'GoDaddy Websites'],
   [/squareup|square-web|weebly/i, 'Square/Weebly'], [/bigcommerce/i, 'BigCommerce'],
-  [/hubspot|hs-sites/i, 'HubSpot'], [/townsquareinteractive|dexyp|yext/i, 'a marketing agency'],
+  [/hubspot|hs-sites/i, 'HubSpot'],
+  // Booking platforms for salons, spas and clinics. These give a business a
+  // photo gallery, a priced menu with durations and online booking — more than
+  // a one-page rebuild offers. Revive Lash & Nail is on Bukkii and their page
+  // is better than ours would be.
+  [/bukkii/i, 'Bukkii'], [/vagaro/i, 'Vagaro'], [/booksy/i, 'Booksy'],
+  [/glossgenius/i, 'GlossGenius'], [/squareup\.com\/appointments|square\.site/i, 'Square Appointments'],
+  [/mindbodyonline|mindbody/i, 'Mindbody'], [/schedulicity/i, 'Schedulicity'],
+  [/setmore|acuityscheduling|fresha/i, 'a booking platform'], [/townsquareinteractive|dexyp|yext/i, 'a marketing agency'],
 ];
 
 // The hosting panel's own placeholder. Catch it before reading anything off the

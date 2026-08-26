@@ -8,6 +8,8 @@
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
+//   ./cc photo <slug> <img...>  add photos to a page (resized and embedded,
+//                           so the file still opens with no internet)
 //   ./cc check [slug]       run our own 12 checks against the pages WE built
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
@@ -205,6 +207,28 @@ function cmdTried(slug, note) {
 
 // Every build writes clients/<slug>/index.html. Attaching six of those to six
 // emails means six files called index.html — export names them by business.
+// For a salon, a bakery or a nail bar the work IS the product. A page with no
+// photographs cannot compete with a booking platform that has a gallery.
+async function cmdPhoto(slug, files) {
+  if (!slug || !files.length) die('Usage: ./cc photo <slug> <image.jpg> [more.jpg ...]');
+  const b = load(slug);
+  const { embed } = require('./tools/embed-photo');
+  const missing = files.filter((f) => !fs.existsSync(f));
+  if (missing.length) die('Cannot find: ' + missing.join(', '));
+
+  console.log(`Resizing and embedding ${files.length} image${files.length === 1 ? '' : 's'}…`);
+  const done = await embed(files);
+  b.photos = [...(b.photos || []), ...done.map((d) => ({ src: d.src, alt: `${b.name} — ${d.file}` }))];
+  save(slug, b);
+
+  const kb = (n) => Math.round(n / 1024) + 'KB';
+  done.forEach((d) => console.log(`  ${d.file}: ${kb(d.before)} → ${kb(d.after)}`));
+  const total = b.photos.reduce((n, p) => n + p.src.length, 0);
+  console.log(`✓ ${b.photos.length} photo${b.photos.length === 1 ? '' : 's'} on the page, ${kb(total)} total`);
+  if (total > 4 * 1024 * 1024) console.log('  ⚠️  Over 4MB — some mail servers will bounce it. Drop a couple.');
+  console.log(`  next: ./cc build ${slug}`);
+}
+
 // We sell a twelve-point audit. Shipping a page that fails it is indefensible.
 async function cmdCheck(slug) {
   const { selfCheck } = require('./tools/self-check');
@@ -299,6 +323,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
+    case 'photo': await cmdPhoto(args[0], args.slice(1)); break;
     case 'check': await cmdCheck(args[0]); break;
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;

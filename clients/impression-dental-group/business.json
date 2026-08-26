@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a dental practice and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a dental practice and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "impression-dental-group",
   "name": "Impression Dental Group",
   "category": "Dental practice",
   "owner": "",
   "currentSite": "https://www.impressiondentalgroup.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "General and family dentistry in Mira Mesa.",
   "subhead": "On Mira Mesa Boulevard. Adults and children welcome.",
@@ -98,12 +98,13 @@
   "_scout": {
     "score": 103,
     "gaps": 8,
-    "currentSiteStatus": "\u00a9 2012",
+    "currentSiteStatus": "© 2012",
     "loadMs": 345,
     "pageKb": 8,
     "builder": null,
     "copyrightYear": 2012,
     "rendered": false,
     "hardGaps": 4
-  }
+  },
+  "sentOn": "2026-08-26"
 }

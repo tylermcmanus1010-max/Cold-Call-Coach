@@ -2,7 +2,7 @@
 
 **Current site:** https://www.kingstonandkingston.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 3/12
+**Score:** 4/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -19,7 +19,7 @@
 | ❌ | Address + directions | No address or one-tap directions |
 | ❌ | Services and pricing | Services are vague and no pricing is shown, so people call competitors |
 | ❌ | Reviews on the page | Your good reviews are stuck on Yelp instead of on your own site |
-| ❌ | Clear call to action | No obvious next step — visitors land and leave |
+| ✅ | Clear call to action | — |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
 | ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
 | ❌ | Shareable link preview | Link looks blank when shared in a text or on Facebook |
@@ -31,7 +31,6 @@
 - Address with a one-tap Google Maps link
 - Every service listed with a starting price
 - Best reviews pulled onto the homepage
-- One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
 - Open Graph tags so the link previews properly when shared
@@ -52,7 +51,6 @@ I looked at your website and rebuilt it. It's attached — open it on your phone
 
 What I changed:
 - Tap-to-call in the header and a sticky call bar on mobile
-- One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
 - Open Graph tags so the link previews properly when shared

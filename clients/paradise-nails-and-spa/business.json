@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a nail salon and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a nail salon and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "paradise-nails-and-spa",
   "name": "Paradise Nails and Spa",
   "category": "Nail salon & spa",
@@ -102,6 +102,7 @@
     "loadMs": 6961,
     "pageKb": 10,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": true
   }
 }

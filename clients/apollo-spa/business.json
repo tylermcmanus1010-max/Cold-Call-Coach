@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a massage studio and are an ASSUMPTION — check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable. Confirmed: opens 10:00 AM seven days a week, 776 Fletcher Pkwy. Closing time unknown, so no schema markup for hours — ask on the call. Rating deliberately omitted: 4.7 from only 3 reviews advertises that almost nobody has reviewed them, which reads worse than showing nothing.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a massage studio and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable. Confirmed: opens 10:00 AM seven days a week, 776 Fletcher Pkwy. Closing time unknown, so no schema markup for hours \u2014 ask on the call. Rating deliberately omitted: 4.7 from only 3 reviews advertises that almost nobody has reviewed them, which reads worse than showing nothing.",
   "slug": "apollo-spa",
   "name": "Apollo Spa",
   "category": "Massage",
@@ -107,9 +107,10 @@
     "loadMs": 147,
     "pageKb": 5,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": true
   },
-  "pitchOpener": "I went looking for your website and could not find one. There is a small page for you on somebody else's domain — apollo.grouppayless.com — but you do not own that address, and nobody searching for a massage in El Cajon is going to land on it. So I built you a real one, on your own name.",
+  "pitchOpener": "I went looking for your website and could not find one. There is a small page for you on somebody else's domain \u2014 apollo.grouppayless.com \u2014 but you do not own that address, and nobody searching for a massage in El Cajon is going to land on it. So I built you a real one, on your own name.",
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [

@@ -2,7 +2,7 @@
 
 **Current site:** https://mesarim.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 5/12
+**Score:** 4/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -13,7 +13,7 @@
 |---|---|---|
 | ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
-| ✅ | Loads in under 2 seconds | — |
+| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
 | ✅ | Tap-to-call phone number | — |
 | ✅ | Hours listed | — |
 | ❌ | Address + directions | No address or one-tap directions |
@@ -26,6 +26,7 @@
 
 ## What the rebuild fixes
 
+- Single self-contained file, no trackers, loads instantly
 - Address with a one-tap Google Maps link
 - Every service listed with a starting price
 - Best reviews pulled onto the homepage
@@ -49,11 +50,11 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
+- Single self-contained file, no trackers, loads instantly
 - Address with a one-tap Google Maps link
 - One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
-- Open Graph tags so the link previews properly when shared
 
 Nothing is live. This is just so you can see what it would look like.
 

@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a gutter and roofing contractor and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "woolley-s-gutter-experts",
   "name": "Woolley's Gutter Experts",
-  "category": "roofer",
+  "category": "Gutters & roofing",
   "owner": "",
   "currentSite": "https://www.woolleysgutterexperts.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "Rain Gutters San Diego: Woolley's Gutter Experts guarantees lowest prices in the Greater San Diego area for gutter installations, cleaning, and repair services.",
+  "headline": "Gutters, done once and done right.",
+  "subhead": "Serving Lemon Grove and across San Diego County.",
+  "tagline": "Gutters & roofing in Lemon Grove, CA. Call (619) 248-4811.",
   "heroNote": "",
-  "phone": "+1 619-248-4811",
+  "phone": "(619) 248-4811",
   "email": "",
   "address": {
     "street": "1924 Main Street",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we do",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Seamless gutters",
+      "desc": "Formed on site to fit.",
+      "price": ""
+    },
+    {
+      "name": "Gutter repair",
+      "desc": "Sagging, leaking and overflow.",
+      "price": ""
+    },
+    {
+      "name": "Downspouts",
+      "desc": "Rerouted away from the foundation.",
+      "price": ""
+    },
+    {
+      "name": "Gutter guards",
+      "desc": "Stop cleaning them twice a year.",
+      "price": ""
+    },
+    {
+      "name": "Cleaning",
+      "desc": "Before the rain, not after.",
+      "price": ""
+    },
+    {
+      "name": "Roof edge & fascia",
+      "desc": "Repaired while we are up there.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "Lemon Grove, working county-wide",
+    "Free estimates"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 248-4811"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#2f6046",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -101,6 +102,7 @@
     "loadMs": 11823,
     "pageKb": 1069,
     "builder": null,
-    "copyrightYear": 2025
+    "copyrightYear": 2025,
+    "rendered": true
   }
 }

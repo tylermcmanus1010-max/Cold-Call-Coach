@@ -1,5 +1,5 @@
 {
-  "_howto": "DO NOT SEND. They have a working website at duckys-barbershop.com with a published price list and online booking. OpenStreetMap listed duckysbarbershop.com (no hyphen), which is a placeholder — that is what the audit scored. Not a lead: someone is already maintaining their site. Confirmed real: 941 Broadway Unit L, El Cajon CA 92021, (619) 456-3232, 4.7 stars from 286 reviews.",
+  "_howto": "DO NOT SEND. They have a working website at duckys-barbershop.com with a published price list and online booking. OpenStreetMap listed duckysbarbershop.com (no hyphen), which is a placeholder \u2014 that is what the audit scored. Not a lead: someone is already maintaining their site. Confirmed real: 941 Broadway Unit L, El Cajon CA 92021, (619) 456-3232, 4.7 stars from 286 reviews.",
   "slug": "ducky-s-barber-shop",
   "name": "Ducky's Barbershop",
   "category": "Barber shop",
@@ -11,7 +11,7 @@
   "headline": "A proper barbershop, and the reviews to prove it.",
   "subhead": "4.7 stars across 286 reviews. Book ahead or call the shop.",
   "tagline": "Barbershop with 4.7 stars across 286 reviews. Call (619) 456-3232.",
-  "heroNote": "Wheelchair accessible · Online booking available",
+  "heroNote": "Wheelchair accessible \u00b7 Online booking available",
   "phone": "(619) 456-3232",
   "email": "",
   "address": {
@@ -26,7 +26,7 @@
   "hours": [],
   "highlights": [
     {
-      "value": "4.7★",
+      "value": "4.7\u2605",
       "label": "On Google"
     },
     {
@@ -112,10 +112,11 @@
   "_scout": {
     "score": 115,
     "gaps": 10,
-    "currentSiteStatus": "© 1999",
+    "currentSiteStatus": "\u00a9 1999",
     "loadMs": 8334,
     "pageKb": 13,
     "builder": null,
-    "copyrightYear": 1999
+    "copyrightYear": 1999,
+    "rendered": true
   }
 }

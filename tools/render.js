@@ -107,7 +107,7 @@ module.exports = function render(b) {
   ].filter(Boolean);
 
   return `<!doctype html>
-<html lang="en">
+<html lang="en" class="v-${voiceOf(b)}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -256,6 +256,48 @@ ${jsonld(b)}
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
   }
+  /* ── hero shape per voice ─────────────────────────────────────────────────
+     Type alone could not separate two sans voices without loading web fonts,
+     which would break the "no external requests" promise in the pitch. So the
+     hero is structurally different instead. */
+
+  /* TRADE — a full-bleed block of colour. Reads like a work truck. */
+  .v-trade .hero{background:var(--accent);padding-top:56px}
+  .v-trade .hero::before{opacity:.18}
+  .v-trade .hero h1{color:#fff}
+  .v-trade .hero .eyebrow{color:rgba(255,255,255,.72)}
+  .v-trade .hero .lede{color:rgba(255,255,255,.88)}
+  .v-trade .hero-note{color:rgba(255,255,255,.75);border-top-color:rgba(255,255,255,.32)}
+  .v-trade .hero .btn-primary{background:#fff;color:var(--accent);border-color:#fff}
+  .v-trade .hero .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+  .v-trade .trust{border-color:rgba(255,255,255,.3);margin-top:38px}
+
+  /* CARE — centred and unhurried. Calm is the product. */
+  .v-care .hero{padding:84px 0 70px;text-align:center}
+  .v-care .hero h1,.v-care .hero .lede{margin-left:auto;margin-right:auto}
+  .v-care .hero .actions{justify-content:center}
+  .v-care .hero-inner{max-width:44rem;margin:0 auto}
+
+  /* BEAUTY — editorial: a rule down the side, deep top margin, nothing rushed. */
+  .v-beauty .hero{padding:92px 0 68px}
+  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
+  .v-beauty .hero h1{max-width:14ch}
+  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
+
+  /* FOOD — the copy sits on a warm card, like something on a counter. */
+  .v-food .hero{padding:40px 0 52px}
+  .v-food .hero-inner{background:color-mix(in srgb, var(--accent) 8%, #fff);
+    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+    border-radius:26px;padding:36px 32px}
+  .v-food .trust{margin-top:20px}
+
+  @media (max-width:760px){
+    .v-food .hero-inner{padding:26px 20px;border-radius:20px}
+    .v-beauty .hero-inner{padding-left:18px}
+    .v-care .hero{padding:52px 0 44px}
+    .v-beauty .hero{padding:56px 0 44px}
+  }
+
   /* ── motion ──────────────────────────────────────────────────────────────
      A short load sequence in the hero, then sections arrive as you reach them.
      Everything below is opt-out: with reduced motion the page renders finished. */
@@ -300,6 +342,7 @@ ${jsonld(b)}
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-inner">
     ${b.category ? `<div class="eyebrow rise" style="--i:0">${esc(b.category)}${a.city ? ' · ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</div>` : ''}
     <h1 class="rise" style="--i:1">${esc(b.headline || b.tagline)}</h1>
     ${b.subhead ? `<p class="lede rise" style="--i:2">${esc(b.subhead)}</p>` : ''}
@@ -308,6 +351,7 @@ ${jsonld(b)}
       ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Get directions</a>` : ''}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
+    </div>
     ${b.highlights?.length ? `<div class="trust rise" style="--i:5">${b.highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
   </div>

@@ -10,7 +10,33 @@
 const { chromium } = require('playwright-core');
 const CHECKS = require('./checks');
 
-const EXEC = process.env.CHROMIUM_PATH || undefined;
+// Find a browser without making anyone think about it. Playwright's bundled
+// path changes with every version bump, and CI runners ship their own Chrome,
+// so look in all the usual places rather than demanding an env var.
+const EXEC = (() => {
+  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+  const fs = require('fs'), path = require('path'), cp = require('child_process');
+  const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, '/opt/pw-browsers',
+                 path.join(require('os').homedir(), '.cache/ms-playwright')].filter(Boolean);
+  for (const root of roots) {
+    let dirs = [];
+    try { dirs = fs.readdirSync(root).filter((d) => d.startsWith('chromium')); } catch { continue; }
+    // newest build number first
+    dirs.sort((a, b) => (+(b.match(/(\d+)$/) || [])[1] || 0) - (+(a.match(/(\d+)$/) || [])[1] || 0));
+    for (const d of dirs) {
+      for (const rel of ['chrome-linux/chrome', 'chrome-linux/headless_shell',
+                         'chrome-mac/Chromium.app/Contents/MacOS/Chromium']) {
+        const f = path.join(root, d, rel);
+        if (fs.existsSync(f)) return f;
+      }
+    }
+  }
+  for (const bin of ['google-chrome', 'chromium', 'chromium-browser']) {
+    try { return cp.execSync(`command -v ${bin}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim() || undefined; }
+    catch { /* not installed */ }
+  }
+  return undefined;   // let Playwright try its own default
+})();
 const PHONE = { width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 ' +
            '(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';

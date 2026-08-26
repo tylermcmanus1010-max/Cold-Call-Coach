@@ -91,17 +91,39 @@ function voiceOf(b) {
   return 'trade';
 }
 
-module.exports = function render(b) {
+function render(b) {
   const tel = digits(b.phone);
   const a = b.address || {};
   const accent = b.theme?.accent || '#0f6b5c';
   const v = VOICES[voiceOf(b)];
+
+  // A menu earns its layout only when there is something to choose between.
+  const priced = (b.services || []).some((s) => s.price || s.duration);
+  const cents = (p) => {
+    const m = String(p || '').match(/(\d+(?:\.\d{1,2})?)/);
+    return m ? Math.round(parseFloat(m[1]) * 100) : 0;
+  };
+  const mins = (d) => {
+    const m = String(d || '').match(/(\d+)\s*(h|hr|hour|m|min)/i);
+    if (!m) return 0;
+    return /^h/i.test(m[2]) ? +m[1] * 60 : +m[1];
+  };
+  const groups = (() => {
+    const out = new Map();
+    for (const s of b.services || []) {
+      const k = s.group || '';
+      if (!out.has(k)) out.set(k, []);
+      out.get(k).push(s);
+    }
+    return [...out.entries()];
+  })();
   const ink = b.theme?.ink || '#12181c';
   const hero = b.theme?.heroImage;
 
   const nav = [
     b.services?.length && ['Services', '#services'],
     b.photos?.length && ['Work', '#work'],
+    b.team?.length && ['Team', '#team'],
     b.about && ['About', '#about'],
     b.reviews?.length && ['Reviews', '#reviews'],
     ['Contact', '#contact'],
@@ -159,7 +181,9 @@ ${jsonld(b)}
     font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
   h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
   p{margin:0 0 14px}
-  section{padding:64px 0;border-top:1px solid var(--line)}
+  /* the header is sticky, so an anchored jump must leave room for it or the
+     first line of the section lands underneath. */
+  section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:72px}
   .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
     text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
@@ -207,6 +231,54 @@ ${jsonld(b)}
   .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .trust b{display:block;font-size:26px;letter-spacing:-.02em}
   .trust span{font-size:13px;color:var(--muted)}
+
+  /* menu — grouped, priced, and selectable, the way a booking platform does it */
+  .menu{margin-top:26px;display:flex;flex-direction:column;gap:26px}
+  .mgroup h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--accent);margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
+  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  /* a button carries a chunky default border on every side — left unreset it
+     turns a clean list into a stack of boxes. */
+  .row-svc{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
+    border:0;border-bottom:1px solid var(--line);border-radius:0;
+    width:100%;text-align:left;background:#fff;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .row-svc:last-child{border-bottom:0}
+  .js .row-svc{cursor:pointer}
+  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 4%, #fff)}
+  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;border-radius:6px;
+    border:1.5px solid var(--line);display:grid;place-items:center;
+    font-size:11px;color:#fff;background:#fff}
+  html:not(.js) .row-svc .tick{display:none}
+  .row-svc.on{background:color-mix(in srgb, var(--accent) 7%, #fff)}
+  .row-svc.on .tick{background:var(--accent);border-color:var(--accent)}
+  .row-svc.on .tick::after{content:"\\2713"}
+  /* these are spans, because a <button> may only hold phrasing content —
+     so each one has to be told to take its own line. */
+  .svc-main{flex:1;min-width:0;display:block}
+  .svc-name{display:block;font-size:15.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
+  .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
+  .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+  .svc-dur{display:block;font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
+
+  /* the running basket — appears once something is chosen */
+  .basket{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--accent);color:#fff;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.4)}
+  .basket.up{display:flex;align-items:center;gap:14px}
+  .basket .sum{flex:1;min-width:0;font-size:13.5px;line-height:1.3}
+  .basket .sum b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+  .basket .btn{background:#fff;color:var(--accent);border-color:#fff;white-space:nowrap}
+  .basket .clear{background:transparent;color:rgba(255,255,255,.85);border:0;font-size:13px;
+    text-decoration:underline;padding:6px}
+
+  /* team */
+  .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
+  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+    background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
+  .member b{display:block;letter-spacing:-.01em}
+  .member span{font-size:12.5px;color:var(--muted)}
 
   /* services */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:30px}
@@ -372,11 +444,46 @@ ${b.services?.length ? `
     <div class="eyebrow">Services</div>
     <h2>${esc(b.servicesHeading || 'What we do')}</h2>
     ${b.servicesLede ? `<p class="lede">${esc(b.servicesLede)}</p>` : ''}
-    <div class="grid">
+    ${priced
+      // A priced list is a menu people choose from, not a row of cards.
+      ? `<div class="menu">${groups.map(([name, items]) => `
+        <div class="mgroup">
+          ${name ? `<h3>${esc(name)}</h3>` : ''}
+          <div class="rows">
+            ${items.map((s) => `<button type="button" class="row-svc" data-price="${esc(cents(s.price))}" data-mins="${esc(mins(s.duration))}" data-name="${esc(s.name)}">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">${esc(s.name)}</span>
+                ${s.desc ? `<span class="svc-desc">${esc(s.desc)}</span>` : ''}
+              </span>
+              <span class="svc-meta">
+                ${s.price ? `<span class="svc-price">${esc(s.price)}</span>` : ''}
+                ${s.duration ? `<span class="svc-dur">${esc(s.duration)}</span>` : ''}
+              </span>
+            </button>`).join('')}
+          </div>
+        </div>`).join('')}</div>`
+      : `<div class="grid">
       ${b.services.map((s) => `<div class="card">
         <h3>${esc(s.name)}</h3>
         ${s.desc ? `<p>${esc(s.desc)}</p>` : ''}
         ${s.price ? `<span class="price">${esc(s.price)}</span>` : ''}
+      </div>`).join('')}
+    </div>`}
+  </div>
+</section>` : ''}
+
+${b.team?.length ? `
+<section id="team">
+  <div class="wrap">
+    <div class="eyebrow">Our team</div>
+    <h2>${esc(b.teamHeading || 'Who you will see')}</h2>
+    ${b.teamLede ? `<p class="lede">${esc(b.teamLede)}</p>` : ''}
+    <div class="team">
+      ${b.team.map((m) => `<div class="member">
+        <div class="av">${esc((m.name || '?').trim()[0].toUpperCase())}</div>
+        <b>${esc(m.name)}</b>
+        ${m.role ? `<span>${esc(m.role)}</span>` : ''}
       </div>`).join('')}
     </div>
   </div>
@@ -454,6 +561,12 @@ ${b.reviews?.length ? `
   </div>
 </footer>
 
+${priced ? `<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>` : ''}
+
 ${b.phone ? `<div class="callbar">
   <a class="btn btn-primary" href="tel:${esc(tel)}">Call ${esc(b.phone)}</a>
   ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Map</a>` : ''}
@@ -463,33 +576,100 @@ ${b.phone ? `<div class="callbar">
 (function(){
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hero = document.querySelector('.hero');
-  if (reduce) { document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
-                document.querySelector('.callbar') && document.querySelector('.callbar').classList.add('up');
-                return; }
 
-  // Hero arrives on load, staggered by --i.
-  requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
-
-  // Sections and cards arrive as you reach them, once.
-  var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
-  targets.forEach(function(el){ el.classList.add('rise'); });
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (!e.isIntersecting) return;
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    targets.forEach(function(el){ io.observe(el); });
+  // Motion is a preference. Booking is a function. Reducing one must never
+  // remove the other — an early return here once disabled the whole menu.
+  if (reduce) {
+    document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
   } else {
-    targets.forEach(function(el){ el.classList.add('in'); });
+    requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
+
+    var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
+    targets.forEach(function(el){ el.classList.add('rise'); });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+      targets.forEach(function(el){ io.observe(el); });
+    } else {
+      targets.forEach(function(el){ el.classList.add('in'); });
+    }
+  }
+
+  // Choose services, see the running total, then send the request as a text or
+  // an email. No backend, no booking account — it composes the message and the
+  // customer sends it from their own phone.
+  var basket = document.getElementById('basket');
+  if (basket) {
+    var picked = [];
+    var TEL = ${JSON.stringify(digits(b.phone || ''))};
+    var MAIL = ${JSON.stringify(b.email || '')};
+    var BOOKURL = ${JSON.stringify(b.booking?.url || '')};
+    var BIZ = ${JSON.stringify(b.name || '')};
+
+    var money = function(c){ return '$' + (c/100).toFixed(2).replace(/\.00$/,''); };
+    // People book in hours and minutes, not decimals. "3.3 hr" is not a time.
+    var time = function(m){
+      if (m < 60) return m + ' min';
+      var h = Math.floor(m / 60), r = m % 60;
+      return h + ' hr' + (r ? ' ' + r + ' min' : '');
+    };
+
+    var paint = function(){
+      if (!picked.length) {
+        basket.hidden = true; basket.classList.remove('up');
+        document.body.style.paddingBottom = '';
+        return;
+      }
+      var total = picked.reduce(function(n,p){ return n + p.price; }, 0);
+      var dur   = picked.reduce(function(n,p){ return n + p.mins; }, 0);
+      basket.hidden = false; basket.classList.add('up');
+      document.getElementById('bkTotal').textContent =
+        picked.length + (picked.length === 1 ? ' service' : ' services') + (total ? ' · ' + money(total) : '');
+      document.getElementById('bkMeta').textContent = dur ? 'about ' + time(dur) : '';
+
+      var lines = picked.map(function(p){ return '• ' + p.name + (p.price ? ' (' + money(p.price) + ')' : ''); }).join('\\n');
+      var msg = 'Hi ' + BIZ + ', I would like to book:\\n' + lines +
+                (total ? '\\n\\nTotal: ' + money(total) : '') +
+                (dur ? '\\nAbout ' + time(dur) : '') +
+                '\\n\\nWhat times do you have?';
+      var go = document.getElementById('bkGo');
+      if (BOOKURL) { go.href = BOOKURL; go.textContent = 'Book online'; }
+      else if (TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg); go.textContent = 'Text this'; }
+      else if (MAIL) { go.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Booking request') +
+                        '&body=' + encodeURIComponent(msg); go.textContent = 'Email this'; }
+      else { go.href = '#'; go.textContent = 'Call us'; }
+    };
+
+    document.querySelectorAll('.row-svc').forEach(function(el){
+      el.addEventListener('click', function(){
+        var name = el.dataset.name;
+        var i = picked.findIndex(function(p){ return p.name === name; });
+        if (i > -1) { picked.splice(i,1); el.classList.remove('on'); }
+        else { picked.push({ name: name, price: +el.dataset.price || 0, mins: +el.dataset.mins || 0 });
+               el.classList.add('on'); }
+        paint();
+      });
+    });
+    document.getElementById('bkClear').addEventListener('click', function(){
+      picked = [];
+      document.querySelectorAll('.row-svc.on').forEach(function(el){ el.classList.remove('on'); });
+      paint();
+    });
   }
 
   // The call bar stays out of the way until you have actually started reading.
   var bar = document.querySelector('.callbar');
   if (bar) {
-    var show = function(){ bar.classList.toggle('up', scrollY > 220); };
+    var show = function(){
+      var busy = basket && !basket.hidden;
+      bar.classList.toggle('up', (reduce || scrollY > 220) && !busy);
+    };
+    if (basket) new MutationObserver(show).observe(basket, { attributes: true });
     addEventListener('scroll', show, { passive: true }); show();
   }
 })();
@@ -498,3 +678,21 @@ ${b.phone ? `<div class="callbar">
 </html>
 `;
 };
+
+// A single stray backslash in the emitted <script> once shipped a page whose
+// entire booking system was dead on arrival — and nothing said a word, because
+// broken JavaScript in a browser just quietly does nothing. No page leaves this
+// file again without its script being parsed first.
+module.exports = function renderChecked(b) {
+  const html = render(b);
+  for (const [, attrs, js] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
+    if (/^\s*$/.test(js)) continue;
+    const type = (attrs.match(/type\s*=\s*["']([^"']+)/i) || [])[1];
+    if (type && !/javascript|module/i.test(type)) continue;   // JSON-LD is not code
+    try { new Function(js); } catch (e) {
+      throw new Error(`${b.slug || b.name || 'page'}: emitted page script will not parse — ${e.message}`);
+    }
+  }
+  return html;
+};
+module.exports.unchecked = render;

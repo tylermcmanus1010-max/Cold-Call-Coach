@@ -2,7 +2,7 @@
 
 **Current site:** http://www.jamulflowers.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 3/12
+**Score:** 6/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -11,32 +11,24 @@
 
 | | Check | Problem |
 |---|---|---|
-| ❌ | Works on a phone | Site is unusable on a phone — 70%+ of your customers are on one |
+| ✅ | Works on a phone | — |
 | ❌ | Secure (HTTPS) | No SSL — Chrome shows visitors a "Not secure" warning |
-| ✅ | Loads in under 2 seconds | — |
+| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
-| ✅ | Hours listed | — |
-| ❌ | Address + directions | No address or one-tap directions |
-| ❌ | Services and pricing | Services are vague and no pricing is shown, so people call competitors |
-| ❌ | Reviews on the page | Your good reviews are stuck on Yelp instead of on your own site |
-| ❌ | Clear call to action | No obvious next step — visitors land and leave |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
 | ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
-| ✅ | Shareable link preview | — |
+| ❌ | Shareable link preview | Link looks blank when shared in a text or on Facebook |
+
+_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, address + directions, services and pricing, reviews on the page._
 
 ## What the rebuild fixes
 
-- Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
+- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Address with a one-tap Google Maps link
-- Every service listed with a starting price
-- Best reviews pulled onto the homepage
-- One clear action above the fold on every screen size
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
-
-> **Fill these in before you send.** The page does not yet show: services and pricing, reviews on the page. They are on their Google listing — the email does not promise them until they are on the page.
+- Open Graph tags so the link previews properly when shared
 
 ---
 
@@ -51,11 +43,11 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for Spring Valley busi
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
-- Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
+- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Address with a one-tap Google Maps link
-- One clear action above the fold on every screen size
+- LocalBusiness schema so Google can read hours, phone, rating and location
+- Written page title, description and social preview card
 
 Nothing is live. This is just so you can see what it would look like.
 

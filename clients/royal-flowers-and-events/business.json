@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://royalflowersandevents.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Flowers and styling for the day itself.",
   "subhead": "On Sabre Springs Parkway. Weddings, events, and the everyday bouquet too.",
@@ -102,7 +102,8 @@
     "loadMs": 132,
     "pageKb": 2,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": true
   },
-  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about hours, phoneTap \u2014 the site renders them with JavaScript."
+  "_verifiedByEye": "BloomNation store. 159 reviews and a 5-star rating displayed on the page, full product catalogue with prices, About Us section. My audit claimed no reviews, no pricing and no address. All three were wrong. Professionally maintained \u2014 not a lead."
 }

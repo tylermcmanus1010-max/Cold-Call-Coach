@@ -36,6 +36,7 @@
   }
 }
 </script>
+<script>document.documentElement.className+=' js';</script>
 <style>
   :root{
     --accent:#0f6e7c;
@@ -45,8 +46,16 @@
     --line:#e3e8ea;
     --bg:#fff;
     --soft:#f6f8f8;
-    --radius:14px;
+    --radius:16px;
     --wrap:1080px;
+    --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --display-weight:600;
+    --tracking:-.015em;
+    --label-case:uppercase;
+    --label-track:.14em;
+    --hero-size:clamp(33px,5.6vw,54px);
+    --rule:1px;
+    --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -57,17 +66,20 @@
   }
   .wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
   a{color:inherit}
-  h1,h2,h3{line-height:1.15;letter-spacing:-.02em;margin:0}
+  h1,h2,h3{line-height:1.14;margin:0;font-family:var(--display);
+    font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
   h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
   p{margin:0 0 14px}
   section{padding:64px 0;border-top:1px solid var(--line)}
-  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
+    text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
 
   /* header */
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
-  .brand{font-weight:800;letter-spacing:-.02em;font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px}
+  .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
+    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px}
   .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
@@ -91,10 +103,12 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
-  .hero h1{font-size:clamp(34px,6vw,58px);max-width:16ch}
+  .hero h1{font-size:var(--hero-size);max-width:17ch}
   .hero .lede{margin:18px 0 28px;font-size:19px}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
-  .hero-note{margin-top:20px;font-size:14px;color:var(--muted)}
+  .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
+    padding-top:16px;border-top:var(--rule) solid color-mix(in srgb, var(--accent) 35%, transparent);
+    display:inline-block}
 
   /* trust strip */
   /* Cell borders rather than a gap over a coloured container: an odd number of
@@ -154,7 +168,34 @@
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
   }
-  @media print{header,.callbar{position:static}}
+  /* ── motion ──────────────────────────────────────────────────────────────
+     A short load sequence in the hero, then sections arrive as you reach them.
+     Everything below is opt-out: with reduced motion the page renders finished. */
+  @media (prefers-reduced-motion:no-preference){
+    /* Scoped to .js — set by an inline script before paint. With scripting off
+       or blocked (some mail clients preview attachments that way) nothing is
+       ever hidden, and the page simply renders finished. */
+    .js .rise{opacity:0;transform:translateY(14px)}
+    .js .in .rise,.js .rise.in{opacity:1;transform:none;
+      transition:opacity .62s var(--ease),transform .62s var(--ease)}
+    .js .hero .rise{transition-delay:calc(var(--i,0) * 90ms)}
+    .card{transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease)}
+    .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+      box-shadow:0 10px 24px -14px rgba(16,32,40,.35)}
+    .btn{transition:transform .18s var(--ease),filter .18s var(--ease)}
+    .btn:active{transform:scale(.97)}
+    .trust div{transition:background .3s var(--ease)}
+    .trust div:hover{background:color-mix(in srgb,var(--accent) 5%,#fff)}
+    .js .callbar{transform:translateY(110%);transition:transform .38s var(--ease)}
+    .js .callbar.up{transform:none}
+    .tel-pulse{position:relative}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .rise,.js .rise{opacity:1;transform:none}
+    .callbar,.js .callbar{transform:none}
+  }
+
+  @media print{header,.callbar{position:static}.rise{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -171,10 +212,10 @@
 
 <div class="hero">
   <div class="wrap">
-    <div class="eyebrow">Endodontist — root canal specialist · San Diego, CA</div>
-    <h1>Root canal specialists in San Diego.</h1>
-    <p class="lede">Endodontics is all we do. Referrals and direct appointments both welcome.</p>
-    <div class="actions">
+    <div class="eyebrow rise" style="--i:0">Endodontist — root canal specialist · San Diego, CA</div>
+    <h1 class="rise" style="--i:1">Root canal specialists in San Diego.</h1>
+    <p class="lede rise" style="--i:2">Endodontics is all we do. Referrals and direct appointments both welcome.</p>
+    <div class="actions rise" style="--i:3">
       <a class="btn btn-primary" href="tel:8584857668">Call (858) 485-7668</a>
       <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=11665%20Avena%20Place%2C%20San%20Diego%2C%20CA%2C%2092128" target="_blank" rel="noopener">Get directions</a>
     </div>
@@ -252,5 +293,40 @@
   <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=11665%20Avena%20Place%2C%20San%20Diego%2C%20CA%2C%2092128" target="_blank" rel="noopener">Map</a>
 </div>
 
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.querySelector('.hero');
+  if (reduce) { document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
+                document.querySelector('.callbar') && document.querySelector('.callbar').classList.add('up');
+                return; }
+
+  // Hero arrives on load, staggered by --i.
+  requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
+
+  // Sections and cards arrive as you reach them, once.
+  var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
+  targets.forEach(function(el){ el.classList.add('rise'); });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    targets.forEach(function(el){ io.observe(el); });
+  } else {
+    targets.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // The call bar stays out of the way until you have actually started reading.
+  var bar = document.querySelector('.callbar');
+  if (bar) {
+    var show = function(){ bar.classList.toggle('up', scrollY > 220); };
+    addEventListener('scroll', show, { passive: true }); show();
+  }
+})();
+</script>
 </body>
 </html>

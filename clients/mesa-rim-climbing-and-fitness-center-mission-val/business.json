@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a climbing gym and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a climbing gym and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "mesa-rim-climbing-and-fitness-center-mission-val",
-  "name": "Mesa Rim Climbing & Fitness Center • Mission Valley",
+  "name": "Mesa Rim Climbing & Fitness Center \u2022 Mission Valley",
   "category": "Climbing & fitness centre",
   "owner": "",
   "currentSite": "https://mesarim.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Climbing and fitness in Mission Valley.",
   "subhead": "On Camino del Rio South. Walk in, rent shoes, get on the wall.",
@@ -85,8 +85,8 @@
     "https": true,
     "mobile": true,
     "speed": false,
-    "phoneTap": false,
-    "hours": false,
+    "phoneTap": true,
+    "hours": true,
     "address": false,
     "services": false,
     "reviews": false,
@@ -102,7 +102,8 @@
     "loadMs": 7499,
     "pageKb": 176,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": true
   },
-  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about mobile, hours, phoneTap — the site renders them with JavaScript."
+  "_verifiedByEye": "Checked by hand: site is current, works on mobile, hours are on it. Not a lead. The browser audit still missed the hours \u2014 likely inside a collapsed panel or loaded on interaction."
 }

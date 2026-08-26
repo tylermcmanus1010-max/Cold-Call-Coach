@@ -266,7 +266,7 @@ function tierOf(lead) {
 function rank(lead) {
   const a = lead.auditResult;
   const tier = tierOf(lead);
-  let s = a.gaps * 6;
+  let s = (a.hardGaps ?? a.gaps) * 6;
   if (tier === 'live') s += 40;          // we opened it and measured what is wrong
   if (tier === 'placeholder') s += 10;   // worth a look, but verify the domain first
   if (!lead.website) {
@@ -373,7 +373,18 @@ async function scout(cfg, opts) {
   if (blocked.length) process.stderr.write(
     `${blocked.length} sites blocked our check (Cloudflare and similar) — skipped, since we cannot prove anything is wrong with them.\n`);
 
-  const qualified = leads.filter((b) => !b.auditResult.blocked && b.auditResult.gaps >= f.minGaps);
+  const managed = leads.filter((b) => b.auditResult.managed);
+  if (managed.length) process.stderr.write(
+    `${managed.length} are on a managed platform (Shopify, Squarespace, BloomNation and the like) — ` +
+    `skipped, someone is already paid to maintain them.\n`);
+
+  // Only provable findings count toward a lead's score. Text-derived checks are
+  // recorded for your own eyes but never make a business look worse than it is.
+  const hardGaps = (a) => CHECKS.filter((c) => !c.soft && !a.checks[c.key]).length;
+  for (const b of leads) b.auditResult.hardGaps = hardGaps(b.auditResult);
+
+  const qualified = leads.filter((b) =>
+    !b.auditResult.blocked && !b.auditResult.managed && b.auditResult.hardGaps >= 3);
 
   // Sort by evidence first, score only within a tier. Ranking everything by one
   // number kept letting ambiguous leads outrank measured ones on arithmetic:
@@ -438,6 +449,10 @@ function toBusinessJson(lead, tplPath) {
     audit: a.checks,
     _scout: {
       score: lead.score, gaps: a.gaps,
+      // Whether these findings were measured in a real browser. A raw-HTML run
+      // cannot see JavaScript-rendered hours, phone links or layout, so its
+      // findings are not safe to put in front of an owner.
+      rendered: a.rendered === true,
       currentSiteStatus: !lead.website ? 'no website' : a.reachable ? (a.reason || 'live') : `unreachable: ${a.reason}`,
       loadMs: a.ms ?? null, pageKb: a.kb ?? null, builder: info.builder || null, copyrightYear: info.copyrightYear || null,
     },

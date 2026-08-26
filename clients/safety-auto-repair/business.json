@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a auto repair shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "safety-auto-repair",
   "name": "Safety Auto Repair",
-  "category": "car repair",
+  "category": "Auto repair",
   "owner": "",
   "currentSite": "https://forsale.godaddy.com/forsale/safetyautorepair.com?utm_source=TDFS_BINNS2&utm_medium=parkedpages&utm_campaign=x_corp_tdfs-binns2_base&traffic_type=TDFS_BINNS2&traffic_id=binns2&",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Honest auto repair in San Diego.",
+  "subhead": "Diagnosed before it is quoted. Call the shop.",
+  "tagline": "Auto repair in San Diego, CA. Call (619) 265-2099.",
   "heroNote": "",
-  "phone": "+1-619-265-2099",
+  "phone": "(619) 265-2099",
   "email": "",
   "address": {
     "street": "6517 El Cajon Blvd",
@@ -23,60 +23,60 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we do",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Diagnostics",
+      "desc": "Codes read and explained first.",
+      "price": ""
+    },
+    {
+      "name": "Brakes",
+      "desc": "Pads, rotors and inspection.",
+      "price": ""
+    },
+    {
+      "name": "Engine repair",
+      "desc": "From tune-ups to major work.",
+      "price": ""
+    },
+    {
+      "name": "Suspension",
+      "desc": "Struts, shocks and alignment.",
+      "price": ""
+    },
+    {
+      "name": "Oil & service",
+      "desc": "Scheduled maintenance.",
+      "price": ""
+    },
+    {
+      "name": "Pre-purchase checks",
+      "desc": "Before you buy a used car.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "Call before you come in and we will tell you the wait"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 265-2099"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#b04a2a",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -101,6 +101,8 @@
     "loadMs": 8319,
     "pageKb": 257,
     "builder": null,
-    "copyrightYear": 2026
+    "copyrightYear": 2026,
+    "rendered": false,
+    "hardGaps": 3
   }
 }

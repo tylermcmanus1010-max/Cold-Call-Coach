@@ -11,7 +11,7 @@ What I changed:
 - HTTPS with a free auto-renewing certificate
 - Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- Every service listed with a starting price
+- LocalBusiness schema so Google can read hours, phone, rating and location
 
 Nothing is live. This is just so you can see what it would look like.
 

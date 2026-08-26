@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a auto body and repair shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "true-line",
   "name": "True Line",
-  "category": "car repair",
+  "category": "Auto body & repair",
   "owner": "",
   "currentSite": "https://truelinewheel.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Straightening cars in El Cajon.",
+  "subhead": "Bring it in and we will tell you what it actually needs.",
+  "tagline": "Auto body & repair in El Cajon, CA. Call (619) 258-1800.",
   "heroNote": "",
-  "phone": "+1-619-258-1800",
+  "phone": "(619) 258-1800",
   "email": "",
   "address": {
     "street": "210 West Bradley Avenue",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we do",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Collision repair",
+      "desc": "Panel, frame and paint.",
+      "price": ""
+    },
+    {
+      "name": "Frame straightening",
+      "desc": "Measured, not guessed.",
+      "price": ""
+    },
+    {
+      "name": "Paint & refinish",
+      "desc": "Matched to the factory colour.",
+      "price": ""
+    },
+    {
+      "name": "Dent removal",
+      "desc": "Small damage without a respray.",
+      "price": ""
+    },
+    {
+      "name": "Insurance work",
+      "desc": "We deal with the adjuster.",
+      "price": ""
+    },
+    {
+      "name": "Estimates",
+      "desc": "Free, and in writing.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "In El Cajon",
+    "Free written estimates"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 258-1800"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#a8452c",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -97,10 +98,12 @@
   "_scout": {
     "score": 91,
     "gaps": 6,
-    "currentSiteStatus": "© 2017",
+    "currentSiteStatus": "\u00a9 2017",
     "loadMs": 4738,
     "pageKb": 177,
     "builder": null,
-    "copyrightYear": 2017
+    "copyrightYear": 2017,
+    "rendered": false,
+    "hardGaps": 4
   }
 }

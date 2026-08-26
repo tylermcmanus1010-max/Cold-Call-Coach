@@ -8,7 +8,6 @@ I looked at your website and rebuilt it. It's attached — open it on your phone
 
 What I changed:
 - Tap-to-call in the header and a sticky call bar on mobile
-- Address with a one-tap Google Maps link
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
 - Open Graph tags so the link previews properly when shared

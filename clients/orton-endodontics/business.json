@@ -102,6 +102,8 @@
     "loadMs": 351,
     "pageKb": 16,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": false,
+    "hardGaps": 3
   }
 }

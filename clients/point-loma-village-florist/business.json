@@ -102,7 +102,9 @@
     "loadMs": 151,
     "pageKb": 2,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": null,
+    "rendered": false,
+    "hardGaps": 3
   },
   "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about hours, phoneTap \u2014 the site renders them with JavaScript."
 }

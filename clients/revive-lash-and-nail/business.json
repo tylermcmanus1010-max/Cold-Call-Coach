@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a lash and nail studio and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "revive-lash-and-nail",
   "name": "Revive Lash & Nail",
-  "category": "beauty",
+  "category": "Lash & nail studio",
   "owner": "",
   "currentSite": "https://revivelashandnail.com/lander",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Lashes and nails, done properly.",
+  "subhead": "Call the studio and book with a tech.",
+  "tagline": "Lash & nail studio in San Diego, CA. Call (619) 466-6854.",
   "heroNote": "",
-  "phone": "+1-619-466-6854",
+  "phone": "(619) 466-6854",
   "email": "",
   "address": {
     "street": "3755 Murphy Canyon Road",
@@ -23,60 +23,60 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "On the menu",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Lash extensions",
+      "desc": "Classic, hybrid and volume sets.",
+      "price": ""
+    },
+    {
+      "name": "Lash fills",
+      "desc": "Every two to three weeks.",
+      "price": ""
+    },
+    {
+      "name": "Manicures",
+      "desc": "Classic and gel.",
+      "price": ""
+    },
+    {
+      "name": "Pedicures",
+      "desc": "Spa and deluxe.",
+      "price": ""
+    },
+    {
+      "name": "Dip & acrylic",
+      "desc": "Full sets and fills.",
+      "price": ""
+    },
+    {
+      "name": "Brow shaping",
+      "desc": "Wax and tint.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "Call to book with a technician"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 466-6854"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#8a3f63",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -97,10 +97,12 @@
   "_scout": {
     "score": 115,
     "gaps": 10,
-    "currentSiteStatus": "© 1999",
+    "currentSiteStatus": "\u00a9 1999",
     "loadMs": 8847,
     "pageKb": 25,
     "builder": null,
-    "copyrightYear": 1999
+    "copyrightYear": 1999,
+    "rendered": false,
+    "hardGaps": 5
   }
 }

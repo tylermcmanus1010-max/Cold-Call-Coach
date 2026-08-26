@@ -1,5 +1,5 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand \u2014 that is the part that sells.",
   "slug": "spa-hans",
   "name": "Spa Hans",
   "category": "massage",
@@ -25,13 +25,13 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
+      "days": "Mon\u2013Fri",
+      "time": "8:00 AM \u2013 5:00 PM",
       "schema": "Mo-Fr 08:00-17:00"
     },
     {
       "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
+      "time": "9:00 AM \u2013 2:00 PM",
       "schema": "Sa 09:00-14:00"
     },
     {
@@ -97,10 +97,12 @@
   "_scout": {
     "score": 98,
     "gaps": 8,
-    "currentSiteStatus": "© 2022",
+    "currentSiteStatus": "\u00a9 2022",
     "loadMs": 9641,
     "pageKb": 148,
     "builder": null,
-    "copyrightYear": 2022
+    "copyrightYear": 2022,
+    "rendered": false,
+    "hardGaps": 4
   }
 }

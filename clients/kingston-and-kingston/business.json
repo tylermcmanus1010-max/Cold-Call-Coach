@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone and current site are REAL. Practice areas are deliberately NOT listed \u2014 never invent them for a law firm. Ask what they do and I will add it.",
+  "_howto": "Name, phone and current site are REAL. Practice areas are deliberately NOT listed — never invent them for a law firm. Ask what they do and I will add it.",
   "slug": "kingston-and-kingston",
   "name": "Kingston and Kingston",
   "category": "Attorneys",
@@ -72,5 +72,10 @@
     "pageKb": 11,
     "builder": "WordPress",
     "copyrightYear": 2026
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: after hours"
+  ]
 }

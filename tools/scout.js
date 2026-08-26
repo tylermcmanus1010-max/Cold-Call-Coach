@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { audit, CHECKS } = require('./audit');
+const { auditRendered, chromium, EXEC } = require('./browser-audit');
 
 // Overpass instances go down and rate-limit independently; try them in turn.
 const OVERPASS_MIRRORS = (process.env.OVERPASS_MIRRORS || '').split(',').map((x) => x.trim()).filter(Boolean);
@@ -345,9 +346,27 @@ async function scout(cfg, opts) {
   leads = [...withSite, ...withoutSite];
   if (opts.limit) leads = leads.slice(0, opts.limit);
 
-  process.stderr.write(`Auditing ${leads.length} websites, ${cfg.concurrency} at a time…\n`);
-  const audits = await pool(leads, cfg.concurrency, (b) => audit(b.website, { timeout: cfg.timeoutMs }),
+  // Audit the RENDERED page. Reading raw HTML told us three businesses had no
+  // hours and no tappable number when both were plainly on their sites — they
+  // just build the page with JavaScript. One browser is shared across all of
+  // them; a fresh context per page keeps them isolated.
+  let browser = null;
+  try {
+    browser = await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
+    process.stderr.write(`Auditing ${leads.length} websites in a real browser, ${cfg.concurrency} at a time…\n`);
+  } catch (e) {
+    process.stderr.write(`Could not start a browser (${e.message.split('\n')[0]}).\n` +
+      `Falling back to raw HTML, which cannot see JavaScript-rendered hours, phone links or layout —\n` +
+      `treat any finding from this run as unconfirmed.\n`);
+  }
+
+  const audits = await pool(leads, cfg.concurrency,
+    (b) => (!b.website ? audit(null)
+      : browser ? auditRendered(b.website, { timeout: cfg.timeoutMs * 2, browser })
+      : audit(b.website, { timeout: cfg.timeoutMs })),
     (done, total) => { if (done % 25 === 0 || done === total) process.stderr.write(`  ${done}/${total}\n`); });
+
+  if (browser) await browser.close().catch(() => {});
 
   leads.forEach((b, i) => { b.auditResult = audits[i]; b.slug = slugify(b.name); });
   const blocked = leads.filter((b) => b.auditResult.blocked);

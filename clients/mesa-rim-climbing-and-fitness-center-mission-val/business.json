@@ -85,8 +85,8 @@
     "https": true,
     "mobile": true,
     "speed": true,
-    "phoneTap": false,
-    "hours": false,
+    "phoneTap": true,
+    "hours": true,
     "address": false,
     "services": false,
     "reviews": false,
@@ -103,5 +103,6 @@
     "pageKb": 142,
     "builder": "WordPress",
     "copyrightYear": 2015
-  }
+  },
+  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about mobile, hours, phoneTap \u2014 the site renders them with JavaScript."
 }

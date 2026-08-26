@@ -28,13 +28,29 @@ permissions:
 jobs:
   scout:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      # The audit renders each site in a real browser. Reading raw HTML reported
+      # missing hours and untappable numbers on sites that had both — they just
+      # build the page with JavaScript.
+      - name: Browser for auditing
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROMIUM_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium-browser >/dev/null 2>&1; then
+            echo "CHROMIUM_PATH=$(command -v chromium-browser)" >> "$GITHUB_ENV"
+          else
+            npx -y playwright@1.49.1 install --with-deps chromium
+          fi
 
       - name: Scout
         id: scout

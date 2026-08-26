@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a florist and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a florist and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "house-of-stemms",
   "name": "House of Stemms",
   "category": "Florist",
@@ -63,7 +63,7 @@
   "about": "",
   "points": [
     "On Mission Gorge Road",
-    "Call before you order online \u2014 we answer"
+    "Call before you order online — we answer"
   ],
   "rating": {
     "value": "",
@@ -103,5 +103,10 @@
     "pageKb": 2,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: no answer, after hours"
+  ]
 }

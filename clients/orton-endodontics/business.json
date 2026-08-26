@@ -1,8 +1,8 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a endodontic practice and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a endodontic practice and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "orton-endodontics",
   "name": "Orton Endodontics",
-  "category": "Endodontist \u2014 root canal specialist",
+  "category": "Endodontist — root canal specialist",
   "owner": "",
   "currentSite": "https://www.ortonendo.com/",
   "liveUrl": "",
@@ -10,7 +10,7 @@
   "tier": "onepage",
   "headline": "Root canal specialists in San Diego.",
   "subhead": "Endodontics is all we do. Referrals and direct appointments both welcome.",
-  "tagline": "Endodontist \u2014 root canal specialist in San Diego, CA. Call (858) 485-7668.",
+  "tagline": "Endodontist — root canal specialist in San Diego, CA. Call (858) 485-7668.",
   "heroNote": "",
   "phone": "(858) 485-7668",
   "email": "",
@@ -62,7 +62,7 @@
   "aboutHeading": "",
   "about": "",
   "points": [
-    "Endodontics only \u2014 this is the whole practice",
+    "Endodontics only — this is the whole practice",
     "Referrals and direct appointments welcome"
   ],
   "rating": {
@@ -105,5 +105,10 @@
     "copyrightYear": null,
     "rendered": false,
     "hardGaps": 3
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: voicemail"
+  ]
 }

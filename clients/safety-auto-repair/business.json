@@ -4,7 +4,7 @@
   "name": "Safety Auto Repair",
   "category": "car repair",
   "owner": "",
-  "currentSite": "https://www.safetyautorepair.com/",
+  "currentSite": "https://forsale.godaddy.com/forsale/safetyautorepair.com?utm_source=TDFS_BINNS2&utm_medium=parkedpages&utm_campaign=x_corp_tdfs-binns2_base&traffic_type=TDFS_BINNS2&traffic_id=binns2&",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -81,26 +81,26 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
+    "https": true,
+    "mobile": true,
     "speed": false,
     "phoneTap": false,
     "hours": false,
     "address": false,
-    "services": false,
+    "services": true,
     "reviews": false,
     "cta": false,
-    "seo": false,
-    "meta": false,
+    "seo": true,
+    "meta": true,
     "social": false
   },
   "_scout": {
-    "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 95,
-    "pageKb": 0,
+    "score": 87,
+    "gaps": 7,
+    "currentSiteStatus": "live",
+    "loadMs": 8319,
+    "pageKb": 257,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": 2026
   }
 }

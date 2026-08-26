@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "san-diego-training-systems",
-  "name": "San Diego Training Systems",
-  "category": "fitness centre",
+  "slug": "spa-hans",
+  "name": "Spa Hans",
+  "category": "massage",
   "owner": "",
-  "currentSite": "https://sandiegotrainingsystems.com/",
+  "currentSite": "https://spahans.online/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,10 +12,10 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-858-945-3695",
+  "phone": "",
   "email": "",
   "address": {
-    "street": "4206 Sorrento Valley Boulevard",
+    "street": "10066 Pacific Heights Boulevard",
     "city": "San Diego",
     "state": "CA",
     "zip": "92121"
@@ -82,8 +82,8 @@
   },
   "audit": {
     "https": true,
-    "mobile": false,
-    "speed": true,
+    "mobile": true,
+    "speed": false,
     "phoneTap": false,
     "hours": false,
     "address": false,
@@ -92,15 +92,15 @@
     "cta": true,
     "seo": false,
     "meta": false,
-    "social": false
+    "social": true
   },
   "_scout": {
-    "score": 111,
-    "gaps": 9,
-    "currentSiteStatus": "live",
-    "loadMs": 1648,
-    "pageKb": 7,
+    "score": 98,
+    "gaps": 8,
+    "currentSiteStatus": "© 2022",
+    "loadMs": 9641,
+    "pageKb": 148,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": 2022
   }
 }

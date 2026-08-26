@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a custom apparel shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a custom apparel shop and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "emerald-sportswear",
   "name": "Emerald Sportswear",
   "category": "Custom apparel & alterations",
@@ -96,12 +96,12 @@
     "social": false
   },
   "_scout": {
-    "score": 105,
+    "score": 115,
     "gaps": 8,
-    "currentSiteStatus": "live",
-    "loadMs": 1532,
+    "currentSiteStatus": "© 2014",
+    "loadMs": 2585,
     "pageKb": 33,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": 2014
   }
 }

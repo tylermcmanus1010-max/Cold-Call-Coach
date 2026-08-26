@@ -81,26 +81,26 @@
     "heroImage": ""
   },
   "audit": {
+    "https": true,
     "mobile": false,
-    "https": false,
     "speed": false,
     "phoneTap": false,
-    "hours": false,
-    "address": false,
+    "hours": true,
+    "address": true,
     "services": false,
     "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "cta": true,
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "_scout": {
-    "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 1228,
-    "pageKb": 111,
-    "builder": "Squarespace",
+    "score": 87,
+    "gaps": 5,
+    "currentSiteStatus": "live",
+    "loadMs": 24287,
+    "pageKb": 114,
+    "builder": null,
     "copyrightYear": null
   }
 }

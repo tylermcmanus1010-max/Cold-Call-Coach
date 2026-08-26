@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ducky&#39;s Barbershop — Barber shop</title>
+<title>Ducky&#39;s Barbershop — Barber shop in El Cajon, CA</title>
 <meta name="description" content="Barbershop with 4.7 stars across 286 reviews. Call (619) 456-3232. Call (619) 456-3232.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Ducky&#39;s Barbershop">
@@ -18,6 +18,14 @@
   "name": "Ducky's Barbershop",
   "description": "Barbershop with 4.7 stars across 286 reviews. Call (619) 456-3232.",
   "telephone": "(619) 456-3232",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "941 Broadway Unit L",
+    "addressLocality": "El Cajon",
+    "addressRegion": "CA",
+    "postalCode": "92021",
+    "addressCountry": "US"
+  },
   "areaServed": [],
   "openingHours": [],
   "priceRange": "$$",
@@ -89,8 +97,11 @@
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted)}
 
   /* trust strip */
-  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px}
-  .trust div{background:#fff;padding:20px}
+  /* Cell borders rather than a gap over a coloured container: an odd number of
+     highlights used to leave the container colour showing as an empty grey box. */
+  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px;background:#fff}
+  .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .trust b{display:block;font-size:26px;letter-spacing:-.02em}
   .trust span{font-size:13px;color:var(--muted)}
 
@@ -160,12 +171,12 @@
 
 <div class="hero">
   <div class="wrap">
-    <div class="eyebrow">Barber shop</div>
+    <div class="eyebrow">Barber shop · El Cajon, CA</div>
     <h1>A proper barbershop, and the reviews to prove it.</h1>
     <p class="lede">4.7 stars across 286 reviews. Book ahead or call the shop.</p>
     <div class="actions">
       <a class="btn btn-primary" href="tel:6194563232">Call (619) 456-3232</a>
-      
+      <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=941%20Broadway%20Unit%20L%2C%20El%20Cajon%2C%20CA%2C%2092021" target="_blank" rel="noopener">Get directions</a>
     </div>
     <div class="hero-note">Wheelchair accessible · Online booking available</div>
     <div class="trust"><div><b>4.7★</b><span>On Google</span></div><div><b>286</b><span>Reviews</span></div><div><b>Walk-in</b><span>Or book ahead</span></div><div><b>Open</b><span>Until 6 PM today</span></div></div>
@@ -221,7 +232,7 @@
       <div class="actions">
         <a class="btn btn-primary" href="tel:6194563232">Call now</a>
         
-        
+        <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=941%20Broadway%20Unit%20L%2C%20El%20Cajon%2C%20CA%2C%2092021" target="_blank" rel="noopener">Directions</a>
       </div>
     </div>
   </div>
@@ -231,14 +242,14 @@
 
 <footer class="site">
   <div class="wrap" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;width:100%">
-    <span>© 2026 Ducky&#39;s Barbershop</span>
+    <span>© 2026 Ducky&#39;s Barbershop · El Cajon, CA</span>
     <span>(619) 456-3232</span>
   </div>
 </footer>
 
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6194563232">Call (619) 456-3232</a>
-  
+  <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=941%20Broadway%20Unit%20L%2C%20El%20Cajon%2C%20CA%2C%2092021" target="_blank" rel="noopener">Map</a>
 </div>
 
 </body>

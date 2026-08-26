@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a endodontic practice and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "orton-endodontics",
   "name": "Orton Endodontics",
-  "category": "dentist",
+  "category": "Endodontist \u2014 root canal specialist",
   "owner": "",
   "currentSite": "https://www.ortonendo.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Root canal specialists in San Diego.",
+  "subhead": "Endodontics is all we do. Referrals and direct appointments both welcome.",
+  "tagline": "Endodontist \u2014 root canal specialist in San Diego, CA. Call (858) 485-7668.",
   "heroNote": "",
-  "phone": "+1 858-485-7668",
+  "phone": "(858) 485-7668",
   "email": "",
   "address": {
     "street": "11665 Avena Place",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we treat",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Root canal therapy",
+      "desc": "The procedure we do every day.",
+      "price": ""
+    },
+    {
+      "name": "Retreatment",
+      "desc": "When a previous root canal has not held.",
+      "price": ""
+    },
+    {
+      "name": "Cracked teeth",
+      "desc": "Diagnosis and treatment of fractures.",
+      "price": ""
+    },
+    {
+      "name": "Dental trauma",
+      "desc": "Knocked-out and injured teeth.",
+      "price": ""
+    },
+    {
+      "name": "Apicoectomy",
+      "desc": "Surgical treatment when needed.",
+      "price": ""
+    },
+    {
+      "name": "Emergency appointments",
+      "desc": "For pain that will not wait.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "Endodontics only \u2014 this is the whole practice",
+    "Referrals and direct appointments welcome"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (858) 485-7668"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#0f6e7c",
     "ink": "#12181c",
     "heroImage": ""
   },

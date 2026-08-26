@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a custom apparel shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "emerald-sportswear",
   "name": "Emerald Sportswear",
-  "category": "tailor",
+  "category": "Custom apparel & alterations",
   "owner": "",
   "currentSite": "https://www.companycasuals.com/emsports/start.jsp",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "Emerald Sportwear",
+  "headline": "Custom apparel and alterations in Spring Valley.",
+  "subhead": "On Campo Road. Bring it in and we will tell you straight what it takes.",
+  "tagline": "Custom apparel & alterations in Spring Valley, CA. Call (619) 741-7335.",
   "heroNote": "",
-  "phone": "+1-619-741-7335",
+  "phone": "(619) 741-7335",
   "email": "",
   "address": {
     "street": "9971 Campo Road",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we make and mend",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Team uniforms",
+      "desc": "Kitted out for the whole roster.",
+      "price": ""
+    },
+    {
+      "name": "Screen printing",
+      "desc": "Shirts, hoodies and spirit wear.",
+      "price": ""
+    },
+    {
+      "name": "Embroidery",
+      "desc": "Logos, names and numbers.",
+      "price": ""
+    },
+    {
+      "name": "Alterations",
+      "desc": "Hems, seams and resizing.",
+      "price": ""
+    },
+    {
+      "name": "Custom orders",
+      "desc": "One piece or a hundred.",
+      "price": ""
+    },
+    {
+      "name": "Bulk pricing",
+      "desc": "Better rates on team quantities.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On Campo Road, Spring Valley",
+    "Call for turnaround before you order online"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 741-7335"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#1f6b4a",
     "ink": "#12181c",
     "heroImage": ""
   },

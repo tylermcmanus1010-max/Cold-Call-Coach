@@ -5,8 +5,11 @@
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc build [slug]       render index.html + pitch.md (all clients if no slug)
+//   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
+//   ./cc export [slug]      copy built pages to send/ named by business,
+//                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
 //
 // scout options:
@@ -155,20 +158,67 @@ Next:
 function cmdBuild(slug) {
   const list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
+  const skipped = [];
   for (const s of list) {
     const b = load(s);
-    if (!b.name || !b.tagline) die(
-      `clients/${s}/business.json is missing ${!b.name ? '"name"' : '"tagline"'}.\n` +
-      `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
-      `  they are the two lines that actually sell the page.`);
+    if (!b.name || !b.tagline) {
+      // Building every client should not stop at the first unfinished one —
+      // that silently left the others on a stale template for a whole session.
+      const missing = !b.name ? '"name"' : '"tagline"';
+      if (slug) die(
+        `clients/${s}/business.json is missing ${missing}.\n` +
+        `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
+        `  they are the two lines that actually sell the page.`);
+      skipped.push(`${s} (missing ${missing})`);
+      continue;
+    }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
+    const p = pitch(b, pricing);
     fs.writeFileSync(path.join(dir(s), 'index.html'), render(b));
-    fs.writeFileSync(path.join(dir(s), 'pitch.md'), pitch(b, pricing));
+    fs.writeFileSync(path.join(dir(s), 'pitch.md'), p.sheet);
+    // Ready to paste: subject on the first line, body underneath, no markdown.
+    fs.writeFileSync(path.join(dir(s), 'email.txt'),
+      `Subject: ${p.subject}\n\n${p.body}\n`);
     const failed = checks.filter((c) => (b.audit || {})[c.key] !== true).length;
     console.log(`✓ ${s} — index.html + pitch.md  (${checks.length - failed}/${checks.length} passing, ${failed} gaps to sell)`);
   }
+  if (skipped.length) {
+    console.log(`\n  ${skipped.length} not built yet — write a headline and tagline for each:`);
+    skipped.forEach((s) => console.log(`    · ${s}`));
+  }
   if (list.length === 1) console.log(`\n  open clients/${list[0]}/index.html   ← check it on a phone first`);
+}
+
+// A cold-call list needs to remember who you rang and when, or you call the
+// same shop twice on the same afternoon and never ring the other half.
+function cmdTried(slug, note) {
+  const b = load(slug);
+  b.attempts = (b.attempts || 0) + 1;
+  b.lastTried = new Date().toISOString().slice(0, 10);
+  if (note) b.callNotes = [...(b.callNotes || []), `${b.lastTried}: ${note}`];
+  save(slug, b);
+  console.log(`✓ ${slug} — attempt ${b.attempts} logged${note ? ` (${note})` : ''}`);
+  if (b.attempts >= 4) console.log('  Four tries is enough. ./cc status ' + slug + ' dead and move on.');
+}
+
+// Every build writes clients/<slug>/index.html. Attaching six of those to six
+// emails means six files called index.html — export names them by business.
+function cmdExport(slug) {
+  const SEND = path.join(ROOT, 'send');
+  const list = slug ? [slug] : all();
+  fs.mkdirSync(SEND, { recursive: true });
+  let n = 0;
+  for (const s of list) {
+    const html = path.join(dir(s), 'index.html');
+    if (!fs.existsSync(html)) continue;
+    fs.copyFileSync(html, path.join(SEND, `${s}.html`));
+    const email = path.join(dir(s), 'email.txt');
+    if (fs.existsSync(email)) fs.copyFileSync(email, path.join(SEND, `${s}-email.txt`));
+    n++;
+  }
+  console.log(`✓ ${n} page${n === 1 ? '' : 's'} → send/`);
+  console.log('  each named after the business, so they do not collide in a downloads folder');
 }
 
 function cmdStatus(slug, status) {
@@ -186,14 +236,15 @@ function cmdList() {
     const gaps = checks.filter((c) => (b.audit || {})[c.key] !== true).length;
     const tier = pricing.tiers[b.tier || pricing.defaultTier];
     return { slug: s, status: b.status || 'new', gaps, sent: b.sentOn || '',
+             tries: b.attempts ? `${b.attempts}× ${b.lastTried}` : '',
              value: tier ? pricing.currency + tier.price.toLocaleString('en-US') : '' };
   });
   if (!rows.length) return console.log('No clients yet. Run: ./cc scout --make 10');
   const ws = Math.max(8, ...rows.map((r) => r.slug.length));
-  console.log(`\n${'BUSINESS'.padEnd(ws)}  STATUS    GAPS  QUOTE     SENT`);
-  console.log('─'.repeat(ws + 34));
+  console.log(`\n${'BUSINESS'.padEnd(ws)}  STATUS    GAPS  QUOTE     CALLED         SENT`);
+  console.log('─'.repeat(ws + 49));
   for (const r of rows) {
-    console.log(`${r.slug.padEnd(ws)}  ${r.status.padEnd(8)}  ${String(r.gaps).padStart(4)}  ${r.value.padEnd(8)}  ${r.sent}`);
+    console.log(`${r.slug.padEnd(ws)}  ${r.status.padEnd(8)}  ${String(r.gaps).padStart(4)}  ${r.value.padEnd(8)}  ${r.tries.padEnd(13)}  ${r.sent}`);
   }
   const open = rows.filter((r) => ['new', 'sent', 'replied'].includes(r.status));
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
@@ -206,8 +257,10 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'audit': await cmdAudit(args[0]); break;
     case 'new': cmdNew(args[0]); break;
     case 'build': cmdBuild(args[0]); break;
+    case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
+    case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {

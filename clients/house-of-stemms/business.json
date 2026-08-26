@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a florist and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "house-of-stemms",
   "name": "House of Stemms",
-  "category": "florist",
+  "category": "Florist",
   "owner": "",
   "currentSite": "https://deluxeflorist.com/san-diego-florist-flower-delivery",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Flowers with some thought behind them.",
+  "subhead": "On Mission Gorge Road. Arranged to order, not pulled from a bucket.",
+  "tagline": "Florist in San Diego, CA. Call (619) 237-8842.",
   "heroNote": "",
-  "phone": "+1-619-237-8842",
+  "phone": "(619) 237-8842",
   "email": "",
   "address": {
     "street": "6602 Mission Gorge Road",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "What we arrange",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Signature arrangements",
+      "desc": "Designed for the occasion, not off a shelf.",
+      "price": ""
+    },
+    {
+      "name": "Weddings",
+      "desc": "Bouquets, ceremony and reception flowers.",
+      "price": ""
+    },
+    {
+      "name": "Events",
+      "desc": "Corporate, launches and private parties.",
+      "price": ""
+    },
+    {
+      "name": "Sympathy",
+      "desc": "Handled quickly and quietly when it matters.",
+      "price": ""
+    },
+    {
+      "name": "Weekly subscriptions",
+      "desc": "Fresh flowers for home or the office.",
+      "price": ""
+    },
+    {
+      "name": "Delivery",
+      "desc": "Across San Diego.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On Mission Gorge Road",
+    "Call before you order online — we answer"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 237-8842"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#3d6b3f",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -102,5 +103,10 @@
     "pageKb": 2,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: no answer, after hours"
+  ]
 }

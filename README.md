@@ -152,6 +152,17 @@ Pages, Cloudflare Pages — all free), put the URL in `liveUrl`, and rebuild.
 
 ---
 
+## Making the call
+
+`CALL.md` is the script. The goal of the call is to get an email address, not to
+sell a website — which makes it a 45-second call that is hard to lose.
+
+## When they say yes
+
+`DELIVERY.md` covers the other half: putting the page live on free hosting,
+pointing their domain **without breaking their email** (the one mistake that
+ends a job on day one), getting paid, and what the monthly fee actually covers.
+
 ## Pricing
 
 All of it lives in `config/pricing.json` — edit once, applies to every pitch.

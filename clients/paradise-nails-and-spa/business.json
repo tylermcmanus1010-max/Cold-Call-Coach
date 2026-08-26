@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a nail salon and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "paradise-nails-and-spa",
   "name": "Paradise Nails and Spa",
-  "category": "beauty",
+  "category": "Nail salon & spa",
   "owner": "",
   "currentSite": "http://www.paradisenails.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "Paradise Nails - Come, Escape The Ordinary from luxurious pedicures & heavenly massages to rejuvenating facials, we aim to please. Serving La Mesa and San Diego with strict adherence to current health and safety standards give peace of mind while you enjoy the personal care of our beauty therapy.",
+  "headline": "Nails and spa treatments in La Mesa.",
+  "subhead": "At Grossmont Center. Walk in or call ahead.",
+  "tagline": "Nail salon & spa in La Mesa, CA. Call (619) 469-8899.",
   "heroNote": "",
-  "phone": "+1-619-469-8899",
+  "phone": "(619) 469-8899",
   "email": "",
   "address": {
     "street": "5500 Grossmont Center Drive",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "On the menu",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Manicures",
+      "desc": "Classic and gel.",
+      "price": ""
+    },
+    {
+      "name": "Pedicures",
+      "desc": "Including spa and deluxe.",
+      "price": ""
+    },
+    {
+      "name": "Gel & dip",
+      "desc": "Long-wearing colour.",
+      "price": ""
+    },
+    {
+      "name": "Acrylic & extensions",
+      "desc": "Full sets and fills.",
+      "price": ""
+    },
+    {
+      "name": "Nail art",
+      "desc": "As simple or as involved as you like.",
+      "price": ""
+    },
+    {
+      "name": "Waxing",
+      "desc": "Brows, lip and more.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "At Grossmont Center, La Mesa",
+    "Walk-ins welcome, or call ahead"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 469-8899"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#8c3f5e",
     "ink": "#12181c",
     "heroImage": ""
   },

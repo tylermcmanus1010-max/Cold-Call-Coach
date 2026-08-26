@@ -3,6 +3,46 @@
 
 const checks = require('./checks');
 
+// The email body, with nothing to strip out. pitch.md embeds it for context;
+// email.txt is the version you actually paste into your mail client.
+function emailBody(ctx) {
+  const { b, from, owner, noSite, host, money, tier, care, pricing, emailFixes } = ctx;
+  // "McManus Web Co." already ends in a period; do not add a second one.
+  const intro = from.businessName
+    ? `I'm ${from.name}, I run ${String(from.businessName).replace(/\.$/, '')}.`
+    : `I'm ${from.name}.`;
+
+  return `Hi ${owner},
+
+${intro} I build websites for ${b.address?.city || 'local'} businesses.
+
+${b.pitchOpener
+  ? `${b.pitchOpener}
+
+It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : noSite
+  ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
+
+So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : `I looked at your website and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What I changed:`}
+${emailFixes}
+
+Nothing is live. This is just so you can see what it would look like.
+
+${money(tier)} for the ${noSite ? tier.label.toLowerCase().replace('rebuild', 'website') : tier.label.toLowerCase()}, live on your domain in ${tier.includes.find((i) => /live in/i.test(i))?.replace(/live in /i, '') || 'about a week'}.${care ? ` ${money(care)} after that if you want me hosting it and making changes for you.` : ''} ${pricing.guarantee}
+
+Worth a 10-minute call?
+
+${from.name}
+${from.phone ? from.phone + '\n' : ''}${from.email}`;
+}
+
 module.exports = function pitch(b, pricing) {
   const tierKey = b.tier || pricing.defaultTier;
   const tier = pricing.tiers[tierKey];
@@ -32,10 +72,31 @@ module.exports = function pitch(b, pricing) {
     ? failed.map((c) => `- ${c.fixed}`).join('\n')
     : checks.slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
 
-  const emailFixes = (failed.length ? failed : checks).slice(0, 5)
-    .map((c) => `- ${c.fixed}`).join('\n');
+  // Only claim what the attached page actually delivers. Promising "hours
+  // listed" when the hours section is empty gets noticed the moment they open it.
+  const delivers = {
+    hours:    (b.hours || []).some((h) => h.schema),
+    address:  Boolean(b.address?.street),
+    services: (b.services || []).some((x) => x.price),
+    reviews:  (b.reviews || []).length > 0,
+    phoneTap: Boolean(b.phone),
+    cta:      Boolean(b.phone),
+  };
+  const shipped = (c) => delivers[c.key] !== false;
 
-  return `# ${b.name} — pitch sheet
+  const emailFixes = (failed.length ? failed : checks)
+    .filter(shipped).slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
+
+  const notYet = failed.filter((c) => !shipped(c));
+
+  const subject = b.pitchOpener
+    ? "You don't have a website of your own — I built you one"
+    : noSite
+    ? 'Your domain is showing a blank hosting page — I built you a website'
+    : 'Rebuilt your website — take a look before you say no';
+  const body = emailBody({ b, from, owner, noSite, host, money, tier, care, pricing, emailFixes });
+
+  const sheet = `# ${b.name} — pitch sheet
 
 **Current site:** ${b.currentSite || '_none found_'}
 **Rebuilt page:** \`index.html\` (in this folder — attach it or host it)
@@ -54,17 +115,25 @@ ${table}
 
 ${fixes}
 
----
+${notYet.length ? `> **Fill these in before you send.** The page does not yet show: ${notYet.map((c) => c.label.toLowerCase()).join(', ')}. They are on their Google listing — the email does not promise them until they are on the page.
+
+` : ''}---
 
 ## Email to send
 
-**Subject:** ${noSite ? 'Your domain is showing a blank hosting page — I built you a website' : 'Rebuilt your website — take a look before you say no'}
+**Subject:** ${subject}
 
 Hi ${owner},
 
 I'm ${from.name}${fromBiz ? `, I run ${fromBiz}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
 
-${noSite
+${b.pitchOpener
+  ? `${b.pitchOpener}
+
+It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+
+What's on it:`
+  : noSite
   ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
 So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
@@ -98,4 +167,8 @@ ${from.phone ? from.phone + '\n' : ''}${from.email}
 
 ${tier.includes.map((i) => `- ${i}`).join('\n')}
 `;
+
+  return { sheet, subject, body, notYet };
 };
+
+module.exports.emailBody = emailBody;

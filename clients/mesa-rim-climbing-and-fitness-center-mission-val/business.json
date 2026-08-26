@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a climbing gym and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "mesa-rim-climbing-and-fitness-center-mission-val",
-  "name": "Mesa Rim Climbing & Fitness Center • Mission Valley",
-  "category": "fitness centre",
+  "name": "Mesa Rim Climbing & Fitness Center \u2022 Mission Valley",
+  "category": "Climbing & fitness centre",
   "owner": "",
   "currentSite": "https://mesarim.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "",
+  "headline": "Climbing and fitness in Mission Valley.",
+  "subhead": "On Camino del Rio South. Walk in, rent shoes, get on the wall.",
+  "tagline": "Climbing & fitness centre in San Diego, CA. Call (619) 908-1911.",
   "heroNote": "",
-  "phone": "+1-619-908-1911",
+  "phone": "(619) 908-1911",
   "email": "",
   "address": {
     "street": "405 Camino del Rio South",
@@ -23,60 +23,61 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
-  "highlights": [
-    {
-      "value": "",
-      "label": ""
-    }
-  ],
-  "servicesHeading": "",
+  "hours": [],
+  "highlights": [],
+  "servicesHeading": "On the floor",
   "servicesLede": "",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Bouldering",
+      "desc": "No ropes, no partner needed.",
+      "price": ""
+    },
+    {
+      "name": "Rope climbing",
+      "desc": "Top rope and lead.",
+      "price": ""
+    },
+    {
+      "name": "Day passes",
+      "desc": "First time? Start here.",
+      "price": ""
+    },
+    {
+      "name": "Memberships",
+      "desc": "Monthly, no long contract.",
+      "price": ""
+    },
+    {
+      "name": "Intro classes",
+      "desc": "Learn to belay and tie in.",
+      "price": ""
+    },
+    {
+      "name": "Youth programs",
+      "desc": "Classes and camps for kids.",
       "price": ""
     }
   ],
   "aboutHeading": "",
   "about": "",
-  "points": [],
+  "points": [
+    "On Camino del Rio South, Mission Valley",
+    "Gear rental available on site"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Give us a call",
+  "ctaLede": "You will get a person, not a booking robot.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 908-1911"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#a1552b",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -84,8 +85,8 @@
     "https": true,
     "mobile": true,
     "speed": true,
-    "phoneTap": false,
-    "hours": false,
+    "phoneTap": true,
+    "hours": true,
     "address": false,
     "services": false,
     "reviews": false,
@@ -97,10 +98,11 @@
   "_scout": {
     "score": 109,
     "gaps": 9,
-    "currentSiteStatus": "© 2015, WordPress",
+    "currentSiteStatus": "\u00a9 2015, WordPress",
     "loadMs": 1083,
     "pageKb": 142,
     "builder": "WordPress",
     "copyrightYear": 2015
-  }
+  },
+  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about mobile, hours, phoneTap \u2014 the site renders them with JavaScript."
 }

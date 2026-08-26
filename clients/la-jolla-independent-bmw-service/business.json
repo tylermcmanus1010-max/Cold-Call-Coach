@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Address, phone and the '50 years of in-house BMW technical experience' line are REAL, scraped from their own site (bimmerdoc.com). Their site is current — WordPress, copyright 2026 — so the pitch is no HTTPS and no mobile layout, not that it is abandoned. Services are the standard scope of an independent BMW specialist and are an ASSUMPTION; their site does list services, so check them. Rating, reviews and hours still needed from their Google listing.",
   "slug": "la-jolla-independent-bmw-service",
   "name": "La Jolla Independent BMW Service",
-  "category": "car repair",
+  "category": "Independent BMW specialist",
   "owner": "",
   "currentSite": "http://www.bimmerdoc.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "With over 50 years of in-house BMW technical experience, we have proven to be one of the nation",
-  "heroNote": "",
-  "phone": "+1-858-488-1555",
+  "headline": "Independent BMW service in La Jolla.",
+  "subhead": "Over 50 years of in-house BMW technical experience — without dealership prices.",
+  "tagline": "Independent BMW service and repair in La Jolla, CA. Call (858) 488-1555.",
+  "heroNote": "On La Jolla Boulevard · Independent, not a dealership",
+  "phone": "(858) 488-1555",
   "email": "",
   "address": {
     "street": "5535 La Jolla Boulevard",
@@ -23,61 +23,77 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [
-    {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
-    },
-    {
-      "days": "Sunday",
-      "time": "Closed"
-    }
-  ],
+  "hours": [],
   "highlights": [
     {
-      "value": "",
-      "label": ""
+      "value": "50+ yrs",
+      "label": "In-house BMW experience"
+    },
+    {
+      "value": "BMW only",
+      "label": "All we work on"
+    },
+    {
+      "value": "Independent",
+      "label": "Not a dealership"
     }
   ],
-  "servicesHeading": "",
-  "servicesLede": "",
+  "servicesHeading": "What we work on",
+  "servicesLede": "BMW only — diagnostics, maintenance and repair.",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Scheduled maintenance",
+      "desc": "Inspection I and II, oil and filter service.",
+      "price": ""
+    },
+    {
+      "name": "Engine diagnostics",
+      "desc": "Fault codes read and explained before any work starts.",
+      "price": ""
+    },
+    {
+      "name": "Brakes & suspension",
+      "desc": "Pads, rotors, bushings and struts.",
+      "price": ""
+    },
+    {
+      "name": "Cooling system",
+      "desc": "Water pumps, thermostats and radiators.",
+      "price": ""
+    },
+    {
+      "name": "Electrical & sensors",
+      "desc": "The faults dealerships quote a fortune for.",
+      "price": ""
+    },
+    {
+      "name": "Pre-purchase inspection",
+      "desc": "Before you buy a used BMW, let us look at it.",
       "price": ""
     }
   ],
-  "aboutHeading": "",
-  "about": "",
-  "points": [],
+  "aboutHeading": "Fifty years of BMWs, and nothing else",
+  "about": "La Jolla Independent BMW Service has over 50 years of in-house BMW technical experience. We work on BMWs and only BMWs, which is why we find things a general shop misses.\n\nYou get told what is wrong and what it costs before anything is touched, and you talk to the person doing the work.",
+  "points": [
+    "Over 50 years of in-house BMW technical experience",
+    "BMW specialists — not a general repair shop",
+    "Independent, so no dealership markup",
+    "On La Jolla Boulevard"
+  ],
   "rating": {
     "value": "",
     "count": "",
-    "source": "Yelp"
+    "source": "Google"
   },
-  "reviews": [
-    {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
-      "stars": 5
-    }
-  ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "reviews": [],
+  "ctaHeading": "Book your BMW in",
+  "ctaLede": "Call the shop and speak to a technician about what your car needs.",
   "cta": {
-    "primary": ""
+    "primary": "Call (858) 488-1555"
   },
   "theme": {
-    "accent": "#0f6b5c",
-    "ink": "#12181c",
+    "accent": "#16457c",
+    "ink": "#12171d",
     "heroImage": ""
   },
   "audit": {
@@ -102,5 +118,10 @@
     "pageKb": 19,
     "builder": "WordPress",
     "copyrightYear": 2026
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-25",
+  "callNotes": [
+    "2026-08-25: not interested, hung up"
+  ]
 }

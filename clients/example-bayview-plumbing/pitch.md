@@ -76,7 +76,7 @@ tylermcmanus1010@gmail.com
 
 > No catch. I already built it — you're paying me to put it on your domain and keep it working. If you don't like it, you don't pay, and you keep the file.
 
-## What's included at $750
+## What's included at $750 — One-page rebuild
 
 - Everything on this page, live on your domain
 - Mobile, tablet and desktop

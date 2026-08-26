@@ -38,6 +38,8 @@
 - Written page title, description and social preview card
 - Open Graph tags so the link previews properly when shared
 
+> **Fill these in before you send.** The page does not yet show: hours listed, address + directions, services and pricing, reviews on the page. They are on their Google listing — the email does not promise them until they are on the page.
+
 ---
 
 ## Email to send
@@ -56,8 +58,8 @@ What's on it:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
 - Tap-to-call in the header and a sticky call bar on mobile
-- Hours listed on-page and marked up for Google
-- Address with a one-tap Google Maps link
+- One clear action above the fold on every screen size
+- LocalBusiness schema so Google can read hours, phone, rating and location
 
 Nothing is live. This is just so you can see what it would look like.
 

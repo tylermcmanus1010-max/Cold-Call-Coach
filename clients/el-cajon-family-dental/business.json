@@ -1,18 +1,18 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "_howto": "Confirmed from their Google listing: 4.4 stars / 247 reviews, 2720 Fletcher Pkwy, (619) 466-1292, payment plans, sedation dentistry, pediatric care, Dr. Mechael, and the three reviews below. Their site is current (copyright 2026) — the pitch is no HTTPS and no mobile, not that it is abandoned. Weekly hours confirmed from Google. STILL MISSING: any published pricing — worth asking on the call.",
   "slug": "el-cajon-family-dental",
   "name": "El Cajon Family Dental",
-  "category": "dentist",
-  "owner": "",
+  "category": "Dental practice",
+  "owner": "Dr. Mechael",
   "currentSite": "http://elcajonfamilydental.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
-  "headline": "",
-  "subhead": "",
-  "tagline": "El Cajon Family Dental is dependable and caring. We welcome you to our general and cosmetic dentistry practice in El Cajon, CA. Call or visit us online today!",
-  "heroNote": "",
-  "phone": "+1 619 466 1292",
+  "headline": "General and cosmetic dentistry in El Cajon.",
+  "subhead": "Dependable, caring care for the whole family — on Fletcher Parkway in El Cajon.",
+  "tagline": "General and cosmetic dentistry in El Cajon, CA. Call (619) 466-1292.",
+  "heroNote": "Payment plans · Sedation dentistry · Pediatric care",
+  "phone": "(619) 466-1292",
   "email": "",
   "address": {
     "street": "2720 Fletcher Parkway",
@@ -20,63 +20,123 @@
     "state": "CA",
     "zip": "92020"
   },
-  "serviceArea": [],
+  "serviceArea": [
+    "El Cajon",
+    "La Mesa",
+    "Santee",
+    "Lakeside",
+    "Spring Valley"
+  ],
   "license": "",
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon–Fri",
+      "days": "Mon – Thu",
       "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
+      "schema": "Mo-Th 08:00-17:00"
     },
     {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
+      "days": "Friday",
+      "time": "7:30 AM – 4:30 PM",
+      "schema": "Fr 07:30-16:30"
     },
     {
-      "days": "Sunday",
+      "days": "Sat – Sun",
       "time": "Closed"
     }
   ],
   "highlights": [
     {
-      "value": "",
-      "label": ""
+      "value": "4.4★",
+      "label": "From 247 reviews"
+    },
+    {
+      "value": "Payment",
+      "label": "Plans available"
+    },
+    {
+      "value": "Sedation",
+      "label": "For nervous patients"
+    },
+    {
+      "value": "Kids",
+      "label": "Pediatric care"
     }
   ],
-  "servicesHeading": "",
-  "servicesLede": "",
+  "servicesHeading": "What we do",
+  "servicesLede": "General and cosmetic dentistry for adults and children.",
   "services": [
     {
-      "name": "",
-      "desc": "",
+      "name": "Cleanings & exams",
+      "desc": "Routine checkups and hygiene for the whole family.",
+      "price": ""
+    },
+    {
+      "name": "Pediatric care",
+      "desc": "Children are welcome here, and treated like it.",
+      "price": ""
+    },
+    {
+      "name": "Sedation dentistry",
+      "desc": "If the dentist makes you anxious, we can help with that.",
+      "price": ""
+    },
+    {
+      "name": "Fillings & crowns",
+      "desc": "Tooth-coloured repairs that match your smile.",
+      "price": ""
+    },
+    {
+      "name": "Root canals",
+      "desc": "Saving a tooth rather than losing it.",
+      "price": ""
+    },
+    {
+      "name": "Cosmetic dentistry",
+      "desc": "Whitening, veneers and smile work.",
       "price": ""
     }
   ],
-  "aboutHeading": "",
-  "about": "",
-  "points": [],
+  "aboutHeading": "A family practice on Fletcher Parkway",
+  "about": "El Cajon Family Dental is a general and cosmetic practice serving families across El Cajon and the East County, with 247 reviews and a 4.4-star rating on Google.\n\nWe see adults and children, we offer sedation for patients who need it, and we have payment plans so cost is not the reason you put off treatment.",
+  "points": [
+    "Payment plans available",
+    "Sedation dentistry for anxious patients",
+    "Pediatric care — children welcome",
+    "On Fletcher Parkway, with parking"
+  ],
   "rating": {
-    "value": "",
-    "count": "",
-    "source": "Yelp"
+    "value": "4.4",
+    "count": "247",
+    "source": "Google"
   },
   "reviews": [
     {
-      "text": "",
-      "author": "",
-      "source": "Yelp",
+      "text": "Great service. Dr. Mechael is really sweet and professional. I'm looking forward to my next cleaning in 6 months. Thank you",
+      "author": "Ivan",
+      "source": "Google",
+      "stars": 5
+    },
+    {
+      "text": "Thank you to Dr. Mechael, Lila and the entire staff, it is a pleasure to see everyone at cleaning intervals. Best dentist we've ever had! They make beautiful repairs and make everything look even better than the original.",
+      "author": "Katrina Dickison",
+      "source": "Google",
+      "stars": 5
+    },
+    {
+      "text": "Excellent family dental office. They are professional and friendly, and they show a lot of care for your health and well-being.",
+      "author": "Daniel Donahue",
+      "source": "Google",
       "stars": 5
     }
   ],
-  "ctaHeading": "",
-  "ctaLede": "",
+  "ctaHeading": "Book your next visit",
+  "ctaLede": "Call the office and speak to someone who can get you on the schedule.",
   "cta": {
-    "primary": ""
+    "primary": "Call (619) 466-1292"
   },
   "theme": {
-    "accent": "#0f6b5c",
+    "accent": "#0e7c73",
     "ink": "#12181c",
     "heroImage": ""
   },
@@ -102,5 +162,7 @@
     "pageKb": 25,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "reviewsHeading": "What patients say",
+  "sentOn": "2026-08-25"
 }

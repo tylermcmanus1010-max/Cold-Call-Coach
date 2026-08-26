@@ -125,8 +125,11 @@
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted)}
 
   /* trust strip */
-  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px}
-  .trust div{background:#fff;padding:20px}
+  /* Cell borders rather than a gap over a coloured container: an odd number of
+     highlights used to leave the container colour showing as an empty grey box. */
+  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px;background:#fff}
+  .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .trust b{display:block;font-size:26px;letter-spacing:-.02em}
   .trust span{font-size:13px;color:var(--muted)}
 

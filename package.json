@@ -1,0 +1,23 @@
+{
+  "name": "cold-call-coach",
+  "version": "1.0.0",
+  "description": "Find local businesses with bad websites. Rebuild them. Send each owner the page with a price attached. Repeat.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylermcmanus1010-max/Cold-Call-Coach.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tylermcmanus1010-max/Cold-Call-Coach/issues"
+  },
+  "homepage": "https://github.com/tylermcmanus1010-max/Cold-Call-Coach#readme",
+  "dependencies": {
+    "playwright-core": "^1.49.1"
+  }
+}

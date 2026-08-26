@@ -98,10 +98,10 @@
   "_scout": {
     "score": 113,
     "gaps": 8,
-    "currentSiteStatus": "Weebly",
-    "loadMs": 209,
-    "pageKb": 24,
-    "builder": "Weebly",
+    "currentSiteStatus": "live",
+    "loadMs": 4739,
+    "pageKb": 29,
+    "builder": null,
     "copyrightYear": null
   },
   "attempts": 1,

@@ -88,7 +88,7 @@
     "phoneTap": false,
     "hours": false,
     "address": false,
-    "services": false,
+    "services": true,
     "reviews": false,
     "cta": false,
     "seo": false,
@@ -96,11 +96,11 @@
     "social": false
   },
   "_scout": {
-    "score": 113,
-    "gaps": 10,
+    "score": 107,
+    "gaps": 9,
     "currentSiteStatus": "live",
-    "loadMs": 62,
-    "pageKb": 3,
+    "loadMs": 3708,
+    "pageKb": 5,
     "builder": null,
     "copyrightYear": null
   },

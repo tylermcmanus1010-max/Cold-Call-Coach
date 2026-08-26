@@ -81,24 +81,24 @@
     "heroImage": ""
   },
   "audit": {
+    "https": true,
     "mobile": false,
-    "https": false,
-    "speed": false,
+    "speed": true,
     "phoneTap": false,
     "hours": false,
     "address": false,
     "services": false,
     "reviews": false,
-    "cta": false,
+    "cta": true,
     "seo": false,
     "meta": false,
     "social": false
   },
   "_scout": {
-    "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 370,
+    "score": 121,
+    "gaps": 9,
+    "currentSiteStatus": "© 2023",
+    "loadMs": 1619,
     "pageKb": 31,
     "builder": null,
     "copyrightYear": 2023

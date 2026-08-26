@@ -1,10 +1,10 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "san-diego-training-systems",
-  "name": "San Diego Training Systems",
-  "category": "fitness centre",
+  "slug": "same-day-flower-delivery-san-diego-ca-send-flowe",
+  "name": "Same Day Flower Delivery San Diego CA - Send Flowers",
+  "category": "florist",
   "owner": "",
-  "currentSite": "https://sandiegotrainingsystems.com/",
+  "currentSite": "https://flowerdeliverysandiegoca.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -12,13 +12,13 @@
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-858-945-3695",
+  "phone": "+1-619-324-5940",
   "email": "",
   "address": {
-    "street": "4206 Sorrento Valley Boulevard",
+    "street": "2454 G Street",
     "city": "San Diego",
     "state": "CA",
-    "zip": "92121"
+    "zip": "92101"
   },
   "serviceArea": [],
   "license": "",
@@ -82,25 +82,25 @@
   },
   "audit": {
     "https": true,
-    "mobile": false,
+    "mobile": true,
     "speed": true,
     "phoneTap": false,
     "hours": false,
     "address": false,
     "services": false,
     "reviews": false,
-    "cta": true,
-    "seo": false,
+    "cta": false,
+    "seo": true,
     "meta": false,
-    "social": false
+    "social": true
   },
   "_scout": {
-    "score": 111,
-    "gaps": 9,
+    "score": 87,
+    "gaps": 7,
     "currentSiteStatus": "live",
-    "loadMs": 1648,
-    "pageKb": 7,
+    "loadMs": 4815,
+    "pageKb": 60,
     "builder": null,
-    "copyrightYear": null
+    "copyrightYear": 2026
   }
 }

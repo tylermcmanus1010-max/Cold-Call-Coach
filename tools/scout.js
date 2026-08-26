@@ -438,6 +438,10 @@ function toBusinessJson(lead, tplPath) {
     audit: a.checks,
     _scout: {
       score: lead.score, gaps: a.gaps,
+      // Whether these findings were measured in a real browser. A raw-HTML run
+      // cannot see JavaScript-rendered hours, phone links or layout, so its
+      // findings are not safe to put in front of an owner.
+      rendered: a.rendered === true,
       currentSiteStatus: !lead.website ? 'no website' : a.reachable ? (a.reason || 'live') : `unreachable: ${a.reason}`,
       loadMs: a.ms ?? null, pageKb: a.kb ?? null, builder: info.builder || null, copyrightYear: info.copyrightYear || null,
     },

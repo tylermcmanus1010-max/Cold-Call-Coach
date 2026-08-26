@@ -49,6 +49,9 @@ module.exports = function pitch(b, pricing) {
   if (!tier) throw new Error(`Unknown tier "${tierKey}" — options: ${Object.keys(pricing.tiers).join(', ')}`);
 
   const audit = b.audit || {};
+  // Findings never measured in a browser must not become claims. A raw-HTML
+  // run cannot see JavaScript-rendered hours, phone links or layout.
+  const unverified = b._scout && b._scout.rendered === false;
   const scored = checks.map((c) => ({ ...c, pass: audit[c.key] === true }));
   const failed = scored.filter((c) => !c.pass);
   const score = scored.length - failed.length;
@@ -100,12 +103,17 @@ module.exports = function pitch(b, pricing) {
 
 **Current site:** ${b.currentSite || '_none found_'}
 **Rebuilt page:** \`index.html\` (in this folder — attach it or host it)
-**Score:** ${score}/${checks.length}
+**Score:** ${score}/${checks.length}${unverified ? ' — UNVERIFIED, read the warning below' : ''}
 **Price to quote:** ${money(tier)} — ${tier.label}${care ? `, then ${money(care)} for hosting and updates` : ''}
 
 ---
 
-## What's wrong with the site they have
+${unverified ? `> **Do not send yet.** These findings come from the served HTML, not a rendered page.
+> If this site builds itself with JavaScript, its hours, phone link and mobile layout may all be
+> there and simply invisible to that check. Re-run the scout with a browser, or open the site
+> yourself, before claiming any of this to the owner.
+
+` : ''}## What's wrong with the site they have
 
 | | Check | Problem |
 |---|---|---|

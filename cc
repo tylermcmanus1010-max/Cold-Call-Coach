@@ -8,6 +8,7 @@
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
+//   ./cc check [slug]       run our own 12 checks against the pages WE built
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
@@ -204,6 +205,27 @@ function cmdTried(slug, note) {
 
 // Every build writes clients/<slug>/index.html. Attaching six of those to six
 // emails means six files called index.html — export names them by business.
+// We sell a twelve-point audit. Shipping a page that fails it is indefensible.
+async function cmdCheck(slug) {
+  const { selfCheck } = require('./tools/self-check');
+  const list = (slug ? [slug] : all()).filter((s) =>
+    fs.existsSync(path.join(dir(s), 'index.html')));
+  if (!list.length) die('Nothing built yet.');
+  console.log(`Auditing ${list.length} of our own pages with the same checks we sell…\n`);
+  const res = await selfCheck(list, ROOT);
+  const w = Math.max(10, ...res.map((r) => r.slug.length));
+  let weak = 0;
+  for (const r of res.sort((a, b) => a.pass - b.pass)) {
+    const ok = r.failed.length === 0;
+    if (!ok) weak++;
+    console.log(`  ${ok ? '✅' : '⚠️ '} ${r.slug.padEnd(w)}  ${r.pass}/${checks.length}` +
+      (ok ? '' : `  missing: ${r.failed.join(', ')}`));
+  }
+  console.log(`\n  ${res.length - weak} of ${res.length} pass everything we pitch.`);
+  if (weak) console.log('  The rest are missing content only the business can give you —\n' +
+    '  hours, address, reviews. Get them off their Google listing before sending.');
+}
+
 function cmdExport(slug) {
   const SEND = path.join(ROOT, 'send');
   const list = slug ? [slug] : all();
@@ -217,7 +239,24 @@ function cmdExport(slug) {
     if (fs.existsSync(email)) fs.copyFileSync(email, path.join(SEND, `${s}-email.txt`));
     n++;
   }
+  // Hours and reviews are the two the owner will notice missing, because they
+  // are the two we just told him mattered. Pricing is optional — plenty of
+  // trades and practices do not publish it.
+  const thin = list.filter((s) => {
+    const b = load(s);
+    return !(b.hours || []).length || !(b.reviews || []).length;
+  });
   console.log(`✓ ${n} page${n === 1 ? '' : 's'} → send/`);
+  if (thin.length) {
+    console.log(`\n  ⚠️  ${thin.length} of these fail checks we sell — no hours or no reviews on the page:`);
+    thin.slice(0, 12).forEach((s) => {
+      const b = load(s);
+      const miss = [!(b.hours || []).length && 'hours', !(b.reviews || []).length && 'reviews']
+        .filter(Boolean).join(' + ');
+      console.log(`      ${s} (${miss})`);
+    });
+    console.log('      Both are on their Google listing. Run ./cc check to see the full picture.');
+  }
   console.log('  each named after the business, so they do not collide in a downloads folder');
 }
 
@@ -260,6 +299,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
+    case 'check': await cmdCheck(args[0]); break;
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     default:

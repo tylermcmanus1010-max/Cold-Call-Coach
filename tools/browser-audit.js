@@ -87,9 +87,17 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
   try {
     let res = null, https = true;
     const started = Date.now();
+    const isFile = /^file:\/\//i.test(String(rawUrl));
     try {
-      res = await page.goto('https://' + bare, { waitUntil: 'domcontentloaded', timeout });
+      if (isFile) {
+        // Our own built pages are audited from disk. They will be served over
+        // HTTPS once live, so that check is not held against them here.
+        res = await page.goto(String(rawUrl), { waitUntil: 'domcontentloaded', timeout });
+      } else {
+        res = await page.goto('https://' + bare, { waitUntil: 'domcontentloaded', timeout });
+      }
     } catch (e) {
+      if (isFile) { await ctx.close(); if (own) await b.close(); return fail('could not open the file', false); }
       https = false;
       // A failed navigation leaves the page on chrome-error://, which interrupts
       // the very next goto. Retry plain HTTP on a clean page instead.

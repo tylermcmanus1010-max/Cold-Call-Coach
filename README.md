@@ -120,7 +120,20 @@ purpose.
 Every other section is optional — delete what you don't have and the page adapts.
 No empty blocks, no lorem ipsum.
 
-## 4. Build and check it
+## 4. Check our own page before we sell an audit
+
+```bash
+./cc check                 # runs the same 12 checks against the pages WE built
+```
+
+We pitch a twelve-point audit. Shipping a page that fails it is indefensible,
+and an owner will notice — those are the exact things we just told him mattered.
+
+A page needs **hours and reviews** before it goes out. Both come off their Google
+listing and take a minute to add. Pricing is optional; plenty of trades and
+practices do not publish it.
+
+## 5. Build and check it
 
 ```bash
 ./cc build joes-auto

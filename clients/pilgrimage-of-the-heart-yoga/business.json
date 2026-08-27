@@ -1,24 +1,32 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "family-interiors",
-  "name": "Family Interiors",
-  "category": "floorer",
+  "slug": "pilgrimage-of-the-heart-yoga",
+  "name": "Pilgrimage of the Heart Yoga",
+  "category": "fitness centre",
   "owner": "",
-  "currentSite": "https://familyinteriors.com/.well-known/sgcaptcha/?r=%2F&y=ipr:68.220.62.241:1787874164.344",
+  "currentSite": "https://pilgrimageyoga.com/.well-known/sgcaptcha/?r=%2F&y=ipr:68.220.62.241:1787874179.096",
   "liveUrl": "",
-  "status": "dead",
+  "status": "new",
   "tier": "onepage",
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
+  "confirmed": {
+    "prices": false,
+    "email": false,
+    "hours": false,
+    "area": false
+  },
   "headline": "",
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-697-5969",
+  "phone": "+1-619-640-4438",
   "email": "",
   "address": {
-    "street": "1350 Hill Street",
-    "city": "El Cajon",
+    "street": "3287 Adams Avenue",
+    "city": "San Diego",
     "state": "CA",
-    "zip": "92020"
+    "zip": "92116"
   },
   "serviceArea": [],
   "license": "",
@@ -45,13 +53,28 @@
       "label": ""
     }
   ],
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
   "servicesHeading": "",
   "servicesLede": "",
   "services": [
     {
+      "group": "",
       "name": "",
       "desc": "",
-      "price": ""
+      "price": "",
+      "duration": ""
+    }
+  ],
+  "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
+  "booking": {
+    "url": ""
+  },
+  "teamHeading": "",
+  "teamLede": "",
+  "team": [
+    {
+      "name": "",
+      "role": ""
     }
   ],
   "aboutHeading": "",
@@ -99,12 +122,9 @@
     "gaps": 9,
     "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 1960,
+    "loadMs": 3171,
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  },
-  "callNotes": [
-    "2026-08-27: dropped — site checks out in a real browser (0 provable gaps), nothing worth selling"
-  ]
+  }
 }

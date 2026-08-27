@@ -83,7 +83,7 @@
   "audit": {
     "https": true,
     "mobile": true,
-    "speed": true,
+    "speed": false,
     "phoneTap": true,
     "hours": false,
     "address": true,
@@ -95,15 +95,14 @@
     "social": false
   },
   "_scout": {
-    "score": 91,
-    "gaps": 5,
+    "score": 73,
+    "gaps": 6,
+    "rendered": true,
     "currentSiteStatus": "© 2019",
-    "loadMs": 3813,
+    "loadMs": 7795,
     "pageKb": 53,
     "builder": null,
-    "copyrightYear": 2019,
-    "rendered": true,
-    "hardGaps": 3
+    "copyrightYear": 2019
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (2 provable gaps), nothing worth selling"

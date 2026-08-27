@@ -95,15 +95,14 @@
     "social": false
   },
   "_scout": {
-    "score": 115,
+    "score": 85,
     "gaps": 10,
-    "currentSiteStatus": "© 1999",
-    "loadMs": 14038,
-    "pageKb": 15,
-    "builder": null,
-    "copyrightYear": 1999,
     "rendered": true,
-    "hardGaps": 5
+    "currentSiteStatus": "© 1999",
+    "loadMs": 15351,
+    "pageKb": 25,
+    "builder": null,
+    "copyrightYear": 1999
   },
   "_verifiedByEye": "Not a lead. On Bukkii — a salon booking platform with a photo gallery, a full priced service menu with durations, per-technician booking, online booking, hours and social links. Better than what we offer a salon. Do not pitch."
 }

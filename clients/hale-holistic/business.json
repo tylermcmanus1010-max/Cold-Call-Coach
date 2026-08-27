@@ -95,14 +95,13 @@
     "social": false
   },
   "_scout": {
-    "score": 110,
+    "score": 80,
     "gaps": 10,
-    "currentSiteStatus": "© 1999",
-    "loadMs": 13942,
-    "pageKb": 24,
-    "builder": null,
-    "copyrightYear": 1999,
     "rendered": true,
-    "hardGaps": 5
+    "currentSiteStatus": "© 1999",
+    "loadMs": 6614,
+    "pageKb": 15,
+    "builder": null,
+    "copyrightYear": 1999
   }
 }

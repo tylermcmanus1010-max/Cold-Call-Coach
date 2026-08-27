@@ -95,15 +95,14 @@
     "social": true
   },
   "_scout": {
-    "score": 98,
+    "score": 74,
     "gaps": 8,
-    "currentSiteStatus": "© 2022",
-    "loadMs": 14541,
-    "pageKb": 152,
-    "builder": null,
-    "copyrightYear": 2022,
     "rendered": true,
-    "hardGaps": 4
+    "currentSiteStatus": "© 2022",
+    "loadMs": 16781,
+    "pageKb": 154,
+    "builder": null,
+    "copyrightYear": 2022
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"

@@ -95,14 +95,13 @@
     "social": false
   },
   "_scout": {
-    "score": 121,
+    "score": 97,
     "gaps": 9,
+    "rendered": true,
     "currentSiteStatus": "© 2023",
-    "loadMs": 1553,
+    "loadMs": 3185,
     "pageKb": 31,
     "builder": null,
-    "copyrightYear": 2023,
-    "rendered": true,
-    "hardGaps": 5
+    "copyrightYear": 2023
   }
 }

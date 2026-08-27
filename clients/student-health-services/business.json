@@ -1,24 +1,32 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
-  "slug": "valerio-s-city-bakery",
-  "name": "Valerio's City Bakery",
-  "category": "bakery",
+  "slug": "student-health-services",
+  "name": "Student Health Services",
+  "category": "doctors",
   "owner": "",
-  "currentSite": "https://valerios.com/",
+  "currentSite": "https://sacd.sdsu.edu/student-health-services",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
+  "confirmed": {
+    "prices": false,
+    "email": false,
+    "hours": false,
+    "area": false
+  },
   "headline": "",
   "subhead": "",
   "tagline": "",
   "heroNote": "",
-  "phone": "+1-619-477-8588",
+  "phone": "+1 619 594 4325",
   "email": "",
   "address": {
-    "street": "1631 East 8th Street",
-    "city": "National City",
+    "street": "5500 Campanile Drive",
+    "city": "San Diego",
     "state": "CA",
-    "zip": "91950"
+    "zip": "92182"
   },
   "serviceArea": [],
   "license": "",
@@ -45,13 +53,28 @@
       "label": ""
     }
   ],
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
   "servicesHeading": "",
   "servicesLede": "",
   "services": [
     {
+      "group": "",
       "name": "",
       "desc": "",
-      "price": ""
+      "price": "",
+      "duration": ""
+    }
+  ],
+  "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
+  "booking": {
+    "url": ""
+  },
+  "teamHeading": "",
+  "teamLede": "",
+  "team": [
+    {
+      "name": "",
+      "role": ""
     }
   ],
   "aboutHeading": "",
@@ -92,15 +115,15 @@
     "cta": true,
     "seo": false,
     "meta": false,
-    "social": false
+    "social": true
   },
   "_scout": {
-    "score": 75,
-    "gaps": 7,
+    "score": 69,
+    "gaps": 6,
     "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 19201,
-    "pageKb": 148,
+    "loadMs": 17122,
+    "pageKb": 176,
     "builder": null,
     "copyrightYear": 2025
   }

@@ -81,7 +81,7 @@
     "heroImage": ""
   },
   "audit": {
-    "https": false,
+    "https": true,
     "mobile": false,
     "speed": false,
     "phoneTap": false,
@@ -95,15 +95,14 @@
     "social": true
   },
   "_scout": {
-    "score": 87,
-    "gaps": 6,
+    "score": 75,
+    "gaps": 5,
+    "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 38256,
+    "loadMs": 7680,
     "pageKb": 114,
     "builder": null,
-    "copyrightYear": null,
-    "rendered": true,
-    "hardGaps": 3
+    "copyrightYear": null
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"

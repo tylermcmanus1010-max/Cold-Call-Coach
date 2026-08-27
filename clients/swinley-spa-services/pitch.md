@@ -1,4 +1,4 @@
-# San Diego Pool & Spa Service — pitch sheet
+# Swinley Spa Services — pitch sheet
 
 **Current site:** _none found_
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)

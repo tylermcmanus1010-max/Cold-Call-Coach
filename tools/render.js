@@ -138,9 +138,10 @@ function render(b) {
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(b.name)}">
 <meta property="og:description" content="${esc(b.tagline)}">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary_large_image">${b.logo ? `
+<meta property="og:image" content="${esc(b.logo)}">` : ''}
 <meta name="theme-color" content="${esc(accent)}">
-<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(
+<link rel="icon" href="${b.logo ? esc(b.logo) : 'data:image/svg+xml,' + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="${accent}"/><text x="16" y="22" font-size="17" font-family="system-ui,sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${(b.name || '?').trim()[0].toUpperCase()}</text></svg>`
 )}">
 <script type="application/ld+json">
@@ -187,6 +188,15 @@ ${jsonld(b)}
     text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
 
+  /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
+     are unreadable in a 66px header bar, so they belong here at full size. */
+  .hero .logo{display:block;max-width:min(100%,var(--logo-w,300px));height:auto;
+    margin:0 0 24px;mix-blend-mode:multiply}
+  /* multiply needs something light behind it; on a full-bleed accent hero the
+     logo keeps its own white card instead. */
+  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
+
   /* header */
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
@@ -220,7 +230,10 @@ ${jsonld(b)}
       linear-gradient(180deg, var(--soft), #fff);
   }
   ${hero ? `.hero::after{content:"";position:absolute;inset:0;z-index:-2;background:url("${esc(hero)}") center/cover;opacity:.14}` : ''}
-  .hero h1{font-size:var(--hero-size);max-width:17ch}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  h2{text-wrap:balance}
+  /* a measure set for desktop is a straitjacket on a 390px screen — it forces
+     breaks the width itself would not. Let the phone use what it has. */
   .hero .lede{margin:18px 0 28px;font-size:19px}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
@@ -373,6 +386,13 @@ ${jsonld(b)}
   .v-beauty .hero{padding:92px 0 68px}
   .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
   .v-beauty .hero h1{max-width:14ch}
+
+  /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
+     they force line breaks the width itself would never make. This has to sit
+     after the per-voice rules — it matches their specificity, so order decides. */
+  @media (max-width:640px){
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+  }
   .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
 
   /* FOOD — the copy sits on a warm card, like something on a counter. */
@@ -423,7 +443,7 @@ ${jsonld(b)}
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#top"><span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span><span class="nm">${esc(b.shortName || b.name)}</span></a>
+    <a class="brand" href="#top">${b.logo ? '' : `<span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>`}<span class="nm">${esc(b.shortName || b.name)}</span></a>
     <nav>${nav.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
     ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>` : ''}
   </div>
@@ -434,6 +454,7 @@ ${jsonld(b)}
 <div class="hero">
   <div class="wrap">
     <div class="hero-inner">
+    ${b.logo ? `<img class="logo rise" style="--i:0" src="${esc(b.logo)}" alt="${esc(b.name)}" width="${esc(b.logoWidth || 300)}">` : ''}
     ${b.category ? `<div class="eyebrow rise" style="--i:0">${esc(b.category)}${a.city ? ' · ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</div>` : ''}
     <h1 class="rise" style="--i:1">${esc(b.headline || b.tagline)}</h1>
     ${b.subhead ? `<p class="lede rise" style="--i:2">${esc(b.subhead)}</p>` : ''}

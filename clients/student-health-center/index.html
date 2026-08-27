@@ -80,6 +80,15 @@
     text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
 
+  /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
+     are unreadable in a 66px header bar, so they belong here at full size. */
+  .hero .logo{display:block;max-width:min(100%,var(--logo-w,300px));height:auto;
+    margin:0 0 24px;mix-blend-mode:multiply}
+  /* multiply needs something light behind it; on a full-bleed accent hero the
+     logo keeps its own white card instead. */
+  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
+
   /* header */
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
@@ -113,7 +122,10 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
-  .hero h1{font-size:var(--hero-size);max-width:17ch}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  h2{text-wrap:balance}
+  /* a measure set for desktop is a straitjacket on a 390px screen — it forces
+     breaks the width itself would not. Let the phone use what it has. */
   .hero .lede{margin:18px 0 28px;font-size:19px}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
@@ -266,6 +278,13 @@
   .v-beauty .hero{padding:92px 0 68px}
   .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
   .v-beauty .hero h1{max-width:14ch}
+
+  /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
+     they force line breaks the width itself would never make. This has to sit
+     after the per-voice rules — it matches their specificity, so order decides. */
+  @media (max-width:640px){
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+  }
   .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
 
   /* FOOD — the copy sits on a warm card, like something on a counter. */
@@ -327,6 +346,7 @@
 <div class="hero">
   <div class="wrap">
     <div class="hero-inner">
+    
     <div class="eyebrow rise" style="--i:0">doctors · San Diego, CA</div>
     <h1 class="rise" style="--i:1">doctors in San Diego.</h1>
     

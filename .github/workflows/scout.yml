@@ -98,4 +98,9 @@ jobs:
           git add clients/ || true
           git diff --cached --quiet && echo "nothing new to commit" && exit 0
           git commit -m "Scaffold top ${{ inputs.make }} leads from scout run"
-          git push
+          for i in 1 2 3 4 5; do
+            git push && break
+            echo "push rejected — another run got there first, rebasing"
+            git pull --rebase origin main || exit 1
+            sleep $((i * 3))
+          done

@@ -351,6 +351,12 @@ async function cmdReaudit(args) {
     console.log(`\n  ${dropped.length} dropped — their site is genuinely fine:`);
     dropped.forEach((r) => console.log(`    · ${r.slug} (we had said ${r.before} broken; really ${r.after})`));
   }
+  const over = checked.filter((r) => r.verdict === 'overclaimed');
+  if (over.length) {
+    console.log(`\n  ⚠️  ${over.length} you have already emailed, whose site is actually fine:`);
+    over.forEach((r) => console.log(`    · ${r.slug} — we claimed ${r.before}, a browser says ${r.after}`));
+    console.log('     Left as sent. If they push back, that is why.');
+  }
   if (blocked.length) {
     console.log(`\n  ${blocked.length} refused our check, so we can claim nothing:`);
     blocked.forEach((r) => console.log(`    · ${r.slug} — ${r.reason}`));

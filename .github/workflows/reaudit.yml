@@ -76,5 +76,10 @@ jobs:
           hours, tap-to-call links or the mobile layout, with measured ones.
           Leads whose site turns out to be fine are marked dead — that is a call
           saved, not a lead lost."
-            git push
+            for i in 1 2 3 4 5; do
+              git push && break
+              echo "push rejected — another run got there first, rebasing"
+              git pull --rebase origin main || exit 1
+              sleep $((i * 3))
+            done
           fi

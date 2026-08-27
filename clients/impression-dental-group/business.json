@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.impressiondentalgroup.com/",
   "liveUrl": "",
-  "status": "dead",
+  "status": "sent",
   "tier": "onepage",
   "headline": "General and family dentistry in Mira Mesa.",
   "subhead": "On Mira Mesa Boulevard. Adults and children welcome.",
@@ -110,6 +110,6 @@
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
+    "2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply."
   ]
 }

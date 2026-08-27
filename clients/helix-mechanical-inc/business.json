@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://helixmechanical.com/",
   "liveUrl": "",
-  "status": "dead",
+  "status": "sent",
   "tier": "onepage",
   "headline": "Servicing San Diego for over 20 years.",
   "subhead": "Heating, air conditioning, plumbing and general building — one licensed contractor for the whole job.",
@@ -140,6 +140,6 @@
   },
   "sentOn": "2026-08-26",
   "callNotes": [
-    "2026-08-27: dropped — site checks out in a real browser (3 provable gaps), nothing worth selling"
+    "2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply."
   ]
 }

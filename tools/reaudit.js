@@ -62,8 +62,9 @@ async function run({ only, all = false, log = console.log } = {}) {
       if (a.blocked) {
         // Refused, not broken. We cannot claim anything about a site we were
         // not allowed to see, and a site behind a firewall usually has someone
-        // already looking after it.
-        b.status = 'dead';
+        // already looking after it. A lead already emailed keeps its status:
+        // that is a conversation in progress, not ours to close.
+        if (!['sent', 'replied'].includes(b.status)) b.status = 'dead';
         b._scout = { ...(b._scout || {}), rendered: true, currentSiteStatus: `blocked: ${a.reason}` };
         b.callNotes = [...(b.callNotes || []), `${today()}: dropped — site refused our check (${a.reason}), nothing we can honestly claim`];
         fs.writeFileSync(f, JSON.stringify(b, null, 2));
@@ -85,10 +86,16 @@ async function run({ only, all = false, log = console.log } = {}) {
       const realGaps = hard.filter((c) => a.checks[c.key] !== true).length;
 
       let verdict = 'keep';
-      if (realGaps < WORTH_IT && a.reachable) {
+      // A lead he has already emailed is a live conversation, not a candidate.
+      // Correcting its findings is right; deciding on his behalf that it is
+      // dead deletes a deal he is waiting on a reply to.
+      const inFlight = ['sent', 'replied'].includes(b.status);
+      if (realGaps < WORTH_IT && a.reachable && !inFlight) {
         b.status = 'dead';
         b.callNotes = [...(b.callNotes || []), `${today()}: dropped — site checks out in a real browser (${realGaps} provable gaps), nothing worth selling`];
         verdict = 'dropped';
+      } else if (realGaps < WORTH_IT && a.reachable && inFlight) {
+        verdict = 'overclaimed';
       }
       fs.writeFileSync(f, JSON.stringify(b, null, 2));
       results.push({ slug, name: b.name, before, after: realGaps, verdict, reachable: a.reachable, reason: a.reason });

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Swinley Spa Services">
+  <title>Swinley Spa Services</title>
+  <defs>
+    <linearGradient id="swDropOnly" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#84AED4"/>
+      <stop offset="1" stop-color="#3B5576"/>
+    </linearGradient>
+  </defs>
+  <!-- The compact mark. Crossed tools cannot survive a 20px browser tab, so
+       small sizes carry the droplet alone — same shape, same blue. -->
+  <path d="M50 6 C 50 6 24 42 24 58 a 26 26 0 0 0 52 0 C 76 42 50 6 50 6 Z"
+        fill="url(#swDropOnly)"/>
+</svg>

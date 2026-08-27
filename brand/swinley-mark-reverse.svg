@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Swinley Spa Services">
+  <title>Swinley Spa Services</title>
+  <!-- Reversed. A logo built from two blues disappears on a dark ground or a
+       brand-blue one, so dark surfaces get a single-colour version instead. -->
+  <path d="M50 2 C 50 2 37 21 37 28 a 13 13 0 0 0 26 0 C 63 21 50 2 50 2 Z" fill="#fff"/>
+  <g fill="#fff" fill-opacity=".6" fill-rule="evenodd">
+    <g transform="rotate(-36 50 62)">
+      <path d="M45 33 H55 A3 3 0 0 1 58 36 V45 A3 3 0 0 1 55 48 H45 A3 3 0 0 1 42 45
+               V36 A3 3 0 0 1 45 33 Z M46.8 33 V39 A3.2 3.2 0 0 0 53.2 39 V33 Z"/>
+      <rect x="46" y="46" width="8" height="32" rx="4"/>
+      <path d="M50 75 L57.4 79.25 L57.4 87.75 L50 92 L42.6 87.75 L42.6 79.25 Z
+               M50 80.5 L52.6 82 L52.6 85 L50 86.5 L47.4 85 L47.4 82 Z"/>
+    </g>
+    <g transform="rotate(36 50 62)">
+      <path d="M45 33 H55 A3 3 0 0 1 58 36 V45 A3 3 0 0 1 55 48 H45 A3 3 0 0 1 42 45
+               V36 A3 3 0 0 1 45 33 Z M46.8 33 V39 A3.2 3.2 0 0 0 53.2 39 V33 Z"/>
+      <rect x="46" y="46" width="8" height="32" rx="4"/>
+      <path d="M50 75 L57.4 79.25 L57.4 87.75 L50 92 L42.6 87.75 L42.6 79.25 Z
+               M50 80.5 L52.6 82 L52.6 85 L50 86.5 L47.4 85 L47.4 82 Z"/>
+    </g>
+  </g>
+</svg>

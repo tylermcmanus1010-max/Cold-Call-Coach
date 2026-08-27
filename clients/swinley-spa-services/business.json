@@ -1,5 +1,5 @@
 {
-  "_status": "Real client — Seth Wright, Swinley Spa Services. Branding, copy and structure are done and match his logo. THREE things must be replaced before this is hosted: phone, email, and the city list under serviceArea. Prices are typical rates used so the booking menu works — Seth confirms every one. No reviews on the page yet: we do not invent testimonials. Three real ones from his customers drop straight in.",
+  "_status": "Real client — Seth Wright, Swinley Spa Services. Branding, copy and structure are done and match his logo. Phone is real. STILL to replace before hosting: email, and the city list under serviceArea — his 402 number is a Nebraska area code, so confirm where he actually works before this ships with San Diego cities on it. Prices are typical rates used so the booking menu works — Seth confirms every one. No reviews on the page yet: we do not invent testimonials. Three real ones from his customers drop straight in.",
   "slug": "swinley-spa-services",
   "name": "Swinley Spa Services",
   "shortName": "Swinley Spa",
@@ -14,7 +14,7 @@
   "subhead": "Regular spa and pool service, drain and refills, and repairs. Same technician every visit, chemicals included, and a photo of your water before we leave.",
   "tagline": "Relax. Soak. Repeat.",
   "heroNote": "Licensed and insured · Free water test on the first visit",
-  "phone": "(619) 555-0148",
+  "phone": "(402) 201-5518",
   "email": "seth@swinleyspaservices.com",
   "address": {
     "city": "San Diego",

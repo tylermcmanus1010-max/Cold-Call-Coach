@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 214" role="img" aria-label="Swinley Spa Services — Relax. Soak. Repeat.">
+  <title>Swinley Spa Services</title>
+  <defs>
+    <linearGradient id="swLockDrop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#84AED4"/><stop offset="1" stop-color="#3B5576"/>
+    </linearGradient>
+    <g id="swLockWrench" fill-rule="evenodd">
+      <path d="M45 33 H55 A3 3 0 0 1 58 36 V45 A3 3 0 0 1 55 48 H45 A3 3 0 0 1 42 45
+               V36 A3 3 0 0 1 45 33 Z M46.8 33 V39 A3.2 3.2 0 0 0 53.2 39 V33 Z"/>
+      <rect x="46" y="46" width="8" height="32" rx="4"/>
+      <path d="M50 75 L57.4 79.25 L57.4 87.75 L50 92 L42.6 87.75 L42.6 79.25 Z
+               M50 80.5 L52.6 82 L52.6 85 L50 86.5 L47.4 85 L47.4 82 Z"/>
+    </g>
+  </defs>
+
+  <g transform="translate(155 0) scale(1.3)">
+    <path d="M50 2 C 50 2 37 21 37 28 a 13 13 0 0 0 26 0 C 63 21 50 2 50 2 Z" fill="url(#swLockDrop)"/>
+    <g fill="#8DB0D0">
+      <use href="#swLockWrench" transform="rotate(-36 50 62)"/>
+      <use href="#swLockWrench" transform="rotate(36 50 62)"/>
+    </g>
+  </g>
+
+  <!-- Small caps drawn as sized tspans rather than font-variant, which not
+       every renderer honours. Set straight: type on an arc is the one thing
+       that most makes a logo look homemade. -->
+  <text x="220" y="162" text-anchor="middle" fill="#41597E"
+        font-family="Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif"
+        font-size="42" letter-spacing="1.5"
+    ><tspan>S</tspan><tspan font-size="30">WINLEY</tspan><tspan font-size="42"> S</tspan
+    ><tspan font-size="30">PA</tspan><tspan font-size="42"> S</tspan><tspan font-size="30">ERVICES</tspan></text>
+
+  <text x="217" y="196" text-anchor="middle" fill="#7C93AE"
+        font-family="Palatino, 'Palatino Linotype', Georgia, serif"
+        font-size="15" letter-spacing="5.5">RELAX. SOAK. REPEAT.</text>
+</svg>

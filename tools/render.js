@@ -208,6 +208,9 @@ ${jsonld(b)}
   @media (max-width:520px){ .brand{font-size:16px} }
   @media (max-width:400px){ .brand{font-size:15px} }
   .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+  /* a stacked logo is unreadable in a 66px bar, so the header takes a compact
+     mark and sets the name in type beside it. */
+  .mark-img{width:30px;height:30px;object-fit:contain;flex:none;display:block}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
   nav a:hover{color:var(--ink)}
@@ -443,7 +446,11 @@ ${jsonld(b)}
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#top">${b.logo ? '' : `<span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>`}<span class="nm">${esc(b.shortName || b.name)}</span></a>
+    <a class="brand" href="#top">${
+      b.mark ? `<img class="mark-img" src="${esc(b.mark)}" alt="">`
+      : b.logo ? ''
+      : `<span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>`
+    }<span class="nm">${esc(b.shortName || b.name)}</span></a>
     <nav>${nav.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
     ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>` : ''}
   </div>

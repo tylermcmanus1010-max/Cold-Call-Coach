@@ -1,26 +1,35 @@
-Subject: Your domain is showing a blank hosting page — I built you a website
+Subject: Your website — two versions, have a look
 
-Hi Seth Wright,
+Hi Seth,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
+Here it is. Two versions attached — open them on your phone, that is where your customers will see it.
 
-I went looking for your website and could not find one — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
+They are the same website. The only difference is the logo: one uses the logo you have, the other uses a version I redrew. Pick whichever you like. There is a third file that shows the two side by side and explains what I changed and why.
 
-So I built you one. It's attached — open it on your phone.
+The part worth looking at is the services list. Tap a few — a weekly hot tub plan, a pool opening, whatever — and the bar at the bottom adds them up and lets someone text you the whole request in one go. That is the thing Vagaro and Booksy charge a monthly fee for. Yours is built in and costs nothing per month.
 
-What's on it:
-- Rebuilt mobile-first; tested down to a 320px screen
-- HTTPS with a free auto-renewing certificate
-- Single self-contained file, no trackers, loads instantly
-- Tap-to-call in the header and a sticky call bar on mobile
-- LocalBusiness schema so Google can read hours, phone, rating and location
+The rest of it:
+- Built for a phone first, tested down to a 320px screen
+- Loads instantly, no trackers, works even with a bad signal
+- Your number is tappable everywhere, with a call bar that follows people down the page
+- Google markup for your hours, service area and location, so you can show up in local search
+- Hot tub service priced monthly and year-round; pools seasonal, with the opening and closing visits priced separately
 
-Nothing is live. This is just so you can see what it would look like.
+Nothing is live yet. This is just so you can see it.
 
-$750 for the one-page website, live on your domain in 5 business days. $60/month after that if you want me hosting it and making changes for you. If you don't like it, you don't pay. You keep the page either way.
+$750 to put it on your own domain, live in 5 business days. $60/month after that if you want me hosting it, keeping it backed up and making changes whenever you need them — cancel any time. The logo files are yours either way, no charge.
 
-Worth a 10-minute call?
+If you don't like it, you don't pay, and you keep the page regardless.
+
+Four things I need from you before it goes live:
+
+1. Your email address, so it goes on the site
+2. A look over the prices — I put in normal Omaha rates so the page worked, but they are mine, not yours. Every one needs your say-so.
+3. Three reviews from customers, with their names as they wrote them. I will not make any up, and right now that is the only real gap on the page.
+4. Your exact town, so the service area is right. I have Omaha and the metro on there.
+
+If swinleyspaservices.com is free I would grab it now, before anything else.
 
 Tyler McManus
+McManus Web Co.
 302-649-6600
-tylermcmanus1010@gmail.com

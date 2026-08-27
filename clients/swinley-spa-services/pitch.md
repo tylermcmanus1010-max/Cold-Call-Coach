@@ -35,11 +35,11 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## Email to send
 
-**Subject:** Your domain is showing a blank hosting page — I built you a website
+**Subject:** Your website — two versions, have a look
 
 Hi Seth Wright,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
+I'm Tyler McManus, I run McManus Web Co. I build websites for Omaha businesses.
 
 I went looking for your website and could not find one — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 

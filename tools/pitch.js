@@ -7,6 +7,13 @@ const checks = require('./checks');
 // email.txt is the version you actually paste into your mail client.
 function emailBody(ctx) {
   const { b, from, owner, noSite, host, money, tier, care, pricing, emailFixes } = ctx;
+
+  // A warm lead — a referral, someone who already asked — gets a bespoke
+  // email. The cold-outreach body below opens by telling them what is wrong
+  // with a website they may not have, which for a warm buyer is both wrong
+  // and insulting. Templating around every case is worse than writing it.
+  if (b.pitchEmail) return String(b.pitchEmail).trim();
+
   // "McManus Web Co." already ends in a period; do not add a second one.
   const intro = from.businessName
     ? `I'm ${from.name}, I run ${String(from.businessName).replace(/\.$/, '')}.`

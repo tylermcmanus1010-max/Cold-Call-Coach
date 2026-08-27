@@ -109,5 +109,49 @@ commits him to nothing.
 - [ ] Domain registered
 - [ ] Wordmark converted to outlines, if he takes the redrawn logo, before
       anything gets printed
-- [ ] **DNS: add an A or CNAME record at his existing registrar. Never move his
-      nameservers** — it breaks his email. See `DELIVERY.md`.
+- [ ] Email working at the domain **before** the site points at it
+- [ ] DNS — see the hosting run below. The "never move their nameservers" rule
+      in `DELIVERY.md` is about businesses with existing email. Seth has no
+      domain yet, so it does not apply to him.
+
+---
+
+## When he says yes — the hosting run
+
+`./cc host swinley-spa-services` will refuse until all of this is true. That is
+deliberate: everything on the page that is still a guess of mine gets caught
+before it goes in front of his customers.
+
+### Order of operations
+
+1. **He registers swinleyspaservices.com himself**, on his own card. Cloudflare
+   Registrar, about $10 a year, and it lands on Cloudflare nameservers ready to
+   go. In his name, not yours — get added to the account instead.
+2. **Set up the email before the site.** `seth@swinleyspaservices.com` is on the
+   page and does not exist yet. Cloudflare Email Routing is free and forwards it
+   to whatever he reads now. Do this first — an enquiry that bounces is a job he
+   never hears about, and he never finds out why.
+3. **Fill in what he confirms** in `business.json`: every price, the email, the
+   hours, the towns. Then `"status": "won"` and
+   `"liveUrl": "https://swinleyspaservices.com"`.
+4. `./cc host swinley-spa-services` → drag `sites/swinley-spa-services` onto
+   Cloudflare Pages. He approves on the `pages.dev` URL.
+5. **Only then** attach the domain, in the Pages project's Custom Domains tab.
+   His domain is new, so there is no email to break — the nameserver warning in
+   `DELIVERY.md` is about businesses with an existing domain, not him.
+6. Confirm HTTPS is live, then invoice.
+
+### The freeze-season point, if he stalls
+
+He does not need the whole site to benefit. If he registers the domain and sets
+up email forwarding this week, he has a professional address on his van and his
+quotes before closing season, which is the thing his competitors mostly do not
+have. The site can follow. Getting him moving on the $10 part is usually what
+unsticks the $750 part.
+
+### Do not go live with
+
+- The reviews section empty **and** him under the impression it is finished —
+  tell him plainly it is the last gap, and that three real ones fix it
+- Any price he has not said yes to out loud
+- An email address that has not received a test message

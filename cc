@@ -15,6 +15,8 @@
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
 //   ./cc sheet              rebuild the call sheet dashboard from clients/
+//   ./cc host <slug>        check a client is really ready, then write
+//                           sites/<slug>/ for the host to serve
 //
 // scout options:
 //   --source osm            OpenStreetMap (default, free, no key)
@@ -323,6 +325,30 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+function cmdHost(slug, flags) {
+  if (!slug) die('Usage: ./cc host <slug>   — prepare the folder a host serves');
+  const host = require('./tools/host');
+  const r = host(slug, { force: flags.includes('--force') });
+
+  if (r.blocked) {
+    console.log(`\n✗ ${slug} is not ready to go live.\n`);
+    r.stop.forEach((s) => console.log(`    · ${s}`));
+    console.log('\n  These are the things that embarrass you in front of a paying client.');
+    console.log('  Fix them, or ./cc host ' + slug + ' --force if you truly mean it.\n');
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n✓ sites/${slug}/ — ${r.files.join(', ')}`);
+  console.log(`  serving at ${r.b.liveUrl}`);
+  if (r.warn.length) {
+    console.log('\n  Worth knowing, not blocking:');
+    r.warn.forEach((w) => console.log(`    · ${w}`));
+  }
+  console.log('\n  Next: DELIVERY.md — put it up on the temporary URL first, get their');
+  console.log('  approval there, and only then touch their DNS.\n');
+}
+
 function cmdSheet() {
   const build = require('./tools/call-sheet');
   const { html, state, skipped } = build();
@@ -359,6 +385,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;
+    case 'host': cmdHost(args[0], args.slice(1)); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

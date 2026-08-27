@@ -27,7 +27,7 @@ function jsonld(b) {
     name: b.name,
     description: b.tagline,
     telephone: b.phone,
-    url: b.newUrl || undefined,
+    url: b.liveUrl || b.newUrl || undefined,
     address: a.street ? {
       '@type': 'PostalAddress',
       streetAddress: a.street, addressLocality: a.city,
@@ -135,7 +135,9 @@ function render(b) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(b.name)}${b.category ? ' — ' + esc(b.category) : ''}${a.city ? ' in ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</title>
 <meta name="description" content="${esc(b.tagline)}${b.phone ? ' Call ' + esc(b.phone) + '.' : ''}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="website">${b.liveUrl ? `
+<link rel="canonical" href="${esc(b.liveUrl)}">
+<meta property="og:url" content="${esc(b.liveUrl)}">` : ''}
 <meta property="og:title" content="${esc(b.name)}">
 <meta property="og:description" content="${esc(b.tagline)}">
 <meta name="twitter:card" content="summary_large_image">${b.logo ? `

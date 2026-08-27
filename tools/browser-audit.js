@@ -105,7 +105,7 @@ function probe() {
   };
 }
 
-async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
+async function auditRendered(rawUrl, { timeout = 25000, browser, expectName } = {}) {
   const bare = String(rawUrl).replace(/^https?:\/\//i, '').replace(/\/+$/, '');
   const own = !browser;
   const b = browser || await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
@@ -236,6 +236,7 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
       ms, kb: Math.round(p.bytes / 1024), checks, gaps,
       info: { title: p.title, description: p.description, copyrightYear: p.copyright ? +p.copyright : null },
       stale,
+      namesBusiness: expectName ? namesBusiness(expectName, p.title + ' ' + p.text) : null,
       reason: stale ? `© ${p.copyright}` : null,
     };
   } catch (e) {
@@ -244,4 +245,29 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
   }
 }
 
-module.exports = { auditRendered, chromium, EXEC };
+
+// Does this page actually belong to the business we think it does?
+//
+// Directory data hands us the wrong address more often than it hands us a bad
+// one: an expired domain now resold, a listing on some aggregator's site, a
+// competitor's page. The audit is perfectly accurate about whatever page it is
+// given — it just has no idea the page is not theirs, and every finding then
+// gets said out loud to an owner whose real site is fine.
+const GENERIC = new Set([
+  'the', 'and', 'inc', 'llc', 'ltd', 'co', 'company', 'corp', 'group',
+  'center', 'centre', 'services', 'service', 'shop', 'store', 'studio',
+  'san', 'diego', 'california', 'ca', 'usa', 'best', 'quality', 'professional',
+]);
+
+function namesBusiness(name, pageText) {
+  const flat = String(pageText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const words = String(name || '').toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length >= 3 && !GENERIC.has(w));
+  if (!words.length) return null;          // nothing distinctive to look for
+  const hits = words.filter((w) => flat.includes(w)).length;
+  return hits / words.length >= 0.6;
+}
+
+module.exports = { auditRendered, chromium, EXEC, namesBusiness };

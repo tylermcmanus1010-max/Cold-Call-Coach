@@ -54,7 +54,7 @@ async function run({ only, all = false, log = console.log } = {}) {
   try {
     for (const { slug, f, b } of list) {
       let a;
-      try { a = await auditRendered(b.currentSite, browser); }
+      try { a = await auditRendered(b.currentSite, { browser, expectName: b.name }); }
       catch (e) { results.push({ slug, name: b.name, error: e.message }); continue; }
 
       const before = Object.values(b.audit || {}).filter((v) => v !== true).length;
@@ -75,7 +75,7 @@ async function run({ only, all = false, log = console.log } = {}) {
       b.audit = a.checks;
       b._scout = {
         ...(b._scout || {}),
-        gaps: a.gaps, rendered: true,
+        gaps: a.gaps, rendered: true, namesBusiness: a.namesBusiness,
         currentSiteStatus: a.reachable ? (a.reason || 'live') : `unreachable: ${a.reason}`,
         loadMs: a.ms ?? null, pageKb: a.kb ?? null,
       };
@@ -98,7 +98,8 @@ async function run({ only, all = false, log = console.log } = {}) {
         verdict = 'overclaimed';
       }
       fs.writeFileSync(f, JSON.stringify(b, null, 2));
-      results.push({ slug, name: b.name, before, after: realGaps, verdict, reachable: a.reachable, reason: a.reason });
+      results.push({ slug, name: b.name, before, after: realGaps, verdict,
+                     reachable: a.reachable, reason: a.reason, names: a.namesBusiness });
     }
   } finally {
     await browser.close();

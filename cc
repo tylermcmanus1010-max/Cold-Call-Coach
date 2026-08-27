@@ -351,6 +351,15 @@ async function cmdReaudit(args) {
     console.log(`\n  ${dropped.length} dropped — their site is genuinely fine:`);
     dropped.forEach((r) => console.log(`    · ${r.slug} (we had said ${r.before} broken; really ${r.after})`));
   }
+  const notTheirs = checked.filter((r) => r.names === false && r.verdict !== 'dropped');
+  if (notTheirs.length) {
+    console.log(`\n  ⚠️  ${notTheirs.length} where the page never names the business —`);
+    console.log('     an expired domain resold, a listing on someone else\'s site, a stale');
+    console.log('     address. The findings are accurate about the page; the page may not');
+    console.log('     be theirs. Open these on a phone before you pitch them:');
+    notTheirs.forEach((r) => console.log(`    · ${r.slug}`));
+  }
+
   const over = checked.filter((r) => r.verdict === 'overclaimed');
   if (over.length) {
     console.log(`\n  ⚠️  ${over.length} you have already emailed, whose site is actually fine:`);

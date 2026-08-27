@@ -1,6 +1,6 @@
 # Big Kahuna's — pitch sheet
 
-**Current site:** https://bigkahunasib.com/
+**Current site:** https://bigkahunaca.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
 **Score:** 7/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates

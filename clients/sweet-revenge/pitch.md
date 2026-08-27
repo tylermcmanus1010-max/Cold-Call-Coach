@@ -2,7 +2,7 @@
 
 **Current site:** https://www.sweetrevengesd.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 9/12
+**Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -13,7 +13,7 @@
 |---|---|---|
 | ❌ | Works on a phone | Site is unusable on a phone — 70%+ of your customers are on one |
 | ✅ | Secure (HTTPS) | — |
-| ✅ | Loads in under 2 seconds | — |
+| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
 | ✅ | Tap-to-call phone number | — |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
 | ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
@@ -24,6 +24,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 ## What the rebuild fixes
 
 - Rebuilt mobile-first; tested down to a 320px screen
+- Single self-contained file, no trackers, loads instantly
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
 
@@ -41,6 +42,7 @@ I looked at your website and rebuilt it. It's attached — open it on your phone
 
 What I changed:
 - Rebuilt mobile-first; tested down to a 320px screen
+- Single self-contained file, no trackers, loads instantly
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
 

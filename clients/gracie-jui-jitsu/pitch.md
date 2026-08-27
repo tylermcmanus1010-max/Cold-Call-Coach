@@ -2,7 +2,7 @@
 
 **Current site:** https://www.thegraciesandiego.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 10/12
+**Score:** 9/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -13,7 +13,7 @@
 |---|---|---|
 | ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
-| ✅ | Loads in under 2 seconds | — |
+| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
 | ✅ | Tap-to-call phone number | — |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
 | ✅ | Title + description | — |
@@ -23,6 +23,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## What the rebuild fixes
 
+- Single self-contained file, no trackers, loads instantly
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Open Graph tags so the link previews properly when shared
 
@@ -39,6 +40,7 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
+- Single self-contained file, no trackers, loads instantly
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Open Graph tags so the link previews properly when shared
 

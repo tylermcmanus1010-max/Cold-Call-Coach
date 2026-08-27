@@ -94,6 +94,13 @@ function buildState() {
     try { b = JSON.parse(fs.readFileSync(f, 'utf8')); }
     catch (e) { skipped.push(`${slug} (unreadable business.json)`); continue; }
 
+    // Demo and spec pages are work, not leads. They carry placeholder phone
+    // numbers, and a placeholder number in a dial list is a wasted call.
+    if ((b.status || '') === 'spec' || slug.startsWith('example-')) {
+      skipped.push(`${slug} (spec page, not a lead)`);
+      continue;
+    }
+
     // A lead with no phone number is not a call. Keep it visible only if it is
     // already in flight, so nothing silently disappears off the sheet.
     if (!digits(b.phone) && (b.status || 'new') === 'new') { skipped.push(`${slug} (no phone)`); continue; }

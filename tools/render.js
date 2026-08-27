@@ -191,7 +191,12 @@ ${jsonld(b)}
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
   .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
-    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px}
+    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px;
+    min-width:0}
+  /* the bar is a fixed height, so a long name has to shrink rather than wrap */
+  .brand .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:520px){ .brand{font-size:16px} }
+  @media (max-width:400px){ .brand{font-size:15px} }
   .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
@@ -258,6 +263,7 @@ ${jsonld(b)}
   .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
   .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
   .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+  .svc-price .svc-unit{font-size:12px;font-weight:600;color:var(--muted)}
   .svc-dur{display:block;font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
 
   /* the running basket — appears once something is chosen */
@@ -274,6 +280,11 @@ ${jsonld(b)}
   /* team */
   .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
   .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  /* a one-person business is a selling point, but a lone card floating in a
+     full-width box reads as an unfinished page. Lay it on its side instead. */
+  .team.solo{grid-template-columns:1fr}
+  .team.solo .member{display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px}
+  .team.solo .member .av{margin:0}
   .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
     background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
   .member b{display:block;letter-spacing:-.01em}
@@ -412,7 +423,7 @@ ${jsonld(b)}
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#top"><span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>${esc(b.name)}</a>
+    <a class="brand" href="#top"><span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span><span class="nm">${esc(b.shortName || b.name)}</span></a>
     <nav>${nav.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
     ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>` : ''}
   </div>
@@ -451,14 +462,14 @@ ${b.services?.length ? `
         <div class="mgroup">
           ${name ? `<h3>${esc(name)}</h3>` : ''}
           <div class="rows">
-            ${items.map((s) => `<button type="button" class="row-svc" data-price="${esc(cents(s.price))}" data-mins="${esc(mins(s.duration))}" data-name="${esc(s.name)}">
+            ${items.map((s) => `<button type="button" class="row-svc" data-price="${esc(cents(s.price))}" data-mins="${esc(mins(s.duration))}" data-unit="${esc(s.unit || '')}" data-name="${esc(s.name)}">
               <span class="tick" aria-hidden="true"></span>
               <span class="svc-main">
                 <span class="svc-name">${esc(s.name)}</span>
                 ${s.desc ? `<span class="svc-desc">${esc(s.desc)}</span>` : ''}
               </span>
               <span class="svc-meta">
-                ${s.price ? `<span class="svc-price">${esc(s.price)}</span>` : ''}
+                ${s.price ? `<span class="svc-price">${esc(s.price)}${s.unit ? `<span class="svc-unit">${esc(s.unit)}</span>` : ''}</span>` : ''}
                 ${s.duration ? `<span class="svc-dur">${esc(s.duration)}</span>` : ''}
               </span>
             </button>`).join('')}
@@ -473,7 +484,7 @@ ${b.team?.length ? `
     <div class="eyebrow">Our team</div>
     <h2>${esc(b.teamHeading || 'Who you will see')}</h2>
     ${b.teamLede ? `<p class="lede">${esc(b.teamLede)}</p>` : ''}
-    <div class="team">
+    <div class="team${b.team.length === 1 ? ' solo' : ''}">
       ${b.team.map((m) => `<div class="member">
         <div class="av">${esc((m.name || '?').trim()[0].toUpperCase())}</div>
         <b>${esc(m.name)}</b>
@@ -619,17 +630,34 @@ ${b.phone ? `<div class="callbar">
         document.body.style.paddingBottom = '';
         return;
       }
-      var total = picked.reduce(function(n,p){ return n + p.price; }, 0);
-      var dur   = picked.reduce(function(n,p){ return n + p.mins; }, 0);
+      // A $145/mo plan and a $395 one-off job cannot be added into one number.
+      // Sum each unit separately: "$395 + $145/mo", never a meaningless $540.
+      var sums = {}, order = [];
+      picked.forEach(function(p){
+        var u = p.unit || '';
+        if (!(u in sums)) { sums[u] = 0; if (u) order.push(u); }
+        sums[u] += p.price;
+      });
+      var parts = [];
+      if (sums['']) parts.push(money(sums['']));
+      order.forEach(function(u){ if (sums[u]) parts.push(money(sums[u]) + u); });
+      var priced = parts.join(' + ');
+
+      // Time on site only means something for a one-off visit; a monthly plan
+      // is not "about 90 minutes".
+      var dur = picked.reduce(function(n,p){ return n + (p.unit ? 0 : p.mins); }, 0);
+
       basket.hidden = false; basket.classList.add('up');
       document.getElementById('bkTotal').textContent =
-        picked.length + (picked.length === 1 ? ' service' : ' services') + (total ? ' · ' + money(total) : '');
+        picked.length + (picked.length === 1 ? ' service' : ' services') + (priced ? ' · ' + priced : '');
       document.getElementById('bkMeta').textContent = dur ? 'about ' + time(dur) : '';
 
-      var lines = picked.map(function(p){ return '• ' + p.name + (p.price ? ' (' + money(p.price) + ')' : ''); }).join('\\n');
+      var lines = picked.map(function(p){
+        return '• ' + p.name + (p.price ? ' (' + money(p.price) + (p.unit || '') + ')' : '');
+      }).join('\\n');
       var msg = 'Hi ' + BIZ + ', I would like to book:\\n' + lines +
-                (total ? '\\n\\nTotal: ' + money(total) : '') +
-                (dur ? '\\nAbout ' + time(dur) : '') +
+                (priced ? '\\n\\nTotal: ' + priced : '') +
+                (dur ? '\\nAbout ' + time(dur) + ' on site' : '') +
                 '\\n\\nWhat times do you have?';
       var go = document.getElementById('bkGo');
       if (BOOKURL) { go.href = BOOKURL; go.textContent = 'Book online'; }
@@ -644,7 +672,8 @@ ${b.phone ? `<div class="callbar">
         var name = el.dataset.name;
         var i = picked.findIndex(function(p){ return p.name === name; });
         if (i > -1) { picked.splice(i,1); el.classList.remove('on'); }
-        else { picked.push({ name: name, price: +el.dataset.price || 0, mins: +el.dataset.mins || 0 });
+        else { picked.push({ name: name, price: +el.dataset.price || 0, mins: +el.dataset.mins || 0,
+                             unit: el.dataset.unit || '' });
                el.classList.add('on'); }
         paint();
       });

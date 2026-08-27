@@ -1,12 +1,12 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand \u2014 that is the part that sells.",
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
   "slug": "family-interiors",
   "name": "Family Interiors",
   "category": "floorer",
   "owner": "",
   "currentSite": "https://familyinteriors.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "",
   "subhead": "",
@@ -25,13 +25,13 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon\u2013Fri",
-      "time": "8:00 AM \u2013 5:00 PM",
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
       "schema": "Mo-Fr 08:00-17:00"
     },
     {
       "days": "Saturday",
-      "time": "9:00 AM \u2013 2:00 PM",
+      "time": "9:00 AM – 2:00 PM",
       "schema": "Sa 09:00-14:00"
     },
     {
@@ -81,28 +81,31 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
-    "speed": false,
-    "phoneTap": false,
-    "hours": false,
-    "address": false,
-    "services": false,
+    "https": true,
+    "mobile": true,
+    "speed": true,
+    "phoneTap": true,
+    "hours": true,
+    "address": true,
+    "services": true,
     "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "cta": true,
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "_scout": {
     "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 337,
-    "pageKb": 0,
+    "gaps": 1,
+    "currentSiteStatus": "live",
+    "loadMs": 5087,
+    "pageKb": 331,
     "builder": null,
     "copyrightYear": null,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 7
-  }
+  },
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (0 provable gaps), nothing worth selling"
+  ]
 }

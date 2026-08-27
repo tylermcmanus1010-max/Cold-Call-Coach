@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a dental practice and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a dental practice and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "impression-dental-group",
   "name": "Impression Dental Group",
   "category": "Dental practice",
   "owner": "",
   "currentSite": "https://www.impressiondentalgroup.com/",
   "liveUrl": "",
-  "status": "sent",
+  "status": "dead",
   "tier": "onepage",
   "headline": "General and family dentistry in Mira Mesa.",
   "subhead": "On Mira Mesa Boulevard. Adults and children welcome.",
@@ -87,7 +87,7 @@
     "speed": true,
     "phoneTap": false,
     "hours": false,
-    "address": false,
+    "address": true,
     "services": false,
     "reviews": false,
     "cta": true,
@@ -97,16 +97,19 @@
   },
   "_scout": {
     "score": 103,
-    "gaps": 8,
-    "currentSiteStatus": "\u00a9 2012",
-    "loadMs": 345,
+    "gaps": 7,
+    "currentSiteStatus": "© 2012",
+    "loadMs": 2572,
     "pageKb": 8,
     "builder": null,
     "copyrightYear": 2012,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 4
   },
   "sentOn": "2026-08-26",
   "attempts": 1,
-  "lastTried": "2026-08-26"
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
+  ]
 }

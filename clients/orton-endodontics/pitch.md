@@ -2,35 +2,28 @@
 
 **Current site:** https://www.ortonendo.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 9/12 — UNVERIFIED, read the warning below
+**Score:** 11/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
-
-> **Do not send yet.** These findings come from the served HTML, not a rendered page.
-> If this site builds itself with JavaScript, its hours, phone link and mobile layout may all be
-> there and simply invisible to that check. Re-run the scout with a browser, or open the site
-> yourself, before claiming any of this to the owner.
 
 ## What's wrong with the site they have
 
 | | Check | Problem |
 |---|---|---|
-| ❌ | Works on a phone | Site is unusable on a phone — 70%+ of your customers are on one |
+| ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
 | ✅ | Loads in under 2 seconds | — |
 | ✅ | Tap-to-call phone number | — |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
-| ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
+| ✅ | Title + description | — |
 | ✅ | Shareable link preview | — |
 
-_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, address + directions, services and pricing, reviews on the page._
+_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, services and pricing, reviews on the page._
 
 ## What the rebuild fixes
 
-- Rebuilt mobile-first; tested down to a 320px screen
 - LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
 
 ---
 
@@ -45,9 +38,7 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
-- Rebuilt mobile-first; tested down to a 320px screen
 - LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
 
 Nothing is live. This is just so you can see what it would look like.
 

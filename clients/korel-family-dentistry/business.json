@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a dental practice and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a dental practice and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "korel-family-dentistry",
   "name": "Korel Family Dentistry",
   "category": "Family dentistry",
@@ -81,31 +81,34 @@
     "heroImage": ""
   },
   "audit": {
-    "https": true,
     "mobile": true,
-    "speed": false,
-    "phoneTap": false,
+    "https": true,
+    "speed": true,
+    "phoneTap": true,
     "hours": true,
     "address": true,
-    "services": false,
-    "reviews": false,
+    "services": true,
+    "reviews": true,
     "cta": true,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "_scout": {
     "score": 87,
-    "gaps": 7,
-    "currentSiteStatus": "live",
-    "loadMs": 9792,
+    "gaps": 0,
+    "currentSiteStatus": "credited to Online Ethos — already maintained",
+    "loadMs": 2839,
     "pageKb": 91,
     "builder": null,
     "copyrightYear": 2026,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 5
   },
-  "pitchOpener": "Thanks for taking my call just now. As promised \u2014 I build one free sample site a week for a local business I'd like to work with, and this week I did yours.",
+  "pitchOpener": "Thanks for taking my call just now. As promised — I build one free sample site a week for a local business I'd like to work with, and this week I did yours.",
   "pitchSubject": "The sample site I mentioned on the phone",
-  "_verifiedByEye": "Not a lead. koreldentistry.com is maintained by an agency \u2014 the footer credits \"Design By Online Ethos\" \u2014 copyright 2026, hours listed twice, reviews, address and photos throughout. The pitch we sent claims nothing about their site, so it stands as a neutral free-sample offer; no correction needed."
+  "_verifiedByEye": "Not a lead. koreldentistry.com is maintained by an agency — the footer credits \"Design By Online Ethos\" — copyright 2026, hours listed twice, reviews, address and photos throughout. The pitch we sent claims nothing about their site, so it stands as a neutral free-sample offer; no correction needed.",
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (0 provable gaps), nothing worth selling"
+  ]
 }

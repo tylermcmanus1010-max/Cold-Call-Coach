@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://lajollacolonydental.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Family dentistry in La Jolla Colony.",
   "subhead": "Adults and children. Call and speak to the office.",
@@ -98,16 +98,17 @@
     "score": 93,
     "gaps": 8,
     "currentSiteStatus": "live",
-    "loadMs": 3556,
+    "loadMs": 1811,
     "pageKb": 37,
     "builder": null,
     "copyrightYear": null,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 4
   },
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-26: called"
+    "2026-08-26: called",
+    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
   ]
 }

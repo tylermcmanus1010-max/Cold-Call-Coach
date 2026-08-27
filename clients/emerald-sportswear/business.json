@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a custom apparel shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a custom apparel shop and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "emerald-sportswear",
   "name": "Emerald Sportswear",
   "category": "Custom apparel & alterations",
   "owner": "",
   "currentSite": "https://www.companycasuals.com/emsports/start.jsp",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Custom apparel and alterations in Spring Valley.",
   "subhead": "On Campo Road. Bring it in and we will tell you straight what it takes.",
@@ -98,14 +98,17 @@
   "_scout": {
     "score": 115,
     "gaps": 8,
-    "currentSiteStatus": "\u00a9 2014",
-    "loadMs": 2585,
+    "currentSiteStatus": "© 2014",
+    "loadMs": 2903,
     "pageKb": 33,
     "builder": null,
     "copyrightYear": 2014,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 4
   },
   "attempts": 1,
-  "lastTried": "2026-08-26"
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
+  ]
 }

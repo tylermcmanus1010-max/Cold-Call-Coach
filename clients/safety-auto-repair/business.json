@@ -98,16 +98,17 @@
     "score": 87,
     "gaps": 7,
     "currentSiteStatus": "live",
-    "loadMs": 8319,
-    "pageKb": 257,
+    "loadMs": 14199,
+    "pageKb": 248,
     "builder": null,
     "copyrightYear": 2026,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 3
   },
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-26: number not in service"
+    "2026-08-26: number not in service",
+    "2026-08-27: dropped — site checks out in a real browser (3 provable gaps), nothing worth selling"
   ]
 }

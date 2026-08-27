@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a florist and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a florist and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
   "slug": "point-loma-village-florist",
   "name": "Point Loma Village Florist",
   "category": "Florist",
@@ -82,11 +82,11 @@
     "heroImage": ""
   },
   "audit": {
-    "https": true,
-    "mobile": true,
-    "speed": true,
-    "phoneTap": true,
-    "hours": true,
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": false,
     "address": false,
     "services": false,
     "reviews": false,
@@ -97,16 +97,16 @@
   },
   "_scout": {
     "score": 99,
-    "gaps": 9,
-    "currentSiteStatus": "live",
-    "loadMs": 151,
-    "pageKb": 2,
+    "gaps": 12,
+    "currentSiteStatus": "parked or placeholder page",
+    "loadMs": 1051,
+    "pageKb": 0,
     "builder": null,
     "copyrightYear": null,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 3
   },
-  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about hours, phoneTap \u2014 the site renders them with JavaScript.",
+  "_verifiedByEye": "Checked by hand on the live site. The raw-HTML audit was wrong about hours, phoneTap — the site renders them with JavaScript.",
   "attempts": 1,
   "lastTried": "2026-08-25",
   "callNotes": [

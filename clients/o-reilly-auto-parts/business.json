@@ -81,28 +81,31 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
-    "speed": false,
-    "phoneTap": false,
-    "hours": false,
-    "address": false,
+    "https": true,
+    "mobile": true,
+    "speed": true,
+    "phoneTap": true,
+    "hours": true,
+    "address": true,
     "services": false,
-    "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
+    "reviews": true,
+    "cta": true,
+    "seo": true,
+    "meta": true,
     "social": false
   },
   "_scout": {
     "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 1742,
-    "pageKb": 433,
+    "gaps": 2,
+    "currentSiteStatus": "© 2008",
+    "loadMs": 4192,
+    "pageKb": 442,
     "builder": null,
     "copyrightYear": 2008,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 7
-  }
+  },
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling"
+  ]
 }

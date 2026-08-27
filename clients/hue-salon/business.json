@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a hair salon and are an ASSUMPTION \u2014 check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
+  "_howto": "Name, phone, address and current site are REAL, from OpenStreetMap and their own page. The services below are the standard scope of a hair salon and are an ASSUMPTION — check them against their site or ask on the call. Rating, reviews and hours are empty on purpose and need their Google listing before this is sendable.",
   "slug": "hue-salon",
   "name": "Hue Salon",
   "category": "Hair salon",
   "owner": "",
   "currentSite": "http://www.huesalonsandiego.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Colour and cuts in San Diego.",
   "subhead": "A neighbourhood salon on Wabaska Drive. Call and speak to a stylist.",
@@ -99,16 +99,17 @@
     "score": 113,
     "gaps": 8,
     "currentSiteStatus": "live",
-    "loadMs": 4739,
+    "loadMs": 2238,
     "pageKb": 29,
     "builder": null,
     "copyrightYear": null,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 4
   },
   "attempts": 1,
   "lastTried": "2026-08-25",
   "callNotes": [
-    "2026-08-25: no answer"
+    "2026-08-25: no answer",
+    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
   ]
 }

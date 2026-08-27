@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone and current site are REAL. Practice areas are deliberately NOT listed \u2014 never invent them for a law firm. Ask what they do and I will add it.",
+  "_howto": "Name, phone and current site are REAL. Practice areas are deliberately NOT listed — never invent them for a law firm. Ask what they do and I will add it.",
   "slug": "kingston-and-kingston",
   "name": "Kingston and Kingston",
   "category": "Attorneys",
   "owner": "",
   "currentSite": "https://www.kingstonandkingston.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Attorneys in San Diego.",
   "subhead": "Call the office and speak to someone about your situation.",
@@ -68,16 +68,17 @@
     "score": 93,
     "gaps": 8,
     "currentSiteStatus": "live",
-    "loadMs": 2736,
+    "loadMs": 1876,
     "pageKb": 11,
     "builder": null,
     "copyrightYear": 2026,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 4
   },
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-26: after hours"
+    "2026-08-26: after hours",
+    "2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling"
   ]
 }

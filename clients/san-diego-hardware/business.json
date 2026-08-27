@@ -1,12 +1,12 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand \u2014 that is the part that sells.",
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
   "slug": "san-diego-hardware",
   "name": "San Diego Hardware",
   "category": "hardware",
   "owner": "",
   "currentSite": "https://sandiegohardware.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "",
   "subhead": "",
@@ -25,13 +25,13 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon\u2013Fri",
-      "time": "8:00 AM \u2013 5:00 PM",
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
       "schema": "Mo-Fr 08:00-17:00"
     },
     {
       "days": "Saturday",
-      "time": "9:00 AM \u2013 2:00 PM",
+      "time": "9:00 AM – 2:00 PM",
       "schema": "Sa 09:00-14:00"
     },
     {
@@ -81,28 +81,31 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
+    "https": true,
+    "mobile": true,
     "speed": false,
     "phoneTap": false,
     "hours": false,
-    "address": false,
-    "services": false,
+    "address": true,
+    "services": true,
     "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "cta": true,
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "_scout": {
     "score": 137,
-    "gaps": 12,
-    "currentSiteStatus": "parked or placeholder page",
-    "loadMs": 3709,
-    "pageKb": 593,
+    "gaps": 4,
+    "currentSiteStatus": "live",
+    "loadMs": 16072,
+    "pageKb": 935,
     "builder": "Shopify",
     "copyrightYear": 2026,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 7
-  }
+  },
+  "callNotes": [
+    "2026-08-27: dropped — site checks out in a real browser (2 provable gaps), nothing worth selling"
+  ]
 }

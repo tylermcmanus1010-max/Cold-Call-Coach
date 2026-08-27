@@ -2,15 +2,10 @@
 
 **Current site:** https://www.omnitekdental.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 10/12 — UNVERIFIED, read the warning below
+**Score:** 11/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
-
-> **Do not send yet.** These findings come from the served HTML, not a rendered page.
-> If this site builds itself with JavaScript, its hours, phone link and mobile layout may all be
-> there and simply invisible to that check. Re-run the scout with a browser, or open the site
-> yourself, before claiming any of this to the owner.
 
 ## What's wrong with the site they have
 
@@ -18,7 +13,7 @@
 |---|---|---|
 | ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
-| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
+| ✅ | Loads in under 2 seconds | — |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
 | ✅ | Google business markup | — |
 | ✅ | Title + description | — |
@@ -28,7 +23,6 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## What the rebuild fixes
 
-- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
 
 ---
@@ -44,7 +38,6 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for Chula Vista busine
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
-- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
 
 Nothing is live. This is just so you can see what it would look like.

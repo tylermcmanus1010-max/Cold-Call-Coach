@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.ortonendo.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Root canal specialists in San Diego.",
   "subhead": "Endodontics is all we do. Referrals and direct appointments both welcome.",
@@ -83,32 +83,33 @@
   },
   "audit": {
     "https": true,
-    "mobile": false,
+    "mobile": true,
     "speed": true,
     "phoneTap": true,
     "hours": false,
-    "address": false,
+    "address": true,
     "services": false,
     "reviews": false,
     "cta": true,
     "seo": false,
-    "meta": false,
+    "meta": true,
     "social": true
   },
   "_scout": {
     "score": 99,
-    "gaps": 7,
+    "gaps": 4,
     "currentSiteStatus": "live",
-    "loadMs": 351,
-    "pageKb": 16,
+    "loadMs": 2029,
+    "pageKb": 19,
     "builder": null,
     "copyrightYear": null,
-    "rendered": false,
+    "rendered": true,
     "hardGaps": 3
   },
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-26: voicemail"
+    "2026-08-26: voicemail",
+    "2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling"
   ]
 }

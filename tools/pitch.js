@@ -7,6 +7,13 @@ const checks = require('./checks');
 // email.txt is the version you actually paste into your mail client.
 function emailBody(ctx) {
   const { b, from, owner, noSite, host, money, tier, care, pricing, emailFixes } = ctx;
+
+  // A warm lead — a referral, someone who already asked — gets a bespoke
+  // email. The cold-outreach body below opens by telling them what is wrong
+  // with a website they may not have, which for a warm buyer is both wrong
+  // and insulting. Templating around every case is worse than writing it.
+  if (b.pitchEmail) return String(b.pitchEmail).trim();
+
   // "McManus Web Co." already ends in a period; do not add a second one.
   const intro = from.businessName
     ? `I'm ${from.name}, I run ${String(from.businessName).replace(/\.$/, '')}.`
@@ -54,7 +61,11 @@ module.exports = function pitch(b, pricing) {
   const unverified = b._scout && b._scout.rendered === false;
   const scored = checks.map((c) => ({ ...c, pass: audit[c.key] === true }));
   // Never claim a text-derived finding. Those are for your eyes, not the owner's.
-  const failed = scored.filter((c) => !c.pass && !c.soft);
+  // Same rule in the pitch: if the site could not be read, say that once rather
+  // than listing every check as a separate failure.
+  const unreadable = /placeholder|no website|does not resolve|parked|unreachable|HTTP \d/i
+    .test(b._scout?.currentSiteStatus || '');
+  const failed = unreadable ? [] : scored.filter((c) => !c.pass && !c.soft);
   const unsureAbout = scored.filter((c) => !c.pass && c.soft);
   const score = scored.length - failed.length;
   const money = (t) => `${pricing.currency}${t.price.toLocaleString('en-US')}${t.unit || ''}`;
@@ -89,12 +100,15 @@ module.exports = function pitch(b, pricing) {
   };
   const shipped = (c) => delivers[c.key] !== false;
 
-  const emailFixes = (failed.length ? failed : checks)
+  const emailFixes = (failed.length ? failed : checks.filter((c) => !c.soft))
     .filter(shipped).slice(0, 5).map((c) => `- ${c.fixed}`).join('\n');
 
   const notYet = failed.filter((c) => !shipped(c));
 
-  const subject = b.pitchOpener
+  // A custom opener does not imply anything about their current site — only an
+  // explicit pitchSubject, or the no-site case, changes the subject line.
+  const subject = b.pitchSubject ? b.pitchSubject
+    : (b.pitchOpener && noSite)
     ? "You don't have a website of your own — I built you one"
     : noSite
     ? 'Your domain is showing a blank hosting page — I built you a website'

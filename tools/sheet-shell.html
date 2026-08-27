@@ -1,0 +1,326 @@
+<title>San Diego Call Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;650;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f6f8f9; --card:#ffffff; --ink:#111a1f; --dim:#5a6b74; --rule:#dbe3e7;
+  --accent:#0d5c63; --accent-soft:#e3f0f0;
+  --go:#1c7a4f; --wait:#8a6100; --stop:#8d3535;
+  --shadow:0 1px 2px rgba(16,32,40,.06);
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+  --paper:#0d1418; --card:#151e24; --ink:#e7eef2; --dim:#8ea2ac; --rule:#25333b;
+  --accent:#4fb3bb; --accent-soft:#123037;
+  --go:#4bbd84; --wait:#d6a53a; --stop:#dd7b7b;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}}
+:root[data-theme="dark"]{
+  --paper:#0d1418; --card:#151e24; --ink:#e7eef2; --dim:#8ea2ac; --rule:#25333b;
+  --accent:#4fb3bb; --accent-soft:#123037;
+  --go:#4bbd84; --wait:#d6a53a; --stop:#dd7b7b;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:Archivo,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 64px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:0}
+.sub{color:var(--dim);font-size:13px;margin-top:3px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:18px 0 26px}
+.tally div{background:var(--card);padding:11px 8px;text-align:center}
+.tally b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.tally span{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.09em}
+
+h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--dim);margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+h2::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.card.overdue{border-color:var(--wait)}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.nm{font-weight:650;letter-spacing:-.01em;line-height:1.25}
+.meta{font-size:12px;color:var(--dim);margin-top:2px}
+.chip{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  padding:3px 8px;border-radius:999px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.chip.go{background:color-mix(in srgb,var(--go) 15%,transparent);color:var(--go)}
+.chip.wait{background:color-mix(in srgb,var(--wait) 18%,transparent);color:var(--wait)}
+.chip.stop{background:color-mix(in srgb,var(--stop) 15%,transparent);color:var(--stop)}
+
+.tel{display:inline-block;margin:10px 0 2px;font-size:22px;font-weight:600;
+  letter-spacing:.01em;color:var(--accent);text-decoration:none}
+.tel:hover{text-decoration:underline}
+.say.hold{border-left-color:var(--wait);color:var(--wait)}
+
+.savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:20;
+  font-size:12.5px;font-weight:650;padding:9px 16px;border-radius:999px;cursor:default;
+  background:var(--ink);color:var(--paper);box-shadow:0 6px 20px -8px rgba(0,0,0,.5)}
+.savebar.saved{background:var(--go);color:#fff}
+.savebar.error{background:var(--stop);color:#fff;cursor:pointer}
+.note{font-size:13px;color:var(--accent);background:var(--accent-soft);
+  border-radius:8px;padding:9px 11px;margin:10px 0 0;font-weight:600}
+.needs{font-size:12.5px;color:var(--wait);background:color-mix(in srgb,var(--wait) 10%,transparent);
+  border-radius:8px;padding:8px 10px;margin:10px 0 0}
+.needs b{color:var(--wait)}
+.fold{margin-top:10px;border-top:1px solid var(--rule);padding-top:8px}
+.fold summary{font-weight:600;color:var(--accent)}
+.block{margin:10px 0 0}
+.lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}
+.block p{margin:0;font-size:13.5px;color:var(--ink)}
+.block .file{font-size:12.5px;color:var(--accent)}
+.block pre{margin:0;white-space:pre-wrap;font:12.5px/1.5 "IBM Plex Mono",ui-monospace,monospace;
+  background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:10px;overflow-x:auto}
+.hint{font-size:11.5px;color:var(--dim);margin-top:2px}
+.say{font-size:13.5px;color:var(--dim);margin:6px 0 0;border-left:2px solid var(--rule);padding-left:10px}
+.say b{color:var(--ink);font-weight:600}
+
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+button,.lnk{font:inherit;font-size:12.5px;font-weight:600;padding:7px 11px;border-radius:8px;
+  border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none}
+button:hover,.lnk:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,.lnk:focus-visible,.tel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.08);color:#fff}
+button[disabled]{opacity:.4;cursor:default}
+
+details{margin-top:8px}
+summary{cursor:pointer;font-size:12px;color:var(--dim);padding:6px 0}
+.dead .nm{color:var(--dim)}
+.ro{background:var(--accent-soft);color:var(--accent);border-radius:10px;padding:10px 12px;
+  font-size:13px;margin-bottom:16px}
+footer{margin-top:32px;color:var(--dim);font-size:11.5px;text-align:center}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+</style>
+<div class="wrap" id="app"></div>
+<script>
+const STATE = __STATE__;
+const CSS = "\n:root{\n  --paper:#f6f8f9; --card:#ffffff; --ink:#111a1f; --dim:#5a6b74; --rule:#dbe3e7;\n  --accent:#0d5c63; --accent-soft:#e3f0f0;\n  --go:#1c7a4f; --wait:#8a6100; --stop:#8d3535;\n  --shadow:0 1px 2px rgba(16,32,40,.06);\n}\n:root:not([data-theme=\"light\"]){ @media (prefers-color-scheme:dark){\n  --paper:#0d1418; --card:#151e24; --ink:#e7eef2; --dim:#8ea2ac; --rule:#25333b;\n  --accent:#4fb3bb; --accent-soft:#123037;\n  --go:#4bbd84; --wait:#d6a53a; --stop:#dd7b7b;\n  --shadow:0 1px 2px rgba(0,0,0,.4);\n}}\n:root[data-theme=\"dark\"]{\n  --paper:#0d1418; --card:#151e24; --ink:#e7eef2; --dim:#8ea2ac; --rule:#25333b;\n  --accent:#4fb3bb; --accent-soft:#123037;\n  --go:#4bbd84; --wait:#d6a53a; --stop:#dd7b7b;\n  --shadow:0 1px 2px rgba(0,0,0,.4);\n}\n*{box-sizing:border-box}\nbody{margin:0;background:var(--paper);color:var(--ink);\n  font-family:Archivo,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;\n  font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}\n.wrap{max-width:640px;margin:0 auto;padding:20px 16px 64px}\nh1{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:0}\n.sub{color:var(--dim);font-size:13px;margin-top:3px}\n.mono{font-family:\"IBM Plex Mono\",ui-monospace,monospace;font-variant-numeric:tabular-nums}\n\n.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);\n  border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:18px 0 26px}\n.tally div{background:var(--card);padding:11px 8px;text-align:center}\n.tally b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em}\n.tally span{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.09em}\n\nh2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;\n  color:var(--dim);margin:26px 0 10px;display:flex;align-items:center;gap:8px}\nh2::after{content:\"\";flex:1;height:1px;background:var(--rule)}\n\n.card{background:var(--card);border:1px solid var(--rule);border-radius:12px;\n  padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}\n.card.overdue{border-color:var(--wait)}\n.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}\n.nm{font-weight:650;letter-spacing:-.01em;line-height:1.25}\n.meta{font-size:12px;color:var(--dim);margin-top:2px}\n.chip{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;\n  padding:3px 8px;border-radius:999px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}\n.chip.go{background:color-mix(in srgb,var(--go) 15%,transparent);color:var(--go)}\n.chip.wait{background:color-mix(in srgb,var(--wait) 18%,transparent);color:var(--wait)}\n.chip.stop{background:color-mix(in srgb,var(--stop) 15%,transparent);color:var(--stop)}\n\n.tel{display:inline-block;margin:10px 0 2px;font-size:22px;font-weight:600;\n  letter-spacing:.01em;color:var(--accent);text-decoration:none}\n.tel:hover{text-decoration:underline}\n.say.hold{border-left-color:var(--wait);color:var(--wait)}\n\n.savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:20;\n  font-size:12.5px;font-weight:650;padding:9px 16px;border-radius:999px;cursor:default;\n  background:var(--ink);color:var(--paper);box-shadow:0 6px 20px -8px rgba(0,0,0,.5)}\n.savebar.saved{background:var(--go);color:#fff}\n.savebar.error{background:var(--stop);color:#fff;cursor:pointer}\n.note{font-size:13px;color:var(--accent);background:var(--accent-soft);\n  border-radius:8px;padding:9px 11px;margin:10px 0 0;font-weight:600}\n.needs{font-size:12.5px;color:var(--wait);background:color-mix(in srgb,var(--wait) 10%,transparent);\n  border-radius:8px;padding:8px 10px;margin:10px 0 0}\n.needs b{color:var(--wait)}\n.fold{margin-top:10px;border-top:1px solid var(--rule);padding-top:8px}\n.fold summary{font-weight:600;color:var(--accent)}\n.block{margin:10px 0 0}\n.lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}\n.block p{margin:0;font-size:13.5px;color:var(--ink)}\n.block .file{font-size:12.5px;color:var(--accent)}\n.block pre{margin:0;white-space:pre-wrap;font:12.5px/1.5 \"IBM Plex Mono\",ui-monospace,monospace;\n  background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:10px;overflow-x:auto}\n.hint{font-size:11.5px;color:var(--dim);margin-top:2px}\n.say{font-size:13.5px;color:var(--dim);margin:6px 0 0;border-left:2px solid var(--rule);padding-left:10px}\n.say b{color:var(--ink);font-weight:600}\n\n.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}\nbutton,.lnk{font:inherit;font-size:12.5px;font-weight:600;padding:7px 11px;border-radius:8px;\n  border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none}\nbutton:hover,.lnk:hover{border-color:var(--accent);color:var(--accent)}\nbutton:focus-visible,.lnk:focus-visible,.tel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}\nbutton.primary{background:var(--accent);border-color:var(--accent);color:#fff}\nbutton.primary:hover{filter:brightness(1.08);color:#fff}\nbutton[disabled]{opacity:.4;cursor:default}\n\ndetails{margin-top:8px}\nsummary{cursor:pointer;font-size:12px;color:var(--dim);padding:6px 0}\n.dead .nm{color:var(--dim)}\n.ro{background:var(--accent-soft);color:var(--accent);border-radius:10px;padding:10px 12px;\n  font-size:13px;margin-bottom:16px}\nfooter{margin-top:32px;color:var(--dim);font-size:11.5px;text-align:center}\n@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}\n";
+const APP = "var canWrite = null, artifact = null;\n\nfunction esc(s){ return String(s == null ? '' : s)\n  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')\n  .replace(/\"/g,'&quot;').replace(/'/g,'&#39;'); }\n\nfunction today(){ return new Date().toISOString().slice(0,10); }\nfunction daysSince(d){ return d ? Math.floor((Date.parse(today()) - Date.parse(d)) / 86400000) : 0; }\nfunction tel(p){ return 'tel:' + String(p).replace(/[^0-9+]/g,''); }\n\nfunction copyText(t){\n  try{ if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); }catch(e){}\n  try{\n    var ta = document.createElement('textarea');\n    ta.value = t; ta.setAttribute('readonly','');\n    ta.style.position='fixed'; ta.style.top='-1000px';\n    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);\n    document.execCommand('copy'); document.body.removeChild(ta);\n  }catch(e){}\n  return Promise.resolve();\n}\n\nfunction flash(el, msg){\n  var old = el.getAttribute('data-old') || el.textContent;\n  el.setAttribute('data-old', old);\n  el.textContent = msg;\n  setTimeout(function(){ el.textContent = el.getAttribute('data-old'); }, 1500);\n}\n\nfunction chip(l){\n  var overdue = l.status === 'sent' && daysSince(l.sentOn) >= 3;\n  if(l.status === 'sent') return '<span class=\"chip ' + (overdue?'wait':'go') + '\">' +\n    (overdue ? daysSince(l.sentOn) + 'd &mdash; chase' : 'sent') + '</span>';\n  if(l.status === 'won')  return '<span class=\"chip go\">won</span>';\n  if(l.status === 'dead') return '<span class=\"chip stop\">dead</span>';\n  if(l.attempts)          return '<span class=\"chip wait\">' + l.attempts + ' tried</span>';\n  if(!l.built)            return '<span class=\"chip stop\">no page</span>';\n  return '<span class=\"chip\">ready</span>';\n}\n\nfunction card(l, i){\n  var o = [], dead = l.status === 'dead';\n  var overdue = l.status === 'sent' && daysSince(l.sentOn) >= 3;\n  o.push('<div class=\"card' + (overdue?' overdue':'') + (dead?' dead':'') + '\">');\n\n  o.push('<div class=\"top\"><div><div class=\"nm\">' + esc(l.name) + '</div>');\n  o.push('<div class=\"meta\">' + esc(l.cat) + (l.city ? ' &middot; ' + esc(l.city) : '') + '</div></div>');\n  o.push(chip(l) + '</div>');\n\n  if(!dead){\n    o.push('<a class=\"tel mono\" href=\"' + tel(l.phone) + '\" data-copy=\"' + esc(l.phone) + '\">' + esc(l.phone) + '</a>');\n    o.push('<div class=\"hint\">Tap to copy, then paste into your dialer</div>');\n\n    if(l.note){\n      o.push('<p class=\"note\"><b>Note:</b> ' + esc(l.note) + '</p>');\n    }\n    if(l.needs && l.needs.length){\n      o.push('<p class=\"needs\"><b>Screenshot me:</b> ' + esc(l.needs.join(', ')) +\n             ' &mdash; from their Google listing</p>');\n    }\n\n    o.push('<div class=\"acts\">');\n    o.push('<button data-a=\"script\" data-i=\"' + i + '\">Phone script</button>');\n    if(l.built) o.push('<button data-a=\"email\" data-i=\"' + i + '\">Email text</button>');\n    o.push('<button data-a=\"copysearch\" data-i=\"' + i + '\">Copy for Google</button>');\n    o.push('</div>');\n\n    o.push('<details class=\"fold\"><summary>What to say &amp; what to send</summary>');\n    o.push('<div class=\"block\"><div class=\"lbl\">On the phone</div><p>' + esc(l.script) + '</p></div>');\n    if(l.built){\n      o.push('<div class=\"block\"><div class=\"lbl\">Attach</div><p class=\"mono file\">' + esc(l.file) + '</p></div>');\n      o.push('<div class=\"block\"><div class=\"lbl\">Subject</div><p>' + esc(l.subject) + '</p></div>');\n      o.push('<div class=\"block\"><div class=\"lbl\">Email</div><pre>' + esc(l.body) + '</pre></div>');\n    } else {\n      o.push('<div class=\"block\"><div class=\"lbl\">No page yet</div><p>Ask me to build it before you send anything.</p></div>');\n    }\n    o.push('</details>');\n\n    o.push('<div class=\"acts\">');\n    o.push('<button data-a=\"tried\" data-i=\"' + i + '\">No answer</button>');\n    if(l.status !== 'sent') o.push('<button class=\"primary\" data-a=\"sent\" data-i=\"' + i + '\">Sent it</button>');\n    else o.push('<button class=\"primary\" data-a=\"won\" data-i=\"' + i + '\">They said yes</button>');\n    o.push('<button data-a=\"dead\" data-i=\"' + i + '\">Not interested</button>');\n    o.push('</div>');\n  } else {\n    o.push('<div class=\"acts\"><button data-a=\"revive\" data-i=\"' + i + '\">Bring back</button></div>');\n  }\n  o.push('</div>');\n  return o.join('');\n}\n\nfunction render(){\n  var L = STATE.leads, ready=[], noPage=[], sent=[], won=[], dead=[];\n  for(var i=0;i<L.length;i++){\n    var l = L[i]; l._i = i;\n    if(l.status==='dead') dead.push(l);\n    else if(l.status==='won') won.push(l);\n    else if(l.status==='sent') sent.push(l);\n    else if(l.built) ready.push(l);\n    else noPage.push(l);\n  }\n  sent.sort(function(a,b){ return daysSince(b.sentOn)-daysSince(a.sentOn); });\n  ready.sort(function(a,b){ return (a.attempts-b.attempts) || a.name.localeCompare(b.name); });\n\n  var h = [];\n  h.push('<header><h1>San Diego Call Sheet</h1>');\n  h.push('<div class=\"sub\">Every business vetted so far &mdash; number, script, email and file in one place.</div></header>');\n  h.push('<div class=\"tally\">');\n  h.push('<div><b class=\"mono\">' + ready.length + '</b><span>Ready</span></div>');\n  h.push('<div><b class=\"mono\">' + sent.length + '</b><span>Sent</span></div>');\n  h.push('<div><b class=\"mono\">' + won.length + '</b><span>Won</span></div>');\n  h.push('<div><b class=\"mono\">' + dead.length + '</b><span>Dead</span></div>');\n  h.push('</div>');\n\n  if(canWrite === false) h.push('<div class=\"ro\">Read-only view &mdash; buttons are off.</div>');\n\n  if(sent.length){ h.push('<h2>Waiting on a reply</h2>');\n    sent.forEach(function(l){ h.push(card(l,l._i)); }); }\n  if(won.length){ h.push('<h2>Won</h2>');\n    won.forEach(function(l){ h.push(card(l,l._i)); }); }\n\n  h.push('<h2>Call these &mdash; ' + ready.length + '</h2>');\n  ready.forEach(function(l){ h.push(card(l,l._i)); });\n\n  if(noPage.length){\n    h.push('<h2>Vetted, page not built yet &mdash; ' + noPage.length + '</h2>');\n    noPage.forEach(function(l){ h.push(card(l,l._i)); });\n  }\n  if(dead.length){\n    h.push('<details><summary>' + dead.length + ' dead &mdash; closed, chains, or not interested</summary>');\n    dead.forEach(function(l){ h.push(card(l,l._i)); });\n    h.push('</details>');\n  }\n  h.push('<div id=\"savebar\" class=\"savebar\" hidden></div>');\n  h.push('<footer>Send me a screenshot of any Google listing and I will finish that page.</footer>');\n  document.getElementById('app').innerHTML = h.join('');\n  if(saveState !== 'idle') setSave(saveState);\n}\n\n// Every publish mints a version and reloads the view, so one publish per tap\n// meant rapid taps collided: the later ones were rejected as conflicts and\n// silently lost. Batch them, and always say whether the change actually saved.\nvar saveTimer = null, saveState = 'idle';\n\nfunction setSave(s){\n  saveState = s;\n  var el = document.getElementById('savebar');\n  if(!el) return;\n  el.className = 'savebar ' + s;\n  el.textContent = s === 'saving' ? 'Saving…'\n    : s === 'saved'  ? 'Saved'\n    : s === 'error'  ? 'Not saved — tap to retry'\n    : '';\n  el.hidden = (s === 'idle');\n}\n\nfunction doPublish(){\n  if(!artifact){ setSave('error'); return; }\n  setSave('saving');\n  artifact.publish(PAGE(STATE, PAGE.toString(), CSS, APP)).then(function(){\n    setSave('saved');\n    setTimeout(function(){ if(saveState === 'saved') setSave('idle'); }, 1800);\n  }).catch(function(e){\n    var code = e && e.code;\n    if(code==='not_writer'||code==='not_granted'||code==='not_declared'){ canWrite=false; render(); return; }\n    // conflict means another view published first and this one is reloading to\n    // it; anything else is worth showing rather than swallowing.\n    setSave(code === 'conflict' ? 'saving' : 'error');\n  });\n}\n\nfunction save(){\n  clearTimeout(saveTimer);\n  setSave('saving');\n  saveTimer = setTimeout(doPublish, 700);\n}\n\ndocument.addEventListener('click', function(ev){\n  if(ev.target.closest('#savebar')){ doPublish(); return; }\n  var t = ev.target.closest('a.tel[data-copy]');\n  if(t){ ev.preventDefault(); copyText(t.getAttribute('data-copy')); flash(t,'Copied'); return; }\n  var b = ev.target.closest('button[data-a]');\n  if(!b) return;\n  var l = STATE.leads[+b.dataset.i], a = b.dataset.a;\n\n  if(a==='script'){ copyText(l.script); flash(b,'Script copied'); return; }\n  if(a==='email'){ copyText('Subject: ' + l.subject + '\\n\\n' + l.body); flash(b,'Email copied'); return; }\n  if(a==='copysearch'){ copyText(l.name + ' ' + l.city + ' CA'); flash(b,'Copied for Google'); return; }\n\n  if(a==='tried'){ l.attempts=(l.attempts||0)+1; l.lastTried=today(); }\n  if(a==='sent'){ l.status='sent'; l.sentOn=today(); }\n  if(a==='won'){ l.status='won'; }\n  if(a==='dead'){ l.status='dead'; }\n  if(a==='revive'){ l.status='new'; }\n  render(); save();\n});\n\nrender();\n(async function(){\n  try{ artifact = await claude.use('artifact'); canWrite = artifact ? null : false; }\n  catch(e){ canWrite = false; }\n  if(canWrite === false) render();\n})();\n";
+const PAGE = function PAGE(state, selfSrc, css, app) {
+  const esc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+'<title>San Diego Call Sheet</title>\n' +
+'<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;650;700&family=IBM+Plex+Mono:wght@500;600&display=swap">\n' +
+'<style>' + css + '</style>\n</head>\n<body>\n<div class="wrap" id="app"></div>\n' +
+'<script>\nconst STATE = ' + JSON.stringify(state) + ';\n' +
+'const CSS = ' + JSON.stringify(css) + ';\n' +
+'const APP = ' + JSON.stringify(app) + ';\n' +
+'const PAGE = ' + selfSrc + ';\n' +
+app +
+'\n<\/script>\n</body>\n</html>\n';
+};
+var canWrite = null, artifact = null;
+
+function esc(s){ return String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function daysSince(d){ return d ? Math.floor((Date.parse(today()) - Date.parse(d)) / 86400000) : 0; }
+function tel(p){ return 'tel:' + String(p).replace(/[^0-9+]/g,''); }
+
+function copyText(t){
+  try{ if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); }catch(e){}
+  try{
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(e){}
+  return Promise.resolve();
+}
+
+function flash(el, msg){
+  var old = el.getAttribute('data-old') || el.textContent;
+  el.setAttribute('data-old', old);
+  el.textContent = msg;
+  setTimeout(function(){ el.textContent = el.getAttribute('data-old'); }, 1500);
+}
+
+function chip(l){
+  var overdue = l.status === 'sent' && daysSince(l.sentOn) >= 3;
+  if(l.status === 'sent') return '<span class="chip ' + (overdue?'wait':'go') + '">' +
+    (overdue ? daysSince(l.sentOn) + 'd &mdash; chase' : 'sent') + '</span>';
+  if(l.status === 'won')  return '<span class="chip go">won</span>';
+  if(l.status === 'dead') return '<span class="chip stop">dead</span>';
+  if(l.attempts)          return '<span class="chip wait">' + l.attempts + ' tried</span>';
+  if(!l.built)            return '<span class="chip stop">no page</span>';
+  return '<span class="chip">ready</span>';
+}
+
+function card(l, i){
+  var o = [], dead = l.status === 'dead';
+  var overdue = l.status === 'sent' && daysSince(l.sentOn) >= 3;
+  o.push('<div class="card' + (overdue?' overdue':'') + (dead?' dead':'') + '">');
+
+  o.push('<div class="top"><div><div class="nm">' + esc(l.name) + '</div>');
+  o.push('<div class="meta">' + esc(l.cat) + (l.city ? ' &middot; ' + esc(l.city) : '') + '</div></div>');
+  o.push(chip(l) + '</div>');
+
+  if(!dead){
+    o.push('<a class="tel mono" href="' + tel(l.phone) + '" data-copy="' + esc(l.phone) + '">' + esc(l.phone) + '</a>');
+    o.push('<div class="hint">Tap to copy, then paste into your dialer</div>');
+
+    if(l.note){
+      o.push('<p class="note"><b>Note:</b> ' + esc(l.note) + '</p>');
+    }
+    if(l.needs && l.needs.length){
+      o.push('<p class="needs"><b>Screenshot me:</b> ' + esc(l.needs.join(', ')) +
+             ' &mdash; from their Google listing</p>');
+    }
+
+    o.push('<div class="acts">');
+    o.push('<button data-a="script" data-i="' + i + '">Phone script</button>');
+    if(l.built) o.push('<button data-a="email" data-i="' + i + '">Email text</button>');
+    o.push('<button data-a="copysearch" data-i="' + i + '">Copy for Google</button>');
+    o.push('</div>');
+
+    o.push('<details class="fold"><summary>What to say &amp; what to send</summary>');
+    o.push('<div class="block"><div class="lbl">On the phone</div><p>' + esc(l.script) + '</p></div>');
+    if(l.built){
+      o.push('<div class="block"><div class="lbl">Attach</div><p class="mono file">' + esc(l.file) + '</p></div>');
+      o.push('<div class="block"><div class="lbl">Subject</div><p>' + esc(l.subject) + '</p></div>');
+      o.push('<div class="block"><div class="lbl">Email</div><pre>' + esc(l.body) + '</pre></div>');
+    } else {
+      o.push('<div class="block"><div class="lbl">No page yet</div><p>Ask me to build it before you send anything.</p></div>');
+    }
+    o.push('</details>');
+
+    o.push('<div class="acts">');
+    o.push('<button data-a="tried" data-i="' + i + '">No answer</button>');
+    if(l.status !== 'sent') o.push('<button class="primary" data-a="sent" data-i="' + i + '">Sent it</button>');
+    else o.push('<button class="primary" data-a="won" data-i="' + i + '">They said yes</button>');
+    o.push('<button data-a="dead" data-i="' + i + '">Not interested</button>');
+    o.push('</div>');
+  } else {
+    o.push('<div class="acts"><button data-a="revive" data-i="' + i + '">Bring back</button></div>');
+  }
+  o.push('</div>');
+  return o.join('');
+}
+
+function render(){
+  var L = STATE.leads, ready=[], noPage=[], sent=[], won=[], dead=[];
+  for(var i=0;i<L.length;i++){
+    var l = L[i]; l._i = i;
+    if(l.status==='dead') dead.push(l);
+    else if(l.status==='won') won.push(l);
+    else if(l.status==='sent') sent.push(l);
+    else if(l.built) ready.push(l);
+    else noPage.push(l);
+  }
+  sent.sort(function(a,b){ return daysSince(b.sentOn)-daysSince(a.sentOn); });
+  ready.sort(function(a,b){ return (a.attempts-b.attempts) || a.name.localeCompare(b.name); });
+
+  var h = [];
+  h.push('<header><h1>San Diego Call Sheet</h1>');
+  h.push('<div class="sub">Every business vetted so far &mdash; number, script, email and file in one place.</div></header>');
+  h.push('<div class="tally">');
+  h.push('<div><b class="mono">' + ready.length + '</b><span>Ready</span></div>');
+  h.push('<div><b class="mono">' + sent.length + '</b><span>Sent</span></div>');
+  h.push('<div><b class="mono">' + won.length + '</b><span>Won</span></div>');
+  h.push('<div><b class="mono">' + dead.length + '</b><span>Dead</span></div>');
+  h.push('</div>');
+
+  if(canWrite === false) h.push('<div class="ro">Read-only view &mdash; buttons are off.</div>');
+
+  if(sent.length){ h.push('<h2>Waiting on a reply</h2>');
+    sent.forEach(function(l){ h.push(card(l,l._i)); }); }
+  if(won.length){ h.push('<h2>Won</h2>');
+    won.forEach(function(l){ h.push(card(l,l._i)); }); }
+
+  h.push('<h2>Call these &mdash; ' + ready.length + '</h2>');
+  ready.forEach(function(l){ h.push(card(l,l._i)); });
+
+  if(noPage.length){
+    h.push('<h2>Vetted, page not built yet &mdash; ' + noPage.length + '</h2>');
+    noPage.forEach(function(l){ h.push(card(l,l._i)); });
+  }
+  if(dead.length){
+    h.push('<details><summary>' + dead.length + ' dead &mdash; closed, chains, or not interested</summary>');
+    dead.forEach(function(l){ h.push(card(l,l._i)); });
+    h.push('</details>');
+  }
+  h.push('<div id="savebar" class="savebar" hidden></div>');
+  h.push('<footer>Send me a screenshot of any Google listing and I will finish that page.</footer>');
+  document.getElementById('app').innerHTML = h.join('');
+  if(saveState !== 'idle') setSave(saveState);
+}
+
+// Every publish mints a version and reloads the view, so one publish per tap
+// meant rapid taps collided: the later ones were rejected as conflicts and
+// silently lost. Batch them, and always say whether the change actually saved.
+var saveTimer = null, saveState = 'idle';
+
+function setSave(s){
+  saveState = s;
+  var el = document.getElementById('savebar');
+  if(!el) return;
+  el.className = 'savebar ' + s;
+  el.textContent = s === 'saving' ? 'Saving…'
+    : s === 'saved'  ? 'Saved'
+    : s === 'error'  ? 'Not saved — tap to retry'
+    : '';
+  el.hidden = (s === 'idle');
+}
+
+function doPublish(){
+  if(!artifact){ setSave('error'); return; }
+  setSave('saving');
+  artifact.publish(PAGE(STATE, PAGE.toString(), CSS, APP)).then(function(){
+    setSave('saved');
+    setTimeout(function(){ if(saveState === 'saved') setSave('idle'); }, 1800);
+  }).catch(function(e){
+    var code = e && e.code;
+    if(code==='not_writer'||code==='not_granted'||code==='not_declared'){ canWrite=false; render(); return; }
+    // conflict means another view published first and this one is reloading to
+    // it; anything else is worth showing rather than swallowing.
+    setSave(code === 'conflict' ? 'saving' : 'error');
+  });
+}
+
+function save(){
+  clearTimeout(saveTimer);
+  setSave('saving');
+  saveTimer = setTimeout(doPublish, 700);
+}
+
+document.addEventListener('click', function(ev){
+  if(ev.target.closest('#savebar')){ doPublish(); return; }
+  var t = ev.target.closest('a.tel[data-copy]');
+  if(t){ ev.preventDefault(); copyText(t.getAttribute('data-copy')); flash(t,'Copied'); return; }
+  var b = ev.target.closest('button[data-a]');
+  if(!b) return;
+  var l = STATE.leads[+b.dataset.i], a = b.dataset.a;
+
+  if(a==='script'){ copyText(l.script); flash(b,'Script copied'); return; }
+  if(a==='email'){ copyText('Subject: ' + l.subject + '\n\n' + l.body); flash(b,'Email copied'); return; }
+  if(a==='copysearch'){ copyText(l.name + ' ' + l.city + ' CA'); flash(b,'Copied for Google'); return; }
+
+  if(a==='tried'){ l.attempts=(l.attempts||0)+1; l.lastTried=today(); }
+  if(a==='sent'){ l.status='sent'; l.sentOn=today(); }
+  if(a==='won'){ l.status='won'; }
+  if(a==='dead'){ l.status='dead'; }
+  if(a==='revive'){ l.status='new'; }
+  render(); save();
+});
+
+render();
+(async function(){
+  try{ artifact = await claude.use('artifact'); canWrite = artifact ? null : false; }
+  catch(e){ canWrite = false; }
+  if(canWrite === false) render();
+})();
+
+</script>

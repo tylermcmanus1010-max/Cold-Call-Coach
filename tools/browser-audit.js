@@ -10,7 +10,33 @@
 const { chromium } = require('playwright-core');
 const CHECKS = require('./checks');
 
-const EXEC = process.env.CHROMIUM_PATH || undefined;
+// Find a browser without making anyone think about it. Playwright's bundled
+// path changes with every version bump, and CI runners ship their own Chrome,
+// so look in all the usual places rather than demanding an env var.
+const EXEC = (() => {
+  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+  const fs = require('fs'), path = require('path'), cp = require('child_process');
+  const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, '/opt/pw-browsers',
+                 path.join(require('os').homedir(), '.cache/ms-playwright')].filter(Boolean);
+  for (const root of roots) {
+    let dirs = [];
+    try { dirs = fs.readdirSync(root).filter((d) => d.startsWith('chromium')); } catch { continue; }
+    // newest build number first
+    dirs.sort((a, b) => (+(b.match(/(\d+)$/) || [])[1] || 0) - (+(a.match(/(\d+)$/) || [])[1] || 0));
+    for (const d of dirs) {
+      for (const rel of ['chrome-linux/chrome', 'chrome-linux/headless_shell',
+                         'chrome-mac/Chromium.app/Contents/MacOS/Chromium']) {
+        const f = path.join(root, d, rel);
+        if (fs.existsSync(f)) return f;
+      }
+    }
+  }
+  for (const bin of ['google-chrome', 'chromium', 'chromium-browser']) {
+    try { return cp.execSync(`command -v ${bin}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim() || undefined; }
+    catch { /* not installed */ }
+  }
+  return undefined;   // let Playwright try its own default
+})();
 const PHONE = { width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 ' +
            '(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
@@ -25,7 +51,15 @@ const MANAGED = [
   [/squarespace|static1\.squarespace/i, 'Squarespace'], [/wix\.com|_wixCssImports|wixstatic/i, 'Wix'],
   [/webflow/i, 'Webflow'], [/duda(one)?|dudamobile/i, 'Duda'], [/godaddy.*websites|w\.sitey/i, 'GoDaddy Websites'],
   [/squareup|square-web|weebly/i, 'Square/Weebly'], [/bigcommerce/i, 'BigCommerce'],
-  [/hubspot|hs-sites/i, 'HubSpot'], [/townsquareinteractive|dexyp|yext/i, 'a marketing agency'],
+  [/hubspot|hs-sites/i, 'HubSpot'],
+  // Booking platforms for salons, spas and clinics. These give a business a
+  // photo gallery, a priced menu with durations and online booking — more than
+  // a one-page rebuild offers. Revive Lash & Nail is on Bukkii and their page
+  // is better than ours would be.
+  [/bukkii/i, 'Bukkii'], [/vagaro/i, 'Vagaro'], [/booksy/i, 'Booksy'],
+  [/glossgenius/i, 'GlossGenius'], [/squareup\.com\/appointments|square\.site/i, 'Square Appointments'],
+  [/mindbodyonline|mindbody/i, 'Mindbody'], [/schedulicity/i, 'Schedulicity'],
+  [/setmore|acuityscheduling|fresha/i, 'a booking platform'], [/townsquareinteractive|dexyp|yext/i, 'a marketing agency'],
 ];
 
 // The hosting panel's own placeholder. Catch it before reading anything off the
@@ -87,9 +121,17 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
   try {
     let res = null, https = true;
     const started = Date.now();
+    const isFile = /^file:\/\//i.test(String(rawUrl));
     try {
-      res = await page.goto('https://' + bare, { waitUntil: 'domcontentloaded', timeout });
+      if (isFile) {
+        // Our own built pages are audited from disk. They will be served over
+        // HTTPS once live, so that check is not held against them here.
+        res = await page.goto(String(rawUrl), { waitUntil: 'domcontentloaded', timeout });
+      } else {
+        res = await page.goto('https://' + bare, { waitUntil: 'domcontentloaded', timeout });
+      }
     } catch (e) {
+      if (isFile) { await ctx.close(); if (own) await b.close(); return fail('could not open the file', false); }
       https = false;
       // A failed navigation leaves the page on chrome-error://, which interrupts
       // the very next goto. Retry plain HTTP on a clean page instead.
@@ -147,7 +189,23 @@ async function auditRendered(rawUrl, { timeout = 25000, browser } = {}) {
     }
 
     const platformHtml = await page.content().catch(() => '');
+
+    // A credit line in the footer — "Design By Online Ethos", "Site by ..." —
+    // means an agency is being paid to look after it. Korel Dentistry carried
+    // one, along with hours listed twice, reviews, photos and a current
+    // copyright. Walking into that is walking into a fight.
+    const credit = (p.text.match(
+      /\b(?:design(?:ed)?|site|website|web\s*design|developed|built|maintained)\s+by\s+([A-Z][\w&'.-]*(?:\s+[A-Z][\w&'.-]*){0,3})/i) || [])[1];
+    const platformCredit = credit && /wordpress|shopify|wix|squarespace|weebly|godaddy|duda|webflow|bloomnation/i.test(credit);
+    const agency = credit && !platformCredit ? credit.trim() : null;
+
     const managed = MANAGED.find(([re]) => re.test(platformHtml));
+    if (agency) {
+      return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
+               managed: 'an agency — ' + agency, ms, kb: Math.round(p.bytes / 1024),
+               reason: `credited to ${agency} — already maintained`,
+               checks: Object.fromEntries(CHECKS.map((c) => [c.key, true])), gaps: 0, info: {} };
+    }
     if (managed) {
       return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
                managed: managed[1], ms, kb: Math.round(p.bytes / 1024),

@@ -1,0 +1,80 @@
+# Re-check leads we already scaffolded, in a real browser.
+#
+# Leads scaffolded before the browser auditor existed carry findings read off
+# raw HTML, which cannot see anything JavaScript builds — hours, tap-to-call
+# links, the mobile layout. Those findings are not safe to say to an owner.
+#
+# Actions tab -> Re-audit leads -> Run workflow. Results in the run summary,
+# readable on a phone. Corrected leads are committed back.
+
+name: Re-audit leads
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'One client only (blank = every unverified lead)'
+        required: false
+      all:
+        description: 'Also redo leads already verified in a browser'
+        required: false
+        default: 'no'
+        type: choice
+        options: [ 'no', 'yes' ]
+
+permissions:
+  contents: write
+
+jobs:
+  reaudit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Re-audit
+        run: |
+          ./cc reaudit ${{ inputs.slug }} ${{ inputs.all == 'yes' && '--all' || '' }} | tee reaudit.log
+
+      - name: Rebuild pages and the call sheet
+        run: |
+          ./cc build || true
+          ./cc sheet || true
+
+      - name: Write the summary
+        run: |
+          {
+            echo '## Re-audit'
+            echo
+            echo '```'
+            cat reaudit.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the corrected leads
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f reaudit.log
+          git add clients call-sheet.html
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "Re-audit leads in a real browser
+
+          Replaces findings read off raw HTML, which cannot see JavaScript-built
+          hours, tap-to-call links or the mobile layout, with measured ones.
+          Leads whose site turns out to be fine are marked dead — that is a call
+          saved, not a lead lost."
+            git push
+          fi

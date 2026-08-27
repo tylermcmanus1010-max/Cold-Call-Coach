@@ -1,12 +1,12 @@
 {
-  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a auto repair shop and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing.",
+  "_howto": "Name, phone, address and current site are REAL and the audit was measured in a real browser. Services are the standard scope of a auto repair shop and are an ASSUMPTION — confirm on the call. Rating, reviews and hours need their Google listing.",
   "slug": "safety-auto-repair",
   "name": "Safety Auto Repair",
   "category": "Auto repair",
   "owner": "",
   "currentSite": "https://forsale.godaddy.com/forsale/safetyautorepair.com?utm_source=TDFS_BINNS2&utm_medium=parkedpages&utm_campaign=x_corp_tdfs-binns2_base&traffic_type=TDFS_BINNS2&traffic_id=binns2&",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Honest auto repair in San Diego.",
   "subhead": "Diagnosed before it is quoted. Call the shop.",
@@ -104,5 +104,10 @@
     "copyrightYear": 2026,
     "rendered": false,
     "hardGaps": 3
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: number not in service"
+  ]
 }

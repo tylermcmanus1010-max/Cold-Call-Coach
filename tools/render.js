@@ -27,7 +27,7 @@ function jsonld(b) {
     name: b.name,
     description: b.tagline,
     telephone: b.phone,
-    url: b.newUrl || undefined,
+    url: b.liveUrl || b.newUrl || undefined,
     address: a.street ? {
       '@type': 'PostalAddress',
       streetAddress: a.street, addressLocality: a.city,
@@ -91,34 +91,59 @@ function voiceOf(b) {
   return 'trade';
 }
 
-module.exports = function render(b) {
+function render(b) {
   const tel = digits(b.phone);
   const a = b.address || {};
   const accent = b.theme?.accent || '#0f6b5c';
   const v = VOICES[voiceOf(b)];
+
+  // A menu earns its layout only when there is something to choose between.
+  const cents = (p) => {
+    const m = String(p || '').match(/(\d+(?:\.\d{1,2})?)/);
+    return m ? Math.round(parseFloat(m[1]) * 100) : 0;
+  };
+  const mins = (d) => {
+    const m = String(d || '').match(/(\d+)\s*(h|hr|hour|m|min)/i);
+    if (!m) return 0;
+    return /^h/i.test(m[2]) ? +m[1] * 60 : +m[1];
+  };
+  const groups = (() => {
+    const out = new Map();
+    for (const s of b.services || []) {
+      const k = s.group || '';
+      if (!out.has(k)) out.set(k, []);
+      out.get(k).push(s);
+    }
+    return [...out.entries()];
+  })();
   const ink = b.theme?.ink || '#12181c';
   const hero = b.theme?.heroImage;
 
   const nav = [
     b.services?.length && ['Services', '#services'],
+    b.photos?.length && ['Work', '#work'],
+    b.team?.length && ['Team', '#team'],
     b.about && ['About', '#about'],
     b.reviews?.length && ['Reviews', '#reviews'],
     ['Contact', '#contact'],
   ].filter(Boolean);
 
   return `<!doctype html>
-<html lang="en">
+<html lang="en" class="v-${voiceOf(b)}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(b.name)}${b.category ? ' — ' + esc(b.category) : ''}${a.city ? ' in ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</title>
 <meta name="description" content="${esc(b.tagline)}${b.phone ? ' Call ' + esc(b.phone) + '.' : ''}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="website">${b.liveUrl ? `
+<link rel="canonical" href="${esc(b.liveUrl)}">
+<meta property="og:url" content="${esc(b.liveUrl)}">` : ''}
 <meta property="og:title" content="${esc(b.name)}">
 <meta property="og:description" content="${esc(b.tagline)}">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary_large_image">${b.logo ? `
+<meta property="og:image" content="${esc(b.logo)}">` : ''}
 <meta name="theme-color" content="${esc(accent)}">
-<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(
+<link rel="icon" href="${b.logo ? esc(b.logo) : 'data:image/svg+xml,' + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="${accent}"/><text x="16" y="22" font-size="17" font-family="system-ui,sans-serif" font-weight="700" fill="#fff" text-anchor="middle">${(b.name || '?').trim()[0].toUpperCase()}</text></svg>`
 )}">
 <script type="application/ld+json">
@@ -158,17 +183,36 @@ ${jsonld(b)}
     font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
   h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
   p{margin:0 0 14px}
-  section{padding:64px 0;border-top:1px solid var(--line)}
+  /* the header is sticky, so an anchored jump must leave room for it or the
+     first line of the section lands underneath. */
+  section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:72px}
   .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
     text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
+
+  /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
+     are unreadable in a 66px header bar, so they belong here at full size. */
+  .hero .logo{display:block;max-width:min(100%,var(--logo-w,300px));height:auto;
+    margin:0 0 24px;mix-blend-mode:multiply}
+  /* multiply needs something light behind it; on a full-bleed accent hero the
+     logo keeps its own white card instead. */
+  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
 
   /* header */
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
   .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
-    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px}
+    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px;
+    min-width:0}
+  /* the bar is a fixed height, so a long name has to shrink rather than wrap */
+  .brand .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:520px){ .brand{font-size:16px} }
+  @media (max-width:400px){ .brand{font-size:15px} }
   .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+  /* a stacked logo is unreadable in a 66px bar, so the header takes a compact
+     mark and sets the name in type beside it. */
+  .mark-img{width:30px;height:30px;object-fit:contain;flex:none;display:block}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
   nav a:hover{color:var(--ink)}
@@ -191,7 +235,10 @@ ${jsonld(b)}
       linear-gradient(180deg, var(--soft), #fff);
   }
   ${hero ? `.hero::after{content:"";position:absolute;inset:0;z-index:-2;background:url("${esc(hero)}") center/cover;opacity:.14}` : ''}
-  .hero h1{font-size:var(--hero-size);max-width:17ch}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  h2{text-wrap:balance}
+  /* a measure set for desktop is a straitjacket on a 390px screen — it forces
+     breaks the width itself would not. Let the phone use what it has. */
   .hero .lede{margin:18px 0 28px;font-size:19px}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
@@ -206,6 +253,60 @@ ${jsonld(b)}
   .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .trust b{display:block;font-size:26px;letter-spacing:-.02em}
   .trust span{font-size:13px;color:var(--muted)}
+
+  /* menu — grouped, priced, and selectable, the way a booking platform does it */
+  .menu{margin-top:26px;display:flex;flex-direction:column;gap:26px}
+  .mgroup h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--accent);margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
+  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  /* a button carries a chunky default border on every side — left unreset it
+     turns a clean list into a stack of boxes. */
+  .row-svc{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
+    border:0;border-bottom:1px solid var(--line);border-radius:0;
+    width:100%;text-align:left;background:#fff;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .row-svc:last-child{border-bottom:0}
+  .js .row-svc{cursor:pointer}
+  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 4%, #fff)}
+  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;border-radius:6px;
+    border:1.5px solid var(--line);display:grid;place-items:center;
+    font-size:11px;color:#fff;background:#fff}
+  html:not(.js) .row-svc .tick{display:none}
+  .row-svc.on{background:color-mix(in srgb, var(--accent) 7%, #fff)}
+  .row-svc.on .tick{background:var(--accent);border-color:var(--accent)}
+  .row-svc.on .tick::after{content:"\\2713"}
+  /* these are spans, because a <button> may only hold phrasing content —
+     so each one has to be told to take its own line. */
+  .svc-main{flex:1;min-width:0;display:block}
+  .svc-name{display:block;font-size:15.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
+  .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
+  .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+  .svc-price .svc-unit{font-size:12px;font-weight:600;color:var(--muted)}
+  .svc-dur{display:block;font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
+
+  /* the running basket — appears once something is chosen */
+  .basket{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--accent);color:#fff;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.4)}
+  .basket.up{display:flex;align-items:center;gap:14px}
+  .basket .sum{flex:1;min-width:0;font-size:13.5px;line-height:1.3}
+  .basket .sum b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+  .basket .btn{background:#fff;color:var(--accent);border-color:#fff;white-space:nowrap}
+  .basket .clear{background:transparent;color:rgba(255,255,255,.85);border:0;font-size:13px;
+    text-decoration:underline;padding:6px}
+
+  /* team */
+  .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
+  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  /* a one-person business is a selling point, but a lone card floating in a
+     full-width box reads as an unfinished page. Lay it on its side instead. */
+  .team.solo{grid-template-columns:1fr}
+  .team.solo .member{display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px}
+  .team.solo .member .av{margin:0}
+  .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+    background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
+  .member b{display:block;letter-spacing:-.01em}
+  .member span{font-size:12.5px;color:var(--muted)}
 
   /* services */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:30px}
@@ -225,6 +326,14 @@ ${jsonld(b)}
   ul.ticks li{padding-left:28px;position:relative;color:var(--muted)}
   ul.ticks li::before{content:"\\2713";position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;
     background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+
+  /* gallery — for businesses whose work IS the product */
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:28px}
+  .shots figure{margin:0;border-radius:var(--radius);overflow:hidden;background:var(--soft);
+    border:1px solid var(--line);aspect-ratio:1/1}
+  .shots img{width:100%;height:100%;object-fit:cover;display:block}
+  .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  @media (max-width:520px){ .shots figure:first-child{grid-column:span 2;grid-row:auto} }
 
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
@@ -256,6 +365,55 @@ ${jsonld(b)}
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
   }
+  /* ── hero shape per voice ─────────────────────────────────────────────────
+     Type alone could not separate two sans voices without loading web fonts,
+     which would break the "no external requests" promise in the pitch. So the
+     hero is structurally different instead. */
+
+  /* TRADE — a full-bleed block of colour. Reads like a work truck. */
+  .v-trade .hero{background:var(--accent);padding-top:56px}
+  .v-trade .hero::before{opacity:.18}
+  .v-trade .hero h1{color:#fff}
+  .v-trade .hero .eyebrow{color:rgba(255,255,255,.72)}
+  .v-trade .hero .lede{color:rgba(255,255,255,.88)}
+  .v-trade .hero-note{color:rgba(255,255,255,.75);border-top-color:rgba(255,255,255,.32)}
+  .v-trade .hero .btn-primary{background:#fff;color:var(--accent);border-color:#fff}
+  .v-trade .hero .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+  .v-trade .trust{border-color:rgba(255,255,255,.3);margin-top:38px}
+
+  /* CARE — centred and unhurried. Calm is the product. */
+  .v-care .hero{padding:84px 0 70px;text-align:center}
+  .v-care .hero h1,.v-care .hero .lede{margin-left:auto;margin-right:auto}
+  .v-care .hero .actions{justify-content:center}
+  .v-care .hero-inner{max-width:44rem;margin:0 auto}
+
+  /* BEAUTY — editorial: a rule down the side, deep top margin, nothing rushed. */
+  .v-beauty .hero{padding:92px 0 68px}
+  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
+  .v-beauty .hero h1{max-width:14ch}
+
+  /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
+     they force line breaks the width itself would never make. This has to sit
+     after the per-voice rules — it matches their specificity, so order decides. */
+  @media (max-width:640px){
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+  }
+  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
+
+  /* FOOD — the copy sits on a warm card, like something on a counter. */
+  .v-food .hero{padding:40px 0 52px}
+  .v-food .hero-inner{background:color-mix(in srgb, var(--accent) 8%, #fff);
+    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+    border-radius:26px;padding:36px 32px}
+  .v-food .trust{margin-top:20px}
+
+  @media (max-width:760px){
+    .v-food .hero-inner{padding:26px 20px;border-radius:20px}
+    .v-beauty .hero-inner{padding-left:18px}
+    .v-care .hero{padding:52px 0 44px}
+    .v-beauty .hero{padding:56px 0 44px}
+  }
+
   /* ── motion ──────────────────────────────────────────────────────────────
      A short load sequence in the hero, then sections arrive as you reach them.
      Everything below is opt-out: with reduced motion the page renders finished. */
@@ -290,7 +448,11 @@ ${jsonld(b)}
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#top"><span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>${esc(b.name)}</a>
+    <a class="brand" href="#top">${
+      b.mark ? `<img class="mark-img" src="${esc(b.mark)}" alt="">`
+      : b.logo ? ''
+      : `<span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>`
+    }<span class="nm">${esc(b.shortName || b.name)}</span></a>
     <nav>${nav.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
     ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>` : ''}
   </div>
@@ -300,6 +462,8 @@ ${jsonld(b)}
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-inner">
+    ${b.logo ? `<img class="logo rise" style="--i:0" src="${esc(b.logo)}" alt="${esc(b.name)}" width="${esc(b.logoWidth || 300)}">` : ''}
     ${b.category ? `<div class="eyebrow rise" style="--i:0">${esc(b.category)}${a.city ? ' · ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</div>` : ''}
     <h1 class="rise" style="--i:1">${esc(b.headline || b.tagline)}</h1>
     ${b.subhead ? `<p class="lede rise" style="--i:2">${esc(b.subhead)}</p>` : ''}
@@ -308,6 +472,7 @@ ${jsonld(b)}
       ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Get directions</a>` : ''}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
+    </div>
     ${b.highlights?.length ? `<div class="trust rise" style="--i:5">${b.highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
   </div>
@@ -319,12 +484,54 @@ ${b.services?.length ? `
     <div class="eyebrow">Services</div>
     <h2>${esc(b.servicesHeading || 'What we do')}</h2>
     ${b.servicesLede ? `<p class="lede">${esc(b.servicesLede)}</p>` : ''}
-    <div class="grid">
-      ${b.services.map((s) => `<div class="card">
-        <h3>${esc(s.name)}</h3>
-        ${s.desc ? `<p>${esc(s.desc)}</p>` : ''}
-        ${s.price ? `<span class="price">${esc(s.price)}</span>` : ''}
+    ${''/* Every service list is a menu people choose from, not a row of cards.
+           Prices and durations show when the business has given them; when it
+           has not, the choosing and the request still work. We never invent a
+           number to fill the column. */}
+    ${`<div class="menu">${groups.map(([name, items]) => `
+        <div class="mgroup">
+          ${name ? `<h3>${esc(name)}</h3>` : ''}
+          <div class="rows">
+            ${items.map((s) => `<button type="button" class="row-svc" data-price="${esc(cents(s.price))}" data-mins="${esc(mins(s.duration))}" data-unit="${esc(s.unit || '')}" data-name="${esc(s.name)}">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">${esc(s.name)}</span>
+                ${s.desc ? `<span class="svc-desc">${esc(s.desc)}</span>` : ''}
+              </span>
+              <span class="svc-meta">
+                ${s.price ? `<span class="svc-price">${esc(s.price)}${s.unit ? `<span class="svc-unit">${esc(s.unit)}</span>` : ''}</span>` : ''}
+                ${s.duration ? `<span class="svc-dur">${esc(s.duration)}</span>` : ''}
+              </span>
+            </button>`).join('')}
+          </div>
+        </div>`).join('')}</div>`}
+  </div>
+</section>` : ''}
+
+${b.team?.length ? `
+<section id="team">
+  <div class="wrap">
+    <div class="eyebrow">Our team</div>
+    <h2>${esc(b.teamHeading || 'Who you will see')}</h2>
+    ${b.teamLede ? `<p class="lede">${esc(b.teamLede)}</p>` : ''}
+    <div class="team${b.team.length === 1 ? ' solo' : ''}">
+      ${b.team.map((m) => `<div class="member">
+        <div class="av">${esc((m.name || '?').trim()[0].toUpperCase())}</div>
+        <b>${esc(m.name)}</b>
+        ${m.role ? `<span>${esc(m.role)}</span>` : ''}
       </div>`).join('')}
+    </div>
+  </div>
+</section>` : ''}
+
+${b.photos?.length ? `
+<section id="work">
+  <div class="wrap">
+    <div class="eyebrow">${esc(b.galleryEyebrow || 'Our work')}</div>
+    <h2>${esc(b.galleryHeading || 'Recent work')}</h2>
+    ${b.galleryLede ? `<p class="lede">${esc(b.galleryLede)}</p>` : ''}
+    <div class="shots">
+      ${b.photos.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 1))}" loading="lazy"></figure>`).join('')}
     </div>
   </div>
 </section>` : ''}
@@ -389,6 +596,12 @@ ${b.reviews?.length ? `
   </div>
 </footer>
 
+${b.services?.length ? `<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>` : ''}
+
 ${b.phone ? `<div class="callbar">
   <a class="btn btn-primary" href="tel:${esc(tel)}">Call ${esc(b.phone)}</a>
   ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Map</a>` : ''}
@@ -398,33 +611,118 @@ ${b.phone ? `<div class="callbar">
 (function(){
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hero = document.querySelector('.hero');
-  if (reduce) { document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
-                document.querySelector('.callbar') && document.querySelector('.callbar').classList.add('up');
-                return; }
 
-  // Hero arrives on load, staggered by --i.
-  requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
-
-  // Sections and cards arrive as you reach them, once.
-  var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
-  targets.forEach(function(el){ el.classList.add('rise'); });
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (!e.isIntersecting) return;
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    targets.forEach(function(el){ io.observe(el); });
+  // Motion is a preference. Booking is a function. Reducing one must never
+  // remove the other — an early return here once disabled the whole menu.
+  if (reduce) {
+    document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
   } else {
-    targets.forEach(function(el){ el.classList.add('in'); });
+    requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
+
+    var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
+    targets.forEach(function(el){ el.classList.add('rise'); });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+      targets.forEach(function(el){ io.observe(el); });
+    } else {
+      targets.forEach(function(el){ el.classList.add('in'); });
+    }
+  }
+
+  // Choose services, see the running total, then send the request as a text or
+  // an email. No backend, no booking account — it composes the message and the
+  // customer sends it from their own phone.
+  var basket = document.getElementById('basket');
+  if (basket) {
+    var picked = [];
+    var TEL = ${JSON.stringify(digits(b.phone || ''))};
+    var MAIL = ${JSON.stringify(b.email || '')};
+    var BOOKURL = ${JSON.stringify(b.booking?.url || '')};
+    var BIZ = ${JSON.stringify(b.name || '')};
+
+    var money = function(c){ return '$' + (c/100).toFixed(2).replace(/\.00$/,''); };
+    // People book in hours and minutes, not decimals. "3.3 hr" is not a time.
+    var time = function(m){
+      if (m < 60) return m + ' min';
+      var h = Math.floor(m / 60), r = m % 60;
+      return h + ' hr' + (r ? ' ' + r + ' min' : '');
+    };
+
+    var paint = function(){
+      if (!picked.length) {
+        basket.hidden = true; basket.classList.remove('up');
+        document.body.style.paddingBottom = '';
+        return;
+      }
+      // A $145/mo plan and a $395 one-off job cannot be added into one number.
+      // Sum each unit separately: "$395 + $145/mo", never a meaningless $540.
+      var sums = {}, order = [];
+      picked.forEach(function(p){
+        var u = p.unit || '';
+        if (!(u in sums)) { sums[u] = 0; if (u) order.push(u); }
+        sums[u] += p.price;
+      });
+      var parts = [];
+      if (sums['']) parts.push(money(sums['']));
+      order.forEach(function(u){ if (sums[u]) parts.push(money(sums[u]) + u); });
+      var priced = parts.join(' + ');
+
+      // Time on site only means something for a one-off visit; a monthly plan
+      // is not "about 90 minutes".
+      var dur = picked.reduce(function(n,p){ return n + (p.unit ? 0 : p.mins); }, 0);
+
+      basket.hidden = false; basket.classList.add('up');
+      document.getElementById('bkTotal').textContent =
+        picked.length + (picked.length === 1 ? ' service' : ' services') + (priced ? ' · ' + priced : '');
+      document.getElementById('bkMeta').textContent = dur ? 'about ' + time(dur) : '';
+
+      var lines = picked.map(function(p){
+        return '• ' + p.name + (p.price ? ' (' + money(p.price) + (p.unit || '') + ')' : '');
+      }).join('\\n');
+      var msg = 'Hi ' + BIZ + ', I would like to book:\\n' + lines +
+                (priced ? '\\n\\nTotal: ' + priced : '') +
+                (dur ? '\\nAbout ' + time(dur) + ' on site' : '') +
+                '\\n\\nWhat times do you have?';
+      var go = document.getElementById('bkGo');
+      if (BOOKURL) { go.href = BOOKURL; go.textContent = 'Book online'; }
+      else if (TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg); go.textContent = 'Text this'; }
+      else if (MAIL) { go.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Booking request') +
+                        '&body=' + encodeURIComponent(msg); go.textContent = 'Email this'; }
+      else { go.href = '#'; go.textContent = 'Call us'; }
+    };
+
+    document.querySelectorAll('.row-svc').forEach(function(el){
+      el.addEventListener('click', function(){
+        var name = el.dataset.name;
+        var i = picked.findIndex(function(p){ return p.name === name; });
+        if (i > -1) { picked.splice(i,1); el.classList.remove('on'); }
+        else { picked.push({ name: name, price: +el.dataset.price || 0, mins: +el.dataset.mins || 0,
+                             unit: el.dataset.unit || '' });
+               el.classList.add('on'); }
+        paint();
+      });
+    });
+    document.getElementById('bkClear').addEventListener('click', function(){
+      picked = [];
+      document.querySelectorAll('.row-svc.on').forEach(function(el){ el.classList.remove('on'); });
+      paint();
+    });
   }
 
   // The call bar stays out of the way until you have actually started reading.
   var bar = document.querySelector('.callbar');
   if (bar) {
-    var show = function(){ bar.classList.toggle('up', scrollY > 220); };
+    var show = function(){
+      var busy = basket && !basket.hidden;
+      bar.classList.toggle('up', (reduce || scrollY > 220) && !busy);
+    };
+    if (basket) new MutationObserver(show).observe(basket, { attributes: true });
     addEventListener('scroll', show, { passive: true }); show();
   }
 })();
@@ -433,3 +731,21 @@ ${b.phone ? `<div class="callbar">
 </html>
 `;
 };
+
+// A single stray backslash in the emitted <script> once shipped a page whose
+// entire booking system was dead on arrival — and nothing said a word, because
+// broken JavaScript in a browser just quietly does nothing. No page leaves this
+// file again without its script being parsed first.
+module.exports = function renderChecked(b) {
+  const html = render(b);
+  for (const [, attrs, js] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
+    if (/^\s*$/.test(js)) continue;
+    const type = (attrs.match(/type\s*=\s*["']([^"']+)/i) || [])[1];
+    if (type && !/javascript|module/i.test(type)) continue;   // JSON-LD is not code
+    try { new Function(js); } catch (e) {
+      throw new Error(`${b.slug || b.name || 'page'}: emitted page script will not parse — ${e.message}`);
+    }
+  }
+  return html;
+};
+module.exports.unchecked = render;

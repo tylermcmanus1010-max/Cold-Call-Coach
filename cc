@@ -8,9 +8,17 @@
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
 //   ./cc status <slug> <new|sent|replied|won|dead>
+//   ./cc photo <slug> <img...>  add photos to a page (resized and embedded,
+//                           so the file still opens with no internet)
+//   ./cc check [slug]       run our own 12 checks against the pages WE built
+//   ./cc reaudit [slug]     re-check leads in a real browser and drop the ones
+//                           whose site turns out to be fine (--all to redo every one)
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
+//   ./cc sheet              rebuild the call sheet dashboard from clients/
+//   ./cc host <slug>        check a client is really ready, then write
+//                           sites/<slug>/ for the host to serve
 //
 // scout options:
 //   --source osm            OpenStreetMap (default, free, no key)
@@ -158,19 +166,23 @@ Next:
 function cmdBuild(slug) {
   const list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
-  const skipped = [];
+  const skipped = [], generic = [];
   for (const s of list) {
     const b = load(s);
-    if (!b.name || !b.tagline) {
-      // Building every client should not stop at the first unfinished one —
-      // that silently left the others on a stale template for a whole session.
-      const missing = !b.name ? '"name"' : '"tagline"';
-      if (slug) die(
-        `clients/${s}/business.json is missing ${missing}.\n` +
-        `  If scout scaffolded this, that is on purpose — write the headline and tagline yourself,\n` +
-        `  they are the two lines that actually sell the page.`);
-      skipped.push(`${s} (missing ${missing})`);
+    if (!b.name) {
+      if (slug) die(`clients/${s}/business.json is missing "name" — nothing can be built without it.`);
+      skipped.push(`${s} (missing "name")`);
       continue;
+    }
+    // A missing tagline used to block the build entirely, which left vetted
+    // leads with no page and nothing to call about. Derive a plain, true one
+    // from what we already know and note it, rather than refusing to work.
+    // Nothing here is a claim about the business — only what it is and where.
+    if (!b.tagline) {
+      const where = b.address?.city || 'San Diego';
+      const what = (b.category || '').trim();
+      b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
+      generic.push(s);
     }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
@@ -184,8 +196,13 @@ function cmdBuild(slug) {
     console.log(`✓ ${s} — index.html + pitch.md  (${checks.length - failed}/${checks.length} passing, ${failed} gaps to sell)`);
   }
   if (skipped.length) {
-    console.log(`\n  ${skipped.length} not built yet — write a headline and tagline for each:`);
+    console.log(`\n  ${skipped.length} not built:`);
     skipped.forEach((s) => console.log(`    · ${s}`));
+  }
+  if (generic.length) {
+    console.log(`\n  ${generic.length} built with a placeholder tagline — fine to call on, worth`);
+    console.log('  a better line before you send: ' + generic.slice(0, 6).join(', ')
+      + (generic.length > 6 ? `, +${generic.length - 6} more` : ''));
   }
   if (list.length === 1) console.log(`\n  open clients/${list[0]}/index.html   ← check it on a phone first`);
 }
@@ -204,6 +221,49 @@ function cmdTried(slug, note) {
 
 // Every build writes clients/<slug>/index.html. Attaching six of those to six
 // emails means six files called index.html — export names them by business.
+// For a salon, a bakery or a nail bar the work IS the product. A page with no
+// photographs cannot compete with a booking platform that has a gallery.
+async function cmdPhoto(slug, files) {
+  if (!slug || !files.length) die('Usage: ./cc photo <slug> <image.jpg> [more.jpg ...]');
+  const b = load(slug);
+  const { embed } = require('./tools/embed-photo');
+  const missing = files.filter((f) => !fs.existsSync(f));
+  if (missing.length) die('Cannot find: ' + missing.join(', '));
+
+  console.log(`Resizing and embedding ${files.length} image${files.length === 1 ? '' : 's'}…`);
+  const done = await embed(files);
+  b.photos = [...(b.photos || []), ...done.map((d) => ({ src: d.src, alt: `${b.name} — ${d.file}` }))];
+  save(slug, b);
+
+  const kb = (n) => Math.round(n / 1024) + 'KB';
+  done.forEach((d) => console.log(`  ${d.file}: ${kb(d.before)} → ${kb(d.after)}`));
+  const total = b.photos.reduce((n, p) => n + p.src.length, 0);
+  console.log(`✓ ${b.photos.length} photo${b.photos.length === 1 ? '' : 's'} on the page, ${kb(total)} total`);
+  if (total > 4 * 1024 * 1024) console.log('  ⚠️  Over 4MB — some mail servers will bounce it. Drop a couple.');
+  console.log(`  next: ./cc build ${slug}`);
+}
+
+// We sell a twelve-point audit. Shipping a page that fails it is indefensible.
+async function cmdCheck(slug) {
+  const { selfCheck } = require('./tools/self-check');
+  const list = (slug ? [slug] : all()).filter((s) =>
+    fs.existsSync(path.join(dir(s), 'index.html')));
+  if (!list.length) die('Nothing built yet.');
+  console.log(`Auditing ${list.length} of our own pages with the same checks we sell…\n`);
+  const res = await selfCheck(list, ROOT);
+  const w = Math.max(10, ...res.map((r) => r.slug.length));
+  let weak = 0;
+  for (const r of res.sort((a, b) => a.pass - b.pass)) {
+    const ok = r.failed.length === 0;
+    if (!ok) weak++;
+    console.log(`  ${ok ? '✅' : '⚠️ '} ${r.slug.padEnd(w)}  ${r.pass}/${checks.length}` +
+      (ok ? '' : `  missing: ${r.failed.join(', ')}`));
+  }
+  console.log(`\n  ${res.length - weak} of ${res.length} pass everything we pitch.`);
+  if (weak) console.log('  The rest are missing content only the business can give you —\n' +
+    '  hours, address, reviews. Get them off their Google listing before sending.');
+}
+
 function cmdExport(slug) {
   const SEND = path.join(ROOT, 'send');
   const list = slug ? [slug] : all();
@@ -217,7 +277,24 @@ function cmdExport(slug) {
     if (fs.existsSync(email)) fs.copyFileSync(email, path.join(SEND, `${s}-email.txt`));
     n++;
   }
+  // Hours and reviews are the two the owner will notice missing, because they
+  // are the two we just told him mattered. Pricing is optional — plenty of
+  // trades and practices do not publish it.
+  const thin = list.filter((s) => {
+    const b = load(s);
+    return !(b.hours || []).length || !(b.reviews || []).length;
+  });
   console.log(`✓ ${n} page${n === 1 ? '' : 's'} → send/`);
+  if (thin.length) {
+    console.log(`\n  ⚠️  ${thin.length} of these fail checks we sell — no hours or no reviews on the page:`);
+    thin.slice(0, 12).forEach((s) => {
+      const b = load(s);
+      const miss = [!(b.hours || []).length && 'hours', !(b.reviews || []).length && 'reviews']
+        .filter(Boolean).join(' + ');
+      console.log(`      ${s} (${miss})`);
+    });
+    console.log('      Both are on their Google listing. Run ./cc check to see the full picture.');
+  }
   console.log('  each named after the business, so they do not collide in a downloads folder');
 }
 
@@ -250,6 +327,86 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+async function cmdReaudit(args) {
+  const only = args.find((a) => !a.startsWith('--'));
+  const all = args.includes('--all');
+  const run = require('./tools/reaudit');
+  console.log('\nRe-checking in a real browser. Findings read off raw HTML cannot see');
+  console.log('JavaScript-built hours, tap-to-call links or the mobile layout, so they');
+  console.log('are not safe to say to an owner holding the phone.\n');
+
+  const { checked, note } = await run({ only, all });
+  if (note) return console.log(`  ${note}\n`);
+
+  const kept = checked.filter((r) => r.verdict === 'keep');
+  const dropped = checked.filter((r) => r.verdict === 'dropped');
+  const blocked = checked.filter((r) => r.verdict === 'blocked');
+  const errored = checked.filter((r) => r.error);
+
+  for (const r of checked.filter((x) => x.verdict === 'keep')) {
+    const moved = r.before !== r.after ? `  (we had said ${r.before})` : '';
+    console.log(`  ✓ ${r.slug.padEnd(46)} ${r.after} provable gaps${moved}`);
+  }
+  if (dropped.length) {
+    console.log(`\n  ${dropped.length} dropped — their site is genuinely fine:`);
+    dropped.forEach((r) => console.log(`    · ${r.slug} (we had said ${r.before} broken; really ${r.after})`));
+  }
+  if (blocked.length) {
+    console.log(`\n  ${blocked.length} refused our check, so we can claim nothing:`);
+    blocked.forEach((r) => console.log(`    · ${r.slug} — ${r.reason}`));
+  }
+  if (errored.length) {
+    console.log(`\n  ${errored.length} could not be checked:`);
+    errored.forEach((r) => console.log(`    · ${r.slug} — ${r.error}`));
+  }
+  console.log(`\n  ${kept.length} still worth calling. Run ./cc build && ./cc sheet.\n`);
+}
+
+function cmdHost(slug, flags) {
+  if (!slug) die('Usage: ./cc host <slug>   — prepare the folder a host serves');
+  const host = require('./tools/host');
+  const r = host(slug, { force: flags.includes('--force') });
+
+  if (r.blocked) {
+    console.log(`\n✗ ${slug} is not ready to go live.\n`);
+    r.stop.forEach((s) => console.log(`    · ${s}`));
+    console.log('\n  These are the things that embarrass you in front of a paying client.');
+    console.log('  Fix them, or ./cc host ' + slug + ' --force if you truly mean it.\n');
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n✓ sites/${slug}/ — ${r.files.join(', ')}`);
+  console.log(`  serving at ${r.b.liveUrl}`);
+  if (r.warn.length) {
+    console.log('\n  Worth knowing, not blocking:');
+    r.warn.forEach((w) => console.log(`    · ${w}`));
+  }
+  console.log('\n  Next: DELIVERY.md — put it up on the temporary URL first, get their');
+  console.log('  approval there, and only then touch their DNS.\n');
+}
+
+function cmdSheet() {
+  const build = require('./tools/call-sheet');
+  const { html, state, skipped } = build();
+  const out = path.join(__dirname, 'call-sheet.html');
+  fs.writeFileSync(out, html);
+
+  const by = state.leads.reduce((m, l) => (m[l.status] = (m[l.status] || 0) + 1, m), {});
+  const ready = state.leads.filter((l) => ['new', 'tried'].includes(l.status) && l.built).length;
+  console.log(`\n✓ call-sheet.html — ${state.leads.length} leads`);
+  console.log(`  ${ready} ready to call · ${by.sent || 0} awaiting reply · ${by.won || 0} won · ${by.dead || 0} dead`);
+
+  const thin = state.leads.filter((l) => ['new', 'tried'].includes(l.status) && l.needs.length >= 3);
+  if (thin.length) {
+    console.log(`\n  ${thin.length} pages are still thin — screenshot their Google listing first:`);
+    for (const l of thin.slice(0, 8)) console.log(`    · ${l.name} — needs ${l.needs.join(', ')}`);
+    if (thin.length > 8) console.log(`    · …and ${thin.length - 8} more`);
+  }
+  if (skipped.length) console.log(`\n  Left off: ${skipped.join(', ')}`);
+  console.log('');
+}
+
 const [cmd, ...args] = process.argv.slice(2);
 (async () => {
   switch (cmd) {
@@ -260,8 +417,13 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'tried': cmdTried(args[0], args.slice(1).join(' ')); break;
     case 'sent': cmdStatus(args[0], 'sent'); break;
     case 'status': cmdStatus(args[0], args[1]); break;
+    case 'photo': await cmdPhoto(args[0], args.slice(1)); break;
+    case 'check': await cmdCheck(args[0]); break;
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
+    case 'sheet': cmdSheet(); break;
+    case 'host': cmdHost(args[0], args.slice(1)); break;
+    case 'reaudit': await cmdReaudit(args); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

@@ -3,10 +3,10 @@
   "slug": "korel-family-dentistry",
   "name": "Korel Family Dentistry",
   "category": "Family dentistry",
-  "owner": "",
+  "owner": "there",
   "currentSite": "https://dentistelcajon.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Family dentistry in El Cajon.",
   "subhead": "One practice for the whole family. Call the office directly.",
@@ -104,5 +104,8 @@
     "copyrightYear": 2026,
     "rendered": false,
     "hardGaps": 5
-  }
+  },
+  "pitchOpener": "Thanks for taking my call just now. As promised \u2014 I build one free sample site a week for a local business I'd like to work with, and this week I did yours.",
+  "pitchSubject": "The sample site I mentioned on the phone",
+  "_verifiedByEye": "Not a lead. koreldentistry.com is maintained by an agency \u2014 the footer credits \"Design By Online Ethos\" \u2014 copyright 2026, hours listed twice, reviews, address and photos throughout. The pitch we sent claims nothing about their site, so it stands as a neutral free-sample offer; no correction needed."
 }

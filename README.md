@@ -114,13 +114,72 @@ blank is the part that sells:
 | `highlights` | Years in business, review count, "same day" — the four boxes under the hero. |
 | `theme.accent` | One hex color. Pull it from their sign, truck, or logo. |
 
-`./cc build` refuses to run until you've written a headline and tagline. That's on
-purpose.
+`./cc build` needs a `name`. If there's no `tagline` it derives a plain one from
+category and city so a vetted lead is never uncallable over one missing line —
+but it tells you which pages got the placeholder, and those are worth a real
+line before you send them.
 
 Every other section is optional — delete what you don't have and the page adapts.
 No empty blocks, no lorem ipsum.
 
-## 4. Build and check it
+### The service menu is the whole page
+
+Every service becomes a row people can tap. Selected rows add up in a bar at the
+bottom — count, total, and how long the visit runs — and the button texts or
+emails that selection to the business as a booking request. That is what Vagaro,
+Booksy and Bukkii sell for a monthly fee, and it is the reason their sites beat a
+grid of cards.
+
+```json
+"services": [
+  { "group": "Drains & sewer", "name": "Drain cleaning", "desc": "Kitchen, bath or laundry line.",
+    "price": "$129", "duration": "60 min" }
+]
+```
+
+`group` sorts rows under a heading. `price` and `duration` are optional and must
+only ever be a number the business actually published — never one you assumed.
+Without them the rows still select and still send; the bar just says "3 services"
+instead of a total. Most businesses will not give you prices on the first call,
+and the page works fine that way.
+
+If they already use a booking platform, put its link in `booking.url` and the
+button sends people there instead.
+
+## Photos, for businesses whose work is the product
+
+```bash
+./cc photo <slug> photo1.jpg photo2.jpg
+```
+
+Resized to 1400px and embedded as data URIs, so the page still opens with no
+internet and still arrives as one file. A 4MB phone photo lands around 400KB.
+
+This matters more than it sounds. A nail salon, a bakery or a barber is selling
+something visual, and a text-only page cannot compete with a booking platform
+that has a gallery — Revive Lash & Nail is on Bukkii with a photo grid, a priced
+menu and per-technician booking, and their page beats anything we would send.
+
+**Where a one-page rebuild actually wins:** trades, contractors, dental and
+professional services. There the site is a brochure — who you are, what you are
+licensed for, how to reach you — and being fast, secure and readable on a phone
+is the whole job. Helix Mechanical's licence classes did more work than any
+photograph would have.
+
+## 4. Check our own page before we sell an audit
+
+```bash
+./cc check                 # runs the same 12 checks against the pages WE built
+```
+
+We pitch a twelve-point audit. Shipping a page that fails it is indefensible,
+and an owner will notice — those are the exact things we just told him mattered.
+
+A page needs **hours and reviews** before it goes out. Both come off their Google
+listing and take a minute to add. Pricing is optional; plenty of trades and
+practices do not publish it.
+
+## 5. Build and check it
 
 ```bash
 ./cc build joes-auto
@@ -148,7 +207,14 @@ Pages, Cloudflare Pages — all free), put the URL in `liveUrl`, and rebuild.
 ./cc sent joes-auto                  # stamps today's date
 ./cc status joes-auto replied        # new | sent | replied | won | dead
 ./cc list
+./cc sheet                           # rebuild the call sheet dashboard
 ```
+
+`./cc sheet` writes `call-sheet.html` from `clients/` — every lead with its
+number, phone script, email text and page file, sorted into who to call now, who
+owes you a reply, and who is dead. It is the same file that gets published as the
+dashboard, and tapping its buttons writes back to `clients/`, so the two never
+disagree.
 
 ---
 

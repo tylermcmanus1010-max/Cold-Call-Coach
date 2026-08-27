@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.impressiondentalgroup.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "General and family dentistry in Mira Mesa.",
   "subhead": "On Mira Mesa Boulevard. Adults and children welcome.",
@@ -105,5 +105,8 @@
     "copyrightYear": 2012,
     "rendered": false,
     "hardGaps": 4
-  }
+  },
+  "sentOn": "2026-08-26",
+  "attempts": 1,
+  "lastTried": "2026-08-26"
 }

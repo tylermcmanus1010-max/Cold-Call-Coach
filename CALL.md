@@ -30,6 +30,15 @@ Take it straight from `pitch.md`. One fact, said plainly, no jargon:
 
 One is enough. Listing five sounds like an attack.
 
+## Look at the footer before you dial
+
+Scroll to the bottom of their site. A credit line — "Design By ...", "Site by ...",
+"Website by ..." — means an agency is being paid to maintain it. Skip it. Korel
+Dentistry looked like a lead until the footer said "Design By Online Ethos".
+
+A current copyright year plus hours, reviews and photos says the same thing more
+quietly.
+
 ## Ask this in the first ten seconds
 
 > "Are you independent, or part of a franchise?"

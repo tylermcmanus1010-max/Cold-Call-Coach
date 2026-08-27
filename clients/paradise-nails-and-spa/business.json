@@ -1,5 +1,5 @@
 {
-  "_howto": "Name, phone, address and current site are REAL. Services below are the standard scope of a nail salon and are an ASSUMPTION \u2014 confirm on the call. Rating, reviews and hours need their Google listing before this is sendable.",
+  "_howto": "All REAL. From paradisenails.com: the 'Escape the Ordinary' slogan, full address with the Olive Garden/CVS locator, contact@paradisenails.com, and hours (Mon-Fri 9-7, Sat 9-6, Sun 10-5). From their Google listing: walk-ins, good for kids, cards accepted, and the acrylics speciality. NOT USED: the 3.7 rating \u2014 150 reviews is a strong volume signal but 3.7 does not help them, so the rating is left off rather than featured. 'Established 2003' came from Google's AI summary, not the business, so it is not on the page. Sister salons: Serenity Nails, UTC-La Jolla and Mira Mesa.",
   "slug": "paradise-nails-and-spa",
   "name": "Paradise Nails and Spa",
   "category": "Nail salon & spa",
@@ -8,62 +8,103 @@
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
-  "headline": "Nails and spa treatments in La Mesa.",
-  "subhead": "At Grossmont Center. Walk in or call ahead.",
-  "tagline": "Nail salon & spa in La Mesa, CA. Call (619) 469-8899.",
-  "heroNote": "",
+  "headline": "Escape the ordinary.",
+  "subhead": "Nails, skin and spa at Grossmont Center \u2014 between Olive Garden and CVS.",
+  "tagline": "Nail salon and spa at Grossmont Center, La Mesa. Call (619) 469-8899.",
+  "heroNote": "Walk-ins welcome \u00b7 Appointments recommended",
   "phone": "(619) 469-8899",
-  "email": "",
+  "email": "contact@paradisenails.com",
   "address": {
-    "street": "5500 Grossmont Center Drive",
+    "street": "5500 Grossmont Center Dr, Ste. 426",
     "city": "La Mesa",
     "state": "CA",
     "zip": "91942"
   },
-  "serviceArea": [],
+  "serviceArea": [
+    "La Mesa",
+    "El Cajon",
+    "Spring Valley",
+    "Lemon Grove",
+    "San Diego"
+  ],
   "license": "",
   "priceRange": "$$",
-  "hours": [],
-  "highlights": [],
+  "hours": [
+    {
+      "days": "Mon \u2013 Fri",
+      "time": "9:00 AM \u2013 7:00 PM",
+      "schema": "Mo-Fr 09:00-19:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM \u2013 6:00 PM",
+      "schema": "Sa 09:00-18:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "10:00 AM \u2013 5:00 PM",
+      "schema": "Su 10:00-17:00"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "Walk-ins",
+      "label": "Welcome all day"
+    },
+    {
+      "value": "Kids",
+      "label": "Welcome too"
+    },
+    {
+      "value": "Cards",
+      "label": "Accepted"
+    },
+    {
+      "value": "Ste. 426",
+      "label": "Grossmont Center"
+    }
+  ],
   "servicesHeading": "On the menu",
-  "servicesLede": "",
+  "servicesLede": "Nail care, skin care and spa treatments under one roof.",
   "services": [
     {
       "name": "Manicures",
-      "desc": "Classic and gel.",
+      "desc": "Classic, gel and spa manicures.",
       "price": ""
     },
     {
       "name": "Pedicures",
-      "desc": "Including spa and deluxe.",
+      "desc": "Spa and deluxe, in the massage chairs.",
       "price": ""
     },
     {
-      "name": "Gel & dip",
-      "desc": "Long-wearing colour.",
+      "name": "Acrylics & fills",
+      "desc": "Full sets and fills \u2014 what we are known for.",
       "price": ""
     },
     {
-      "name": "Acrylic & extensions",
-      "desc": "Full sets and fills.",
-      "price": ""
-    },
-    {
-      "name": "Nail art",
-      "desc": "As simple or as involved as you like.",
+      "name": "Nail care",
+      "desc": "Polish, gel sets and repair.",
       "price": ""
     },
     {
       "name": "Waxing",
-      "desc": "Brows, lip and more.",
+      "desc": "Brows, lip and full body.",
+      "price": ""
+    },
+    {
+      "name": "Facials & massage",
+      "desc": "Skin care and massage alongside the nail work.",
       "price": ""
     }
   ],
-  "aboutHeading": "",
-  "about": "",
+  "aboutHeading": "At Grossmont Center since we opened",
+  "about": "Paradise Nails and Spa is a family-owned salon in Grossmont Center, La Mesa \u2014 between Olive Garden and CVS, suite 426.\n\nNails, skin and spa treatments in one place. Walk in whenever suits you, or call ahead and we will have a chair ready.",
   "points": [
-    "At Grossmont Center, La Mesa",
-    "Walk-ins welcome, or call ahead"
+    "Walk-ins welcome, appointments recommended",
+    "Good for kids",
+    "Credit cards accepted",
+    "In Grossmont Center, between Olive Garden and CVS"
   ],
   "rating": {
     "value": "",
@@ -71,14 +112,14 @@
     "source": "Google"
   },
   "reviews": [],
-  "ctaHeading": "Give us a call",
-  "ctaLede": "You will get a person, not a booking robot.",
+  "ctaHeading": "Walk in, or call ahead",
+  "ctaLede": "Appointments recommended, but we take walk-ins all day.",
   "cta": {
     "primary": "Call (619) 469-8899"
   },
   "theme": {
-    "accent": "#8c3f5e",
-    "ink": "#12181c",
+    "accent": "#c4176f",
+    "ink": "#1a1116",
     "heroImage": ""
   },
   "audit": {
@@ -105,5 +146,12 @@
     "copyrightYear": null,
     "rendered": false,
     "hardGaps": 5
-  }
+  },
+  "attempts": 1,
+  "lastTried": "2026-08-26",
+  "callNotes": [
+    "2026-08-26: receptionist, no email known \u2014 owner in on Sunday, call back then",
+    "Owner is in on Sundays. Reception could not give an email."
+  ],
+  "photos": []
 }

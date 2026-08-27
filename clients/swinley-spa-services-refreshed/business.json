@@ -1,0 +1,247 @@
+{
+  "_status": "EXAMPLE ONLY \u2014 the same site as swinley-spa-services, built with the redrawn mark instead of the JPEG logo. Shown next to the original so Seth can pick. Do not host both.",
+  "slug": "swinley-spa-services-refreshed",
+  "name": "Swinley Spa Services",
+  "shortName": "Swinley Spa",
+  "category": "Hot tub and pool service",
+  "voice": "beauty",
+  "owner": "Seth Wright",
+  "currentSite": "",
+  "liveUrl": "",
+  "status": "spec",
+  "tier": "onepage",
+  "headline": "Your hot tub, ready when you are.",
+  "subhead": "Hot tub service all year, pools through the season, and the opening and closing visits either side of it. Same technician every visit, chemicals included, and a photo of your water before we leave.",
+  "tagline": "Relax. Soak. Repeat.",
+  "heroNote": "Licensed and insured \u00b7 Free water test on the first visit",
+  "phone": "(402) 201-5518",
+  "email": "seth@swinleyspaservices.com",
+  "address": {
+    "city": "Omaha",
+    "state": "NE"
+  },
+  "serviceArea": [
+    "Omaha",
+    "Bellevue",
+    "Papillion",
+    "La Vista",
+    "Elkhorn",
+    "Gretna",
+    "Bennington",
+    "Ralston",
+    "Springfield",
+    "Council Bluffs"
+  ],
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon\u2013Fri",
+      "time": "8:00 AM \u2013 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM \u2013 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "Weekly",
+      "label": "Same tech, same day"
+    },
+    {
+      "value": "Included",
+      "label": "All chemicals"
+    },
+    {
+      "value": "48 hr",
+      "label": "Callback on repairs"
+    },
+    {
+      "value": "No",
+      "label": "Long-term contract"
+    }
+  ],
+  "servicesHeading": "Pick what you need",
+  "servicesLede": "Choose what you need and send it over. We reply with the next open day \u2014 usually the same afternoon.",
+  "services": [
+    {
+      "group": "Regular spa service",
+      "name": "Weekly hot tub service",
+      "desc": "Water tested and balanced, filter rinsed, shell and waterline wiped, cover cleaned. Chemicals included.",
+      "price": "$70",
+      "unit": "/mo"
+    },
+    {
+      "group": "Regular spa service",
+      "name": "Every other week",
+      "desc": "The same visit, twice a month. Right for a tub that gets light use or sits under a cover.",
+      "price": "$48",
+      "unit": "/mo"
+    },
+    {
+      "group": "Regular spa service",
+      "name": "Chemicals and testing only",
+      "desc": "We keep the water right, you handle the wiping down.",
+      "price": "$40",
+      "unit": "/mo"
+    },
+    {
+      "group": "Drain and deep clean",
+      "name": "Drain, clean and refill",
+      "desc": "Full drain, shell and jet clean, filter service, refill and rebalance. Every three to four months is normal.",
+      "price": "$165",
+      "duration": "2 hr"
+    },
+    {
+      "group": "Drain and deep clean",
+      "name": "Deep clean with line flush",
+      "desc": "Flushes biofilm out of the plumbing before the drain. If the water smells or foams, this is the one.",
+      "price": "$215",
+      "duration": "3 hr"
+    },
+    {
+      "group": "Drain and deep clean",
+      "name": "Filter deep soak",
+      "desc": "Overnight chemical soak, rinsed and checked for tears. Longer life than a hose rinse.",
+      "price": "$55",
+      "duration": "45 min"
+    },
+    {
+      "group": "Drain and deep clean",
+      "name": "Cover clean and condition",
+      "desc": "Cleaned, treated and checked for waterlogging \u2014 the thing that quietly doubles a winter heating bill.",
+      "price": "$75",
+      "duration": "1 hr"
+    },
+    {
+      "group": "Repairs and diagnostics",
+      "name": "Heater diagnostic",
+      "desc": "We find the fault and quote the repair before touching anything.",
+      "price": "$115",
+      "duration": "1 hr"
+    },
+    {
+      "group": "Repairs and diagnostics",
+      "name": "Leak detection",
+      "desc": "Pressure test on the lines, dye test on the shell. Findings in writing.",
+      "price": "$175",
+      "duration": "2 hr"
+    },
+    {
+      "group": "Repairs and diagnostics",
+      "name": "Ozonator or UV replacement",
+      "desc": "Less chemical in the water and a cleaner soak.",
+      "price": "$195",
+      "duration": "1 hr 30 min"
+    },
+    {
+      "group": "Repairs and diagnostics",
+      "name": "Freeze call-out",
+      "desc": "Tub down in a cold snap. We get heat back into it before the plumbing splits.",
+      "price": "$145",
+      "duration": "1 hr"
+    },
+    {
+      "group": "Repairs and diagnostics",
+      "name": "Pump, blower or panel repair",
+      "desc": "Quoted on site once we know the part. No guesswork over the phone."
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Pool opening",
+      "desc": "Cover off and cleaned, equipment started and checked, water balanced. Booked from April.",
+      "price": "$285",
+      "duration": "3 hr"
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Pool closing and winterise",
+      "desc": "Lines blown and plugged, equipment drained, chemicals set, cover on. The visit that prevents a spring repair bill.",
+      "price": "$265",
+      "duration": "3 hr"
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Weekly pool service",
+      "desc": "Brush, vacuum, skim, empty baskets, test and balance, check equipment. May through September, chemicals included.",
+      "price": "$120",
+      "unit": "/mo"
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Pool service every other week",
+      "desc": "The same visit, twice a month, through the season.",
+      "price": "$80",
+      "unit": "/mo"
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Green pool recovery",
+      "desc": "Green to clear, usually in 48 hours. The follow-up visit is included.",
+      "price": "$325",
+      "duration": "3 hr"
+    },
+    {
+      "group": "Pools \u2014 season and shutdown",
+      "name": "Filter clean and inspection",
+      "desc": "Cartridge or DE filter stripped, cleaned and checked.",
+      "price": "$105",
+      "duration": "1 hr"
+    }
+  ],
+  "aboutHeading": "What a service visit actually includes",
+  "about": "Most people meet their spa company once and never see the same face again. That is how a tub ends up with cloudy water, a waterlogged cover and a heater nobody looked at until January.\n\nEvery visit is the same list, every time, and it takes about half an hour. You get a photo of the water and the chemistry readings on your phone before we drive away \u2014 so you know we came, and you know exactly where your water stands.\n\nThe tub is the thing you actually use in a Nebraska winter, so spa service runs all year. Pools run on the season, and the opening and closing visits either side of it are the two that matter most \u2014 a pool closed properly in October is a pool that costs nothing in April.",
+  "points": [
+    "Test and balance bromine or chlorine, pH and alkalinity",
+    "Rinse the filter and check it for tears",
+    "Wipe the shell, waterline and jets",
+    "Clean and condition the cover",
+    "Check the heater, pump, blower and control panel",
+    "Through winter, check the cover seal and freeze protection",
+    "Top the water back up to level",
+    "Photo and readings sent to you before we leave"
+  ],
+  "teamHeading": "Who comes to your house",
+  "teamLede": "The same person every visit, and the same person who answers when you call.",
+  "team": [
+    {
+      "name": "Seth Wright",
+      "role": "Owner and lead technician"
+    }
+  ],
+  "ctaHeading": "Want your water handled?",
+  "ctaLede": "Call or text with your tub or pool and where you are in the metro. We will give you a price on the phone \u2014 no site visit needed for regular service.",
+  "cta": {
+    "primary": "Call for a price"
+  },
+  "theme": {
+    "accent": "#41597e",
+    "ink": "#1b2432"
+  },
+  "logoWidth": 286,
+  "audit": {
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  },
+  "logo": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20440%20214%22%20role%3D%22img%22%20aria-label%3D%22Swinley%20Spa%20Services%20%E2%80%94%20Relax.%20Soak.%20Repeat.%22%3E%20%3Ctitle%3ESwinley%20Spa%20Services%3C%2Ftitle%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22swLockDrop%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2384AED4%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233B5576%22%2F%3E%20%3C%2FlinearGradient%3E%20%3Cg%20id%3D%22swLockWrench%22%20fill-rule%3D%22evenodd%22%3E%20%3Cpath%20d%3D%22M45%2033%20H55%20A3%203%200%200%201%2058%2036%20V45%20A3%203%200%200%201%2055%2048%20H45%20A3%203%200%200%201%2042%2045%20V36%20A3%203%200%200%201%2045%2033%20Z%20M46.8%2033%20V39%20A3.2%203.2%200%200%200%2053.2%2039%20V33%20Z%22%2F%3E%20%3Crect%20x%3D%2246%22%20y%3D%2246%22%20width%3D%228%22%20height%3D%2232%22%20rx%3D%224%22%2F%3E%20%3Cpath%20d%3D%22M50%2075%20L57.4%2079.25%20L57.4%2087.75%20L50%2092%20L42.6%2087.75%20L42.6%2079.25%20Z%20M50%2080.5%20L52.6%2082%20L52.6%2085%20L50%2086.5%20L47.4%2085%20L47.4%2082%20Z%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fdefs%3E%20%3Cg%20transform%3D%22translate(155%200)%20scale(1.3)%22%3E%20%3Cpath%20d%3D%22M50%202%20C%2050%202%2037%2021%2037%2028%20a%2013%2013%200%200%200%2026%200%20C%2063%2021%2050%202%2050%202%20Z%22%20fill%3D%22url(%23swLockDrop)%22%2F%3E%20%3Cg%20fill%3D%22%238DB0D0%22%3E%20%3Cuse%20href%3D%22%23swLockWrench%22%20transform%3D%22rotate(-36%2050%2062)%22%2F%3E%20%3Cuse%20href%3D%22%23swLockWrench%22%20transform%3D%22rotate(36%2050%2062)%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fg%3E%20%3C!--%20Small%20caps%20drawn%20as%20sized%20tspans%20rather%20than%20font-variant%2C%20which%20not%20every%20renderer%20honours.%20Set%20straight%3A%20type%20on%20an%20arc%20is%20the%20one%20thing%20that%20most%20makes%20a%20logo%20look%20homemade.%20--%3E%20%3Ctext%20x%3D%22220%22%20y%3D%22162%22%20text-anchor%3D%22middle%22%20fill%3D%22%2341597E%22%20font-family%3D%22Palatino%2C%20'Palatino%20Linotype'%2C%20'Iowan%20Old%20Style'%2C%20Georgia%2C%20serif%22%20font-size%3D%2242%22%20letter-spacing%3D%221.5%22%20%3E%3Ctspan%3ES%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2230%22%3EWINLEY%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2242%22%3E%20S%3C%2Ftspan%20%3E%3Ctspan%20font-size%3D%2230%22%3EPA%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2242%22%3E%20S%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2230%22%3EERVICES%3C%2Ftspan%3E%3C%2Ftext%3E%20%3Ctext%20x%3D%22217%22%20y%3D%22196%22%20text-anchor%3D%22middle%22%20fill%3D%22%237C93AE%22%20font-family%3D%22Palatino%2C%20'Palatino%20Linotype'%2C%20Georgia%2C%20serif%22%20font-size%3D%2215%22%20letter-spacing%3D%225.5%22%3ERELAX.%20SOAK.%20REPEAT.%3C%2Ftext%3E%20%3C%2Fsvg%3E%20",
+  "mark": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20role%3D%22img%22%20aria-label%3D%22Swinley%20Spa%20Services%22%3E%20%3Ctitle%3ESwinley%20Spa%20Services%3C%2Ftitle%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22swDropOnly%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2384AED4%22%2F%3E%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233B5576%22%2F%3E%20%3C%2FlinearGradient%3E%20%3C%2Fdefs%3E%20%3C!--%20The%20compact%20mark.%20Crossed%20tools%20cannot%20survive%20a%2020px%20browser%20tab%2C%20so%20small%20sizes%20carry%20the%20droplet%20alone%20%E2%80%94%20same%20shape%2C%20same%20blue.%20--%3E%20%3Cpath%20d%3D%22M50%206%20C%2050%206%2024%2042%2024%2058%20a%2026%2026%200%200%200%2052%200%20C%2076%2042%2050%206%2050%206%20Z%22%20fill%3D%22url(%23swDropOnly)%22%2F%3E%20%3C%2Fsvg%3E%20",
+  "pitchSubject": "Your website \u2014 two versions, have a look",
+  "pitchEmail": "Hi Seth,\n\nHere it is. Two versions attached \u2014 open them on your phone, that is where your customers will see it.\n\nThey are the same website. The only difference is the logo: one uses the logo you have, the other uses a version I redrew. Pick whichever you like. There is a third file that shows the two side by side and explains what I changed and why.\n\nThe part worth looking at is the services list. Tap a few \u2014 a weekly hot tub plan, a pool opening, whatever \u2014 and the bar at the bottom adds them up and lets someone text you the whole request in one go. That is the thing Vagaro and Booksy charge a monthly fee for. Yours is built in and costs nothing per month.\n\nThe rest of it:\n- Built for a phone first, tested down to a 320px screen\n- Loads instantly, no trackers, works even with a bad signal\n- Your number is tappable everywhere, with a call bar that follows people down the page\n- Google markup for your hours, service area and location, so you can show up in local search\n- Hot tub service priced monthly and year-round; pools seasonal, with the opening and closing visits priced separately\n\nNothing is live yet. This is just so you can see it.\n\n$750 to put it on your own domain, live in 5 business days. $60/month after that if you want me hosting it, keeping it backed up and making changes whenever you need them \u2014 cancel any time. The logo files are yours either way, no charge.\n\nIf you don't like it, you don't pay, and you keep the page regardless.\n\nFour things I need from you before it goes live:\n\n1. Your email address, so it goes on the site\n2. A look over the prices \u2014 I put in normal Omaha rates so the page worked, but they are mine, not yours. Every one needs your say-so.\n3. Three reviews from customers, with their names as they wrote them. I will not make any up, and right now that is the only real gap on the page.\n4. Your exact town, so the service area is right. I have Omaha and the metro on there.\n\nIf swinleyspaservices.com is free I would grab it now, before anything else.\n\nTyler McManus\nMcManus Web Co.\n302-649-6600\n",
+  "callScript": "Seth \u2014 I've got it done, sending you three files, open them on your phone. Two are the same website with different logos, one yours as it is and one I redrew; third file shows you both. Scroll to the services and tap a few \u2014 that bar at the bottom adds them up and texts you the whole request. That's what Vagaro charges monthly for. $750 on your own domain, live in five business days, $60 a month after if you want me hosting and making changes, cancel any time. Logo's yours either way. Closing season starts in a few weeks \u2014 go now and you've got a page taking bookings the whole run. I need your email, your say-so on every price, three reviews with real names, and your exact town. And check swinleyspaservices.com is free today."
+}

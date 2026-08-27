@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="v-food">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -70,17 +70,36 @@
     font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
   h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
   p{margin:0 0 14px}
-  section{padding:64px 0;border-top:1px solid var(--line)}
+  /* the header is sticky, so an anchored jump must leave room for it or the
+     first line of the section lands underneath. */
+  section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:72px}
   .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
     text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
+
+  /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
+     are unreadable in a 66px header bar, so they belong here at full size. */
+  .hero .logo{display:block;max-width:min(100%,var(--logo-w,300px));height:auto;
+    margin:0 0 24px;mix-blend-mode:multiply}
+  /* multiply needs something light behind it; on a full-bleed accent hero the
+     logo keeps its own white card instead. */
+  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
 
   /* header */
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
   .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
-    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px}
+    font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px;
+    min-width:0}
+  /* the bar is a fixed height, so a long name has to shrink rather than wrap */
+  .brand .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:520px){ .brand{font-size:16px} }
+  @media (max-width:400px){ .brand{font-size:15px} }
   .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+  /* a stacked logo is unreadable in a 66px bar, so the header takes a compact
+     mark and sets the name in type beside it. */
+  .mark-img{width:30px;height:30px;object-fit:contain;flex:none;display:block}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
   nav a:hover{color:var(--ink)}
@@ -103,7 +122,10 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
-  .hero h1{font-size:var(--hero-size);max-width:17ch}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  h2{text-wrap:balance}
+  /* a measure set for desktop is a straitjacket on a 390px screen — it forces
+     breaks the width itself would not. Let the phone use what it has. */
   .hero .lede{margin:18px 0 28px;font-size:19px}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
@@ -118,6 +140,60 @@
   .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .trust b{display:block;font-size:26px;letter-spacing:-.02em}
   .trust span{font-size:13px;color:var(--muted)}
+
+  /* menu — grouped, priced, and selectable, the way a booking platform does it */
+  .menu{margin-top:26px;display:flex;flex-direction:column;gap:26px}
+  .mgroup h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--accent);margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
+  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  /* a button carries a chunky default border on every side — left unreset it
+     turns a clean list into a stack of boxes. */
+  .row-svc{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
+    border:0;border-bottom:1px solid var(--line);border-radius:0;
+    width:100%;text-align:left;background:#fff;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .row-svc:last-child{border-bottom:0}
+  .js .row-svc{cursor:pointer}
+  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 4%, #fff)}
+  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;border-radius:6px;
+    border:1.5px solid var(--line);display:grid;place-items:center;
+    font-size:11px;color:#fff;background:#fff}
+  html:not(.js) .row-svc .tick{display:none}
+  .row-svc.on{background:color-mix(in srgb, var(--accent) 7%, #fff)}
+  .row-svc.on .tick{background:var(--accent);border-color:var(--accent)}
+  .row-svc.on .tick::after{content:"\2713"}
+  /* these are spans, because a <button> may only hold phrasing content —
+     so each one has to be told to take its own line. */
+  .svc-main{flex:1;min-width:0;display:block}
+  .svc-name{display:block;font-size:15.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
+  .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
+  .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+  .svc-price .svc-unit{font-size:12px;font-weight:600;color:var(--muted)}
+  .svc-dur{display:block;font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
+
+  /* the running basket — appears once something is chosen */
+  .basket{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--accent);color:#fff;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.4)}
+  .basket.up{display:flex;align-items:center;gap:14px}
+  .basket .sum{flex:1;min-width:0;font-size:13.5px;line-height:1.3}
+  .basket .sum b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+  .basket .btn{background:#fff;color:var(--accent);border-color:#fff;white-space:nowrap}
+  .basket .clear{background:transparent;color:rgba(255,255,255,.85);border:0;font-size:13px;
+    text-decoration:underline;padding:6px}
+
+  /* team */
+  .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
+  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  /* a one-person business is a selling point, but a lone card floating in a
+     full-width box reads as an unfinished page. Lay it on its side instead. */
+  .team.solo{grid-template-columns:1fr}
+  .team.solo .member{display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px}
+  .team.solo .member .av{margin:0}
+  .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+    background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
+  .member b{display:block;letter-spacing:-.01em}
+  .member span{font-size:12.5px;color:var(--muted)}
 
   /* services */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:30px}
@@ -137,6 +213,14 @@
   ul.ticks li{padding-left:28px;position:relative;color:var(--muted)}
   ul.ticks li::before{content:"\2713";position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;
     background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+
+  /* gallery — for businesses whose work IS the product */
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:28px}
+  .shots figure{margin:0;border-radius:var(--radius);overflow:hidden;background:var(--soft);
+    border:1px solid var(--line);aspect-ratio:1/1}
+  .shots img{width:100%;height:100%;object-fit:cover;display:block}
+  .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  @media (max-width:520px){ .shots figure:first-child{grid-column:span 2;grid-row:auto} }
 
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
@@ -168,6 +252,55 @@
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
   }
+  /* ── hero shape per voice ─────────────────────────────────────────────────
+     Type alone could not separate two sans voices without loading web fonts,
+     which would break the "no external requests" promise in the pitch. So the
+     hero is structurally different instead. */
+
+  /* TRADE — a full-bleed block of colour. Reads like a work truck. */
+  .v-trade .hero{background:var(--accent);padding-top:56px}
+  .v-trade .hero::before{opacity:.18}
+  .v-trade .hero h1{color:#fff}
+  .v-trade .hero .eyebrow{color:rgba(255,255,255,.72)}
+  .v-trade .hero .lede{color:rgba(255,255,255,.88)}
+  .v-trade .hero-note{color:rgba(255,255,255,.75);border-top-color:rgba(255,255,255,.32)}
+  .v-trade .hero .btn-primary{background:#fff;color:var(--accent);border-color:#fff}
+  .v-trade .hero .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+  .v-trade .trust{border-color:rgba(255,255,255,.3);margin-top:38px}
+
+  /* CARE — centred and unhurried. Calm is the product. */
+  .v-care .hero{padding:84px 0 70px;text-align:center}
+  .v-care .hero h1,.v-care .hero .lede{margin-left:auto;margin-right:auto}
+  .v-care .hero .actions{justify-content:center}
+  .v-care .hero-inner{max-width:44rem;margin:0 auto}
+
+  /* BEAUTY — editorial: a rule down the side, deep top margin, nothing rushed. */
+  .v-beauty .hero{padding:92px 0 68px}
+  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
+  .v-beauty .hero h1{max-width:14ch}
+
+  /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
+     they force line breaks the width itself would never make. This has to sit
+     after the per-voice rules — it matches their specificity, so order decides. */
+  @media (max-width:640px){
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+  }
+  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
+
+  /* FOOD — the copy sits on a warm card, like something on a counter. */
+  .v-food .hero{padding:40px 0 52px}
+  .v-food .hero-inner{background:color-mix(in srgb, var(--accent) 8%, #fff);
+    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+    border-radius:26px;padding:36px 32px}
+  .v-food .trust{margin-top:20px}
+
+  @media (max-width:760px){
+    .v-food .hero-inner{padding:26px 20px;border-radius:20px}
+    .v-beauty .hero-inner{padding-left:18px}
+    .v-care .hero{padding:52px 0 44px}
+    .v-beauty .hero{padding:56px 0 44px}
+  }
+
   /* ── motion ──────────────────────────────────────────────────────────────
      A short load sequence in the hero, then sections arrive as you reach them.
      Everything below is opt-out: with reduced motion the page renders finished. */
@@ -202,7 +335,7 @@
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#top"><span class="mark">L</span>Le Parfait Paris</a>
+    <a class="brand" href="#top"><span class="mark">L</span><span class="nm">Le Parfait Paris</span></a>
     <nav><a href="#services">Services</a><a href="#contact">Contact</a></nav>
     <a class="btn btn-primary" href="tel:6192454457">Call <span class="label">(619) 245-4457</span></a>
   </div>
@@ -212,6 +345,8 @@
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-inner">
+    
     <div class="eyebrow rise" style="--i:0">French bakery &amp; patisserie · San Diego, CA</div>
     <h1 class="rise" style="--i:1">A French bakery in downtown San Diego.</h1>
     <p class="lede rise" style="--i:2">On G Street. Baked here, every morning.</p>
@@ -220,6 +355,7 @@
       <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=555%20G%20Street%2C%20San%20Diego%2C%20CA%2C%2092101" target="_blank" rel="noopener">Get directions</a>
     </div>
     
+    </div>
     
   </div>
 </div>
@@ -230,35 +366,80 @@
     <div class="eyebrow">Services</div>
     <h2>From the counter</h2>
     
-    <div class="grid">
-      <div class="card">
-        <h3>Croissants &amp; viennoiserie</h3>
-        <p>Baked fresh each morning.</p>
-        
-      </div><div class="card">
-        <h3>Macarons</h3>
-        <p>Made in-house, by the piece or the box.</p>
-        
-      </div><div class="card">
-        <h3>Cakes &amp; entremets</h3>
-        <p>For birthdays and for no reason at all.</p>
-        
-      </div><div class="card">
-        <h3>Breads</h3>
-        <p>Baguettes and country loaves.</p>
-        
-      </div><div class="card">
-        <h3>Coffee</h3>
-        <p>Espresso to sit in with, or take away.</p>
-        
-      </div><div class="card">
-        <h3>Catering &amp; events</h3>
-        <p>Platters and pastry for meetings and parties.</p>
-        
-      </div>
-    </div>
+    
+    <div class="menu">
+        <div class="mgroup">
+          
+          <div class="rows">
+            <button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Croissants &amp; viennoiserie">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Croissants &amp; viennoiserie</span>
+                <span class="svc-desc">Baked fresh each morning.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Macarons">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Macarons</span>
+                <span class="svc-desc">Made in-house, by the piece or the box.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Cakes &amp; entremets">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Cakes &amp; entremets</span>
+                <span class="svc-desc">For birthdays and for no reason at all.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Breads">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Breads</span>
+                <span class="svc-desc">Baguettes and country loaves.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Coffee">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Coffee</span>
+                <span class="svc-desc">Espresso to sit in with, or take away.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button><button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Catering &amp; events">
+              <span class="tick" aria-hidden="true"></span>
+              <span class="svc-main">
+                <span class="svc-name">Catering &amp; events</span>
+                <span class="svc-desc">Platters and pastry for meetings and parties.</span>
+              </span>
+              <span class="svc-meta">
+                
+                
+              </span>
+            </button>
+          </div>
+        </div></div>
   </div>
 </section>
+
+
+
+
 
 
 
@@ -288,6 +469,12 @@
   </div>
 </footer>
 
+<div class="basket" id="basket" hidden>
+  <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
+  <button type="button" class="clear" id="bkClear">Clear</button>
+  <a class="btn" id="bkGo" href="#">Request</a>
+</div>
+
 <div class="callbar">
   <a class="btn btn-primary" href="tel:6192454457">Call (619) 245-4457</a>
   <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=555%20G%20Street%2C%20San%20Diego%2C%20CA%2C%2092101" target="_blank" rel="noopener">Map</a>
@@ -297,33 +484,118 @@
 (function(){
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hero = document.querySelector('.hero');
-  if (reduce) { document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
-                document.querySelector('.callbar') && document.querySelector('.callbar').classList.add('up');
-                return; }
 
-  // Hero arrives on load, staggered by --i.
-  requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
-
-  // Sections and cards arrive as you reach them, once.
-  var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
-  targets.forEach(function(el){ el.classList.add('rise'); });
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (!e.isIntersecting) return;
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    targets.forEach(function(el){ io.observe(el); });
+  // Motion is a preference. Booking is a function. Reducing one must never
+  // remove the other — an early return here once disabled the whole menu.
+  if (reduce) {
+    document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
   } else {
-    targets.forEach(function(el){ el.classList.add('in'); });
+    requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
+
+    var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
+    targets.forEach(function(el){ el.classList.add('rise'); });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+      targets.forEach(function(el){ io.observe(el); });
+    } else {
+      targets.forEach(function(el){ el.classList.add('in'); });
+    }
+  }
+
+  // Choose services, see the running total, then send the request as a text or
+  // an email. No backend, no booking account — it composes the message and the
+  // customer sends it from their own phone.
+  var basket = document.getElementById('basket');
+  if (basket) {
+    var picked = [];
+    var TEL = "6192454457";
+    var MAIL = "Downtown@leparfaitparis.com";
+    var BOOKURL = "";
+    var BIZ = "Le Parfait Paris";
+
+    var money = function(c){ return '$' + (c/100).toFixed(2).replace(/.00$/,''); };
+    // People book in hours and minutes, not decimals. "3.3 hr" is not a time.
+    var time = function(m){
+      if (m < 60) return m + ' min';
+      var h = Math.floor(m / 60), r = m % 60;
+      return h + ' hr' + (r ? ' ' + r + ' min' : '');
+    };
+
+    var paint = function(){
+      if (!picked.length) {
+        basket.hidden = true; basket.classList.remove('up');
+        document.body.style.paddingBottom = '';
+        return;
+      }
+      // A $145/mo plan and a $395 one-off job cannot be added into one number.
+      // Sum each unit separately: "$395 + $145/mo", never a meaningless $540.
+      var sums = {}, order = [];
+      picked.forEach(function(p){
+        var u = p.unit || '';
+        if (!(u in sums)) { sums[u] = 0; if (u) order.push(u); }
+        sums[u] += p.price;
+      });
+      var parts = [];
+      if (sums['']) parts.push(money(sums['']));
+      order.forEach(function(u){ if (sums[u]) parts.push(money(sums[u]) + u); });
+      var priced = parts.join(' + ');
+
+      // Time on site only means something for a one-off visit; a monthly plan
+      // is not "about 90 minutes".
+      var dur = picked.reduce(function(n,p){ return n + (p.unit ? 0 : p.mins); }, 0);
+
+      basket.hidden = false; basket.classList.add('up');
+      document.getElementById('bkTotal').textContent =
+        picked.length + (picked.length === 1 ? ' service' : ' services') + (priced ? ' · ' + priced : '');
+      document.getElementById('bkMeta').textContent = dur ? 'about ' + time(dur) : '';
+
+      var lines = picked.map(function(p){
+        return '• ' + p.name + (p.price ? ' (' + money(p.price) + (p.unit || '') + ')' : '');
+      }).join('\n');
+      var msg = 'Hi ' + BIZ + ', I would like to book:\n' + lines +
+                (priced ? '\n\nTotal: ' + priced : '') +
+                (dur ? '\nAbout ' + time(dur) + ' on site' : '') +
+                '\n\nWhat times do you have?';
+      var go = document.getElementById('bkGo');
+      if (BOOKURL) { go.href = BOOKURL; go.textContent = 'Book online'; }
+      else if (TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg); go.textContent = 'Text this'; }
+      else if (MAIL) { go.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Booking request') +
+                        '&body=' + encodeURIComponent(msg); go.textContent = 'Email this'; }
+      else { go.href = '#'; go.textContent = 'Call us'; }
+    };
+
+    document.querySelectorAll('.row-svc').forEach(function(el){
+      el.addEventListener('click', function(){
+        var name = el.dataset.name;
+        var i = picked.findIndex(function(p){ return p.name === name; });
+        if (i > -1) { picked.splice(i,1); el.classList.remove('on'); }
+        else { picked.push({ name: name, price: +el.dataset.price || 0, mins: +el.dataset.mins || 0,
+                             unit: el.dataset.unit || '' });
+               el.classList.add('on'); }
+        paint();
+      });
+    });
+    document.getElementById('bkClear').addEventListener('click', function(){
+      picked = [];
+      document.querySelectorAll('.row-svc.on').forEach(function(el){ el.classList.remove('on'); });
+      paint();
+    });
   }
 
   // The call bar stays out of the way until you have actually started reading.
   var bar = document.querySelector('.callbar');
   if (bar) {
-    var show = function(){ bar.classList.toggle('up', scrollY > 220); };
+    var show = function(){
+      var busy = basket && !basket.hidden;
+      bar.classList.toggle('up', (reduce || scrollY > 220) && !busy);
+    };
+    if (basket) new MutationObserver(show).observe(basket, { attributes: true });
     addEventListener('scroll', show, { passive: true }); show();
   }
 })();

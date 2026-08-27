@@ -2,7 +2,7 @@
 
 **Current site:** http://www.convoydental.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 6/12
+**Score:** 12/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -25,10 +25,9 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
+- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
-- LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
-- Open Graph tags so the link previews properly when shared
+- Hours listed on-page and marked up for Google
 
 ---
 
@@ -47,9 +46,9 @@ So I built you one. It's attached — open it on your phone.
 What's on it:
 - Rebuilt mobile-first; tested down to a 320px screen
 - HTTPS with a free auto-renewing certificate
+- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
 - LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
 
 Nothing is live. This is just so you can see what it would look like.
 

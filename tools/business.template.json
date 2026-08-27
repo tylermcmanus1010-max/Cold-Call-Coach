@@ -10,6 +10,10 @@
   "status": "new",
   "tier": "onepage",
 
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
+  "confirmed": { "prices": false, "email": false, "hours": false, "area": false },
+
   "headline": "",
   "subhead": "",
   "tagline": "",
@@ -32,10 +36,20 @@
     { "value": "", "label": "" }
   ],
 
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
   "servicesHeading": "",
   "servicesLede": "",
   "services": [
-    { "name": "", "desc": "", "price": "" }
+    { "group": "", "name": "", "desc": "", "price": "", "duration": "" }
+  ],
+
+  "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
+  "booking": { "url": "" },
+
+  "teamHeading": "",
+  "teamLede": "",
+  "team": [
+    { "name": "", "role": "" }
   ],
 
   "aboutHeading": "",

@@ -11,6 +11,8 @@
 //   ./cc photo <slug> <img...>  add photos to a page (resized and embedded,
 //                           so the file still opens with no internet)
 //   ./cc check [slug]       run our own 12 checks against the pages WE built
+//   ./cc reaudit [slug]     re-check leads in a real browser and drop the ones
+//                           whose site turns out to be fine (--all to redo every one)
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
@@ -325,6 +327,41 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+async function cmdReaudit(args) {
+  const only = args.find((a) => !a.startsWith('--'));
+  const all = args.includes('--all');
+  const run = require('./tools/reaudit');
+  console.log('\nRe-checking in a real browser. Findings read off raw HTML cannot see');
+  console.log('JavaScript-built hours, tap-to-call links or the mobile layout, so they');
+  console.log('are not safe to say to an owner holding the phone.\n');
+
+  const { checked, note } = await run({ only, all });
+  if (note) return console.log(`  ${note}\n`);
+
+  const kept = checked.filter((r) => r.verdict === 'keep');
+  const dropped = checked.filter((r) => r.verdict === 'dropped');
+  const blocked = checked.filter((r) => r.verdict === 'blocked');
+  const errored = checked.filter((r) => r.error);
+
+  for (const r of checked.filter((x) => x.verdict === 'keep')) {
+    const moved = r.before !== r.after ? `  (we had said ${r.before})` : '';
+    console.log(`  ✓ ${r.slug.padEnd(46)} ${r.after} provable gaps${moved}`);
+  }
+  if (dropped.length) {
+    console.log(`\n  ${dropped.length} dropped — their site is genuinely fine:`);
+    dropped.forEach((r) => console.log(`    · ${r.slug} (we had said ${r.before} broken; really ${r.after})`));
+  }
+  if (blocked.length) {
+    console.log(`\n  ${blocked.length} refused our check, so we can claim nothing:`);
+    blocked.forEach((r) => console.log(`    · ${r.slug} — ${r.reason}`));
+  }
+  if (errored.length) {
+    console.log(`\n  ${errored.length} could not be checked:`);
+    errored.forEach((r) => console.log(`    · ${r.slug} — ${r.error}`));
+  }
+  console.log(`\n  ${kept.length} still worth calling. Run ./cc build && ./cc sheet.\n`);
+}
+
 function cmdHost(slug, flags) {
   if (!slug) die('Usage: ./cc host <slug>   — prepare the folder a host serves');
   const host = require('./tools/host');
@@ -386,6 +423,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
+    case 'reaudit': await cmdReaudit(args); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

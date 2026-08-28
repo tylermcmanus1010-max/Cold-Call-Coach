@@ -32,7 +32,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## Email to send
 
-**Subject:** Rebuilt your website — take a look before you say no
+**Subject:** The laser is the best thing you have and nobody can find it
 
 Hi Dr. Mojaver,
 

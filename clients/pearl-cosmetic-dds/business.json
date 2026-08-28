@@ -1,5 +1,5 @@
 {
-  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand \u2014 that is the part that sells.",
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
   "slug": "pearl-cosmetic-dds",
   "name": "Pearl Cosmetic & Family Dentistry",
   "category": "Cosmetic and family dentistry",
@@ -8,7 +8,7 @@
   "liveUrl": "",
   "status": "replied",
   "tier": "onepage",
-  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL \u2014 without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
   "confirmed": {
     "prices": false,
@@ -19,7 +19,7 @@
   "headline": "Fillings without the needle or the drill.",
   "subhead": "Laser dentistry, crowns finished in a single visit, and digital scans instead of the chalky mould. Cosmetic and family dentistry in Sabre Springs.",
   "tagline": "Laser and digital dentistry in Sabre Springs, San Diego.",
-  "heroNote": "New patients welcome \u00b7 No insurance? Membership from $399 a year",
+  "heroNote": "New patients welcome · No insurance? Membership from $399 a year",
   "phone": "+1-858-513-1747",
   "email": "Cs@pearlcosmeticdds.com",
   "address": {
@@ -31,7 +31,7 @@
   "serviceArea": [
     "Sabre Springs",
     "Poway",
-    "Rancho Pe\u00f1asquitos",
+    "Rancho Peñasquitos",
     "Carmel Mountain",
     "Rancho Bernardo",
     "Scripps Ranch",
@@ -42,13 +42,13 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon\u2013Fri",
-      "time": "8:00 AM \u2013 5:00 PM",
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
       "schema": "Mo-Fr 08:00-17:00"
     },
     {
       "days": "Last Saturday of the month",
-      "time": "8:00 AM \u2013 2:00 PM",
+      "time": "8:00 AM – 2:00 PM",
       "schema": "Sa 08:00-14:00"
     },
     {
@@ -74,13 +74,13 @@
       "label": "Membership, no insurance needed"
     }
   ],
-  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional \u2014 give them only if the business actually published them, never guessed; without them the rows still select and still send.",
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
   "servicesHeading": "What are you coming in for?",
   "servicesLede": "Pick what applies and send it over. We will come back with the next open appointment.",
   "services": [
     {
       "group": "If the dentist makes you nervous",
-      "name": "Laser fillings \u2014 no needle, no drill",
+      "name": "Laser fillings — no needle, no drill",
       "desc": "Our Solea laser does most fillings without anaesthetic and without the noise. This is the one that changes minds."
     },
     {
@@ -101,7 +101,7 @@
     {
       "group": "Done in one visit",
       "name": "Digital scan instead of a mould",
-      "desc": "An iTero scanner takes an optical impression \u2014 no tray, no chalky paste, no gagging."
+      "desc": "An iTero scanner takes an optical impression — no tray, no chalky paste, no gagging."
     },
     {
       "group": "Straightening",
@@ -135,7 +135,7 @@
     },
     {
       "group": "Cosmetic and routine",
-      "name": "Membership plan \u2014 $399 a year",
+      "name": "Membership plan — $399 a year",
       "desc": "No insurance, no problem. Cover your routine care without a policy."
     }
   ],
@@ -152,9 +152,9 @@
     }
   ],
   "aboutHeading": "Dr. Mojaver",
-  "about": "We perform all aspects of dentistry, with a focus on healthy, well-designed smiles. We also practise holistic dentistry \u2014 non-toxic materials chosen so that what goes in your mouth does not work against the rest of you.\n\nDr. Mojaver has over 18 years of experience, and has invested in the equipment that actually changes how a visit feels: a Solea laser that does most fillings with no needle and no drill, CEREC 3D so a crown is finished the same day, and an iTero scanner so nobody has to bite into a tray of paste.\n\nIf you have been avoiding the dentist, this is the practice built for you.",
+  "about": "We perform all aspects of dentistry, with a focus on healthy, well-designed smiles. We also practise holistic dentistry — non-toxic materials chosen so that what goes in your mouth does not work against the rest of you.\n\nDr. Mojaver has over 18 years of experience, and has invested in the equipment that actually changes how a visit feels: a Solea laser that does most fillings with no needle and no drill, CEREC 3D so a crown is finished the same day, and an iTero scanner so nobody has to bite into a tray of paste.\n\nIf you have been avoiding the dentist, this is the practice built for you.",
   "points": [
-    "Most fillings done with a laser \u2014 no needle, no drill, no noise",
+    "Most fillings done with a laser — no needle, no drill, no noise",
     "Crowns designed and fitted in one appointment",
     "Digital scanning instead of impression moulds",
     "Non-toxic, biocompatible materials",
@@ -173,12 +173,12 @@
       "source": "Google"
     },
     {
-      "text": "The entire team is very friendly and personable, remembering details about my life and asking me about them. Whenever I walk in, I don\u2019t even have to give my name. That\u2019s my kind of place. Good people and great work.",
+      "text": "The entire team is very friendly and personable, remembering details about my life and asking me about them. Whenever I walk in, I don’t even have to give my name. That’s my kind of place. Good people and great work.",
       "author": "Amandine B.",
       "source": "Yelp"
     },
     {
-      "text": "I love going to Pearl Dentistry \u2014 the staff is friendly and it\u2019s like a little party every time I visit. I have been to dental offices that have left my teeth hurting.",
+      "text": "I love going to Pearl Dentistry — the staff is friendly and it’s like a little party every time I visit. I have been to dental offices that have left my teeth hurting.",
       "author": "Dana M.",
       "source": "Yelp"
     }
@@ -216,7 +216,9 @@
     "builder": null,
     "copyrightYear": 2026
   },
-  "_status": "WARM \u2014 gave Tyler their email on the call. Everything below is taken from THEIR OWN website (screenshots 28 Aug): services, technology, hours, the membership price, the dentist's name and three testimonials with real names. Nothing here is invented. Still to confirm with the practice: Dr. Mojaver's exact credentials and the '249' review count, which came off their Google map card.",
+  "_status": "WARM — gave Tyler their email on the call. Everything below is taken from THEIR OWN website (screenshots 28 Aug): services, technology, hours, the membership price, the dentist's name and three testimonials with real names. Nothing here is invented. Still to confirm with the practice: Dr. Mojaver's exact credentials and the '249' review count, which came off their Google map card.",
   "shortName": "Pearl Dentistry",
-  "reviewsHeading": "What patients say"
+  "reviewsHeading": "What patients say",
+  "pitchSubject": "The laser is the best thing you have and nobody can find it",
+  "pitchEmail": "Hi Dr. Mojaver,\n\nTyler McManus here — thanks for the email address earlier.\n\nAttached is a rebuilt version of your site. Open it on your phone, that is where your patients will see it.\n\nThe reason I rebuilt it rather than just listing problems: you have the single best thing a dental practice can say to a nervous patient, and it is almost impossible to find. The Solea laser. Fillings with no needle and no drill. That is the reason someone who has avoided a dentist for ten years picks up the phone — and right now it is several scrolls down a page that takes about seventeen seconds to load.\n\nSo on the new page it is the headline. Then crowns finished in one visit, the digital scanner instead of the mould, and the $399 membership for people with no insurance.\n\nEverything on it came off your own site — your services, your hours including the last Saturday of the month, your reviews from Meredith, Amandine and Dana. I have not made anything up, and where I was not sure I left it out.\n\nThe measured difference: your current page is 245KB and took 16.8 seconds on my phone. The attached one is 38KB and loads instantly. It also has a tappable phone number, which yours does not, and the page title and Google markup that yours is missing.\n\n$750 to put it on your domain, live in 5 business days. $60/month after that if you want me hosting it and making changes — cancel any time. If you don't like it you don't pay, and you keep the file either way.\n\nOne thing I would want from you before it goes live: check the service list is right. I built it from what is on your site, but you know what you actually offer.\n\nTyler McManus\nMcManus Web Co.\n302-649-6600"
 }

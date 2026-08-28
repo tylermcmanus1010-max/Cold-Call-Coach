@@ -1,23 +1,23 @@
-Subject: Rebuilt your website — take a look before you say no
+Subject: The laser is the best thing you have and nobody can find it
 
 Hi Dr. Mojaver,
 
-I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
+Tyler McManus here — thanks for the email address earlier.
 
-I looked at your website and rebuilt it. It's attached — open it on your phone.
+Attached is a rebuilt version of your site. Open it on your phone, that is where your patients will see it.
 
-What I changed:
-- Single self-contained file, no trackers, loads instantly
-- Tap-to-call in the header and a sticky call bar on mobile
-- LocalBusiness schema so Google can read hours, phone, rating and location
-- Written page title, description and social preview card
+The reason I rebuilt it rather than just listing problems: you have the single best thing a dental practice can say to a nervous patient, and it is almost impossible to find. The Solea laser. Fillings with no needle and no drill. That is the reason someone who has avoided a dentist for ten years picks up the phone — and right now it is several scrolls down a page that takes about seventeen seconds to load.
 
-Nothing is live. This is just so you can see what it would look like.
+So on the new page it is the headline. Then crowns finished in one visit, the digital scanner instead of the mould, and the $399 membership for people with no insurance.
 
-$750 for the one-page rebuild, live on your domain in 5 business days. $60/month after that if you want me hosting it and making changes for you. If you don't like it, you don't pay. You keep the page either way.
+Everything on it came off your own site — your services, your hours including the last Saturday of the month, your reviews from Meredith, Amandine and Dana. I have not made anything up, and where I was not sure I left it out.
 
-Worth a 10-minute call?
+The measured difference: your current page is 245KB and took 16.8 seconds on my phone. The attached one is 38KB and loads instantly. It also has a tappable phone number, which yours does not, and the page title and Google markup that yours is missing.
+
+$750 to put it on your domain, live in 5 business days. $60/month after that if you want me hosting it and making changes — cancel any time. If you don't like it you don't pay, and you keep the file either way.
+
+One thing I would want from you before it goes live: check the service list is right. I built it from what is on your site, but you know what you actually offer.
 
 Tyler McManus
+McManus Web Co.
 302-649-6600
-tylermcmanus1010@gmail.com

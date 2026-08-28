@@ -1,5 +1,5 @@
 {
-  "_status": "WARM — interested. His REAL site is https://www.rtroofingspecialist.com/ (found via his Google listing). rtroofing.com is a different, parked domain he no longer owns — still worth telling him, but it is not his website. Everything previously measured was against that parked domain and has been cleared. Do not claim anything until the re-audit lands.",
+  "_status": "WARM but NOT a rebuild. His real site rtroofingspecialist.com passes 6 of 7 provable checks — mobile, HTTPS, tap-to-call, schema, meta, OG all fine. The single failure is load time: 15.6s and 245KB. Our page is 38KB. Sell the speed or sell nothing; do not sell him a replacement for a site that works. rtroofing.com being parked is still true and still worth telling him. See RT.md.",
   "slug": "rt-roofing-specialist-inc",
   "name": "RT Roofing Specialist",
   "shortName": "RT Roofing",
@@ -190,6 +190,9 @@
     "pageKb": 245
   },
   "callNotes": [
-    "2026-08-28: he DOES have a site — rtroofingspecialist.com, linked from his Google listing. Our lead had rtroofing.com, which is parked and for sale and not his. Findings reset."
-  ]
+    "2026-08-28: he DOES have a site — rtroofingspecialist.com, linked from his Google listing. Our lead had rtroofing.com, which is parked and for sale and not his. Findings reset.",
+    "2026-08-28: measured his real site — 6 of 7 provable checks PASS. Only failure is 15.6s load. Not a rebuild. Repriced at $450 for the speed fix, or walk away honestly."
+  ],
+  "pitchSubject": "Your site checks out — one thing it does not",
+  "pitchEmail": "Hi,\n\nGood news first: I went through your site properly on a phone and it is better than most I look at. It works on mobile, your number is tappable, your page title and preview are right, and you are wired into your Google listing properly. I am not going to sell you a new website. You do not need one.\n\nTwo things I did find.\n\nYour site takes about 15.6 seconds to load on a phone — it is 245KB. Open it on your own phone and time it. That is the one that costs you, because somebody with a leak at 9pm does not wait fifteen seconds, they go back and tap the next roofer on the list.\n\nAnd rtroofing.com, the one we talked about, is parked and listed for sale by a reseller. Anyone holding an old card or an old invoice lands on a page selling your name back to you. That is a loose end rather than a fire, but it is worth closing.\n\nAttached is the same information on a page that loads instantly — 38KB, with nothing pulled in from anywhere else. Open it next to yours and you will see the difference immediately.\n\nIf you want it on your domain it is $450, live in 5 business days. If you would rather keep what you have, keep the file anyway, no charge, and no hard feelings — your site is genuinely fine.\n\nTyler McManus\nMcManus Web Co.\n302-649-6600"
 }

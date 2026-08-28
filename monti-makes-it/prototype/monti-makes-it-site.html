@@ -921,6 +921,116 @@ function ordersFor(id) {
 }
 
 /* ==========================================================================
+   The transaction ledger (§11.4–11.7)
+
+   One row per money event, derived from the orders rather than typed. The admin
+   master ledger and the client ledger are two projections of this one list —
+   §11.6 calls a client ledger disagreeing with the admin's the most damaging
+   inconsistency this product could ship, and the way to prevent it is to have
+   one set of rows and one totals function, not two that happen to match.
+   ========================================================================== */
+var LEDGER = [];
+(function () {
+  var n = 100000;
+  function push(o, kind, status, gross, fee, when) {
+    LEDGER.push({
+      receipt: "MMI-R-" + (++n), clientId: o.clientId, orderRef: o.ref,
+      kind: kind, status: status, method: o.method,
+      gross: gross, fee: fee || 0, net: gross - (fee || 0), when: when,
+      itemName: o.name
+    });
+  }
+  ORDERS.forEach(function (o) {
+    /* §11.7 — an ACH debit that has not settled is one PENDING row, excluded
+       from revenue everywhere and labelled on both surfaces. A card capture
+       lands settled. Either way one charge row per order. */
+    var settled = !!o.paid;
+    push(o, "CHARGE", settled ? "SETTLED" : "PENDING", o.total || (o.unit * o.qty),
+         o.processingFee, o.paid || o.ordered);
+    if (settled && o.processingFee) push(o, "FEE", "SETTLED", 0, o.processingFee, o.paid);
+  });
+  /* A few transactions on the demo accounts. Without them every ledger row
+     belongs to one member, which makes member search pointless to demonstrate
+     and makes the cross-tenant check vacuous — a client ledger that cannot
+     reach another member's rows proves nothing when there are no other rows.
+     These sit on the accounts that are openly labelled as demo. */
+  [[2, "MMI-O-9101", 412000, -68], [2, "MMI-O-9114", 98000, -22],
+   [3, "MMI-O-9107", 265000, -51], [3, "MMI-O-9121", 143000, -12]
+  ].forEach(function (row) {
+    var when = addDays(TODAY, row[3]);
+    push({clientId: row[0], ref: row[1], method: "CARD",
+          name: "Demo transaction"}, "CHARGE", "SETTLED", row[2],
+         Math.round(row[2] * 0.029) + 30, when);
+  });
+
+  LEDGER.sort(function (a, b) { return b.when - a.when; });
+})();
+
+var REVENUE_KINDS = ["CHARGE"];
+
+function ledgerRows(opts) {
+  opts = opts || {};
+  return LEDGER.filter(function (r) {
+    if (opts.clientId && r.clientId !== opts.clientId) return false;
+    if (opts.start && r.when < opts.start) return false;
+    /* Half-open: inclusive start, exclusive end, so a transaction stamped at a
+       period boundary lands in exactly one period (§11.5.1). */
+    if (opts.end && r.when >= opts.end) return false;
+    if (opts.member) {
+      var c = client(r.clientId);
+      if (!c || c.name.toLowerCase().indexOf(opts.member.toLowerCase()) === -1) return false;
+    }
+    if (opts.orderRef && String(r.orderRef).toLowerCase() !== opts.orderRef.toLowerCase()) return false;
+    if (opts.receipt && r.receipt.toLowerCase() !== opts.receipt.toLowerCase()) return false;
+    return true;
+  });
+}
+
+function ledgerTotals(rows) {
+  var settled = rows.filter(function (r) { return r.status === "SETTLED"; });
+  var gross = settled.filter(function (r) { return REVENUE_KINDS.indexOf(r.kind) !== -1; })
+    .reduce(function (t, r) { return t + r.gross; }, 0);
+  var fees = settled.reduce(function (t, r) { return t + r.fee; }, 0);
+  var orders = {};
+  settled.forEach(function (r) { if (REVENUE_KINDS.indexOf(r.kind) !== -1) orders[r.orderRef] = 1; });
+  var count = Object.keys(orders).length;
+  var pending = rows.filter(function (r) { return r.status === "PENDING"; })
+    .reduce(function (t, r) { return t + r.gross; }, 0);
+  return {gross: gross, fees: fees, net: gross - fees, orders: count,
+          aov: count ? Math.round(gross / count) : 0, pending: pending, rows: rows.length};
+}
+
+function periodKey(d, g) {
+  var y = d.getFullYear(), m = d.getMonth();
+  if (g === "month") return y + "-" + String(m + 1).padStart(2, "0");
+  if (g === "quarter") return y + "-Q" + (Math.floor(m / 3) + 1);
+  return String(y);
+}
+function periodLabel(key, g) {
+  if (g !== "month") return key;
+  var parts = key.split("-");
+  return new Date(+parts[0], +parts[1] - 1, 1)
+    .toLocaleDateString("en-US", {month: "long", year: "numeric"});
+}
+
+function ledgerPeriods(g, opts) {
+  var rows = ledgerRows(opts);
+  var buckets = {};
+  rows.forEach(function (r) {
+    var k = periodKey(r.when, g);
+    (buckets[k] = buckets[k] || []).push(r);
+  });
+  var keys = Object.keys(buckets).sort();
+  var out = keys.map(function (k, i) {
+    var cur = ledgerTotals(buckets[k]);
+    var prev = i ? ledgerTotals(buckets[keys[i - 1]]) : null;
+    return {key: k, label: periodLabel(k, g), totals: cur, prev: prev,
+            delta: prev && prev.gross ? (cur.gross - prev.gross) / prev.gross : null};
+  }).reverse();
+  return {granularity: g, periods: out, grand: ledgerTotals(rows)};
+}
+
+/* ==========================================================================
    Revenue maths
    ========================================================================== */
 function seriesFor(rangeKey) {
@@ -977,6 +1087,9 @@ function deltaHtml(v) {
 var S = {
   route: "home",
   catSku: null,
+  ledgerPeriod: "month",
+  ledgerFilters: {},
+  receipt: null,
   user: null,               // {kind:'admin'} | {kind:'client', id:n}
   adminTab: "revenue",
   adminClient: null,
@@ -1682,7 +1795,8 @@ function viewPortal() {
   var c = client(S.user.id);
   var qs = quotesFor(c.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
   var nav = [["overview","◈","Overview"],["quotes","◷","My quotes"],["catalog","▤","My products"],
-             ["purchases","▣","Purchased items"],["account","◎","Account"]];
+             ["purchases","▣","Purchased items"],["ledger","≡","My ledger"],
+             ["account","◎","Account"]];
   var mine = itemsForClient(c), myOrders = ordersFor(c.id);
 
   var side = '<aside class="sidebar">' +
@@ -1807,6 +1921,11 @@ function viewPortal() {
       '</div></div>');
   } else if (S.portalTab === "purchases") {
     body = purchasesView(c, myOrders);
+  } else if (S.portalTab === "ledger") {
+    body = '<p class="muted" style="max-width:62ch;margin-bottom:1.5rem">' +
+      'Every purchase you have made, in one place. Switch between months, quarters ' +
+      'and years — the same transactions grouped three ways, so the totals always ' +
+      'agree. Every line opens the receipt itself.</p>' + ledgerBody(c.id);
   } else {
     body = '<div class="grid grid-sidebar"><div class="card">' +
       '<h3>Account</h3><dl class="kv" style="margin-top:1.25rem">' +
@@ -2117,6 +2236,168 @@ function viewPaid() {
     '</div></div></div></div>';
 }
 
+/* --- the ledger, rendered ------------------------------------------------
+   One function for both surfaces. `client` decides which columns appear — the
+   client view has no fee and no net, because those are ours — and everything
+   else is identical, deliberately: two renderers would drift, and what they
+   would drift about is money. */
+function ledgerDelta(v) {
+  if (v === null || v === undefined) return '<span class="delta flat">no prior period</span>';
+  if (v > 0.005) return '<span class="delta up">▲ ' + (v * 100).toFixed(1) + '%</span>';
+  if (v < -0.005) return '<span class="delta down">▼ ' + (-v * 100).toFixed(1) + '%</span>';
+  return '<span class="delta flat">level</span>';
+}
+
+function ledgerPeriodSwitch() {
+  return '<div class="ledger-periods" role="group" aria-label="Period format">' +
+    [["month", "Month over month"], ["quarter", "Quarter over quarter"],
+     ["year", "Year over year"]].map(function (p) {
+      return '<button class="ledger-period-btn ' + (S.ledgerPeriod === p[0] ? "active" : "") +
+        '" aria-pressed="' + (S.ledgerPeriod === p[0]) + '" data-lperiod="' + p[0] + '">' +
+        p[1] + '</button>';
+    }).join("") + '</div>';
+}
+
+function ledgerPeriodTable(view, isClient) {
+  if (!view.periods.length) {
+    return '<div class="empty" style="padding:2.5rem 1rem">No transactions in this range.</div>';
+  }
+  return '<div class="ledger-grand">' +
+      '<div><div class="stat-label">Total over this range</div>' +
+      '<div class="stat-value">' + money(view.grand.gross) + '</div>' +
+      '<div class="tiny dim">' + view.grand.orders + ' order' +
+        (view.grand.orders === 1 ? "" : "s") + ' · ' + view.periods.length + ' ' +
+        view.granularity + (view.periods.length === 1 ? "" : "s") + '</div></div>' +
+      /* §11.4.3 — a pending debit sits apart from the total it is deliberately
+         not in. In the same column it would read as revenue. */
+      (view.grand.pending ? '<div class="ledger-pending">' +
+        '<div class="stat-label">Pending, not counted</div>' +
+        '<div class="stat-value">' + money(view.grand.pending) + '</div>' +
+        '<div class="tiny dim">Bank transfers still settling.</div></div>' : '') +
+    '</div>' +
+    '<div class="table-wrap"><table class="data ledger-table"><thead><tr>' +
+      '<th>' + view.granularity.charAt(0).toUpperCase() + view.granularity.slice(1) + '</th>' +
+      '<th class="right">Gross</th>' +
+      (isClient ? '' : '<th class="right">Fees</th>') +
+      '<th class="right">' + (isClient ? "Paid" : "Net") + '</th>' +
+      '<th class="right">Orders</th><th class="right">Average</th><th>vs previous</th>' +
+    '</tr></thead><tbody>' + view.periods.map(function (p) {
+      return '<tr><td><strong>' + esc(p.label) + '</strong></td>' +
+        '<td class="right mono tnum">' + money(p.totals.gross) + '</td>' +
+        (isClient ? '' : '<td class="right mono tnum">' + money(p.totals.fees) + '</td>') +
+        '<td class="right mono tnum">' + money(p.totals.net) + '</td>' +
+        '<td class="right tnum">' + p.totals.orders + '</td>' +
+        '<td class="right mono tnum">' + money(p.totals.aov) + '</td>' +
+        '<td class="tiny">' + ledgerDelta(p.delta) + '</td></tr>';
+    }).join("") + '</tbody></table></div>';
+}
+
+function ledgerTransactions(rows, isClient) {
+  if (!rows.length) {
+    return '<div class="empty" style="padding:2.5rem 1rem">' +
+      '<p>Nothing matches this search.</p>' +
+      '<p class="tiny dim">Try a wider date range, or clear the filters.</p></div>';
+  }
+  return '<div class="table-wrap"><table class="data ledger-table"><thead><tr>' +
+    '<th>Receipt</th><th>When</th>' + (isClient ? '' : '<th>Member</th>') +
+    '<th>Order</th><th>Event</th><th>Method</th><th class="right">Amount</th>' +
+    (isClient ? '' : '<th class="right">Fee</th>') + '<th></th>' +
+    '</tr></thead><tbody>' + rows.map(function (r) {
+      var tone = r.status === "SETTLED" ? "green" : (r.status === "PENDING" ? "amber" : "red");
+      return '<tr><td class="mono tiny">' + esc(r.receipt) + '</td>' +
+        '<td class="tiny">' + esc(fmtFull(r.when)) + '</td>' +
+        (isClient ? '' : '<td>' + esc(client(r.clientId) ? client(r.clientId).name : "—") + '</td>') +
+        '<td class="mono tiny">' + esc(r.orderRef || "—") + '</td>' +
+        '<td><span class="badge badge-' + tone + '">' + esc(r.kind.toLowerCase()) + '</span>' +
+          (r.status === "PENDING"
+            ? '<div class="tiny dim">settling — not counted as revenue</div>' : '') + '</td>' +
+        '<td class="tiny">' + esc((r.method || "—").toLowerCase()) + '</td>' +
+        '<td class="right mono tnum">' + money(r.gross) + '</td>' +
+        (isClient ? '' : '<td class="right mono tnum">' + money(r.fee) + '</td>') +
+        '<td class="right"><button class="btn btn-sm" data-receipt="' + esc(r.receipt) +
+          '">Receipt</button></td></tr>';
+    }).join("") + '</tbody></table></div>';
+}
+
+function ledgerSearchForm() {
+  var f = S.ledgerFilters;
+  return '<div class="ledger-search">' +
+    '<label class="field"><span class="field-label">From</span>' +
+      '<input type="date" id="lf-start" value="' + esc(f.start || "") + '"></label>' +
+    '<label class="field"><span class="field-label">To</span>' +
+      '<input type="date" id="lf-end" value="' + esc(f.end || "") + '"></label>' +
+    (S.user && S.user.kind === "admin"
+      ? '<label class="field"><span class="field-label">Member</span>' +
+        '<input type="text" id="lf-member" value="' + esc(f.member || "") + '" ' +
+        'placeholder="Company name"></label>' : '') +
+    '<label class="field"><span class="field-label">Order</span>' +
+      '<input type="text" id="lf-order" value="' + esc(f.orderRef || "") + '" ' +
+      'placeholder="MMI-O-…"></label>' +
+    '<label class="field"><span class="field-label">Receipt</span>' +
+      '<input type="text" id="lf-receipt" value="' + esc(f.receipt || "") + '" ' +
+      'placeholder="MMI-R-…"></label>' +
+    '<div class="ledger-search-actions">' +
+      '<button class="btn btn-primary" data-lsearch="1">Search</button>' +
+      '<button class="btn" data-lclear="1">Clear</button></div></div>';
+}
+
+function ledgerFilterOpts(clientId) {
+  var f = S.ledgerFilters;
+  return {
+    clientId: clientId || null,
+    start: f.start ? new Date(f.start + "T00:00:00") : null,
+    end: f.end ? new Date(f.end + "T00:00:00") : null,
+    member: f.member || null, orderRef: f.orderRef || null, receipt: f.receipt || null
+  };
+}
+
+function ledgerBody(clientId) {
+  var isClient = !!clientId;
+  var opts = ledgerFilterOpts(clientId);
+  var view = ledgerPeriods(S.ledgerPeriod, opts);
+  var rows = ledgerRows(opts);
+  return ledgerSearchForm() + ledgerPeriodSwitch() +
+    ledgerPeriodTable(view, isClient) +
+    '<div class="divider-label">Transactions</div>' +
+    ledgerTransactions(rows, isClient);
+}
+
+function viewReceipt() {
+  var r = LEDGER.filter(function (x) { return x.receipt === S.receipt; })[0];
+  var isAdmin = S.user && S.user.kind === "admin";
+  /* Scoped in the lookup rather than checked afterwards: a member asking for
+     another member's receipt number finds nothing, because it was never
+     selectable (§11.6). */
+  if (r && !isAdmin && r.clientId !== S.user.id) r = null;
+  var back = isAdmin ? "admin" : "portal";
+  if (!r) {
+    return '<div class="card" style="margin:2rem auto;max-width:520px">' +
+      '<h3>No such receipt</h3>' +
+      '<p class="muted" style="margin-top:.6rem">That receipt number does not belong to ' +
+      'this account.</p>' +
+      '<button class="btn btn-primary" style="margin-top:1rem" data-act="' + back + '">Back</button></div>';
+  }
+  return '<div class="card card-lg" style="margin:2rem auto;max-width:560px">' +
+    '<span class="eyebrow-label">Receipt</span>' +
+    '<h2 style="margin-top:.6rem">' + esc(r.receipt) + '</h2>' +
+    '<dl class="kv" style="margin-top:1.25rem">' +
+      (isAdmin ? '<dt>Member</dt><dd>' + esc(client(r.clientId).name) + '</dd>' : '') +
+      '<dt>When</dt><dd>' + esc(fmtFull(r.when)) + '</dd>' +
+      '<dt>Item</dt><dd>' + esc(r.itemName || "—") + '</dd>' +
+      '<dt>Order</dt><dd class="mono">' + esc(r.orderRef || "—") + '</dd>' +
+      '<dt>Event</dt><dd>' + esc(r.kind.toLowerCase()) + ' · ' + esc(r.status.toLowerCase()) + '</dd>' +
+      '<dt>Method</dt><dd>' + esc((r.method || "—").toLowerCase()) + '</dd>' +
+      '<dt>Amount</dt><dd class="mono tnum">' + money(r.gross) + '</dd>' +
+      (isAdmin ? '<dt>Fee</dt><dd class="mono tnum">' + money(r.fee) + '</dd>' : '') +
+    '</dl>' +
+    (r.status === "PENDING"
+      ? '<div class="notice notice-wait" style="margin-top:1rem"><strong>Still settling.</strong>' +
+        'Bank transfers take one to three business days. Nothing is produced until the money ' +
+        'actually lands.</div>' : '') +
+    '<button class="btn btn-primary" style="margin-top:1.5rem" data-act="' + back + '">Back to the ledger</button>' +
+  '</div>';
+}
+
 function stat(label, value, sub, accent) {
   return '<div class="stat' + (accent ? " stat-accent" : "") + '"><div class="stat-label">' + esc(label) + '</div>' +
     '<div class="stat-value">' + esc(value) + '</div>' +
@@ -2178,7 +2459,8 @@ function viewMemberQuote() {
    Admin portal
    ========================================================================== */
 function viewAdmin() {
-  var nav = [["revenue","◈","Revenue"],["incoming","▼","Incoming quotes"],["crm","◎","CRM"],
+  var nav = [["revenue","◈","Revenue"],["ledger","≡","Master ledger"],
+             ["incoming","▼","Incoming quotes"],["crm","◎","CRM"],
              ["catalog","▤","Items catalog"],["clients","▣","Client portals"]];
   var openQuotes = QUOTES.concat(S.submitted).filter(function(q){return q.status==="NEW"||q.status==="IN_REVIEW";}).length;
 
@@ -2212,6 +2494,7 @@ function viewAdmin() {
   var body, head;
   if (S.adminClient) { head = adminClientHead(); body = adminClientBody(); }
   else if (S.adminTab === "revenue") { head = ["Money", "Revenue"]; body = adminRevenue(); }
+  else if (S.adminTab === "ledger")  { head = ["Money", "Master ledger"]; body = ledgerBody(null); }
   else if (S.adminTab === "incoming") { head = ["Triage", "Incoming quotes"]; body = adminIncoming(); }
   else if (S.adminTab === "crm")     { head = ["Relationships", "CRM · " + CLIENTS.length + " clients"]; body = adminCrm(); }
   else if (S.adminTab === "catalog") { head = ["Product", "Items catalog"]; body = adminCatalog(); }
@@ -2501,6 +2784,7 @@ function render() {
     case "home":        html = viewHome(); break;
     case "catalogue":   html = viewCatalogue(); break;
     case "catalogue-item": html = viewCatalogueItem(); break;
+    case "receipt":     html = topbar() + viewReceipt() + footer(); break;
     case "how":         html = viewHow(); break;
     case "membership":  html = viewMembership(); break;
     case "quote":       html = viewQuote(); break;
@@ -2575,6 +2859,31 @@ function wire() {
   });
 
   app.querySelectorAll("[data-iv]").forEach(wireViewer);
+
+  app.querySelectorAll("[data-lperiod]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.ledgerPeriod = el.getAttribute("data-lperiod");
+      go(S.route);
+    });
+  });
+  app.querySelectorAll("[data-lsearch]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      function val(id) { var e = app.querySelector(id); return e && e.value.trim() ? e.value.trim() : null; }
+      S.ledgerFilters = {start: val("#lf-start"), end: val("#lf-end"),
+                         member: val("#lf-member"), orderRef: val("#lf-order"),
+                         receipt: val("#lf-receipt")};
+      go(S.route);
+    });
+  });
+  app.querySelectorAll("[data-lclear]").forEach(function (el) {
+    el.addEventListener("click", function () { S.ledgerFilters = {}; go(S.route); });
+  });
+  app.querySelectorAll("[data-receipt]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.receipt = el.getAttribute("data-receipt");
+      go("receipt");
+    });
+  });
 
   app.querySelectorAll("[data-buy]").forEach(function (el) {
     el.addEventListener("click", function () {

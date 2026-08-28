@@ -1,4 +1,4 @@
-# RT Roofing Specialist Inc — pitch sheet
+# RT Roofing Specialist — pitch sheet
 
 **Current site:** https://rtroofing.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)

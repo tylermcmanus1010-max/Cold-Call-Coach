@@ -4,6 +4,7 @@
 //   ./cc scout              build the lead list: pull businesses, audit every site
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
+//   ./cc harvest <slug>     read THEIR site first — services, hours, real reviews
 //   ./cc build [slug]       render index.html + pitch.md (all clients if no slug)
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
@@ -167,7 +168,7 @@ Next:
 function cmdBuild(slug) {
   const list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
-  const skipped = [], generic = [];
+  const skipped = [], generic = [], unharvested = [];
   for (const s of list) {
     const b = load(s);
     if (!b.name) {
@@ -185,6 +186,10 @@ function cmdBuild(slug) {
       b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
       generic.push(s);
     }
+    if (b.currentSite && !fs.existsSync(path.join(dir(s), 'harvest.json'))
+        && !['won', 'spec'].includes(b.status)) {
+      unharvested.push(s);
+    }
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
     const p = pitch(b, pricing);
@@ -199,6 +204,13 @@ function cmdBuild(slug) {
   if (skipped.length) {
     console.log(`\n  ${skipped.length} not built:`);
     skipped.forEach((s) => console.log(`    · ${s}`));
+  }
+  if (unharvested.length) {
+    console.log(`\n  ${unharvested.length} built without reading their own site first.`);
+    console.log('  Their real services, hours and testimonials are sitting on it — that is the');
+    console.log('  difference between 10/12 and 12/12. Run: ./cc harvest <slug>');
+    console.log('    ' + unharvested.slice(0, 6).join(', ')
+      + (unharvested.length > 6 ? `, +${unharvested.length - 6} more` : ''));
   }
   if (generic.length) {
     console.log(`\n  ${generic.length} built with a placeholder tagline — fine to call on, worth`);
@@ -326,6 +338,21 @@ function cmdList() {
   }
   const open = rows.filter((r) => ['new', 'sent', 'replied'].includes(r.status));
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
+}
+
+async function cmdHarvest(slug) {
+  if (!slug) die('Usage: ./cc harvest <slug>   — read their own site before building');
+  const harvest = require('./tools/harvest');
+  const online = require('./tools/reaudit');           // shares the connectivity guard
+  console.log(`\nReading ${slug}'s own website. Every page built from guesses is a page of`);
+  console.log('guesses — their real services, hours and testimonials are on their site.\n');
+  const out = await harvest(slug);
+  console.log(`\n✓ clients/${slug}/harvest.json`);
+  console.log(`  ${out.pagesRead.length} pages · ${out.quotes.length} possible testimonials · ${out.people.length} names`);
+  console.log(`  ${out.hours.length} hours lines · ${out.prices.length} prices · ${out.emails.length} emails`);
+  if (out.emails.length) console.log(`  emails: ${out.emails.slice(0, 4).join(', ')}`);
+  if (out.people.length) console.log(`  people: ${out.people.slice(0, 4).join(', ')}`);
+  console.log('\n  Read it before you build. Nothing was written to business.json.\n');
 }
 
 function cmdNext(args) {
@@ -472,6 +499,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;
+    case 'harvest': await cmdHarvest(args[0]); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

@@ -1,0 +1,86 @@
+# Read a business's own website before we rebuild it.
+#
+# Every page built from guesses is a page of guesses. Their real services,
+# hours and — most valuably — their real testimonials are already on their
+# site. Nothing here is written to business.json; it is material for a person
+# to read and decide about.
+#
+# Actions tab -> Harvest a site -> Run workflow.
+
+name: Harvest a site
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Which client to read (the folder name under clients/)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Harvest
+        run: ./cc harvest "${{ inputs.slug }}" | tee harvest.log
+
+      - name: Write the summary
+        run: |
+          {
+            echo '## Harvested — ${{ inputs.slug }}'
+            echo
+            echo '```'
+            cat harvest.log
+            echo '```'
+            echo
+            echo '### Possible testimonials'
+            node -e '
+              const h=require("./clients/${{ inputs.slug }}/harvest.json");
+              (h.quotes||[]).slice(0,10).forEach(q=>console.log("- "+q.slice(0,300)));
+              if(!(h.quotes||[]).length) console.log("_none found_");
+            '
+            echo
+            echo '### Hours, people, prices'
+            node -e '
+              const h=require("./clients/${{ inputs.slug }}/harvest.json");
+              for (const k of ["hours","people","prices","emails"]) {
+                console.log("**"+k+"**: "+((h[k]||[]).slice(0,10).join(" · ")||"_none_"));
+              }
+            '
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit what was found
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f harvest.log
+          git add clients/ || true
+          if git diff --cached --quiet; then
+            echo "nothing found"
+          else
+            git commit -m "Harvest ${{ inputs.slug }}'s own website
+
+          Material read off their site for a person to judge. Nothing was
+          written to business.json."
+            for i in 1 2 3 4 5; do
+              git push && break
+              echo "push rejected — another run got there first, rebasing"
+              git pull --rebase --autostash origin main || exit 1
+              sleep $((i * 3))
+            done
+          fi

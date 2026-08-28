@@ -100,7 +100,42 @@ The checks: mobile, HTTPS, speed, tap-to-call, hours, address, services/pricing,
 reviews, call-to-action, schema markup, meta tags, link previews. They live in
 `tools/checks.js` along with the exact wording each one gets in the pitch email.
 
-## 3. Fill in the sales copy
+## 3. Read their site first — `./cc harvest <slug>`
+
+```bash
+./cc harvest pearl-cosmetic-dds
+```
+
+**Do this before you write a word of copy.** Every page built from guesses is a
+page of guesses.
+
+Pearl Cosmetic scored 10/12 on invented services. The moment their real ones
+went in it scored 12/12 — because their own homepage had a laser that does
+fillings with no needle, crowns finished in a single visit, a $399 membership
+plan for people with no insurance, and three testimonials with real names.
+None of that could have been guessed. All of it was sitting there.
+
+It crawls their site and writes `clients/<slug>/harvest.json`:
+
+| | |
+|---|---|
+| `quotes` | Possible testimonials — **the one gap our checks always flag, and the one thing that cannot be invented** |
+| `hours` | Day-and-time lines, in their words |
+| `people` | Dr. Whoever, Someone DDS — who to name on the page |
+| `prices` | Any dollar figure, with the sentence around it |
+| `emails`, `phones`, `social` | Contact details straight from the source |
+| `headings` | Every heading — this is where their real service list lives |
+
+**It never writes `business.json`.** Deciding what is true, and what belongs in
+front of an owner, stays with you.
+
+Egress is blocked on most machines, so run it where it works: Actions tab →
+**Harvest a site** → Run workflow. The testimonials and hours come back in the
+run summary, readable on a phone.
+
+`./cc build` tells you which clients were built without this.
+
+## 4. Fill in the sales copy
 
 Scout pre-fills `business.json` with everything it could find — name, phone,
 address, category, current site, and the full audit. What it deliberately leaves
@@ -166,7 +201,7 @@ licensed for, how to reach you — and being fast, secure and readable on a phon
 is the whole job. Helix Mechanical's licence classes did more work than any
 photograph would have.
 
-## 4. Check our own page before we sell an audit
+## 5. Check our own page before we sell an audit
 
 ```bash
 ./cc check                 # runs the same 12 checks against the pages WE built
@@ -179,7 +214,7 @@ A page needs **hours and reviews** before it goes out. Both come off their Googl
 listing and take a minute to add. Pricing is optional; plenty of trades and
 practices do not publish it.
 
-## 5. Build and check it
+## 6. Build and check it
 
 ```bash
 ./cc build joes-auto
@@ -193,7 +228,7 @@ practices do not publish it.
 
 **Open it on your actual phone before you send it.** That's the demo.
 
-## 5. Send it
+## 7. Send it
 
 Attach `index.html`, paste the email from `pitch.md`. Subject line is already
 written. Don't attach a proposal, don't attach a deck — the page is the pitch.
@@ -201,7 +236,7 @@ written. Don't attach a proposal, don't attach a deck — the page is the pitch.
 To send a link instead, drop `index.html` on any static host (Netlify drop, GitHub
 Pages, Cloudflare Pages — all free), put the URL in `liveUrl`, and rebuild.
 
-## 6. Track it
+## 8. Track it
 
 ```bash
 ./cc sent joes-auto                  # stamps today's date

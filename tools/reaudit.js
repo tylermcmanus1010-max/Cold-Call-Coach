@@ -130,3 +130,4 @@ async function assertOnline() {
 }
 
 module.exports = run;
+module.exports.assertOnline = assertOnline;

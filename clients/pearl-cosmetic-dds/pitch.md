@@ -1,4 +1,4 @@
-# Pearl Cosmetic DDS — pitch sheet
+# Pearl Cosmetic & Family Dentistry — pitch sheet
 
 **Current site:** https://pearlcosmeticdds.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
@@ -34,7 +34,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 **Subject:** Rebuilt your website — take a look before you say no
 
-Hi there,
+Hi Dr. Mojaver,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
 
@@ -60,7 +60,7 @@ tylermcmanus1010@gmail.com
 
 ## Follow-up text (day 3, if no reply)
 
-> Hi there, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
+> Hi Dr. Mojaver, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
 
 ## If they ask "why so cheap / what's the catch"
 

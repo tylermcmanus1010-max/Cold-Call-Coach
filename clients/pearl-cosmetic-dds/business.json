@@ -1,9 +1,9 @@
 {
   "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand \u2014 that is the part that sells.",
   "slug": "pearl-cosmetic-dds",
-  "name": "Pearl Cosmetic DDS",
+  "name": "Pearl Cosmetic & Family Dentistry",
   "category": "Cosmetic and family dentistry",
-  "owner": "",
+  "owner": "Dr. Mojaver",
   "currentSite": "https://pearlcosmeticdds.com/",
   "liveUrl": "",
   "status": "replied",
@@ -16,14 +16,14 @@
     "hours": false,
     "area": false
   },
-  "headline": "Know exactly what the work costs before anyone starts it.",
-  "subhead": "Cosmetic and family dentistry in Sabre Springs. You get a written treatment plan with the price on it, and time to think about it \u2014 no decisions made in the chair.",
-  "tagline": "Cosmetic and family dentistry in Sabre Springs, San Diego.",
-  "heroNote": "New patients welcome \u00b7 Most insurance accepted",
+  "headline": "Fillings without the needle or the drill.",
+  "subhead": "Laser dentistry, crowns finished in a single visit, and digital scans instead of the chalky mould. Cosmetic and family dentistry in Sabre Springs.",
+  "tagline": "Laser and digital dentistry in Sabre Springs, San Diego.",
+  "heroNote": "New patients welcome \u00b7 No insurance? Membership from $399 a year",
   "phone": "+1-858-513-1747",
-  "email": "",
+  "email": "Cs@pearlcosmeticdds.com",
   "address": {
-    "street": "13522 Sabre Springs Parkway",
+    "street": "13522 Sabre Springs Pkwy, Suite 201",
     "city": "San Diego",
     "state": "CA",
     "zip": "92128"
@@ -47,9 +47,9 @@
       "schema": "Mo-Fr 08:00-17:00"
     },
     {
-      "days": "Saturday",
-      "time": "9:00 AM \u2013 2:00 PM",
-      "schema": "Sa 09:00-14:00"
+      "days": "Last Saturday of the month",
+      "time": "8:00 AM \u2013 2:00 PM",
+      "schema": "Sa 08:00-14:00"
     },
     {
       "days": "Sunday",
@@ -58,90 +58,85 @@
   ],
   "highlights": [
     {
-      "value": "Written",
-      "label": "Plan and price up front"
+      "value": "No drill",
+      "label": "Laser fillings, no needle"
     },
     {
-      "value": "Same day",
-      "label": "Emergency appointments"
+      "value": "One visit",
+      "label": "Crowns start to finish"
     },
     {
-      "value": "Most",
-      "label": "Insurance accepted"
+      "value": "249",
+      "label": "Google reviews"
     },
     {
-      "value": "Evening",
-      "label": "Appointments available"
+      "value": "$399/yr",
+      "label": "Membership, no insurance needed"
     }
   ],
   "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional \u2014 give them only if the business actually published them, never guessed; without them the rows still select and still send.",
   "servicesHeading": "What are you coming in for?",
-  "servicesLede": "Pick what applies and send it over. We will come back with the next open appointment \u2014 and a price before you commit to anything.",
+  "servicesLede": "Pick what applies and send it over. We will come back with the next open appointment.",
   "services": [
     {
-      "group": "Cosmetic",
-      "name": "Veneers",
-      "desc": "Porcelain, matched to the rest of your teeth."
+      "group": "If the dentist makes you nervous",
+      "name": "Laser fillings \u2014 no needle, no drill",
+      "desc": "Our Solea laser does most fillings without anaesthetic and without the noise. This is the one that changes minds."
     },
     {
-      "group": "Cosmetic",
-      "name": "Teeth whitening",
-      "desc": "In-practice or a take-home kit made to fit you."
+      "group": "If the dentist makes you nervous",
+      "name": "Sedation and relaxation options",
+      "desc": "For anyone who has been putting off a visit for years."
     },
     {
-      "group": "Cosmetic",
-      "name": "Bonding and reshaping",
-      "desc": "Chips, gaps and uneven edges, usually in one visit."
+      "group": "If the dentist makes you nervous",
+      "name": "Second opinion",
+      "desc": "Bring your X-rays. We will tell you what genuinely needs doing."
     },
     {
-      "group": "Cosmetic",
-      "name": "Smile consultation",
-      "desc": "What is possible, what it costs, and what it does not need."
+      "group": "Done in one visit",
+      "name": "Crowns in a single visit",
+      "desc": "CEREC 3D designs and mills your crown here, so there is no temporary and no second appointment."
+    },
+    {
+      "group": "Done in one visit",
+      "name": "Digital scan instead of a mould",
+      "desc": "An iTero scanner takes an optical impression \u2014 no tray, no chalky paste, no gagging."
     },
     {
       "group": "Straightening",
-      "name": "Clear aligners",
-      "desc": "Straightening without visible braces."
+      "name": "Invisalign",
+      "desc": "Clear aligners instead of visible braces, planned from your digital scan."
     },
     {
-      "group": "Straightening",
-      "name": "Retainers",
-      "desc": "New, or replacing one that no longer fits."
-    },
-    {
-      "group": "Repair and restore",
-      "name": "Crowns and bridges",
-      "desc": "Rebuilding a tooth that will not hold a filling."
-    },
-    {
-      "group": "Repair and restore",
+      "group": "Implants and restoration",
       "name": "Dental implants",
-      "desc": "A permanent replacement for a missing tooth."
+      "desc": "A permanent replacement for a missing tooth, and the treatment of choice for one."
     },
     {
-      "group": "Repair and restore",
-      "name": "Fillings",
-      "desc": "Tooth-coloured, matched so they do not show."
+      "group": "Implants and restoration",
+      "name": "Implant crowns, bridges and dentures",
+      "desc": "Replacing several teeth, anchored properly rather than resting on the gum."
     },
     {
-      "group": "Repair and restore",
-      "name": "Root canal",
-      "desc": "Saving a tooth rather than losing it."
+      "group": "Cosmetic and routine",
+      "name": "Smile design consultation",
+      "desc": "What is possible, what it costs, and what you do not actually need."
     },
     {
-      "group": "Routine",
+      "group": "Cosmetic and routine",
       "name": "Cleaning and exam",
-      "desc": "The visit that stops most of the list above."
+      "desc": "The visit that prevents most of the list above."
     },
     {
-      "group": "Routine",
-      "name": "X-rays and check-up",
-      "desc": "For a new patient, or a second opinion."
+      "group": "Cosmetic and routine",
+      "name": "Holistic dentistry",
+      "desc": "Non-toxic materials, chosen for your overall health and not just your teeth."
     },
     {
-      "group": "Routine",
-      "name": "Emergency appointment",
-      "desc": "Pain, a broken tooth, or something that came loose."
+      "group": "Cosmetic and routine",
+      "name": "Membership plan \u2014 $399 a year",
+      "desc": "No insurance, no problem. Cover your routine care without a policy."
     }
   ],
   "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
@@ -156,29 +151,46 @@
       "role": ""
     }
   ],
-  "aboutHeading": "No decisions made in the chair",
-  "about": "Nobody makes a good decision about money while they are lying back with a bib on. That is why the plan and the price go to you in writing, and why you get to take them home.\n\nIf something can wait, we will tell you it can wait. If it cannot, you will understand exactly why before you agree to anything.\n\nCosmetic work especially \u2014 veneers, whitening, aligners \u2014 is elective. There is never a reason to rush you into it.",
+  "aboutHeading": "Dr. Mojaver",
+  "about": "We perform all aspects of dentistry, with a focus on healthy, well-designed smiles. We also practise holistic dentistry \u2014 non-toxic materials chosen so that what goes in your mouth does not work against the rest of you.\n\nDr. Mojaver has over 18 years of experience, and has invested in the equipment that actually changes how a visit feels: a Solea laser that does most fillings with no needle and no drill, CEREC 3D so a crown is finished the same day, and an iTero scanner so nobody has to bite into a tray of paste.\n\nIf you have been avoiding the dentist, this is the practice built for you.",
   "points": [
-    "A written treatment plan, with the price on it",
-    "What needs doing now, and what can safely wait",
-    "Your insurance checked before you commit, not after",
-    "Payment plans discussed openly, not at the desk on the way out",
-    "A second opinion is always welcome \u2014 bring your X-rays"
+    "Most fillings done with a laser \u2014 no needle, no drill, no noise",
+    "Crowns designed and fitted in one appointment",
+    "Digital scanning instead of impression moulds",
+    "Non-toxic, biocompatible materials",
+    "Sedation and relaxation options for anxious patients",
+    "Membership from $399 a year if you have no insurance"
   ],
   "rating": {
     "value": "",
     "count": "",
     "source": "Google"
   },
-  "reviews": [],
+  "reviews": [
+    {
+      "text": "I actually found Dr. Mojaver through Google search, but I was very grateful because, from my first day here, I felt very comfortable and very happy with Dr. Mojaver as my dentist.",
+      "author": "Meredith",
+      "source": "Google"
+    },
+    {
+      "text": "The entire team is very friendly and personable, remembering details about my life and asking me about them. Whenever I walk in, I don\u2019t even have to give my name. That\u2019s my kind of place. Good people and great work.",
+      "author": "Amandine B.",
+      "source": "Yelp"
+    },
+    {
+      "text": "I love going to Pearl Dentistry \u2014 the staff is friendly and it\u2019s like a little party every time I visit. I have been to dental offices that have left my teeth hurting.",
+      "author": "Dana M.",
+      "source": "Yelp"
+    }
+  ],
   "ctaHeading": "Come and get it looked at",
   "ctaLede": "Call or send your details and we will find you an appointment. New patients and second opinions both welcome.",
   "cta": {
     "primary": "Call the practice"
   },
   "theme": {
-    "accent": "#2b6f6b",
-    "ink": "#141d1f"
+    "accent": "#33685c",
+    "ink": "#141d1a"
   },
   "audit": {
     "https": true,
@@ -204,6 +216,7 @@
     "builder": null,
     "copyrightYear": 2026
   },
-  "_status": "WARM \u2014 gave Tyler their email on the call. EMAIL FIELD IS STILL BLANK, fill it before sending. Everything below needs the practice's confirmation: hours, the dentist's name, and the service list (these are standard cosmetic-dentistry services, not ones they have confirmed offering). No prices \u2014 dental is consult-based. No reviews; we do not invent them. Their real site is live and works on a phone; the provable failures are 16.8s load, no tap-to-call, no Google markup, no page title.",
-  "shortName": "Pearl Cosmetic"
+  "_status": "WARM \u2014 gave Tyler their email on the call. Everything below is taken from THEIR OWN website (screenshots 28 Aug): services, technology, hours, the membership price, the dentist's name and three testimonials with real names. Nothing here is invented. Still to confirm with the practice: Dr. Mojaver's exact credentials and the '249' review count, which came off their Google map card.",
+  "shortName": "Pearl Dentistry",
+  "reviewsHeading": "What patients say"
 }

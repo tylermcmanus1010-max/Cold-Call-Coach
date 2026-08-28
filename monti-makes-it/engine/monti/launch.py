@@ -68,6 +68,10 @@ OPEN_QUESTIONS = [
     ("Quality", "Food-contact certification requirements have not been confirmed for this "
                 "line. Carry-out containers usually need them; we are not assuming which, and "
                 "no run goes ahead until we have it in writing."),
+    ("How it is made", "Minimum order quantity and lead time are not agreed yet. The price "
+                       "matrix starts at 20,000 units because that is where the entered "
+                       "quantity tiers begin — that is a pricing boundary, not an MOQ we "
+                       "have quoted, and the two are not the same thing."),
 ]
 
 ITEMS = [
@@ -80,8 +84,8 @@ ITEMS = [
             "The everyday one — it is the volume line, and where the price band bottoms out."),
         "range_low_cents": 14,
         "range_high_cents": 20,
-        "typical_moq": 20_000,
-        "typical_lead_time_days": 32,
+        "typical_moq": None,
+        "typical_lead_time_days": None,
         "range_drivers": (
             "how many you order, and how the container is specified — size, material, and how "
             "much of it is printed. More units and a simpler print move you toward the bottom "
@@ -101,8 +105,8 @@ ITEMS = [
             "board. Ordered alongside the 750ml on most runs."),
         "range_low_cents": 15,
         "range_high_cents": 20,
-        "typical_moq": 20_000,
-        "typical_lead_time_days": 32,
+        "typical_moq": None,
+        "typical_lead_time_days": None,
         "range_drivers": (
             "the same two things as the 750ml — order quantity, and how the container is "
             "specified. The larger size uses more board, so its range starts a cent higher."),
@@ -110,28 +114,6 @@ ITEMS = [
         "tool": None,          # shares the plate set; no separate tooling charge
     },
 ]
-
-# A drawing rather than a photograph: we have not been sent product photography,
-# and a stock image of someone else's container presented as Boarshead's would
-# be fabricated evidence. The dimensions carried in the callouts are the ones
-# the SKU names, and nothing else is asserted.
-CONTAINER_SVG = """<svg viewBox="0 0 320 240" role="img" xmlns="http://www.w3.org/2000/svg">
-  <rect width="320" height="240" fill="#F9F8F4"/>
-  <path d="M78 96 L242 96 L226 188 L94 188 Z" fill="#EDE7DA" stroke="#8A958D" stroke-width="2"/>
-  <path d="M78 96 L242 96 L250 74 L70 74 Z" fill="#E3DBCA" stroke="#8A958D" stroke-width="2"/>
-  <path d="M70 74 L250 74 L250 62 L70 62 Z" fill="#D8CEB8" stroke="#8A958D" stroke-width="2"/>
-  <rect x="118" y="118" width="84" height="34" rx="3" fill="none" stroke="#B08D4F"
-        stroke-width="1.5" stroke-dasharray="5 3"/>
-  <text x="160" y="140" text-anchor="middle" font-family="monospace" font-size="11"
-        fill="#B08D4F">PRINT AREA</text>
-</svg>"""
-
-ANNOTATIONS = (
-    '[{"x": 50, "y": 26, "label": "Hinged lid"},'
-    ' {"x": 50, "y": 56, "label": "Print area, one panel"},'
-    ' {"x": 30, "y": 78, "label": "Sidewall taper — stacks"},'
-    ' {"x": 72, "y": 90, "label": "Base"}]'
-)
 
 GENOME_SECTIONS = ["What it is", "Materials", "How it is made", "Quality",
                    "Logistics", "History"]
@@ -169,8 +151,8 @@ def provision_boarshead():
             "lead_time_days, assigned_by, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
             (item_id, customer_id, matrix_id, spec["typical_moq"],
              spec["typical_lead_time_days"], ADMIN,
-             "Priced off the published quantity x spec matrix."))
-        _add_images(item_id, spec)
+             "Priced off the published quantity x spec matrix. MOQ and lead time are "
+             "not agreed yet — see the open questions on this item."))
         _add_genome(item_id, spec)
         if spec["tool"]:
             _add_tool(item_id, customer_id, spec)
@@ -219,27 +201,19 @@ def _publish_matrix(customer_id):
 
 
 def _create_item(spec):
+    """`moq` and `lead_time_days` are NOT NULL with defaults, so an unknown
+    cannot be stored as one there — the columns take their defaults and it is
+    `typical_moq` / `typical_lead_time_days`, which are nullable, that carry the
+    truth. Those are the two the public catalogue renders, so an unagreed figure
+    shows as absent rather than as a number nobody quoted."""
     return execute(
-        "INSERT INTO catalog_items (sku, name, category, description, unit_price_cents, moq, "
-        "lead_time_days, range_low_cents, range_high_cents, typical_moq, "
+        "INSERT INTO catalog_items (sku, name, category, description, unit_price_cents, "
+        "range_low_cents, range_high_cents, typical_moq, "
         "typical_lead_time_days, range_drivers, is_public, is_active, is_fixture, tags) "
-        "VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, 1, 1, 0, 'carry-out')",
+        "VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, 1, 1, 0, 'carry-out')",
         (spec["sku"], spec["name"], spec["category"], spec["description"],
-         spec["typical_moq"], spec["typical_lead_time_days"],
          spec["range_low_cents"], spec["range_high_cents"], spec["typical_moq"],
          spec["typical_lead_time_days"], spec["range_drivers"]))
-
-
-def _add_images(item_id, spec):
-    execute(
-        "INSERT INTO item_images (item_id, svg, caption, source_label, alt_text, position, "
-        "is_public, annotations) VALUES (?, ?, ?, ?, ?, 0, 1, ?)",
-        (item_id, CONTAINER_SVG,
-         f"{spec['name']} — form and print area",
-         "Placeholder drawing · replaced when the client's own photographs arrive",
-         f"Line drawing of a hinged-lid carry-out container showing the lid, the tapered "
-         f"sidewall and the printable panel on the front face.",
-         ANNOTATIONS))
 
 
 def _add_genome(item_id, spec):

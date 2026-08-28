@@ -46,12 +46,17 @@ def brand_inventory():
 
     path = OUT / "brand-inventory.csv"
     # The pre-rename inventory is the interesting half — the count before the
-    # work started. It is preserved from the first run and the current state is
-    # appended, so the file shows the delta rather than just today's zero.
+    # work started, which cannot be recovered once the rename has happened. So
+    # every historic row is carried forward, not only the ones still marked
+    # PENDING: reading back PENDING alone meant the second run found none (the
+    # first had already marked them RESOLVED), carried nothing, and wrote a file
+    # containing only today's zero. An evidence file that erases its own
+    # baseline on a re-run is worse than no file, because it looks current.
     previous = []
     if path.exists():
         with path.open() as fh:
-            previous = [r for r in csv.DictReader(fh) if r.get("status") == "PENDING"]
+            previous = [r for r in csv.DictReader(fh)
+                        if r.get("status") in ("PENDING", "RESOLVED")]
 
     with path.open("w", newline="") as fh:
         writer = csv.DictWriter(

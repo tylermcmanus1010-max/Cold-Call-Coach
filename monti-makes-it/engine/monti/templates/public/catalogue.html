@@ -5,15 +5,12 @@
 <section class="section" style="padding-top:clamp(3rem,7vw,5rem)">
   <div class="container-narrow">
     <span class="eyebrow-label">Catalogue</span>
-    <h1 style="margin-top:1rem">Things we make, and what they cost</h1>
+    <h1 style="margin-top:1rem">Things we make</h1>
     <p class="section-lede">
-      Real items off our line, with real price ranges. Anyone can look — you do not need an
-      account and we do not ask for an email to show you a number.
+      Things we have made, and what we can make. Where a price is published you can see it without an account and without giving us an email. Where one is not, it is because nobody has priced that item yet — not because we are holding it back.
     </p>
     <p class="tiny dim" style="margin-top:1rem;max-width:62ch">
-      These are ranges, not quotes. Where a price lands inside one depends on how many you order
-      and how the item is specified — each listing says which. To get your number, ask for a
-      quote; to buy, you need to be a member and the item needs to be registered to your account.
+      A published range is a range, not a quote: where a price lands inside one depends on how many you order and how the item is specified, and the listing says which. For anything without a range, ask and we will price it inside 24 hours. To buy, you need to be a member and the item needs to be registered to your account.
     </p>
   </div>
 </section>
@@ -24,14 +21,20 @@
       <div class="cat-grid">
         {% for item in items %}
           <article class="cat-card">
-            {% if item.images %}
-              <div class="iv-thumb-media" aria-hidden="true">
+            {# Every card gets the same box whether or not a photograph exists,
+               so the grid does not jump between items that have one and items
+               that do not. #}
+            <div class="cat-card-media">
+              {% if item.images %}
                 {% set first = item.images[0] %}
                 {% if first.svg %}{{ first.svg|safe }}
                 {% else %}<img src="{{ url_for('static', filename='uploads/' ~ first.stored_name) }}"
                                alt="{{ first.alt_text }}" loading="lazy">{% endif %}
-              </div>
-            {% endif %}
+              {% else %}
+                <span class="cat-card-placeholder" role="img"
+                      aria-label="No photograph of {{ item.name }} yet">?</span>
+              {% endif %}
+            </div>
             <div class="cat-card-body">
               <div class="tiny mono dim">{{ item.category }}</div>
               <h3 style="margin:0;font-size:1.05rem">{{ item.name }}</h3>

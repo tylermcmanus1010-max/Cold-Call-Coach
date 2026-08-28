@@ -17,8 +17,10 @@
     operable        full keyboard: arrows, +/-, 0 to reset, Escape to close.
                     Focus moves into the dialog and returns to the thumbnail
                     that opened it. No focus trap that cannot be escaped.
-    honest          an item with no images gets an explicit empty state, not a
-                    blank space — a missing viewer on a portal item is a P1.
+    honest          an item with no images gets a plain white box with a
+                    question mark, not a blank space and not a stand-in drawing
+                    — a missing viewer on a portal item is a P1, and an invented
+                    picture of an unseen product is worse than an empty one.
 
   `images` is a list of dicts with caption, source_label, alt_text and either
   `svg` or `stored_name`, plus optional `annotations` JSON.
@@ -83,12 +85,23 @@
   </div>
 </div>
 {% else %}
-  {# WI-G-11: every item exposes a viewer or says plainly that it has no images.
-     Silence here reads as a broken page. #}
+  {#
+    WI-G-11: every item exposes a viewer or says plainly that it has no images.
+    Silence reads as a broken page.
+
+    The placeholder is a plain white box with a question mark, and it is
+    deliberately not a drawing. Product photography is the client's own
+    submission, so anything we render in its place is a picture of a thing we
+    have not seen — which is the same class of invention as a made-up price. The
+    box holds the layout, states what is missing, and gets replaced the moment a
+    real photograph arrives.
+  #}
   <div class="iv-empty" data-iv-empty="{{ viewer_id }}">
-    <p>No images on this item yet.</p>
-    <p class="tiny dim">We photograph and draw every item we make. If this one is yours and
-      you need to see it, ask and we will get the set up.</p>
+    <div class="iv-placeholder" role="img"
+         aria-label="No photograph of {{ item_name }} yet">
+      <span aria-hidden="true">?</span>
+    </div>
+    <p class="iv-placeholder-note">Photograph to come.</p>
   </div>
 {% endif %}
 {% endmacro %}

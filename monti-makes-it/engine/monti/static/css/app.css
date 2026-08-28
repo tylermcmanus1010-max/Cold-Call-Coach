@@ -863,11 +863,21 @@ body.iv-open { overflow: hidden; }
 .iv-dialog[hidden]{display:none !important;}
 .iv-callouts[hidden]{display:none !important;}
 .iv-slide[hidden]{display:none !important;}
-.iv-empty {
-  border: 1px dashed var(--line); border-radius: var(--radius);
-  padding: 1.5rem; color: var(--ink-2); background: var(--surface-2);
+.iv-empty { display: grid; gap: .6rem; justify-items: start; }
+.iv-empty p { margin: 0; }
+/* A white box and a question mark. Not a drawing: a picture of a product we
+   have not been sent is invented evidence, and the box is honest about being
+   empty while still holding the space the real photograph will occupy. */
+.iv-placeholder {
+  width: 100%; max-width: 320px; aspect-ratio: 4 / 3;
+  display: grid; place-items: center;
+  background: #FFFFFF; border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink-3); font-family: var(--mono); font-size: 2.6rem; line-height: 1;
 }
-.iv-empty p { margin: 0 0 .35rem; }
+.iv-placeholder-note {
+  font-size: .78rem; color: var(--ink-3); font-family: var(--mono);
+  letter-spacing: .06em;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .iv-media { transition: none; }
@@ -900,6 +910,14 @@ body.iv-open { overflow: hidden; }
 .cat-card {
   border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
   overflow: hidden; display: flex; flex-direction: column;
+}
+.cat-card-media {
+  aspect-ratio: 4 / 3; background: #FFFFFF; border-bottom: 1px solid var(--line);
+  display: grid; place-items: center; overflow: hidden;
+}
+.cat-card-media img, .cat-card-media svg { width: 100%; height: 100%; object-fit: cover; }
+.cat-card-placeholder {
+  font-family: var(--mono); font-size: 2.2rem; color: var(--ink-3); line-height: 1;
 }
 .cat-card-body { padding: 1.1rem; display: grid; gap: .5rem; }
 .cat-range {

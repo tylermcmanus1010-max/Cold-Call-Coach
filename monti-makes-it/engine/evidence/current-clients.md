@@ -5,13 +5,13 @@ Appendix B as a live register. Generated from the database by
 
 ## Boarshead — MMI-C-1001
 
-- **Status:** MEMBER, member since 2026-08-28 19:38:07
-- **Client agent:** CLI-01 (ACTIVE, scope verified 2026-08-28 19:38:07)
+- **Status:** MEMBER, member since 2026-08-28 21:41:35
+- **Client agent:** CLI-01 (ACTIVE, scope verified 2026-08-28 21:41:35)
 
 **Price matrix** — Carry-out containers — quantity x spec
 
 - 16 cells, $0.14 to $0.20 per unit
-- published 2026-08-28 19:38:07
+- published 2026-08-28 21:41:35
 - every cell carries the id of the pricing input it came from
 
 **Registered items**
@@ -32,9 +32,11 @@ Appendix B as a live register. Generated from the database by
 Appendix B: unknowns are marked unknown, never filled with a plausible
 default. These are marked on the item and visible to the client.
 
+- `MMI-B-0101` · How it is made
 - `MMI-B-0101` · Logistics
 - `MMI-B-0101` · Materials
 - `MMI-B-0101` · Quality
+- `MMI-B-0102` · How it is made
 - `MMI-B-0102` · Logistics
 - `MMI-B-0102` · Materials
 - `MMI-B-0102` · Quality

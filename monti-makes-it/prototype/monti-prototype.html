@@ -307,9 +307,17 @@ body.iv-open{overflow:hidden;}
 .iv-dialog[hidden]{display:none !important;}
 .iv-callouts[hidden]{display:none !important;}
 .iv-slide[hidden]{display:none !important;}
-.iv-empty{border:1px dashed var(--line); border-radius:var(--radius); padding:1.5rem;
-  color:var(--ink-2); background:var(--surface-2);}
-.iv-empty p{margin:0 0 .35rem;}
+.iv-empty{display:grid; gap:.6rem; justify-items:start;}
+.iv-empty p{margin:0;}
+/* A white box and a question mark. Not a drawing: a picture of a product we have
+   not been sent is invented evidence, and the box is honest about being empty
+   while still holding the space the real photograph will occupy. */
+.iv-placeholder{width:100%; max-width:320px; aspect-ratio:4 / 3;
+  display:grid; place-items:center; background:#FFFFFF;
+  border:1px solid var(--line); border-radius:var(--radius);
+  color:var(--ink-3); font-family:var(--mono); font-size:2.6rem; line-height:1;}
+.iv-placeholder-note{font-size:.78rem; color:var(--ink-3); font-family:var(--mono);
+  letter-spacing:.06em;}
 @media(prefers-reduced-motion:reduce){.iv-media{transition:none;}}
 
 /* the Tooling Line (§11.3) */
@@ -329,8 +337,10 @@ body.iv-open{overflow:hidden;}
   background:var(--surface); overflow:hidden; display:flex; flex-direction:column;
   cursor:pointer;}
 .cat-card:hover{border-color:var(--green-line);}
-.cat-card-media{background:var(--sunk);}
-.cat-card-media svg{width:100%; height:auto; display:block;}
+.cat-card-media{aspect-ratio:4 / 3; background:#FFFFFF;
+  border-bottom:1px solid var(--line); display:grid; place-items:center; overflow:hidden;}
+.cat-card-media svg,.cat-card-media img{width:100%; height:100%; object-fit:cover; display:block;}
+.cat-card-placeholder{font-family:var(--mono); font-size:2.2rem; color:var(--ink-3); line-height:1;}
 .cat-card-body{padding:1.1rem; display:grid; gap:.5rem;}
 .cat-range{font-family:var(--mono); font-size:1.15rem; color:var(--green);
   font-variant-numeric:tabular-nums;}
@@ -786,34 +796,6 @@ function perUnitPrice(cents) {
   return "$" + String(d.toFixed(4)).replace(/0+$/, "").replace(/\.$/, "");
 }
 
-/* A drawing, not a photograph. We have not been sent product photography, and a
-   stock image of somebody else's container presented as Boarshead's would be
-   fabricated evidence. The callouts name only what the SKU itself states. */
-var CONTAINER_SVG =
-  '<svg viewBox="0 0 320 240" role="img" aria-label="Line drawing of a hinged-lid carry-out ' +
-  'container showing the lid, the tapered sidewall and the printable front panel." ' +
-  'xmlns="http://www.w3.org/2000/svg">' +
-  '<rect width="320" height="240" fill="#F9F8F4"/>' +
-  '<path d="M78 96 L242 96 L226 188 L94 188 Z" fill="#EDE7DA" stroke="#8A958D" stroke-width="2"/>' +
-  '<path d="M78 96 L242 96 L250 74 L70 74 Z" fill="#E3DBCA" stroke="#8A958D" stroke-width="2"/>' +
-  '<path d="M70 74 L250 74 L250 62 L70 62 Z" fill="#D8CEB8" stroke="#8A958D" stroke-width="2"/>' +
-  '<rect x="118" y="118" width="84" height="34" rx="3" fill="none" stroke="#B08D4F" ' +
-  'stroke-width="1.5" stroke-dasharray="5 3"/>' +
-  '<text x="160" y="140" text-anchor="middle" font-family="monospace" font-size="11" ' +
-  'fill="#B08D4F">PRINT AREA</text></svg>';
-
-var CONTAINER_IMAGES = [{
-  svg: CONTAINER_SVG,
-  caption: "Form and print area",
-  source: "Placeholder drawing · replaced when the client's own photographs arrive",
-  annotations: [
-    {x: 50, y: 26, label: "Hinged lid"},
-    {x: 50, y: 56, label: "Print area, one panel"},
-    {x: 30, y: 78, label: "Sidewall taper — stacks"},
-    {x: 72, y: 90, label: "Base"}
-  ]
-}];
-
 /* Appendix B: $0.20 → $0.14, driven by *both* order quantity and container
    spec. That is a matrix, not a line. Rows are spec tiers, columns are quantity
    tiers, and the corners are the two stated band ends. */
@@ -830,13 +812,12 @@ var CATALOG = [
   {sku:"MMI-B-0101", name:"Branded carry-out container, 750ml", cat:"Packaging & print",
    materials:"Not confirmed — see the open questions on this item",
    price:16, moq:20000, lead:32, tags:["carry-out"], public:true,
-   range:[14, 20], typicalMoq:20000, typicalLead:32,
+   range:[14, 20],
    drivers:"how many you order, and how the container is specified — size, material, and how much " +
            "of it is printed. More units and a simpler print move you toward the bottom of the " +
            "range; smaller runs, full-wrap colour, a window or a coating move you up.",
    description:"Hinged-lid carry-out container in the 750ml size, printed to your artwork. " +
      "The everyday one — it is the volume line, and where the price band bottoms out.",
-   images:CONTAINER_IMAGES,
    tool:{ref:"MMI-T-2001", what:"One cutting die and four print plates.", cost:84000},
    negotiated:"Priced off your published quantity × spec matrix.",
    genome:[
@@ -859,44 +840,35 @@ var CATALOG = [
   {sku:"MMI-B-0102", name:"Branded carry-out container, 1000ml", cat:"Packaging & print",
    materials:"Not confirmed — see the open questions on this item",
    price:17, moq:20000, lead:32, tags:["carry-out"], public:true,
-   range:[15, 20], typicalMoq:20000, typicalLead:32,
+   range:[15, 20],
    drivers:"the same two things as the 750ml — order quantity, and how the container is specified. " +
            "The larger size uses more board, so its range starts a cent higher.",
    description:"The larger size in the same family, on the same tooling family and the same board. " +
      "Ordered alongside the 750ml on most runs.",
-   images:CONTAINER_IMAGES,
    negotiated:"Priced off your published quantity × spec matrix."},
   {sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition", cat:"Bags & leather goods",
    materials:"18oz waxed cotton duck, vegetable-tanned leather, solid brass", price:2980, moq:250, lead:34,
    tags:["client-1"],
    description:"The tote we built for this account: 18oz waxed duck body, vegetable-tanned leather handles, " +
      "solid brass hardware, interior zip pocket, debossed logo on the base panel.",
-   negotiated:"Locked at $29.80 through Q4 at 250+ units."},
+  },
   {sku:"MMI-2001", name:"Waxed canvas tote, 18L", cat:"Bags & leather goods",
    materials:"18oz waxed cotton duck, veg-tan leather, solid brass", price:298, moq:500, lead:38,
-   tags:["bags","leather"], public:true, range:[253, 372], typicalMoq:500, typicalLead:38,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   tags:["bags","leather"], public:true},
   {sku:"MMI-2002", name:"Kraft coffee pouch, 12oz, valve", cat:"Packaging & print",
-   materials:"Kraft paper / PLA liner", price:36, moq:10000, lead:30, tags:["packaging","food-safe"], public:true, range:[30, 45], typicalMoq:10000, typicalLead:30,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"Kraft paper / PLA liner", price:36, moq:10000, lead:30, tags:["packaging","food-safe"], public:true},
   {sku:"MMI-2003", name:"Matte black growler, 64oz", cat:"Metal & machined parts",
-   materials:"304 stainless steel", price:1840, moq:500, lead:35, tags:["drinkware","metal"], public:true, range:[1564, 2300], typicalMoq:500, typicalLead:35,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"304 stainless steel", price:1840, moq:500, lead:35, tags:["drinkware","metal"], public:true},
   {sku:"MMI-2004", name:"Recycled padded mailer, 10x13", cat:"Packaging & print",
-   materials:"Recycled kraft, recycled paper padding", price:41, moq:20000, lead:24, tags:["packaging","shipping"], public:true, range:[34, 51], typicalMoq:20000, typicalLead:24,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"Recycled kraft, recycled paper padding", price:41, moq:20000, lead:24, tags:["packaging","shipping"], public:true},
   {sku:"MMI-2005", name:"Airless pump bottle, 50ml", cat:"Molded plastics",
-   materials:"Frosted PP, matte gold collar", price:168, moq:10000, lead:45, tags:["packaging","beauty"], public:true, range:[142, 210], typicalMoq:10000, typicalLead:45,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"Frosted PP, matte gold collar", price:168, moq:10000, lead:45, tags:["packaging","beauty"], public:true},
   {sku:"MMI-2006", name:"Rigid box, magnetic close", cat:"Packaging & print",
-   materials:"1200gsm greyboard, soft-touch lamination", price:212, moq:2000, lead:32, tags:["packaging","retail"], public:true, range:[180, 265], typicalMoq:2000, typicalLead:32,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"1200gsm greyboard, soft-touch lamination", price:212, moq:2000, lead:32, tags:["packaging","retail"], public:true},
   {sku:"MMI-2007", name:"Anodized carabiner, custom", cat:"Metal & machined parts",
-   materials:"6061 aluminum, hard anodize", price:186, moq:5000, lead:34, tags:["metal"], public:true, range:[158, 232], typicalMoq:5000, typicalLead:34,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+   materials:"6061 aluminum, hard anodize", price:186, moq:5000, lead:34, tags:["metal"], public:true},
   {sku:"MMI-2008", name:"Silicone gasket, food grade", cat:"Silicone & rubber",
-   materials:"Platinum-cure silicone, 40–70 Shore A", price:72, moq:8000, lead:28, tags:["food-safe"], public:true, range:[61, 90], typicalMoq:8000, typicalLead:28,
-   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."}
+   materials:"Platinum-cure silicone, 40–70 Shore A", price:72, moq:8000, lead:28, tags:["food-safe"], public:true}
 ];
 
 /* --- what the first account has already bought, so the timeline has something in it --- */
@@ -1253,10 +1225,16 @@ function viewHome() {
    missing viewer on a portal item is a P1, and silence reads as a broken page
    rather than as an absence. */
 function imageViewer(images, itemName, id) {
+  /* No photograph yet: a plain white box with a question mark, deliberately not
+     a drawing. Product photography is the client's own submission, so anything
+     rendered in its place is a picture of a thing we have not seen — the same
+     class of invention as a made-up price. The box holds the space the real
+     photograph will occupy and is honest about being empty. */
   if (!images || !images.length) {
-    return '<div class="iv-empty"><p>No images on this item yet.</p>' +
-      '<p class="tiny dim">We photograph and draw every item we make. If this one is yours and ' +
-      'you need to see it, ask and we will get the set up.</p></div>';
+    return '<div class="iv-empty" data-iv-empty="' + esc(id) + '">' +
+      '<div class="iv-placeholder" role="img" aria-label="No photograph of ' +
+        esc(itemName) + ' yet"><span aria-hidden="true">?</span></div>' +
+      '<p class="iv-placeholder-note">Photograph to come.</p></div>';
   }
   return '<div class="iv" data-iv="' + esc(id) + '">' +
     '<ul class="iv-thumbs">' + images.map(function (img, i) {
@@ -1454,18 +1432,26 @@ function viewCatalogue() {
   return topbar() +
   '<section class="section" style="padding-top:clamp(3rem,7vw,5rem)"><div class="container-narrow">' +
     '<span class="eyebrow-label">Catalogue</span>' +
-    '<h1 style="margin-top:1rem">Things we make, and what they cost</h1>' +
-    '<p class="section-lede">Real items off our line, with real price ranges. Anyone can look — ' +
-      'you do not need an account and we do not ask for an email to show you a number.</p>' +
-    '<p class="tiny dim" style="margin-top:1rem;max-width:62ch">These are ranges, not quotes. ' +
-      'Where a price lands inside one depends on how many you order and how the item is specified — ' +
-      'each listing says which. To get your number, ask for a quote; to buy, you need to be a member ' +
-      'and the item needs to be registered to your account.</p>' +
+    '<h1 style="margin-top:1rem">Things we make</h1>' +
+    '<p class="section-lede">Things we have made, and what we can make. Where a price is ' +
+      'published you can see it without an account and without giving us an email. Where one ' +
+      'is not, it is because nobody has priced that item yet — not because we are holding it ' +
+      'back.</p>' +
+    '<p class="tiny dim" style="margin-top:1rem;max-width:62ch">A published range is a range, ' +
+      'not a quote: where a price lands inside one depends on how many you order and how the ' +
+      'item is specified, and the listing says which. For anything without a range, ask and we ' +
+      'will price it inside 24 hours. To buy, you need to be a member and the item needs to be ' +
+      'registered to your account.</p>' +
   '</div></section>' +
   '<section class="section rule-top"><div class="container"><div class="cat-grid">' +
     items.map(function (item) {
       return '<article class="cat-card" data-cat="' + esc(item.sku) + '">' +
-        (item.images.length ? '<div class="cat-card-media">' + item.images[0].svg + '</div>' : '') +
+        '<div class="cat-card-media">' +
+          (item.images.length
+            ? item.images[0].svg
+            : '<span class="cat-card-placeholder" role="img" aria-label="No photograph of ' +
+              esc(item.name) + ' yet">?</span>') +
+        '</div>' +
         '<div class="cat-card-body">' +
           '<div class="tiny mono dim">' + esc(item.cat) + '</div>' +
           '<h3 style="margin:0;font-size:1.05rem">' + esc(item.name) + '</h3>' +

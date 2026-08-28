@@ -16,6 +16,7 @@
 //   ./cc export [slug]      copy built pages to send/ named by business,
 //                           ready to attach (all built clients if no slug)
 //   ./cc list               show the pipeline
+//   ./cc next [N]           who to call right now, in order, with the reason
 //   ./cc sheet              rebuild the call sheet dashboard from clients/
 //   ./cc host <slug>        check a client is really ready, then write
 //                           sites/<slug>/ for the host to serve
@@ -327,6 +328,35 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+function cmdNext(args) {
+  const rank = require('./tools/next');
+  const list = rank();
+  const n = Number(args.find((a) => /^\d+$/.test(a))) || 8;
+  const now = require('./tools/next').marketNow();
+
+  if (!list.length) {
+    console.log('\n  Nobody left to call. Run the scout, or ./cc reaudit if leads look stale.\n');
+    return;
+  }
+
+  const good = list.filter((l) => l.inWindow !== false);
+  console.log(`\n  ${now.label} in San Diego — ${list.length} callable, ${good.length} in a sensible window\n`);
+
+  for (const l of list.slice(0, n)) {
+    const when = l.warm ? `BOOKED ${l.callbackAt}`.trim()
+      : l.inWindow === true ? 'good time now'
+      : l.inWindow === false ? `wrong time — try ${l.windows}`
+      : '';
+    console.log(`  ${l.phone.padEnd(18)}${l.name.slice(0, 34)}`);
+    console.log(`  ${' '.repeat(18)}${l.why}`);
+    console.log(`  ${' '.repeat(18)}${l.vertical}${when ? ' · ' + when : ''}${l.attempts ? ` · tried ${l.attempts}x` : ''}`);
+    if (l.maybeNotTheirs) console.log(`  ${' '.repeat(18)}⚠ the page never names them — open it before you pitch`);
+    console.log();
+  }
+  const later = list.slice(n).length;
+  if (later) console.log(`  …and ${later} more. ./cc next 20 to see them.\n`);
+}
+
 async function cmdReaudit(args) {
   const only = args.find((a) => !a.startsWith('--'));
   const all = args.includes('--all');
@@ -439,6 +469,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'sheet': cmdSheet(); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;
+    case 'next': cmdNext(args); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

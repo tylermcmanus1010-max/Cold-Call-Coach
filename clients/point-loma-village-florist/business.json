@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://pointlomaflorist.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "Your neighbourhood florist on Voltaire Street.",
   "subhead": "Same-day arrangements for Point Loma and Ocean Beach.",
@@ -110,6 +110,7 @@
   "attempts": 1,
   "lastTried": "2026-08-25",
   "callNotes": [
-    "2026-08-25: logged from the call sheet"
+    "2026-08-25: logged from the call sheet",
+    "2026-08-28: dropped — Tyler opened it himself on day 2 and found hours on the page and a tappable number. Our scan returned 0KB, which means it got nothing, not that the page is empty."
   ]
 }

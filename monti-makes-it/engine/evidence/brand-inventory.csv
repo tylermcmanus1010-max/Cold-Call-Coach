@@ -1,191 +1,191 @@
 surface,file,line,occurrence,status
-source,.env.example,2,montano makes that,PENDING
-source,.env.example,10,montano makes that,PENDING
-source,.env.example,13,montano makes that,PENDING
-source,.env.example,14,montano makes that,PENDING
-source,.env.example,18,montano makes that,PENDING
-source,.env.example,20,montano makes that,PENDING
-source,.env.example,22,montano makes that,PENDING
-source,.env.example,45,montano makes that,PENDING
-source,.env.example,45,montano makes that,PENDING
-source,.env.example,73,mmt,PENDING
-source,.env.example,74,mmt,PENDING
-source,README.md,1,montano makes that,PENDING
-source,README.md,51,mmt,PENDING
-source,README.md,80,mmt,PENDING
-source,README.md,80,mmt,PENDING
-source,README.md,83,montano makes that,PENDING
-source,README.md,83,montano,PENDING
-source,README.md,102,mmt,PENDING
-source,README.md,145,mmt,PENDING
-source,README.md,185,mmt,PENDING
-source,README.md,192,mmt,PENDING
-source,README.md,218,mmt,PENDING
-source,README.md,247,mmt,PENDING
-source,README.md,334,mmt,PENDING
-source,README.md,342,mmt,PENDING
-source,README.md,343,mmt,PENDING
-source,README.md,343,mmt,PENDING
-source,README.md,346,mmt,PENDING
-source,app.py,2,mmt,PENDING
-source,mmt/__init__.py,1,montano makes that,PENDING
-source,mmt/blueprints/admin.py,302,mmt,PENDING
-source,mmt/blueprints/admin.py,447,mmt,PENDING
-source,mmt/blueprints/public.py,97,mmt,PENDING
-source,mmt/blueprints/public.py,112,mmt,PENDING
-source,mmt/config.py,1,montano makes that,PENDING
-source,mmt/config.py,29,mmt,PENDING
-source,mmt/config.py,30,mmt,PENDING
-source,mmt/config.py,39,montano makes that,PENDING
-source,mmt/config.py,44,montano makes that,PENDING
-source,mmt/config.py,47,montano makes that,PENDING
-source,mmt/config.py,48,montano makes that,PENDING
-source,mmt/config.py,49,montano makes that,PENDING
-source,mmt/config.py,67,montano makes that,PENDING
-source,mmt/config.py,67,montano makes that,PENDING
-source,mmt/db.py,124,mmt,PENDING
-source,mmt/freight.py,4,montano,PENDING
-source,mmt/membership.py,116,mmt,PENDING
-source,mmt/membership.py,128,mmt,PENDING
-source,mmt/membership.py,174,montano,PENDING
-source,mmt/membership.py,217,montano,PENDING
-source,mmt/orders.py,198,mmt,PENDING
-source,mmt/schema.sql,1,montano makes that,PENDING
-source,mmt/seed.py,25,montano,PENDING
-source,mmt/seed.py,30,mmt,PENDING
-source,mmt/seed.py,31,montano,PENDING
-source,mmt/seed.py,33,mmt,PENDING
-source,mmt/seed.py,34,montano,PENDING
-source,mmt/seed.py,36,mmt,PENDING
-source,mmt/seed.py,37,montano,PENDING
-source,mmt/seed.py,39,mmt,PENDING
-source,mmt/seed.py,40,montano,PENDING
-source,mmt/seed.py,42,mmt,PENDING
-source,mmt/seed.py,43,montano,PENDING
-source,mmt/seed.py,57,mmt,PENDING
-source,mmt/seed.py,64,mmt,PENDING
-source,mmt/seed.py,69,mmt,PENDING
-source,mmt/seed.py,74,mmt,PENDING
-source,mmt/seed.py,79,mmt,PENDING
-source,mmt/seed.py,93,montano,PENDING
-source,mmt/seed.py,119,mmt,PENDING
-source,mmt/seed.py,125,montano,PENDING
-source,mmt/seed.py,127,montano makes that,PENDING
-source,mmt/seed.py,152,mmt,PENDING
-source,mmt/seed.py,167,mmt,PENDING
-source,mmt/seed.py,172,mmt,PENDING
-source,mmt/seed.py,176,mmt,PENDING
-source,mmt/seed.py,180,mmt,PENDING
-source,mmt/seed.py,184,mmt,PENDING
-source,mmt/seed.py,188,mmt,PENDING
-source,mmt/seed.py,222,mmt,PENDING
-source,mmt/seed.py,226,mmt,PENDING
-source,mmt/seed.py,229,mmt,PENDING
-source,mmt/seed.py,232,mmt,PENDING
-source,mmt/seed.py,235,mmt,PENDING
-source,mmt/seed.py,238,mmt,PENDING
-source,mmt/seed.py,247,mmt,PENDING
-source,mmt/seed.py,248,mmt,PENDING
-source,mmt/seed.py,267,mmt,PENDING
-source,mmt/seed.py,268,montano,PENDING
-source,mmt/seed.py,269,mmt,PENDING
-source,mmt/seed.py,270,montano,PENDING
-source,mmt/seed.py,271,mmt,PENDING
-source,mmt/seed.py,273,mmt,PENDING
-source,mmt/seed.py,287,mmt,PENDING
-source,mmt/seed.py,288,mmt,PENDING
-source,mmt/seed.py,289,mmt,PENDING
-source,mmt/seed.py,290,mmt,PENDING
-source,mmt/seed.py,291,mmt,PENDING
-source,mmt/seed.py,292,mmt,PENDING
-source,mmt/seed.py,315,mmt,PENDING
-source,mmt/seed.py,316,montano makes that,PENDING
-source,mmt/seed.py,319,mmt,PENDING
-source,mmt/seed.py,320,montano makes that,PENDING
-source,mmt/seed.py,323,montano makes that,PENDING
-source,mmt/seed.py,333,mmt,PENDING
-source,mmt/seed.py,338,mmt,PENDING
-source,mmt/seed.py,349,mmt,PENDING
-source,mmt/seed.py,350,mmt,PENDING
-source,mmt/seed.py,353,mmt,PENDING
-source,mmt/seed.py,363,mmt,PENDING
-source,mmt/seed.py,378,montano,PENDING
-source,mmt/seed.py,382,montano,PENDING
-source,mmt/seed.py,403,mmt,PENDING
-source,mmt/seed.py,434,montano,PENDING
-source,mmt/seed.py,435,mmt,PENDING
-source,mmt/seed.py,447,mmt,PENDING
-source,mmt/seed.py,457,mmt,PENDING
-source,mmt/static/css/app.css,2,montano makes that,PENDING
-source,mmt/templates/_shell.html,28,montano,PENDING
-source,mmt/templates/admin/catalog_form.html,9,mmt,PENDING
-source,mmt/templates/auth/login.html,9,mmt,PENDING
-source,mmt/templates/base.html,22,montano makes that,PENDING
-source,mmt/templates/public/home.html,9,montano,PENDING
-source,tests/audit.py,11,mmt,PENDING
-source,tests/audit.py,20,mmt,PENDING
-source,tests/audit.py,20,mmt,PENDING
-source,tests/audit.py,20,mmt,PENDING
-source,tests/audit.py,21,mmt,PENDING
-source,tests/audit.py,21,mmt,PENDING
-source,tests/audit.py,21,mmt,PENDING
-source,tests/audit.py,48,mmt,PENDING
-source,tests/audit.py,71,mmt,PENDING
-source,tests/audit.py,72,mmt,PENDING
-source,tests/smoke.py,10,mmt,PENDING
-source,tests/smoke.py,47,mmt,PENDING
-source,tests/smoke.py,73,mmt,PENDING
-source,tests/smoke.py,153,mmt,PENDING
-source,tests/smoke.py,162,mmt,PENDING
-source,tests/smoke.py,180,mmt,PENDING
-source,tests/smoke.py,194,mmt,PENDING
-source,tests/smoke.py,200,mmt,PENDING
-source,tests/smoke.py,209,mmt,PENDING
-source,tests/smoke.py,218,mmt,PENDING
-source,tests/smoke.py,229,mmt,PENDING
-source,tests/smoke.py,240,mmt,PENDING
-source,tests/smoke.py,242,mmt,PENDING
-source,tests/smoke.py,251,mmt,PENDING
-source,tests/smoke.py,285,mmt,PENDING
-source,tests/smoke.py,304,mmt,PENDING
-source,tests/smoke.py,313,mmt,PENDING
-source,tests/smoke.py,329,mmt,PENDING
-source,tests/smoke.py,341,mmt,PENDING
-source,tests/smoke.py,342,mmt,PENDING
-source,tests/smoke.py,343,mmt,PENDING
-source,tests/smoke.py,352,mmt,PENDING
-source,tests/smoke.py,365,mmt,PENDING
-source,tests/smoke.py,366,mmt,PENDING
-source,tests/smoke.py,367,mmt,PENDING
-source,tests/smoke.py,369,mmt,PENDING
-source,tests/smoke.py,383,mmt,PENDING
-source,tests/smoke.py,384,mmt,PENDING
-source,tests/smoke.py,397,mmt,PENDING
-source,tests/smoke.py,398,mmt,PENDING
-source,tests/smoke.py,409,mmt,PENDING
-source,tests/smoke.py,410,mmt,PENDING
-source,tests/smoke.py,418,mmt,PENDING
-source,tests/smoke.py,437,mmt,PENDING
-source,tests/smoke.py,449,mmt,PENDING
-source,tests/smoke.py,450,mmt,PENDING
-source,tests/smoke.py,500,mmt,PENDING
-source,tests/smoke.py,522,mmt,PENDING
-source,tests/smoke.py,541,mmt,PENDING
-source,tests/smoke.py,542,mmt,PENDING
-source,tests/smoke.py,598,mmt,PENDING
-source,tests/smoke.py,599,mmt,PENDING
-source,tests/smoke.py,612,mmt,PENDING
-source,tests/smoke.py,620,mmt,PENDING
-source,tests/smoke.py,629,mmt,PENDING
-source,tests/smoke.py,637,mmt,PENDING
-source,tests/smoke.py,647,mmt,PENDING
-source,tests/smoke.py,653,mmt,PENDING
-source,tests/smoke.py,661,mmt,PENDING
-source,tests/smoke.py,667,mmt,PENDING
-source,tests/smoke.py,668,mmt,PENDING
-source,tests/smoke.py,684,mmt,PENDING
-source,tests/smoke.py,689,mmt,PENDING
-source,tests/smoke.py,704,mmt,PENDING
-source,tests/smoke.py,721,mmt,PENDING
-source,tests/smoke.py,743,mmt,PENDING
-source,tests/smoke.py,750,mmt,PENDING
+source,.env.example,2,montano makes that,RESOLVED
+source,.env.example,10,montano makes that,RESOLVED
+source,.env.example,13,montano makes that,RESOLVED
+source,.env.example,14,montano makes that,RESOLVED
+source,.env.example,18,montano makes that,RESOLVED
+source,.env.example,20,montano makes that,RESOLVED
+source,.env.example,22,montano makes that,RESOLVED
+source,.env.example,45,montano makes that,RESOLVED
+source,.env.example,45,montano makes that,RESOLVED
+source,.env.example,73,mmt,RESOLVED
+source,.env.example,74,mmt,RESOLVED
+source,README.md,1,montano makes that,RESOLVED
+source,README.md,51,mmt,RESOLVED
+source,README.md,80,mmt,RESOLVED
+source,README.md,80,mmt,RESOLVED
+source,README.md,83,montano makes that,RESOLVED
+source,README.md,83,montano,RESOLVED
+source,README.md,102,mmt,RESOLVED
+source,README.md,145,mmt,RESOLVED
+source,README.md,185,mmt,RESOLVED
+source,README.md,192,mmt,RESOLVED
+source,README.md,218,mmt,RESOLVED
+source,README.md,247,mmt,RESOLVED
+source,README.md,334,mmt,RESOLVED
+source,README.md,342,mmt,RESOLVED
+source,README.md,343,mmt,RESOLVED
+source,README.md,343,mmt,RESOLVED
+source,README.md,346,mmt,RESOLVED
+source,app.py,2,mmt,RESOLVED
+source,mmt/__init__.py,1,montano makes that,RESOLVED
+source,mmt/blueprints/admin.py,302,mmt,RESOLVED
+source,mmt/blueprints/admin.py,447,mmt,RESOLVED
+source,mmt/blueprints/public.py,97,mmt,RESOLVED
+source,mmt/blueprints/public.py,112,mmt,RESOLVED
+source,mmt/config.py,1,montano makes that,RESOLVED
+source,mmt/config.py,29,mmt,RESOLVED
+source,mmt/config.py,30,mmt,RESOLVED
+source,mmt/config.py,39,montano makes that,RESOLVED
+source,mmt/config.py,44,montano makes that,RESOLVED
+source,mmt/config.py,47,montano makes that,RESOLVED
+source,mmt/config.py,48,montano makes that,RESOLVED
+source,mmt/config.py,49,montano makes that,RESOLVED
+source,mmt/config.py,67,montano makes that,RESOLVED
+source,mmt/config.py,67,montano makes that,RESOLVED
+source,mmt/db.py,124,mmt,RESOLVED
+source,mmt/freight.py,4,montano,RESOLVED
+source,mmt/membership.py,116,mmt,RESOLVED
+source,mmt/membership.py,128,mmt,RESOLVED
+source,mmt/membership.py,174,montano,RESOLVED
+source,mmt/membership.py,217,montano,RESOLVED
+source,mmt/orders.py,198,mmt,RESOLVED
+source,mmt/schema.sql,1,montano makes that,RESOLVED
+source,mmt/seed.py,25,montano,RESOLVED
+source,mmt/seed.py,30,mmt,RESOLVED
+source,mmt/seed.py,31,montano,RESOLVED
+source,mmt/seed.py,33,mmt,RESOLVED
+source,mmt/seed.py,34,montano,RESOLVED
+source,mmt/seed.py,36,mmt,RESOLVED
+source,mmt/seed.py,37,montano,RESOLVED
+source,mmt/seed.py,39,mmt,RESOLVED
+source,mmt/seed.py,40,montano,RESOLVED
+source,mmt/seed.py,42,mmt,RESOLVED
+source,mmt/seed.py,43,montano,RESOLVED
+source,mmt/seed.py,57,mmt,RESOLVED
+source,mmt/seed.py,64,mmt,RESOLVED
+source,mmt/seed.py,69,mmt,RESOLVED
+source,mmt/seed.py,74,mmt,RESOLVED
+source,mmt/seed.py,79,mmt,RESOLVED
+source,mmt/seed.py,93,montano,RESOLVED
+source,mmt/seed.py,119,mmt,RESOLVED
+source,mmt/seed.py,125,montano,RESOLVED
+source,mmt/seed.py,127,montano makes that,RESOLVED
+source,mmt/seed.py,152,mmt,RESOLVED
+source,mmt/seed.py,167,mmt,RESOLVED
+source,mmt/seed.py,172,mmt,RESOLVED
+source,mmt/seed.py,176,mmt,RESOLVED
+source,mmt/seed.py,180,mmt,RESOLVED
+source,mmt/seed.py,184,mmt,RESOLVED
+source,mmt/seed.py,188,mmt,RESOLVED
+source,mmt/seed.py,222,mmt,RESOLVED
+source,mmt/seed.py,226,mmt,RESOLVED
+source,mmt/seed.py,229,mmt,RESOLVED
+source,mmt/seed.py,232,mmt,RESOLVED
+source,mmt/seed.py,235,mmt,RESOLVED
+source,mmt/seed.py,238,mmt,RESOLVED
+source,mmt/seed.py,247,mmt,RESOLVED
+source,mmt/seed.py,248,mmt,RESOLVED
+source,mmt/seed.py,267,mmt,RESOLVED
+source,mmt/seed.py,268,montano,RESOLVED
+source,mmt/seed.py,269,mmt,RESOLVED
+source,mmt/seed.py,270,montano,RESOLVED
+source,mmt/seed.py,271,mmt,RESOLVED
+source,mmt/seed.py,273,mmt,RESOLVED
+source,mmt/seed.py,287,mmt,RESOLVED
+source,mmt/seed.py,288,mmt,RESOLVED
+source,mmt/seed.py,289,mmt,RESOLVED
+source,mmt/seed.py,290,mmt,RESOLVED
+source,mmt/seed.py,291,mmt,RESOLVED
+source,mmt/seed.py,292,mmt,RESOLVED
+source,mmt/seed.py,315,mmt,RESOLVED
+source,mmt/seed.py,316,montano makes that,RESOLVED
+source,mmt/seed.py,319,mmt,RESOLVED
+source,mmt/seed.py,320,montano makes that,RESOLVED
+source,mmt/seed.py,323,montano makes that,RESOLVED
+source,mmt/seed.py,333,mmt,RESOLVED
+source,mmt/seed.py,338,mmt,RESOLVED
+source,mmt/seed.py,349,mmt,RESOLVED
+source,mmt/seed.py,350,mmt,RESOLVED
+source,mmt/seed.py,353,mmt,RESOLVED
+source,mmt/seed.py,363,mmt,RESOLVED
+source,mmt/seed.py,378,montano,RESOLVED
+source,mmt/seed.py,382,montano,RESOLVED
+source,mmt/seed.py,403,mmt,RESOLVED
+source,mmt/seed.py,434,montano,RESOLVED
+source,mmt/seed.py,435,mmt,RESOLVED
+source,mmt/seed.py,447,mmt,RESOLVED
+source,mmt/seed.py,457,mmt,RESOLVED
+source,mmt/static/css/app.css,2,montano makes that,RESOLVED
+source,mmt/templates/_shell.html,28,montano,RESOLVED
+source,mmt/templates/admin/catalog_form.html,9,mmt,RESOLVED
+source,mmt/templates/auth/login.html,9,mmt,RESOLVED
+source,mmt/templates/base.html,22,montano makes that,RESOLVED
+source,mmt/templates/public/home.html,9,montano,RESOLVED
+source,tests/audit.py,11,mmt,RESOLVED
+source,tests/audit.py,20,mmt,RESOLVED
+source,tests/audit.py,20,mmt,RESOLVED
+source,tests/audit.py,20,mmt,RESOLVED
+source,tests/audit.py,21,mmt,RESOLVED
+source,tests/audit.py,21,mmt,RESOLVED
+source,tests/audit.py,21,mmt,RESOLVED
+source,tests/audit.py,48,mmt,RESOLVED
+source,tests/audit.py,71,mmt,RESOLVED
+source,tests/audit.py,72,mmt,RESOLVED
+source,tests/smoke.py,10,mmt,RESOLVED
+source,tests/smoke.py,47,mmt,RESOLVED
+source,tests/smoke.py,73,mmt,RESOLVED
+source,tests/smoke.py,153,mmt,RESOLVED
+source,tests/smoke.py,162,mmt,RESOLVED
+source,tests/smoke.py,180,mmt,RESOLVED
+source,tests/smoke.py,194,mmt,RESOLVED
+source,tests/smoke.py,200,mmt,RESOLVED
+source,tests/smoke.py,209,mmt,RESOLVED
+source,tests/smoke.py,218,mmt,RESOLVED
+source,tests/smoke.py,229,mmt,RESOLVED
+source,tests/smoke.py,240,mmt,RESOLVED
+source,tests/smoke.py,242,mmt,RESOLVED
+source,tests/smoke.py,251,mmt,RESOLVED
+source,tests/smoke.py,285,mmt,RESOLVED
+source,tests/smoke.py,304,mmt,RESOLVED
+source,tests/smoke.py,313,mmt,RESOLVED
+source,tests/smoke.py,329,mmt,RESOLVED
+source,tests/smoke.py,341,mmt,RESOLVED
+source,tests/smoke.py,342,mmt,RESOLVED
+source,tests/smoke.py,343,mmt,RESOLVED
+source,tests/smoke.py,352,mmt,RESOLVED
+source,tests/smoke.py,365,mmt,RESOLVED
+source,tests/smoke.py,366,mmt,RESOLVED
+source,tests/smoke.py,367,mmt,RESOLVED
+source,tests/smoke.py,369,mmt,RESOLVED
+source,tests/smoke.py,383,mmt,RESOLVED
+source,tests/smoke.py,384,mmt,RESOLVED
+source,tests/smoke.py,397,mmt,RESOLVED
+source,tests/smoke.py,398,mmt,RESOLVED
+source,tests/smoke.py,409,mmt,RESOLVED
+source,tests/smoke.py,410,mmt,RESOLVED
+source,tests/smoke.py,418,mmt,RESOLVED
+source,tests/smoke.py,437,mmt,RESOLVED
+source,tests/smoke.py,449,mmt,RESOLVED
+source,tests/smoke.py,450,mmt,RESOLVED
+source,tests/smoke.py,500,mmt,RESOLVED
+source,tests/smoke.py,522,mmt,RESOLVED
+source,tests/smoke.py,541,mmt,RESOLVED
+source,tests/smoke.py,542,mmt,RESOLVED
+source,tests/smoke.py,598,mmt,RESOLVED
+source,tests/smoke.py,599,mmt,RESOLVED
+source,tests/smoke.py,612,mmt,RESOLVED
+source,tests/smoke.py,620,mmt,RESOLVED
+source,tests/smoke.py,629,mmt,RESOLVED
+source,tests/smoke.py,637,mmt,RESOLVED
+source,tests/smoke.py,647,mmt,RESOLVED
+source,tests/smoke.py,653,mmt,RESOLVED
+source,tests/smoke.py,661,mmt,RESOLVED
+source,tests/smoke.py,667,mmt,RESOLVED
+source,tests/smoke.py,668,mmt,RESOLVED
+source,tests/smoke.py,684,mmt,RESOLVED
+source,tests/smoke.py,689,mmt,RESOLVED
+source,tests/smoke.py,704,mmt,RESOLVED
+source,tests/smoke.py,721,mmt,RESOLVED
+source,tests/smoke.py,743,mmt,RESOLVED
+source,tests/smoke.py,750,mmt,RESOLVED

@@ -1,0 +1,39 @@
+id,work item,class,state,evidence
+WI-B-01,Occurrence inventory across every §7.1 surface,A,CERTIFIED,"evidence/brand-inventory.csv — 190 occurrences before, 0 after"
+WI-B-02,"Rename in source, templates and string tables",A,CERTIFIED,A06
+WI-B-03,Rename in database content,A,CERTIFIED,A06 scan_database
+WI-B-04,Rename in generated output and sent email bodies,A,CERTIFIED,A06 scan_rendered + scan_emails
+WI-B-05,Identity assets and filenames,A,CERTIFIED,A06 scans asset filenames
+WI-B-06,Ownership-claim rewrite to the manufacturer claim,C,CERTIFIED,"A06 banned strings; surrounding copy rewritten, see the commit"
+WI-B-07,Country-of-origin statements present and factual,B,CERTIFIED,home page pillar; catalogue item page origin field
+WI-B-08,"Routes, slugs, redirects",A,BLOCKED-EXTERNAL,"zero routes carried the old brand, so no redirect is needed; the domain redirect is a DNS change outside this repository"
+WI-B-09,"Alt text, ARIA labels, captions",A,CERTIFIED,A06 scans rendered output including alt and aria attributes
+WI-X-01,Fixture inventory across every table,A,CERTIFIED,evidence/fixture-inventory.csv
+WI-X-02,Restorable backup taken before any deletion,A,CERTIFIED,"evidence/purge-evidence.md — backup reopened, counted, integrity checked"
+WI-X-03,Purge all test and example clients,A,CERTIFIED,A14
+WI-X-04,Create Boarshead to Appendix B spec,A,CERTIFIED,evidence/current-clients.md
+WI-X-05,Boarshead price matrix entered on the pricing desk,A,CERTIFIED,"16 cells, $0.14–$0.20, every cell carrying a published pricing_input id"
+WI-X-06,Boarshead catalogue items and registrations,A,CERTIFIED,"A07, A08"
+WI-X-07,Boarshead Product Genome per SKU,B,CERTIFIED,six sections; three marked unknown rather than filled
+WI-X-08,Boarshead image sets and viewer,A,CERTIFIED,A16
+WI-X-09,Current Clients register,A,CERTIFIED,evidence/current-clients.md
+WI-C-01,Client agent template and registry,A,CERTIFIED,A14 asserts no customer without an agent
+WI-C-03,Scope enforcement across every client agent,A,CERTIFIED,A30
+WI-C-04,Agent lifecycle,B,PARTIAL,sync_with_membership implements suspend/revoke/reinstate; not yet called from every membership transition
+WI-C-05,Agent output is proposal-only,A,CERTIFIED,A30 asserts no publishing verb exists on the scoped layer
+WI-K-01,Public catalogue with ranges,A,CERTIFIED,A08
+WI-K-02,Registration model and admin assignment,A,CERTIFIED,catalogue_registrations; admin bay is the only writer
+WI-K-03,Server-side order gating at three points,A,CERTIFIED,A07
+WI-K-04,Call-to-action logic for all five viewer states,B,CERTIFIED,cta_state and can_order answer from the same table
+WI-K-05,Reorder revalidates the assignment,B,CERTIFIED,"deactivation, not deletion; A07's third point"
+WI-P-01,Tenant isolation at the data layer on every route,A,CERTIFIED,A05
+WI-P-03,"Image viewer — one component, all item types",A,CERTIFIED,A16
+WI-P-04,"Viewer gestures, zoom, navigation, close, focus return",B,PARTIAL,implemented and keyboard-operable; not yet captured at the §12.2 viewport matrix
+WI-P-05,Annotated diagram layer,B,CERTIFIED,callouts render outside the subject on a leader line
+WI-P-06,"Image set management, captions, sources",B,CERTIFIED,caption and source_label are NOT NULL on item_images
+WI-R-07,The Tooling Line per §11.3,A,CERTIFIED,A31
+WI-R-09,"Product Genome, six client-facing sections",B,CERTIFIED,"six sections, unknowns marked; internal partition excluded in the query"
+WI-Y-06,24h review gate enforced in code,A,CERTIFIED,A11
+WI-G-01,Viewport and capture runner,A,NOT STARTED,the §12.2 screenshot matrix is not built
+WI-V-02,"Full screenshot matrix, pointer and touch",A,NOT STARTED,no captures taken
+WI-O-11,Two clean critical-path passes,A,PARTIAL,210 smoke checks and 9 Class A checks pass; the 20-step journey is not walked end to end by a person

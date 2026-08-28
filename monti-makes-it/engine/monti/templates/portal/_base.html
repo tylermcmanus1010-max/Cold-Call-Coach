@@ -10,6 +10,7 @@
     <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('portal.orders') }}"><span class="side-icon">◱</span> Orders</a>
     <a class="side-link {{ 'active' if 'room' in (request.endpoint or '') }}" href="{{ url_for('portal.room') }}"><span class="side-icon">◆</span> Decision Room</a>
     <a class="side-link {{ 'active' if 'ledger' in (request.endpoint or '') }}" href="{{ url_for('portal.ledger_view') }}"><span class="side-icon">≡</span> My ledger</a>
+    <a class="side-link {{ 'active' if 'membership_record' in (request.endpoint or '') }}" href="{{ url_for('portal.membership_record') }}"><span class="side-icon">◎</span> Membership</a>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.cart' }}" href="{{ url_for('portal.cart') }}"><span class="side-icon">▸</span> Current order
       {% if cart_count %}<span class="side-count">{{ cart_count }}</span>{% endif %}</a>
   </div>

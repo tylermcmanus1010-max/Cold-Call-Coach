@@ -20,6 +20,7 @@ from flask import (
 from .. import catalog as catalog_mod
 from .. import catalogue
 from .. import decisionroom as dr
+from .. import genome as genome_mod
 from .. import ledger
 from .. import membership
 from .. import orders as orders_mod
@@ -452,6 +453,56 @@ def _room_view(item):
         "tooling_unit_cents": (tooling["value_cents"] / qty) if (tooling and qty) else 0,
         "lanes": lane_rows,
     }
+
+
+@bp.route("/genome/<int:item_id>")
+@client_required
+def genome(item_id):
+    """The manufacturing memory of an approved item (E.3).
+
+    Reachable only for an item registered to this member — the check is
+    `can_order`, the same one the order gate uses, so a genome cannot be read
+    for a product that is not theirs.
+    """
+    if not catalogue.can_order(g.customer, item_id):
+        abort(404)
+    item = query("SELECT * FROM catalog_items WHERE id = ?", (item_id,), one=True)
+    if item is None:
+        abort(404)
+
+    tools = genome_mod.tooling_facts(item_id, _cid())
+    lines = []
+    if tools:
+        # The tooling section renders the §11.3 Tooling Line, not a second
+        # description of the same tool (E3.02).
+        qty = item["typical_moq"] or item["moq"] or 1
+        landed = item["range_low_cents"] or 0
+        lines = tooling.lines_for(item_id, _cid(), qty, landed, strategy="lowest_cost")
+
+    return render_template(
+        "portal/genome.html", item=item,
+        sections=genome_mod.bodies(item_id),
+        revisions=genome_mod.revisions(item_id),
+        golden=genome_mod.golden_sample(item_id),
+        quality=genome_mod.quality(item_id, _cid()),
+        tooling_lines=lines,
+        runs=genome_mod.runs(item_id),
+        images=catalogue.item_images(item_id))
+
+
+@bp.route("/membership")
+@client_required
+def membership_record():
+    """The Factory Plan, both commitment columns, credits, and capacity (E.4)."""
+    return render_template(
+        "portal/membership.html",
+        plan=genome_mod.factory_plan(_cid()),
+        commitments=genome_mod.commitments(_cid()),
+        credits=genome_mod.credits(_cid()),
+        capacity=genome_mod.capacity(g.customer),
+        weights=genome_mod.WEIGHTS,
+        rules=genome_mod.FAIRNESS_RULES,
+        boxes=genome_mod.boxes(_cid()))
 
 
 @bp.route("/room/<ref>/accept", methods=("POST",))

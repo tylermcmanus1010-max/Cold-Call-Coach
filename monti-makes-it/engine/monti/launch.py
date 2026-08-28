@@ -160,7 +160,7 @@ def provision_boars_head():
         "source, owner, membership_status, member_since, quote_limit, tags, notes, is_fixture) "
         "VALUES (?, 'Boars Head', ?, ?, 'United States', 'ACTIVE', 'REFERRAL', ?, 'MEMBER', ?, "
         "10, 'packaging, carry-out, first-client', ?, 0)",
-        ("MMI-C-1001", None, "orders@boars_head.example", ADMIN, now_str(),
+        ("MMI-C-1001", None, "orders@boarshead.example", ADMIN, now_str(),
          "First client on the platform. Branded carry-out containers, $0.20 to $0.14 per unit "
          "against a quantity x spec matrix. Contact name, phone and addresses are not yet on "
          "file — see the open questions on their items."))

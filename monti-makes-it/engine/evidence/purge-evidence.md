@@ -8,7 +8,7 @@ flask --app app seed && flask --app app purge-fixtures
 
 ## Backup, taken before any deletion
 
-- path: `/tmp/tmpb539rsj9/backups/purge-pre-purge-20260828T220731Z.db`
+- path: `/tmp/tmp75fjg_up/backups/purge-pre-purge-20260828T223732Z.db`
 - customers in the backup: 10
 - `PRAGMA integrity_check`: ok
 
@@ -24,6 +24,7 @@ a copy nobody has read back is a file, not a backup.
 | orders | 466 |
 | catalog_items | 7 |
 | ledger_entries | 0 |
+| decision_items | 0 |
 | customers | 10 |
 
 Total fixture rows inventoried before deletion: **509**
@@ -46,6 +47,7 @@ survives a cascade that appears to have worked.
 | orders | 0 |
 | catalog_items | 0 |
 | ledger_entries | 0 |
+| decision_items | 0 |
 
 Asserted continuously by `A14`, which also checks the named accounts from
 §0.3.5 by name and sweeps for orphans on every run.

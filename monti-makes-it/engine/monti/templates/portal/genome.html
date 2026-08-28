@@ -1,0 +1,146 @@
+{% extends "portal/_base.html" %}
+{% from "_image_viewer.html" import viewer %}
+{% block title %}{{ item.name }} · Product Genome{% endblock %}
+{% block eyebrow %}Product Genome · <span class="mono">{{ item.sku }}</span>{% endblock %}
+{% block heading %}{{ item.name }}{% endblock %}
+{% block content %}
+
+<p class="muted" style="max-width:64ch">
+  Six things you actually review before authorising another run. Everything else the
+  floor knows sits behind them and comes out on request.
+</p>
+
+<div class="genome-grid">
+  <nav class="gindex" aria-label="Genome sections">
+    <span class="stat-label" style="display:block;padding:0 0 .6rem .1rem">The record</span>
+    {% for section in sections %}
+      <a href="#g-{{ section.key }}">{{ section.title }}</a>
+    {% endfor %}
+  </nav>
+
+  <div class="grecord">
+    {% for section in sections %}
+      <article class="card card-lg gsec" id="g-{{ section.key }}">
+        <h3>{{ section.title }}</h3>
+        <p class="tiny dim" style="margin-top:.3rem">{{ section.blurb }}</p>
+
+        {% if section.unknown %}
+          {#
+            Appendix B: an unknown is marked, never filled with a plausible
+            default. A specification the client never gave us, printed as though
+            they had, is the failure this record exists to prevent.
+          #}
+          <div class="notice notice-wait" style="margin-top:1rem">
+            <strong>Not confirmed</strong>
+            {{ section.body or 'Nothing recorded yet. Tell us and it goes on the record.' }}
+          </div>
+        {% elif section.body %}
+          <p style="margin-top:1rem;max-width:64ch">{{ section.body }}</p>
+        {% endif %}
+
+        {# --- the structured half of each section ------------------------- #}
+        {% if section.key == 'spec' %}
+          {% if images %}
+            <div class="divider-label">Images</div>
+            {{ viewer(images, item.name, 'genome-' ~ item.id) }}
+          {% endif %}
+          {% if revisions %}
+            <div class="divider-label">Revision history</div>
+            <div class="table-wrap"><table class="data">
+              <thead><tr><th>Rev</th><th>Date</th><th>Change</th><th>Reason</th></tr></thead>
+              <tbody>{% for r in revisions %}
+                <tr><td class="mono"><strong>{{ r.rev }}</strong></td>
+                  <td class="mono tiny">{{ r.changed_at|date }}</td>
+                  <td>{{ r.change }}</td><td class="muted">{{ r.reason }}</td></tr>
+              {% endfor %}</tbody></table></div>
+          {% else %}
+            <p class="tiny dim" style="margin-top:1rem">No revisions yet — this is the
+              first specification on record.</p>
+          {% endif %}
+
+        {% elif section.key == 'golden' %}
+          {% if golden %}
+            <dl class="kv" style="margin-top:1rem">
+              <dt>Sample</dt><dd class="mono">{{ golden.ref }}</dd>
+              <dt>Sealed</dt><dd>{{ golden.sealed_at|date if golden.sealed_at else 'Not yet sealed' }}</dd>
+              <dt>Stored</dt><dd>{{ golden.stored_at or 'Not yet stored' }}</dd>
+              <dt>Duplicate</dt><dd>{{ golden.duplicate_held_by or 'None issued' }}</dd>
+              <dt>Re-verify</dt><dd>{{ golden.reverify_at|date if golden.reverify_at else '—' }}</dd>
+            </dl>
+          {% else %}
+            <p class="tiny dim" style="margin-top:1rem">No golden sample sealed yet. One is
+              sealed from the first approved run and every run after is measured against it.</p>
+          {% endif %}
+
+        {% elif section.key == 'quality' %}
+          {% if quality.measured %}
+            <div class="grid grid-3" style="margin-top:1rem">
+              <div class="stat"><div class="stat-label">Orders accepted without a claim</div>
+                <div class="stat-value">{{ quality.claim_free }} of {{ quality.run_count }}</div></div>
+              <div class="stat"><div class="stat-label">Delivered on the promised date</div>
+                <div class="stat-value">{{ quality.on_time }} of {{ quality.run_count }}</div></div>
+              <div class="stat"><div class="stat-label">Open claims</div>
+                <div class="stat-value">{{ quality.open_claims|length }}</div></div>
+            </div>
+          {% else %}
+            {# Zeros here would read as failures. No runs is not a bad record. #}
+            <p class="tiny dim" style="margin-top:1rem">No runs yet, so there is nothing to
+              measure. These figures appear after the first order ships.</p>
+          {% endif %}
+          {% if quality.checks %}
+            <div class="divider-label">What gets checked</div>
+            <div class="table-wrap"><table class="data">
+              <thead><tr><th>Check</th><th>Method</th><th>Frequency</th><th>Accept</th></tr></thead>
+              <tbody>{% for c in quality.checks %}
+                <tr><td>{{ c.check_name }}</td><td>{{ c.method }}</td>
+                  <td>{{ c.frequency }}</td><td>{{ c.accept }}</td></tr>
+              {% endfor %}</tbody></table></div>
+          {% endif %}
+
+        {% elif section.key == 'tooling' %}
+          {% if tooling_lines %}
+            {% for line in tooling_lines %}
+              {% if line.callout %}<div class="tooling-callout">{{ line.callout }}</div>{% endif %}
+              <dl class="tooling" style="margin-top:1rem">
+                <dt>What it is</dt><dd>{{ line.what_it_is }}</dd>
+                <dt>What it costs</dt><dd class="cost">
+                  {% if line.reused %}<span class="tooling-reused">Already made and paid —
+                    nothing on this run.</span>
+                  {% else %}{{ line.cost_cents|money }}, one time{% endif %}</dd>
+                <dt>Who owns it</dt><dd>{{ line.ownership }}</dd>
+                <dt>On this run</dt><dd>{{ line.treatment }}</dd>
+              </dl>
+            {% endfor %}
+          {% else %}
+            <p class="tiny dim" style="margin-top:1rem">No tool on this item.</p>
+          {% endif %}
+
+        {% elif section.key == 'history' %}
+          {% if runs %}
+            <div class="table-wrap" style="margin-top:1rem"><table class="data">
+              <thead><tr><th>Run</th><th>PO</th><th class="right">Qty</th><th>Shipped</th>
+                <th>On time</th><th class="right">Landed / unit</th></tr></thead>
+              <tbody>{% for r in runs %}
+                <tr><td class="mono">{{ '%02d'|format(r.run_no) }}</td>
+                  <td class="mono tiny">{{ r.po_ref or '—' }}</td>
+                  <td class="right tnum">{{ '{:,}'.format(r.quantity) }}</td>
+                  <td class="mono tiny">{{ r.shipped_at|date if r.shipped_at else '—' }}</td>
+                  <td>{% if r.on_time == 1 %}<span class="tag tag-green">On time</span>
+                      {% elif r.on_time == 0 %}<span class="tag tag-wait">Late</span>
+                      {% else %}<span class="tiny dim">—</span>{% endif %}</td>
+                  <td class="right mono tnum">{{ r.landed_unit_cents|money if r.landed_unit_cents else '—' }}</td></tr>
+              {% endfor %}</tbody></table></div>
+          {% else %}
+            <p class="tiny dim" style="margin-top:1rem">First run not yet placed. This
+              section fills in as orders complete.</p>
+          {% endif %}
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/image-viewer.js') }}" defer></script>
+{% endblock %}

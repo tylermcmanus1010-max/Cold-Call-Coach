@@ -1081,3 +1081,43 @@ body.iv-open { overflow: hidden; }
   display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; font-size: .9rem; }
 .outcome.hit { background: var(--good-soft); border: 1px solid var(--green-line); }
 .outcome.miss { background: var(--wait-soft); border: 1px solid var(--wait); }
+
+/* The Product Genome (Appendix E.3) */
+.genome-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 1.75rem;
+  align-items: start; margin-top: 1.5rem; }
+@media (max-width: 1000px) { .genome-grid { grid-template-columns: minmax(0, 1fr); } }
+.gindex { position: sticky; top: 5rem; display: flex; flex-direction: column;
+  border-left: 1px solid var(--line); }
+@media (max-width: 1000px) {
+  .gindex { position: static; flex-direction: row; flex-wrap: wrap; border-left: 0;
+    border-bottom: 1px solid var(--line); padding-bottom: .6rem; gap: .25rem; }
+}
+.gindex a { color: var(--ink-3); font-size: .82rem; padding: .4rem .75rem;
+  border-left: 2px solid transparent; margin-left: -1px; min-height: 44px;
+  display: flex; align-items: center; }
+.gindex a:hover { color: var(--ink); border-left-color: var(--line); }
+.grecord { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+.gsec { scroll-margin-top: 5rem; }
+
+/* Membership: commitments, capacity, weighting (Appendix E.4) */
+.commitlist { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; }
+.commitlist li { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
+  padding: .65rem 0; border-bottom: 1px solid var(--line-soft); font-size: .88rem; }
+.commitlist li:last-child { border-bottom: 0; }
+.commitlist b { font-weight: 500; font-size: .82rem; white-space: nowrap; }
+.commitlist b.ok { color: var(--good); }
+.commitlist b.missed { color: var(--stop); }
+/* An unmeasured commitment is neither met nor missed, and must not borrow the
+   colour of either (E4.02). */
+.commitlist b.unmeasured { color: var(--ink-3); font-style: italic; white-space: normal; }
+.capbar { display: flex; height: 10px; border-radius: 100px; overflow: hidden;
+  background: var(--sunk); border: 1px solid var(--line); margin-top: 1.25rem; }
+.capseg.used { background: var(--green); }
+.capseg.free { background: transparent; }
+.weightlist, .rulelist { list-style: none; margin: .85rem 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: .7rem; font-size: .85rem; }
+.weightlist li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: .7rem; }
+.weightlist b { color: var(--green); }
+.weightlist em { font-style: normal; display: block; font-size: .78rem; color: var(--ink-3); }
+.rulelist li { padding-left: 1rem; position: relative; color: var(--ink-2); }
+.rulelist li::before { content: "·"; position: absolute; left: .25rem; color: var(--green); }

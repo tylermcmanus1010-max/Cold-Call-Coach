@@ -1,0 +1,214 @@
+{% extends "portal/_base.html" %}
+{% block title %}Membership · {{ company }}{% endblock %}
+{% block eyebrow %}Membership{% endblock %}
+{% block heading %}An agreement, not a verdict{% endblock %}
+{% block content %}
+
+<p class="muted" style="max-width:64ch">
+  Acceptance means both sides agreed to work a particular way. Better prices come out of
+  that discipline, so both sets of commitments are on this page and both are measured.
+</p>
+
+{% if plan %}
+  <article class="card card-lg" style="margin-top:1.5rem;border-left:2px solid var(--brass)">
+    <span class="eyebrow-label" style="color:var(--brass)">Written during your acceptance call</span>
+    <h3 style="margin-top:.5rem">Factory Plan</h3>
+    <p class="tiny dim" style="margin-top:.4rem;max-width:58ch">One page, so an approved
+      portal is never an empty one. Revised whenever the plan changes.</p>
+    <dl class="kv" style="margin-top:1.25rem">
+      <dt>First product to quote</dt><dd>{{ plan.first_product or 'Not yet agreed' }}</dd>
+      <dt>Estimated annual demand</dt><dd>{{ plan.annual_demand or 'Not yet stated' }}</dd>
+      <dt>Likely production method</dt><dd>{{ plan.method or 'Not yet confirmed' }}</dd>
+      <dt>Open specification questions</dt><dd>{{ plan.open_questions or 'None' }}</dd>
+      <dt>Testing and certification</dt><dd>{{ plan.testing or 'Not yet confirmed' }}</dd>
+      <dt>Expected first-order path</dt><dd>{{ plan.first_order_path or 'Not yet agreed' }}</dd>
+    </dl>
+  </article>
+{% endif %}
+
+{#
+  Both columns, side by side, and an unmeasured commitment says so (E4.02).
+  Rendering one as met because nothing has gone wrong yet is how a page of green
+  ticks stops meaning anything.
+#}
+<div class="grid grid-2" style="margin-top:1.25rem">
+  {% for side, rows, heading in [('MEMBER', commitments.member, 'You commit to'),
+                                 ('MONTI', commitments.monti, company ~ ' commits to')] %}
+    <article class="card card-lg">
+      <div class="row-between">
+        <span class="eyebrow-label">{{ heading }}</span>
+        {% set measured = rows | rejectattr('met', 'none') | list %}
+        {% if not measured %}
+          <span class="tag tag-muted">Nothing measured yet</span>
+        {% elif measured | selectattr('met', 'equalto', 0) | list %}
+          <span class="tag tag-wait">{{ measured | selectattr('met', 'equalto', 0) | list | length }} missed</span>
+        {% else %}
+          <span class="tag tag-green">All met</span>
+        {% endif %}
+      </div>
+      <ul class="commitlist">
+        {% for row in rows %}
+          <li>
+            <span>{{ row.commitment }}</span>
+            {% if row.met is none %}
+              <b class="unmeasured">Not yet measured</b>
+            {% elif row.met %}
+              <b class="ok">{{ row.measure or 'Met' }}</b>
+            {% else %}
+              <b class="missed">{{ row.measure or 'Missed' }}</b>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% set unmeasured = rows | selectattr('met', 'none') | list %}
+      {% if unmeasured %}
+        <p class="tiny dim" style="margin-top:.9rem">
+          {{ unmeasured|length }} of these have nothing to measure against yet. They fill
+          in as orders complete — we would rather show that than a tick nobody earned.
+        </p>
+      {% endif %}
+    </article>
+  {% endfor %}
+</div>
+
+{% if credits %}
+  <article class="card card-lg" style="margin-top:1.25rem">
+    <div class="row-between">
+      <span class="eyebrow-label">Automatic performance credits</span>
+      <span class="tiny dim">Issued without you asking</span>
+    </div>
+    <ul class="commitlist">
+      {% for credit in credits %}
+        <li><span><strong>{{ credit.amount_cents|money }}</strong> — {{ credit.reason }}
+          {% if credit.detail %}<em style="display:block;font-style:normal"
+             class="tiny dim">{{ credit.detail }}</em>{% endif %}</span>
+          <b class="ok">{{ credit.issued_at|date }}</b></li>
+      {% endfor %}
+    </ul>
+  </article>
+{% endif %}
+
+{# --- quote capacity (E4.04) ------------------------------------------- #}
+<div class="divider-label">Quote capacity</div>
+<p class="muted" style="max-width:64ch">
+  Ten quotes was the wrong unit. A packaging tweak and a 200-part assembly are not the
+  same request, so capacity is measured in units weighted by the engineering they
+  actually consume — and the rules run in your favour.
+</p>
+
+<div class="grid grid-sidebar" style="margin-top:1.25rem">
+  <article class="card card-lg">
+    <div class="grid grid-3">
+      <div class="stat stat-accent"><div class="stat-label">Units left this cycle</div>
+        <div class="stat-value">{{ capacity.left }}</div>
+        <div class="stat-sub">Cycle runs {{ capacity.cycle_days }} days</div></div>
+      <div class="stat"><div class="stat-label">Charged so far</div>
+        <div class="stat-value">{{ capacity.used }}</div>
+        <div class="stat-sub">{{ capacity.rows|length }} request{{ '' if capacity.rows|length == 1 else 's' }} on record</div></div>
+      <div class="stat"><div class="stat-label">Cycle allowance</div>
+        <div class="stat-value">{{ capacity.total }}</div>
+        <div class="stat-sub">{{ capacity.allowance }} base
+          {%- if capacity.earned %} + {{ capacity.earned }} earned{% endif %}
+          {%- if capacity.rolled %} + {{ capacity.rolled }} rolled{% endif %}</div></div>
+    </div>
+
+    <div class="capbar" role="img"
+         aria-label="{{ capacity.used }} of {{ capacity.total }} units charged">
+      <span class="capseg used" style="flex:{{ capacity.used or 0 }}"></span>
+      <span class="capseg free" style="flex:{{ capacity.left or 1 }}"></span>
+    </div>
+
+    {% if capacity.rows %}
+      <div class="table-wrap" style="margin-top:1.25rem">
+        <table class="data">
+          <thead><tr><th>Request</th><th>Classified as</th><th class="right">Weight</th>
+            <th>Outcome</th><th class="right">Charged</th></tr></thead>
+          <tbody>
+            {% for row in capacity.rows %}
+              <tr>
+                <td><strong>{{ row.label }}</strong></td>
+                <td>{{ row.classified }}</td>
+                <td class="right mono tnum">{{ row.weight }}</td>
+                <td>{{ row.outcome }}
+                  {% if row.reason %}<div class="tiny dim">{{ row.reason }}</div>{% endif %}</td>
+                <td class="right mono tnum {{ '' if row.charged else 'dim' }}">{{ row.charged }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if capacity.uncharged %}
+        <p class="tiny dim" style="margin-top:.75rem">
+          {{ capacity.uncharged|length }} request{{ '' if capacity.uncharged|length == 1 else 's' }}
+          this cycle cost you nothing.
+        </p>
+      {% endif %}
+    {% else %}
+      <p class="tiny dim" style="margin-top:1.25rem">No requests charged yet this cycle.</p>
+    {% endif %}
+  </article>
+
+  <aside class="stack">
+    <div class="card">
+      <span class="eyebrow-label">How requests are weighted</span>
+      <ul class="weightlist">
+        {% for weight, name, detail in weights %}
+          <li><b class="mono">{{ weight if weight else '—' }}</b>
+            <span>{{ name }}<em>{{ detail }}</em></span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="card" style="background:var(--green-soft);border-color:var(--green-line)">
+      {# Stated before a refusal, not after it. #}
+      <span class="eyebrow-label">The rules, in your favour</span>
+      <ul class="rulelist">
+        {% for rule in rules %}<li>{{ rule }}</li>{% endfor %}
+      </ul>
+    </div>
+  </aside>
+</div>
+
+{# --- Make This Box (WI-I-07) ------------------------------------------- #}
+<div class="divider-label">Make This Box</div>
+<p class="muted" style="max-width:64ch">
+  Some products cannot be described, only handed over. We ship you a prepaid,
+  tamper-evident box. Put the thing inside, scan the code on the lid, drop it off —
+  and every stage below moves only when something actually happens to it.
+</p>
+
+{% if boxes %}
+  {% for entry in boxes %}
+    <article class="card card-lg" style="margin-top:1rem">
+      <div class="row-between wrap">
+        <span class="mono tiny">{{ entry.box.ref }}</span>
+        <span class="tiny dim">requested {{ entry.box.requested_at|date }}</span>
+      </div>
+      <ol class="dr-tracker" style="margin-top:1rem">
+        {% for stage in entry.stages %}
+          <li class="{{ 'done' if loop.index0 < entry.stage else ('now' if loop.index0 == entry.stage else '') }}">
+            <span class="tk">{{ loop.index }}</span><strong>{{ stage }}</strong>
+          </li>
+        {% endfor %}
+      </ol>
+      {% if entry.events %}
+        <ul class="commitlist" style="margin-top:1rem">
+          {% for event in entry.events %}
+            <li><span>{{ entry.stages[event.stage] }}
+              {% if event.detail %}<em style="display:block;font-style:normal"
+                 class="tiny dim">{{ event.detail }}</em>{% endif %}</span>
+              <b class="ok">{{ event.happened_at|date }}</b></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </article>
+  {% endfor %}
+{% else %}
+  <div class="empty" style="padding:2rem 1rem;margin-top:1rem">
+    <p>No sample boxes yet.</p>
+    <p class="tiny dim">Ask and we will send one. Free for 24 months, returned or stored,
+      your choice.</p>
+    <a class="btn btn-outline" style="margin-top:1rem"
+       href="mailto:{{ cfg.SUPPORT_EMAIL }}?subject=Make%20This%20Box">Request a box</a>
+  </div>
+{% endif %}
+{% endblock %}

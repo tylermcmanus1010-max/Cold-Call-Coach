@@ -343,7 +343,8 @@ function cmdNext(args) {
   console.log(`\n  ${now.label} in San Diego — ${list.length} callable, ${good.length} in a sensible window\n`);
 
   for (const l of list.slice(0, n)) {
-    const when = l.warm ? `BOOKED ${l.callbackAt}`.trim()
+    const when = l.callbackAt ? `BOOKED ${l.callbackAt}`
+      : l.interested ? 'said yes — waiting on you'
       : l.inWindow === true ? 'good time now'
       : l.inWindow === false ? `wrong time — try ${l.windows}`
       : '';

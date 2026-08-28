@@ -1,6 +1,6 @@
 # Pilgrimage of the Heart Yoga — pitch sheet
 
-**Current site:** https://pilgrimageyoga.com/
+**Current site:** https://pilgrimageyoga.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878047.460
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
 **Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates

@@ -1,8 +1,8 @@
 # B Wood Insurance — pitch sheet
 
-**Current site:** https://c3insurance.com/
+**Current site:** https://c3insurance.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878201.579
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 11/12
+**Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -15,15 +15,18 @@
 | ✅ | Secure (HTTPS) | — |
 | ✅ | Loads in under 2 seconds | — |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
-| ✅ | Google business markup | — |
-| ✅ | Title + description | — |
-| ✅ | Shareable link preview | — |
+| ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
+| ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
+| ❌ | Shareable link preview | Link looks blank when shared in a text or on Facebook |
 
-_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: address + directions, reviews on the page, clear call to action._
+_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, address + directions, services and pricing, reviews on the page, clear call to action._
 
 ## What the rebuild fixes
 
 - Tap-to-call in the header and a sticky call bar on mobile
+- LocalBusiness schema so Google can read hours, phone, rating and location
+- Written page title, description and social preview card
+- Open Graph tags so the link previews properly when shared
 
 ---
 
@@ -39,6 +42,9 @@ I looked at your website and rebuilt it. It's attached — open it on your phone
 
 What I changed:
 - Tap-to-call in the header and a sticky call bar on mobile
+- LocalBusiness schema so Google can read hours, phone, rating and location
+- Written page title, description and social preview card
+- Open Graph tags so the link previews properly when shared
 
 Nothing is live. This is just so you can see what it would look like.
 

@@ -2,7 +2,7 @@
 
 **Current site:** https://mesarim.com/
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 7/12
+**Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -13,7 +13,7 @@
 |---|---|---|
 | ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
-| ❌ | Loads in under 2 seconds | Slow load — every extra second costs about 7% of conversions |
+| ✅ | Loads in under 2 seconds | — |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
 | ❌ | Google business markup | No structured data, so Google cannot show your hours, rating or map card |
 | ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
@@ -23,7 +23,6 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## What the rebuild fixes
 
-- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
@@ -42,7 +41,6 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
-- Single self-contained file, no trackers, loads instantly
 - Tap-to-call in the header and a sticky call bar on mobile
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card

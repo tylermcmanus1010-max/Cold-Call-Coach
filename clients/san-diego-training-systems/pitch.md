@@ -1,8 +1,8 @@
 # San Diego Training Systems — pitch sheet
 
-**Current site:** https://sandiegotrainingsystems.com/
+**Current site:** https://sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878190.028
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 7/12
+**Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
@@ -11,7 +11,7 @@
 
 | | Check | Problem |
 |---|---|---|
-| ❌ | Works on a phone | Site is unusable on a phone — 70%+ of your customers are on one |
+| ✅ | Works on a phone | — |
 | ✅ | Secure (HTTPS) | — |
 | ✅ | Loads in under 2 seconds | — |
 | ❌ | Tap-to-call phone number | Phone number is not tappable, so mobile visitors have to copy it by hand |
@@ -19,11 +19,10 @@
 | ❌ | Title + description | Page title and description are empty or default, hurting search ranking |
 | ❌ | Shareable link preview | Link looks blank when shared in a text or on Facebook |
 
-_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, address + directions, services and pricing, reviews on the page._
+_Not claimed, because a page scan cannot prove them — check yourself if you want to use them: hours listed, address + directions, services and pricing, reviews on the page, clear call to action._
 
 ## What the rebuild fixes
 
-- Rebuilt mobile-first; tested down to a 320px screen
 - Tap-to-call in the header and a sticky call bar on mobile
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card
@@ -42,7 +41,6 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 I looked at your website and rebuilt it. It's attached — open it on your phone.
 
 What I changed:
-- Rebuilt mobile-first; tested down to a 320px screen
 - Tap-to-call in the header and a sticky call bar on mobile
 - LocalBusiness schema so Google can read hours, phone, rating and location
 - Written page title, description and social preview card

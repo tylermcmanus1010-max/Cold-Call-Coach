@@ -98,11 +98,16 @@
     "score": 75,
     "gaps": 7,
     "rendered": true,
-    "currentSiteStatus": "live",
+    "currentSiteStatus": "very slow on a phone — timed at 19s, 29s and 99s across three runs",
     "loadMs": 99358,
     "pageKb": 148,
     "builder": null,
-    "copyrightYear": 2025
+    "copyrightYear": 2025,
+    "loadMsReadings": [
+      28687,
+      19201,
+      99358
+    ]
   },
   "attempts": 1,
   "lastTried": "2026-08-27",

@@ -53,6 +53,10 @@ const WINDOWS = [
 
 const windowFor = (cat) => WINDOWS.find((w) => w.re.test(cat || '')) || null;
 
+// 800, 888, 877, 866, 855, 844, 833 — a toll-free line means a call centre or
+// a multi-location outfit. Whoever answers cannot buy a website.
+const TOLL_FREE = /^\+?1?[^0-9]*8(00|33|44|55|66|77|88)/;
+
 // Trades and clinics buy. Businesses whose whole product is how things look
 // tend to already have someone doing their website.
 const VERTICAL_WEIGHT = { trades: 3, auto: 3, medical: 2, professional: 2, retail: 1, food: 1, fitness: 1, salons: 0 };
@@ -73,8 +77,9 @@ function rank({ now = marketNow() } = {}) {
     let b;
     try { b = JSON.parse(fs.readFileSync(f, 'utf8')); } catch { continue; }
 
-    if (['dead', 'won', 'spec'].includes(b.status) || slug.startsWith('example-')) continue;
+    if (['dead', 'won', 'spec', 'sent'].includes(b.status) || slug.startsWith('example-')) continue;
     if (!b.phone) continue;
+    if (TOLL_FREE.test(b.phone)) continue;
     if ((b.attempts || 0) >= 4) continue;          // four tries is enough
     if ((b._scout || {}).rendered !== true) continue;  // never claim unverified findings
 
@@ -93,7 +98,7 @@ function rank({ now = marketNow() } = {}) {
 
     out.push({
       slug, name: b.name, phone: b.phone, cat: b.category || '',
-      gaps, warm, callbackAt: b.callbackAt || '', attempts: b.attempts || 0,
+      gaps, warm, callbackAt: b.callbackAt || '', interested: b.status === 'replied', attempts: b.attempts || 0,
       vertical: w?.label || 'other', inWindow, avoid: w?.avoid || '',
       windows: w ? w.hours.map(([a, c]) => `${a}–${c}`).join(', ') : '',
       why: reason(b, gaps),
@@ -109,7 +114,15 @@ function reason(b, gaps) {
   const sc = b._scout || {};
   const a = b.audit || {};
   if (/placeholder|parked/i.test(sc.currentSiteStatus || '')) return 'no real website — domain sits on a placeholder';
-  if (sc.loadMs > 8000) return `site takes ${(sc.loadMs / 1000).toFixed(0)} seconds to load`;
+  if (sc.loadMs > 8000) {
+    // Three runs put one site at 19s, 29s and 99s. A number that swings that
+    // far is not a number to say out loud — let the owner time it themselves.
+    const r = (sc.loadMsReadings || []).concat(sc.loadMs);
+    const spread = Math.max(...r) / Math.min(...r);
+    return r.length > 1 && spread > 2
+      ? 'site is very slow on a phone — have them time it themselves'
+      : `site takes ${(sc.loadMs / 1000).toFixed(0)} seconds to load`;
+  }
   if (sc.pageKb != null && sc.pageKb < 10 && a.mobile !== true) return `page is ${sc.pageKb}KB — almost nothing on it`;
   if (a.mobile !== true) return 'does not work properly on a phone';
   if (a.phoneTap !== true) return 'phone number is not tappable';

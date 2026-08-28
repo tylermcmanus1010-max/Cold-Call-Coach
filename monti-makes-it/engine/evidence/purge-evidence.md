@@ -8,7 +8,7 @@ flask --app app seed && flask --app app purge-fixtures
 
 ## Backup, taken before any deletion
 
-- path: `/tmp/tmp75fjg_up/backups/purge-pre-purge-20260828T223732Z.db`
+- path: `/tmp/tmpfzxjqzk9/backups/purge-pre-purge-20260828T224456Z.db`
 - customers in the backup: 10
 - `PRAGMA integrity_check`: ok
 

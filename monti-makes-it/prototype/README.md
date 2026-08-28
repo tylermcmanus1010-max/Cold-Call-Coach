@@ -1,6 +1,6 @@
 # The prototype
 
-Open `montano-prototype.html` in any browser. That's it — no install, no server, no
+Open `monti-prototype.html` in any browser. That's it — no install, no server, no
 network. Everything runs in the page.
 
 | Sign in as | Password |

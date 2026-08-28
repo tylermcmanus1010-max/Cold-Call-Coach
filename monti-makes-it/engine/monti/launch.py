@@ -236,7 +236,7 @@ def _add_images(item_id, spec):
         "is_public, annotations) VALUES (?, ?, ?, ?, ?, 0, 1, ?)",
         (item_id, CONTAINER_SVG,
          f"{spec['name']} — form and print area",
-         "Drawing by Monti Makes It · not a photograph of a production unit",
+         "Placeholder drawing · replaced when the client's own photographs arrive",
          f"Line drawing of a hinged-lid carry-out container showing the lid, the tapered "
          f"sidewall and the printable panel on the front face.",
          ANNOTATIONS))

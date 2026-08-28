@@ -17,6 +17,12 @@
 
   var ZOOM_STEPS = [1, 1.75, 3];
 
+  // `hidden` is a property of HTMLElement, and an <svg> is an SVGElement — so
+  // `svg.hidden = false` sets a JavaScript expando and leaves the attribute
+  // exactly where it was. The attribute has to be moved directly.
+  function hide(el) { el.setAttribute("hidden", ""); }
+  function show(el) { el.removeAttribute("hidden"); }
+
   function setup(root) {
     var dialog = root.querySelector(".iv-dialog");
     if (!dialog) { return; }                       // an empty state — nothing to wire
@@ -69,29 +75,43 @@
       if (!svg) { return; }
       var raw = slide.dataset.annotations;
       var on = diagramBtn && diagramBtn.getAttribute("aria-pressed") === "true";
-      if (!raw || !on) { svg.hidden = true; svg.innerHTML = ""; return; }
+      if (!raw || !on) { hide(svg); svg.innerHTML = ""; return; }
 
       var notes;
-      try { notes = JSON.parse(raw); } catch (e) { svg.hidden = true; return; }
-      if (!Array.isArray(notes) || !notes.length) { svg.hidden = true; return; }
+      try { notes = JSON.parse(raw); } catch (e) { hide(svg); return; }
+      if (!Array.isArray(notes) || !notes.length) { hide(svg); return; }
 
+      // Draw in the element's real pixel box rather than in a normalised
+      // viewBox. A 0-100 box with preserveAspectRatio="none" stretches the
+      // glyphs along with the geometry, so the labels came out distorted and
+      // oversized on a wide image — and a callout that is not legible is not a
+      // callout. Sizing the viewBox to the rendered box keeps text upright and
+      // lets the font size mean pixels.
+      var box = svg.getBoundingClientRect();
+      var w = box.width || 320, h = box.height || 240;
+      svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+      // Labels sit against whichever edge is further from the point they name,
+      // at a fixed inset. Offsetting by a percentage instead lets a long label
+      // run off the canvas at a narrow viewport, which is the failure this
+      // layer exists to avoid.
+      var inset = Math.max(8, w * 0.03);
       var parts = notes.map(function (note) {
-        // x/y are percentages of the image box: the point being named.
-        var x = Number(note.x) || 50, y = Number(note.y) || 50;
-        // Push the label to whichever side has more room, so it lands on the
-        // canvas rather than off the edge at a narrow viewport.
-        var toLeft = x > 50;
-        var lx = toLeft ? Math.max(2, x - 26) : Math.min(98, x + 26);
-        var anchor = toLeft ? "end" : "start";
+        var x = (Number(note.x) || 50) / 100 * w;
+        var y = (Number(note.y) || 50) / 100 * h;
+        var toLeft = x > w / 2;
+        var lx = toLeft ? inset : w - inset;
+        var anchor = toLeft ? "start" : "end";
         return (
           '<line x1="' + x + '" y1="' + y + '" x2="' + lx + '" y2="' + y + '" />' +
-          '<circle cx="' + x + '" cy="' + y + '" r="1.1" />' +
-          '<text x="' + lx + '" y="' + (y - 1.6) + '" text-anchor="' + anchor + '">' +
+          '<circle cx="' + x + '" cy="' + y + '" r="3" />' +
+          '<text x="' + lx + '" y="' + (y - 6) + '" text-anchor="' + anchor + '">' +
           String(note.label || "").replace(/[<&>]/g, "") + "</text>"
         );
       });
       svg.innerHTML = parts.join("");
-      svg.hidden = false;
+      show(svg);
     }
 
     function open(i, from) {

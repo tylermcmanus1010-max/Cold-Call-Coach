@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Montano Makes That</title>
+<title>Monti Makes It</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* ==========================================================================
-   Montano Makes That — showroom (public + member portal) / workshop (admin)
+   Monti Makes It — showroom (public + member portal) / workshop (admin)
    ========================================================================== */
 :root{
   --ground:#F5F4EF; --ground-2:#EDEDE6; --surface:#FFFFFF; --surface-2:#F9F8F4; --sunk:#EFEEE7;
@@ -242,22 +242,110 @@ details.more>.more-body{padding-top:1.5rem;}
 .hero-cta{display:flex; gap:1rem; margin-top:2.5rem; flex-wrap:wrap;}
 .hero-note{font-size:.84rem; color:var(--ink-3); margin-top:1.5rem;}
 
-.ladder{display:grid; gap:1px; background:var(--line); border-block:1px solid var(--line);}
-@media(min-width:760px){.ladder{grid-template-columns:repeat(3,1fr);}}
-/* 0.35cm is the floor for the gutter on the right of each price cell, so the
-   figures never run up against the edge of the band. */
-/* Symmetric padding on every side, floored at 0.35cm, content centred — the three
-   cells read as one even comparison and nothing touches a wall. */
-.ladder-cell{background:var(--ground); padding:2rem max(0.35cm, 1.5rem); text-align:center;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;}
-.ladder-cell .who{font-family:var(--mono); font-size:.66rem; letter-spacing:.14em;
+.chain{display:grid; gap:1px; background:var(--line); border-block:1px solid var(--line);}
+@media(min-width:760px){.chain{grid-template-columns:repeat(2,1fr);}}
+.chain-cell{background:var(--ground); padding:2rem max(0.35cm, 1.5rem);
+  display:flex; flex-direction:column; gap:.75rem;}
+.chain-cell .who{font-family:var(--mono); font-size:.66rem; letter-spacing:.14em;
   text-transform:uppercase; color:var(--ink-3);}
-.ladder-cell .amt{font-size:2.4rem; font-weight:600; letter-spacing:-.04em; margin-top:.5rem;
-  font-variant-numeric:tabular-nums; color:var(--ink-3); line-height:1.05;}
-.ladder-cell .sub{font-size:.82rem; color:var(--ink-3); margin-top:.45rem;}
-.ladder-cell.ours .who{color:var(--green);}
-.ladder-cell.ours .amt{color:var(--green);}
-.ladder-cell.ours .sub{color:var(--ink-2);}
+.chain-cell p{margin:0; color:var(--ink-2); font-size:.95rem; line-height:1.55; max-width:44ch;}
+.chain-cell.ours{background:var(--surface);}
+.chain-cell.ours .who{color:var(--green);}
+.chain-cell.ours p{color:var(--ink);}
+/* the item image viewer (§10.3) — sized for a thumb first: every control is at
+   least 44px, and navigation sits where a thumb reaches on a phone held
+   one-handed rather than in the far corners. */
+.iv-thumbs{list-style:none; margin:0; padding:0; display:grid; gap:.75rem;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+.iv-thumb{width:100%; padding:0; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface); cursor:zoom-in; overflow:hidden; text-align:left;
+  display:flex; flex-direction:column; min-height:44px;}
+.iv-thumb:hover{border-color:var(--green-line);}
+.iv-thumb:focus-visible{outline:2px solid var(--green); outline-offset:2px;}
+.iv-thumb-media{display:block; background:var(--sunk);}
+.iv-thumb-media svg{width:100%; height:auto; display:block;}
+.iv-thumb-caption{padding:.55rem .7rem; font-size:.8rem; color:var(--ink-2); line-height:1.35;}
+.iv-dialog{position:fixed; inset:0; z-index:90; background:rgba(20,33,26,.97);
+  display:grid; grid-template-rows:auto 1fr;}
+body.iv-open{overflow:hidden;}
+.iv-bar{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:.6rem max(0.35cm,.75rem); color:var(--on-accent);}
+.iv-count{font-family:var(--mono); font-size:.78rem; letter-spacing:.08em; opacity:.8;}
+.iv-tools{display:flex; gap:.4rem;}
+.iv-btn{min-width:44px; min-height:44px; padding:0 .7rem; background:transparent;
+  color:var(--on-accent); border:1px solid rgba(255,255,255,.28);
+  border-radius:var(--radius-sm); font-size:1.05rem; cursor:pointer;}
+.iv-btn:focus-visible{outline:2px solid var(--on-accent); outline-offset:2px;}
+.iv-btn[aria-pressed="true"]{background:rgba(255,255,255,.18);}
+.iv-diagram{font-size:.82rem;}
+.iv-stage{display:grid; place-items:center; overflow:hidden; padding:0 .5rem 1rem;}
+.iv-slide{margin:0; display:grid; gap:.75rem; max-width:min(96vw,1100px);}
+.iv-media{position:relative; display:grid; place-items:center;
+  transition:transform .18s ease; transform-origin:center center;}
+.iv-media > svg:not(.iv-callouts){max-width:100%; max-height:66vh; display:block;
+  border-radius:var(--radius); background:var(--surface);}
+.iv-slide figcaption{color:var(--on-accent); font-size:.88rem; text-align:center;
+  display:flex; flex-direction:column; gap:.2rem;}
+.iv-source{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; opacity:.65;}
+/* callouts sit outside the subject on a leader line — a label drawn over the
+   part it names covers the part it names */
+.iv-callouts{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
+.iv-callouts line{stroke:var(--brass); stroke-width:1.25;}
+.iv-callouts circle{fill:var(--brass);}
+.iv-callouts text{fill:var(--on-accent); font-size:12px; font-family:var(--mono);
+  paint-order:stroke; stroke:rgba(20,33,26,.85); stroke-width:3px;}
+.iv-nav{position:fixed; bottom:1.1rem; width:56px; height:56px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.28); background:rgba(20,33,26,.6);
+  color:var(--on-accent); font-size:1.6rem; line-height:1; cursor:pointer;}
+.iv-prev{left:max(0.35cm,.9rem);} .iv-next{right:max(0.35cm,.9rem);}
+.iv-nav:focus-visible{outline:2px solid var(--on-accent); outline-offset:2px;}
+@media(min-width:860px){.iv-nav{top:50%; bottom:auto; transform:translateY(-50%);}}
+/* `hidden` sets display:none from the UA stylesheet, and any author `display`
+   rule beats it — so `.iv-dialog{display:grid}` left a full-screen fixed
+   overlay sitting over the page, invisible but swallowing every click on it.
+   This has to win over the display rule above, not sit before it. */
+.iv-dialog[hidden]{display:none !important;}
+.iv-callouts[hidden]{display:none !important;}
+.iv-slide[hidden]{display:none !important;}
+.iv-empty{border:1px dashed var(--line); border-radius:var(--radius); padding:1.5rem;
+  color:var(--ink-2); background:var(--surface-2);}
+.iv-empty p{margin:0 0 .35rem;}
+@media(prefers-reduced-motion:reduce){.iv-media{transition:none;}}
+
+/* the Tooling Line (§11.3) */
+.tooling{border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+  padding:1rem 1.1rem; display:grid; gap:.55rem; margin:0;}
+.tooling dt{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3);}
+.tooling dd{margin:0 0 .5rem; color:var(--ink); font-size:.93rem; line-height:1.5;}
+.tooling .cost{font-variant-numeric:tabular-nums; font-weight:600;}
+.tooling-callout{border:1px solid var(--wait); border-left-width:4px;
+  border-radius:var(--radius); background:var(--wait-soft); padding:.9rem 1.05rem;
+  color:var(--ink); font-size:.95rem; line-height:1.55; margin-bottom:.85rem;}
+
+/* the public catalogue (§8.2) — ranges, never a negotiated price */
+.cat-grid{display:grid; gap:1.25rem; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
+.cat-card{border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface); overflow:hidden; display:flex; flex-direction:column;
+  cursor:pointer;}
+.cat-card:hover{border-color:var(--green-line);}
+.cat-card-media{background:var(--sunk);}
+.cat-card-media svg{width:100%; height:auto; display:block;}
+.cat-card-body{padding:1.1rem; display:grid; gap:.5rem;}
+.cat-range{font-family:var(--mono); font-size:1.15rem; color:var(--green);
+  font-variant-numeric:tabular-nums;}
+.cat-range-note{font-size:.78rem; color:var(--ink-3);}
+.cat-meta{display:flex; gap:1rem; flex-wrap:wrap; font-size:.82rem; color:var(--ink-2);}
+.cat-cta{padding:0 1.1rem 1.1rem; display:flex; gap:.5rem; flex-wrap:wrap;}
+
+/* a stated condition with what to do about it — used where a state would
+   otherwise be a silent failure, such as a paused account meeting an item it
+   cannot order (§8.5) */
+.notice{border:1px solid var(--line); border-left-width:4px; border-radius:var(--radius);
+  padding:.9rem 1.05rem; font-size:.93rem; line-height:1.55; background:var(--surface-2);}
+.notice strong{display:block; margin-bottom:.2rem;}
+.notice-wait{border-color:var(--wait); background:var(--wait-soft);}
+
 .ladder-note{padding:1.25rem max(0.35cm, 1.5rem) 0; font-size:.84rem; color:var(--ink-3);
   text-align:center; max-width:78ch; margin-inline:auto;}
 
@@ -289,7 +377,11 @@ details.more>.more-body{padding-top:1.5rem;}
   background:var(--green-soft); padding:.08rem .4rem; border-radius:100px;}
 .side-foot{margin-top:auto; padding-top:1rem; border-top:1px solid var(--line);}
 .main{min-width:0; display:flex; flex-direction:column;}
-.main-head{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+/* At 390px the heading and the action button do not fit on one line, and a
+   non-wrapping flex row pushes the button past the viewport edge — §1.6
+   counts a control leaving the safe viewport at a tested breakpoint as a P2. */
+.main-head{display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; flex-wrap:wrap;
   padding:1.25rem 2rem; border-bottom:1px solid var(--line); background:var(--ground);}
 .main-head .eyebrow{font-family:var(--mono); font-size:.66rem; text-transform:uppercase;
   letter-spacing:.14em; color:var(--ink-3); margin-bottom:.25rem;}
@@ -438,6 +530,7 @@ table.data tfoot tr:last-child td{border-bottom:0;}
   font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; background:var(--brass-soft);
   color:var(--brass); border:1px solid color-mix(in srgb, var(--brass) 30%, transparent);}
 .tag-green{background:var(--green-soft); color:var(--green); border-color:var(--green-line);}
+.tag-wait{background:var(--wait-soft); color:var(--wait); border-color:var(--wait);}
 .tag-muted{background:var(--sunk); color:var(--ink-3); border-color:var(--line);}
 .tag-row{display:flex; flex-wrap:wrap; gap:.35rem;}
 button.tag{font-family:var(--mono);}
@@ -577,27 +670,32 @@ var RANGES = [
 // Demo accounts. The names are placeholders for testing — swap them before anyone
 // outside the team sees this, since a real person's name on a customer record
 // reads as a real customer.
-var DEMO_NAMES = ["Serena Williams", "Keanu Reeves", "Zendaya", "Idris Elba", "Rihanna"];
+/* Account 1 is Boarshead, the real first client (Appendix B). The rest are
+   scaffolding so the admin bay has more than one row to show, and they are
+   named as scaffolding — the previous set was five real people's names, which
+   on a customer record reads as five real customers. */
+var DEMO_NAMES = ["Boarshead", "Demo account — packaging", "Demo account — apparel",
+                  "Demo account — hardware", "Demo account — beauty"];
 var CLIENTS = [1,2,3,4,5].map(function (n) {
   var joined = addDays(TODAY, -(140 - n * 17));
   return {
     id: n,
-    ref: "MMT-C-" + (1000 + n),
+    ref: "MMI-C-" + (1000 + n),
     name: DEMO_NAMES[n-1],
     contact: DEMO_NAMES[n-1],
-    email: "client" + n + "@montanomakesthat.com",
+    email: n === 1 ? "orders@boarshead.example" : "demo" + n + "@montimakesit.example",
     phone: "+1 555 010" + n,
-    country: ["United States","United States","United States","United Kingdom","Barbados"][n-1],
-    city: ["Palm Beach Gardens","Los Angeles","Oakland","London","Bridgetown"][n-1],
+    country: ["United States","United States","United States","United Kingdom","United States"][n-1],
+    city: [null,"Los Angeles","Oakland","London","Miami"][n-1],
     membership: "MEMBER",
     memberSince: joined,
     quoteLimit: n === 1 ? 16 : 10,
     cycleDays: 30,
     // The first account carries a tag, so the item tagged the same way appears in their portal.
     // Clients 2-5 carry none, so theirs stay quote-only.
-    tags: n === 1 ? ["client-1"] : [],
+    tags: n === 1 ? ["carry-out"] : [],
     freightWaived: n === 1,          // the owner absorbs freight on this account
-    owner: "Tyler Montano"
+    owner: "Tyler Monti"
   };
 });
 
@@ -616,7 +714,7 @@ var QUOTES = [];
    [3, "Aluminium travel tin, 90mm", 8000, 9],
    [5, "Cotton drawstring dust bag", 15000, 20]].forEach(function (row) {
     QUOTES.push({
-      ref: "MMT-Q-" + (++qn), clientId: row[0], title: row[1], qty: row[2],
+      ref: "MMI-Q-" + (++qn), clientId: row[0], title: row[1], qty: row[2],
       unit: null, total: null, status: "NEW",
       created: new Date(TODAY.getTime() - row[3] * 3600 * 1000),
       due: new Date(TODAY.getTime() + (24 - row[3]) * 3600 * 1000)
@@ -631,7 +729,7 @@ var QUOTES = [];
       var qty = [500,1000,2500,5000,10000,25000][Math.floor(rnd()*6)];
       var unit = 80 + Math.floor(rnd() * 3200);
       QUOTES.push({
-        ref: "MMT-Q-" + (++qn),
+        ref: "MMI-Q-" + (++qn),
         clientId: c.id,
         title: QUOTE_TITLES[(ci * 3 + i) % QUOTE_TITLES.length],
         qty: qty,
@@ -646,49 +744,178 @@ var QUOTES = [];
 })();
 
 /* --- the items catalog: what the floor can build. Nothing is assigned to a client yet. --- */
+/* §11.3 — the Tooling Line. Four facts, and never a fifth: what it is, what it
+   costs (one number), who owns it, and how it is being handled in the strategy
+   on screen. What the tool cost us, its lifespan, its amortization internals —
+   none of that is here, because none of it is ever shown. */
+var TOOLING_OWNERSHIP =
+  "You own it once it is paid for. We hold it, store it and maintain it here. " +
+  "If you ever want it moved, we release it to you or to another factory at your cost.";
+
+/* §11.3.4 — at or above 5% of landed unit cost the line is promoted to a
+   callout above the price. The second sentence of that callout is mandatory:
+   a high tooling percentage is bearable precisely because it does not recur,
+   and a client who is not told that reads it as the real price. */
+var TOOLING_THRESHOLD = 0.05;
+
+function toolingLine(tool, qty, landedUnitCents) {
+  var perUnit = tool.cost / qty;
+  var share = landedUnitCents ? perUnit / landedUnitCents : 0;
+  var material = share >= TOOLING_THRESHOLD;
+  return {
+    what: tool.what,
+    cost: tool.cost,
+    ownership: TOOLING_OWNERSHIP,
+    treatment: "Spread across this " + qty.toLocaleString("en-US") + "-unit run — adds " +
+               perUnitPrice(perUnit) + " per unit.",
+    share: share,
+    material: material,
+    callout: material
+      ? ("At this quantity, tooling is " + Math.round(share * 100) + "% of your unit cost. " +
+         "It is a one-time charge of " + money(tool.cost) + " — your next run of the same item " +
+         "has no tooling cost at all.")
+      : null
+  };
+}
+
+/* A third of a cent rendered as "$0.00" reads as free, and as "$0.0034000" it
+   claims a precision we do not have. Four decimals, trailing zeros dropped. */
+function perUnitPrice(cents) {
+  var d = cents / 100;
+  if (d >= 0.01) return money(cents);
+  return "$" + String(d.toFixed(4)).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+/* A drawing, not a photograph. We have not been sent product photography, and a
+   stock image of somebody else's container presented as Boarshead's would be
+   fabricated evidence. The callouts name only what the SKU itself states. */
+var CONTAINER_SVG =
+  '<svg viewBox="0 0 320 240" role="img" aria-label="Line drawing of a hinged-lid carry-out ' +
+  'container showing the lid, the tapered sidewall and the printable front panel." ' +
+  'xmlns="http://www.w3.org/2000/svg">' +
+  '<rect width="320" height="240" fill="#F9F8F4"/>' +
+  '<path d="M78 96 L242 96 L226 188 L94 188 Z" fill="#EDE7DA" stroke="#8A958D" stroke-width="2"/>' +
+  '<path d="M78 96 L242 96 L250 74 L70 74 Z" fill="#E3DBCA" stroke="#8A958D" stroke-width="2"/>' +
+  '<path d="M70 74 L250 74 L250 62 L70 62 Z" fill="#D8CEB8" stroke="#8A958D" stroke-width="2"/>' +
+  '<rect x="118" y="118" width="84" height="34" rx="3" fill="none" stroke="#B08D4F" ' +
+  'stroke-width="1.5" stroke-dasharray="5 3"/>' +
+  '<text x="160" y="140" text-anchor="middle" font-family="monospace" font-size="11" ' +
+  'fill="#B08D4F">PRINT AREA</text></svg>';
+
+var CONTAINER_IMAGES = [{
+  svg: CONTAINER_SVG,
+  caption: "Form and print area",
+  source: "Placeholder drawing · replaced when the client's own photographs arrive",
+  annotations: [
+    {x: 50, y: 26, label: "Hinged lid"},
+    {x: 50, y: 56, label: "Print area, one panel"},
+    {x: 30, y: 78, label: "Sidewall taper — stacks"},
+    {x: 72, y: 90, label: "Base"}
+  ]
+}];
+
+/* Appendix B: $0.20 → $0.14, driven by *both* order quantity and container
+   spec. That is a matrix, not a line. Rows are spec tiers, columns are quantity
+   tiers, and the corners are the two stated band ends. */
+var BOARSHEAD_QTY_TIERS = [[20000, 49999], [50000, 149999], [150000, 499999], [500000, null]];
+var BOARSHEAD_SPEC_TIERS = ["Plain — single size, no print", "One colour — logo, one panel",
+                            "Full colour — wrap print", "Complex — window, coating or insert"];
+var BOARSHEAD_GRID = [[17,16,15,14],[18,17,16,15],[19,18,17,16],[20,19,18,17]];
+
 var CATALOG = [
-  {sku:"MMT-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition", cat:"Bags & leather goods",
+  /* Boarshead's containers. `public` and `range` are the half everyone sees;
+     `price` and `negotiated` are the half only the registered member sees, and
+     §8.6 is explicit that the range is entered deliberately rather than derived
+     from anyone's negotiated price. */
+  {sku:"MMI-B-0101", name:"Branded carry-out container, 750ml", cat:"Packaging & print",
+   materials:"Not confirmed — see the open questions on this item",
+   price:16, moq:20000, lead:32, tags:["carry-out"], public:true,
+   range:[14, 20], typicalMoq:20000, typicalLead:32,
+   drivers:"how many you order, and how the container is specified — size, material, and how much " +
+           "of it is printed. More units and a simpler print move you toward the bottom of the " +
+           "range; smaller runs, full-wrap colour, a window or a coating move you up.",
+   description:"Hinged-lid carry-out container in the 750ml size, printed to your artwork. " +
+     "The everyday one — it is the volume line, and where the price band bottoms out.",
+   images:CONTAINER_IMAGES,
+   tool:{ref:"MMI-T-2001", what:"One cutting die and four print plates.", cost:84000},
+   negotiated:"Priced off your published quantity × spec matrix.",
+   genome:[
+     {section:"What it is", body:"Hinged-lid carry-out container, 750ml, printed to your artwork."},
+     {section:"Materials", unknown:true,
+      body:"Board grade and weight are not stated. We have not assumed one — tell us what the " +
+           "current containers are made from, or send one and we will measure it."},
+     {section:"How it is made",
+      body:"Die-cut and printed flat, then folded. The cutting die and the print plates are the " +
+           "tooling; the tooling line below says what that costs and who owns it."},
+     {section:"Quality", unknown:true,
+      body:"Food-contact certification requirements have not been confirmed for this line. " +
+           "Carry-out containers usually need them; we are not assuming which, and no run goes " +
+           "ahead until we have it in writing."},
+     {section:"Logistics", unknown:true,
+      body:"Destination, incoterm and freight lane are not yet on file, so no landed figure here " +
+           "includes freight. Country of origin is China."},
+     {section:"History", body:"First run not yet placed. This section fills in as orders complete."}
+   ]},
+  {sku:"MMI-B-0102", name:"Branded carry-out container, 1000ml", cat:"Packaging & print",
+   materials:"Not confirmed — see the open questions on this item",
+   price:17, moq:20000, lead:32, tags:["carry-out"], public:true,
+   range:[15, 20], typicalMoq:20000, typicalLead:32,
+   drivers:"the same two things as the 750ml — order quantity, and how the container is specified. " +
+           "The larger size uses more board, so its range starts a cent higher.",
+   description:"The larger size in the same family, on the same tooling family and the same board. " +
+     "Ordered alongside the 750ml on most runs.",
+   images:CONTAINER_IMAGES,
+   negotiated:"Priced off your published quantity × spec matrix."},
+  {sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition", cat:"Bags & leather goods",
    materials:"18oz waxed cotton duck, vegetable-tanned leather, solid brass", price:2980, moq:250, lead:34,
    tags:["client-1"],
    description:"The tote we built for this account: 18oz waxed duck body, vegetable-tanned leather handles, " +
      "solid brass hardware, interior zip pocket, debossed logo on the base panel.",
    negotiated:"Locked at $29.80 through Q4 at 250+ units."},
-  {sku:"MMT-2001", name:"Waxed canvas tote, 18L", cat:"Bags & leather goods",
+  {sku:"MMI-2001", name:"Waxed canvas tote, 18L", cat:"Bags & leather goods",
    materials:"18oz waxed cotton duck, veg-tan leather, solid brass", price:298, moq:500, lead:38,
-   tags:["bags","leather"]},
-  {sku:"MMT-2002", name:"Kraft coffee pouch, 12oz, valve", cat:"Packaging & print",
-   materials:"Kraft paper / PLA liner", price:36, moq:10000, lead:30, tags:["packaging","food-safe"]},
-  {sku:"MMT-2003", name:"Matte black growler, 64oz", cat:"Metal & machined parts",
-   materials:"304 stainless steel", price:1840, moq:500, lead:35, tags:["drinkware","metal"]},
-  {sku:"MMT-2004", name:"Recycled padded mailer, 10x13", cat:"Packaging & print",
-   materials:"Recycled kraft, recycled paper padding", price:41, moq:20000, lead:24, tags:["packaging","shipping"]},
-  {sku:"MMT-2005", name:"Airless pump bottle, 50ml", cat:"Molded plastics",
-   materials:"Frosted PP, matte gold collar", price:168, moq:10000, lead:45, tags:["packaging","beauty"]},
-  {sku:"MMT-2006", name:"Rigid box, magnetic close", cat:"Packaging & print",
-   materials:"1200gsm greyboard, soft-touch lamination", price:212, moq:2000, lead:32, tags:["packaging","retail"]},
-  {sku:"MMT-2007", name:"Anodized carabiner, custom", cat:"Metal & machined parts",
-   materials:"6061 aluminum, hard anodize", price:186, moq:5000, lead:34, tags:["metal"]},
-  {sku:"MMT-2008", name:"Silicone gasket, food grade", cat:"Silicone & rubber",
-   materials:"Platinum-cure silicone, 40–70 Shore A", price:72, moq:8000, lead:28, tags:["food-safe"]}
+   tags:["bags","leather"], public:true, range:[253, 372], typicalMoq:500, typicalLead:38,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2002", name:"Kraft coffee pouch, 12oz, valve", cat:"Packaging & print",
+   materials:"Kraft paper / PLA liner", price:36, moq:10000, lead:30, tags:["packaging","food-safe"], public:true, range:[30, 45], typicalMoq:10000, typicalLead:30,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2003", name:"Matte black growler, 64oz", cat:"Metal & machined parts",
+   materials:"304 stainless steel", price:1840, moq:500, lead:35, tags:["drinkware","metal"], public:true, range:[1564, 2300], typicalMoq:500, typicalLead:35,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2004", name:"Recycled padded mailer, 10x13", cat:"Packaging & print",
+   materials:"Recycled kraft, recycled paper padding", price:41, moq:20000, lead:24, tags:["packaging","shipping"], public:true, range:[34, 51], typicalMoq:20000, typicalLead:24,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2005", name:"Airless pump bottle, 50ml", cat:"Molded plastics",
+   materials:"Frosted PP, matte gold collar", price:168, moq:10000, lead:45, tags:["packaging","beauty"], public:true, range:[142, 210], typicalMoq:10000, typicalLead:45,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2006", name:"Rigid box, magnetic close", cat:"Packaging & print",
+   materials:"1200gsm greyboard, soft-touch lamination", price:212, moq:2000, lead:32, tags:["packaging","retail"], public:true, range:[180, 265], typicalMoq:2000, typicalLead:32,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2007", name:"Anodized carabiner, custom", cat:"Metal & machined parts",
+   materials:"6061 aluminum, hard anodize", price:186, moq:5000, lead:34, tags:["metal"], public:true, range:[158, 232], typicalMoq:5000, typicalLead:34,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2008", name:"Silicone gasket, food grade", cat:"Silicone & rubber",
+   materials:"Platinum-cure silicone, 40–70 Shore A", price:72, moq:8000, lead:28, tags:["food-safe"], public:true, range:[61, 90], typicalMoq:8000, typicalLead:28,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."}
 ];
 
 /* --- what the first account has already bought, so the timeline has something in it --- */
 var ORDERS = [
-  {ref:"MMT-O-2431", clientId:1, sku:"MMT-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+  {ref:"MMI-O-2431", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
    unit:2980, qty:500, method:"ACH",
    ordered:addDays(TODAY,-46), paid:addDays(TODAY,-45), reviewed:addDays(TODAY,-44),
    production:addDays(TODAY,-44), shipped:addDays(TODAY,-28), delivered:addDays(TODAY,-9),
    carrier:"Maersk", tracking:"MAEU7742019", status:"DELIVERED",
    goods:1490000, freightEstimate:389400, freightWaived:true, freightCharged:0,
    convenienceFee:22350, processingFee:45153, total:1557503},
-  {ref:"MMT-O-2478", clientId:1, sku:"MMT-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+  {ref:"MMI-O-2478", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
    unit:2980, qty:250, method:"CARD",
    ordered:addDays(TODAY,-11), paid:addDays(TODAY,-11), reviewed:addDays(TODAY,-10),
    production:addDays(TODAY,-10), shipped:addDays(TODAY,-2), delivered:null,
    carrier:"DHL Express", tracking:"DHL8830142255", status:"SHIPPED",
    goods:745000, freightEstimate:210782, freightWaived:true, freightCharged:0,
    convenienceFee:11175, processingFee:22589, total:778764},
-  {ref:"MMT-O-2502", clientId:1, sku:"MMT-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+  {ref:"MMI-O-2502", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
    unit:2980, qty:250, method:"ACH",
    ordered:addDays(TODAY,-2), paid:addDays(TODAY,-1), reviewed:null,
    production:null, shipped:null, delivered:null,
@@ -784,6 +1011,7 @@ function deltaHtml(v) {
    ========================================================================== */
 var S = {
   route: "home",
+  catSku: null,
   user: null,               // {kind:'admin'} | {kind:'client', id:n}
   adminTab: "revenue",
   adminClient: null,
@@ -929,9 +1157,10 @@ function demoBar() {
 function topbar() {
   return '<header class="topbar"><div class="container topbar-inner">' +
     '<div class="brand" data-act="home"><span class="brand-mark">M</span>' +
-      '<span><span class="brand-name">Montano Makes That</span>' +
+      '<span><span class="brand-name">Monti Makes It</span>' +
       '<span class="brand-sub">Manufacturer · direct</span></span></div>' +
     '<nav class="nav-links">' +
+      '<a data-act="catalogue">Catalogue</a>' +
       '<a data-act="how">How it works</a>' +
       '<a data-act="membership">Membership</a>' +
       (S.user ? '<a data-act="' + (S.user.kind === "admin" ? "admin" : "portal") + '">' +
@@ -942,8 +1171,9 @@ function topbar() {
 function footer() {
   return '<footer class="footer"><div class="container row-between wrap">' +
     '<div class="row" style="gap:.7rem"><span class="brand-mark">M</span>' +
-    '<span class="tiny">Montano Makes That · we are the factory</span></div>' +
+    '<span class="tiny">Monti Makes It · we are the manufacturer</span></div>' +
     '<div class="row wrap" style="gap:1.5rem">' +
+      '<a data-act="catalogue">Catalogue</a>' +
       '<a data-act="quote">Request a quote</a><a data-act="apply">Apply for membership</a>' +
       '<a data-act="how">How it works</a><a data-act="login">Member login</a>' +
     '</div></div></footer>';
@@ -956,10 +1186,11 @@ function viewHome() {
   return topbar() +
   '<section class="hero"><div class="container hero-inner">' +
     '<span class="eyebrow-label">Manufacturer · direct from the floor</span>' +
-    '<h1 class="wordmark"><span>Montano</span><span>Makes <span class="accent">That</span></span></h1>' +
+    '<h1 class="wordmark"><span>Monti</span><span>Makes <span class="accent">It</span></span></h1>' +
     '<div class="hero-rule"></div>' +
-    '<p class="hero-line">We are the factory. You get the price it costs to make your product properly — ' +
-      'because we\'d rather make everything you sell for the next ten years than squeeze you once.</p>' +
+    '<p class="hero-line">We are the manufacturer. There is no middleman between you and the line ' +
+      'that makes your product — so you get the price it costs to make it properly, because we\'d ' +
+      'rather make everything you sell for the next ten years than squeeze you once.</p>' +
     '<div class="hero-cta">' +
       '<button class="btn btn-primary btn-xl" data-act="quote">Request a Quote</button>' +
       '<button class="btn btn-outline btn-xl" data-act="apply">Apply for Membership</button>' +
@@ -967,16 +1198,17 @@ function viewHome() {
     '<p class="hero-note">A quote is free and takes two minutes. Membership is how you buy — and not everyone is accepted.</p>' +
   '</div></section>' +
 
-  '<section class="quiet-band"><div class="container"><div class="ladder">' +
-    '<div class="ladder-cell"><div class="who">Through an agent</div>' +
-      '<div class="amt tnum">+54%</div><div class="sub">over the factory price</div></div>' +
-    '<div class="ladder-cell"><div class="who">Through a trading company</div>' +
-      '<div class="amt tnum">+31%</div><div class="sub">over the factory price</div></div>' +
-    '<div class="ladder-cell ours"><div class="who">Direct from us</div>' +
-      '<div class="amt tnum">0%</div><div class="sub">you pay what it costs to make</div></div>' +
-  '</div><p class="ladder-note">Same product, same materials, same floor — the only thing that changes is ' +
-    'how many people took a cut on the way to you. Illustrative; the markup on your product depends on ' +
-    'who\'s in the chain.</p>' +
+  '<section class="quiet-band"><div class="container"><div class="chain">' +
+    '<div class="chain-cell"><div class="who">The usual chain</div>' +
+      '<p>Agent, trading company, importer, distributor. Each one takes a margin, and each ' +
+        'margin is applied to the one before it.</p></div>' +
+    '<div class="chain-cell ours"><div class="who">Buying from us</div>' +
+      '<p>You and the line that makes your product. One margin, and you can see what it is ' +
+        'applied to.</p></div>' +
+  '</div><p class="ladder-note">We do not publish a savings percentage, because a percentage ' +
+    'without a baseline is not a number — it is a claim. Instead, once you are a member, every ' +
+    'item you order carries its own savings ledger, measured against a baseline you supply and ' +
+    'we record. Where there is no baseline we can source, that item shows no savings figure at all.</p>' +
   '</div></section>' +
 
   '<section class="section"><div class="container"><h2>Why we\'re this cheap</h2>' +
@@ -987,6 +1219,9 @@ function viewHome() {
         '<p>We quote low because we\'re betting on the relationship, not on this run.</p></div>' +
       '<div class="pillar"><div class="pillar-rule"></div><h3>Landed, not "ex-works"</h3>' +
         '<p>Freight, duties and customs are in the number. The price you approve is the price you pay.</p></div>' +
+      '<div class="pillar"><div class="pillar-rule"></div><h3>Made in China</h3>' +
+        '<p>That is where the line is, and we would rather you read it here than find it on a ' +
+          'customs form. HS code, origin and duty rate sit on every estimate we send.</p></div>' +
     '</div></div></section>' +
 
   '<section class="section quiet-band"><div class="container"><div class="measure">' +
@@ -1004,6 +1239,302 @@ function viewHome() {
       '<button class="btn btn-primary btn-xl" data-act="quote">Request a Quote</button>' +
       '<button class="btn btn-outline btn-xl" data-act="apply">Apply for Membership</button>' +
     '</div></div></section>' + footer();
+}
+
+/* --- the item image viewer (§10.3) --------------------------------------
+   One component, every surface that shows an item: the public catalogue, the
+   member's own item page, the genome. Mobile is the first case rather than the
+   fallback — a member opens this in a warehouse, on a phone, one-handed — so
+   swipe moves between images, double-tap zooms, and every control is 44px.
+   Pointer and keyboard get the same capability through the toolbar and arrow
+   keys.
+
+   An item with no images gets an explicit empty state, never blank space: a
+   missing viewer on a portal item is a P1, and silence reads as a broken page
+   rather than as an absence. */
+function imageViewer(images, itemName, id) {
+  if (!images || !images.length) {
+    return '<div class="iv-empty"><p>No images on this item yet.</p>' +
+      '<p class="tiny dim">We photograph and draw every item we make. If this one is yours and ' +
+      'you need to see it, ask and we will get the set up.</p></div>';
+  }
+  return '<div class="iv" data-iv="' + esc(id) + '">' +
+    '<ul class="iv-thumbs">' + images.map(function (img, i) {
+      return '<li><button type="button" class="iv-thumb" data-iv-open="' + i + '" ' +
+        'aria-label="Open image ' + (i + 1) + ' of ' + images.length + ': ' + esc(img.caption) + '">' +
+        '<span class="iv-thumb-media">' + img.svg + '</span>' +
+        '<span class="iv-thumb-caption">' + esc(img.caption) + '</span></button></li>';
+    }).join("") + '</ul>' +
+    '<div class="iv-dialog" role="dialog" aria-modal="true" aria-label="' + esc(itemName) + ' images" hidden>' +
+      '<div class="iv-bar">' +
+        '<span class="iv-count"><span class="iv-now">1</span> / ' + images.length + '</span>' +
+        '<span class="iv-tools">' +
+          '<button type="button" class="iv-btn iv-diagram" aria-pressed="false">Diagram</button>' +
+          '<button type="button" class="iv-btn iv-out" aria-label="Zoom out">&minus;</button>' +
+          '<button type="button" class="iv-btn iv-in" aria-label="Zoom in">+</button>' +
+          '<button type="button" class="iv-btn iv-close" aria-label="Close images">&times;</button>' +
+        '</span></div>' +
+      '<div class="iv-stage">' + images.map(function (img, i) {
+        return '<figure class="iv-slide"' + (i ? ' hidden' : '') +
+          (img.annotations ? " data-annotations='" + JSON.stringify(img.annotations) + "'" : "") + '>' +
+          '<div class="iv-media">' + img.svg +
+            '<svg class="iv-callouts" viewBox="0 0 100 100" preserveAspectRatio="none" hidden></svg>' +
+          '</div>' +
+          '<figcaption>' + esc(img.caption) +
+            '<span class="iv-source">' + esc(img.source) + '</span></figcaption></figure>';
+      }).join("") + '</div>' +
+      '<button type="button" class="iv-nav iv-prev" aria-label="Previous image">&lsaquo;</button>' +
+      '<button type="button" class="iv-nav iv-next" aria-label="Next image">&rsaquo;</button>' +
+    '</div></div>';
+}
+
+function wireViewer(root) {
+  var dialog = root.querySelector(".iv-dialog");
+  if (!dialog) return;
+  var slides = [].slice.call(root.querySelectorAll(".iv-slide"));
+  var nowEl = root.querySelector(".iv-now");
+  var diagramBtn = root.querySelector(".iv-diagram");
+  var steps = [1, 1.75, 3];
+  var index = 0, zoom = 0, opener = null;
+
+  function applyZoom() {
+    var media = slides[index].querySelector(".iv-media");
+    if (media) media.style.transform = "scale(" + steps[zoom] + ")";
+  }
+  function drawCallouts() {
+    var slide = slides[index], svg = slide.querySelector(".iv-callouts");
+    if (!svg) return;
+    var raw = slide.getAttribute("data-annotations");
+    var on = diagramBtn && diagramBtn.getAttribute("aria-pressed") === "true";
+    // `hidden` is a property of HTMLElement and an <svg> is an SVGElement, so
+    // `svg.hidden = false` sets a JavaScript expando and leaves the attribute
+    // exactly where it was. The attribute has to be moved directly.
+    if (!raw || !on) { svg.setAttribute("hidden", ""); svg.innerHTML = ""; return; }
+    var notes = JSON.parse(raw);
+
+    /* Draw in the element's real pixel box rather than a normalised viewBox.
+       A 0-100 box with preserveAspectRatio="none" stretches the glyphs along
+       with the geometry, so labels came out distorted and oversized on a wide
+       image — and a callout that is not legible is not a callout. */
+    var box = svg.getBoundingClientRect();
+    var w = box.width || 320, h = box.height || 240;
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    /* Labels sit against whichever edge is further from the point they name,
+       at a fixed inset — so a callout never covers its own subject, and a long
+       one never runs off the canvas at a narrow viewport. */
+    var inset = Math.max(8, w * 0.03);
+    svg.innerHTML = notes.map(function (n) {
+      var x = (n.x || 50) / 100 * w, y = (n.y || 50) / 100 * h;
+      var toLeft = x > w / 2;
+      var lx = toLeft ? inset : w - inset;
+      return '<line x1="' + x + '" y1="' + y + '" x2="' + lx + '" y2="' + y + '"/>' +
+        '<circle cx="' + x + '" cy="' + y + '" r="3"/>' +
+        '<text x="' + lx + '" y="' + (y - 6) + '" text-anchor="' +
+        (toLeft ? "start" : "end") + '">' + esc(n.label) + '</text>';
+    }).join("");
+    svg.removeAttribute("hidden");
+  }
+
+  function render() {
+    slides.forEach(function (s, i) { s.hidden = i !== index; });
+    if (nowEl) nowEl.textContent = String(index + 1);
+    if (diagramBtn) diagramBtn.hidden = !slides[index].getAttribute("data-annotations");
+    applyZoom(); drawCallouts();
+  }
+  function move(d) { index = (index + d + slides.length) % slides.length; zoom = 0; render(); }
+  function open(i, from) {
+    index = i; zoom = 0; opener = from || null;
+    dialog.hidden = false; document.body.classList.add("iv-open");
+    render(); dialog.querySelector(".iv-close").focus();
+  }
+  function close() {
+    dialog.hidden = true; document.body.classList.remove("iv-open");
+    /* Focus returns to the thumbnail that opened the dialog. Dropping it on the
+       body sends a keyboard user back to the top of a long catalogue page. */
+    if (opener) opener.focus();
+  }
+
+  root.querySelectorAll("[data-iv-open]").forEach(function (thumb) {
+    thumb.addEventListener("click", function () {
+      open(parseInt(thumb.getAttribute("data-iv-open"), 10) || 0, thumb);
+    });
+  });
+  dialog.querySelector(".iv-close").addEventListener("click", close);
+  dialog.querySelector(".iv-prev").addEventListener("click", function () { move(-1); });
+  dialog.querySelector(".iv-next").addEventListener("click", function () { move(1); });
+  dialog.querySelector(".iv-in").addEventListener("click", function () {
+    zoom = Math.min(steps.length - 1, zoom + 1); applyZoom(); });
+  dialog.querySelector(".iv-out").addEventListener("click", function () {
+    zoom = Math.max(0, zoom - 1); applyZoom(); });
+  if (diagramBtn) diagramBtn.addEventListener("click", function () {
+    var on = diagramBtn.getAttribute("aria-pressed") === "true";
+    diagramBtn.setAttribute("aria-pressed", on ? "false" : "true");
+    drawCallouts();
+  });
+
+  dialog.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowRight") move(1);
+    else if (e.key === "ArrowLeft") move(-1);
+    else if (e.key === "+" || e.key === "=") { zoom = Math.min(steps.length - 1, zoom + 1); applyZoom(); }
+    else if (e.key === "-") { zoom = Math.max(0, zoom - 1); applyZoom(); }
+    else if (e.key === "0") { zoom = 0; applyZoom(); }
+    else return;
+    e.preventDefault();
+  });
+
+  var sx = 0, sy = 0, st = 0, lastTap = 0;
+  var stage = dialog.querySelector(".iv-stage");
+  stage.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+  }, {passive: true});
+  stage.addEventListener("touchend", function (e) {
+    var tch = e.changedTouches[0], dx = tch.clientX - sx, dy = tch.clientY - sy;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5 && Date.now() - st < 600) {
+      move(dx < 0 ? 1 : -1); return;
+    }
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+      var now = Date.now();
+      if (now - lastTap < 320) { zoom = (zoom + 1) % steps.length; applyZoom(); lastTap = 0; }
+      else lastTap = now;
+    }
+  }, {passive: true});
+
+  render();
+}
+
+/* --- the Tooling Line, rendered (§11.3) --------------------------------- */
+function toolingBlock(item, qty) {
+  if (!item.tool) return "";
+  var line = toolingLine(item.tool, qty, item.price);
+  return (line.callout ? '<div class="tooling-callout">' + esc(line.callout) + '</div>' : '') +
+    '<dl class="tooling">' +
+      '<dt>What it is</dt><dd>' + esc(line.what) + '</dd>' +
+      '<dt>What it costs</dt><dd class="cost">' + money(line.cost) + ', one time</dd>' +
+      '<dt>Who owns it</dt><dd>' + esc(line.ownership) + '</dd>' +
+      '<dt>On this run</dt><dd>' + esc(line.treatment) + '</dd>' +
+    '</dl>';
+}
+
+/* --- the public catalogue (§8) ------------------------------------------
+   Open to everyone. What is gated is buying, not looking. These two views take
+   no account and read no negotiated price: `publicItem` is the only serializer
+   they use, so there is nothing customer-shaped in scope to leak. */
+function publicItem(it) {
+  return {sku: it.sku, name: it.name, cat: it.cat, description: it.description,
+          range: it.range, typicalMoq: it.typicalMoq, typicalLead: it.typicalLead,
+          drivers: it.drivers, images: it.images || []};
+}
+
+function rangeText(item) {
+  if (!item.range) return null;
+  var lo = item.range[0] / 100, hi = item.range[1] / 100;
+  return lo === hi ? "$" + lo.toFixed(2) : "$" + lo.toFixed(2) + " – $" + hi.toFixed(2);
+}
+
+/* §8.5 — five viewer states, and no viewer ever sees an Order control they
+   cannot use. This answers from the same registration test the order path
+   would apply, so the button and the refusal cannot disagree. */
+function ctaState(sku) {
+  if (!S.user) return "ANONYMOUS";
+  if (S.user.kind === "admin") return "ADMIN";
+  var c = client(S.user.id);
+  if (!c) return "ANONYMOUS";
+  if (c.membership === "PAUSED") return "PAUSED";
+  if (c.membership !== "MEMBER") return "NOT_MEMBER";
+  var registered = itemsForClient(c).some(function (m) { return m.item.sku === sku; });
+  return registered ? "ORDER" : "REQUEST";
+}
+
+function viewCatalogue() {
+  var items = CATALOG.filter(function (it) { return it.public; }).map(publicItem);
+  return topbar() +
+  '<section class="section" style="padding-top:clamp(3rem,7vw,5rem)"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Catalogue</span>' +
+    '<h1 style="margin-top:1rem">Things we make, and what they cost</h1>' +
+    '<p class="section-lede">Real items off our line, with real price ranges. Anyone can look — ' +
+      'you do not need an account and we do not ask for an email to show you a number.</p>' +
+    '<p class="tiny dim" style="margin-top:1rem;max-width:62ch">These are ranges, not quotes. ' +
+      'Where a price lands inside one depends on how many you order and how the item is specified — ' +
+      'each listing says which. To get your number, ask for a quote; to buy, you need to be a member ' +
+      'and the item needs to be registered to your account.</p>' +
+  '</div></section>' +
+  '<section class="section rule-top"><div class="container"><div class="cat-grid">' +
+    items.map(function (item) {
+      return '<article class="cat-card" data-cat="' + esc(item.sku) + '">' +
+        (item.images.length ? '<div class="cat-card-media">' + item.images[0].svg + '</div>' : '') +
+        '<div class="cat-card-body">' +
+          '<div class="tiny mono dim">' + esc(item.cat) + '</div>' +
+          '<h3 style="margin:0;font-size:1.05rem">' + esc(item.name) + '</h3>' +
+          (rangeText(item)
+            ? '<div class="cat-range">' + rangeText(item) + ' <span class="tiny dim">per unit</span></div>'
+            : '<div class="cat-range-note">Priced per specification — ask us.</div>') +
+          '<div class="cat-meta">' +
+            (item.typicalMoq ? '<span>MOQ ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
+            (item.typicalLead ? '<span>' + item.typicalLead + ' days typical</span>' : '') +
+          '</div></div>' +
+        '<div class="cat-cta"><button class="btn btn-outline btn-sm" data-cat="' +
+          esc(item.sku) + '">See it</button></div>' +
+      '</article>';
+    }).join("") +
+  '</div></div></section>' + footer();
+}
+
+function viewCatalogueItem() {
+  var raw = CATALOG.filter(function (x) { return x.sku === S.catSku; })[0];
+  if (!raw) return viewCatalogue();
+  var item = publicItem(raw);
+  var cta = ctaState(item.sku);
+
+  var ctaHtml;
+  if (cta === "ORDER") {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-buy="' + esc(item.sku) + '">Order at your price</button>' +
+      '<span class="tiny dim" style="align-self:center">Registered to your account.</span>';
+  } else if (cta === "REQUEST") {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-act="quote-member">Request this item</button>' +
+      '<span class="tiny dim" style="align-self:center;max-width:34ch">This one is not registered to ' +
+      'your account yet. Requesting it uses one of your quote slots, same as any other request.</span>';
+  } else if (cta === "PAUSED") {
+    ctaHtml = '<div class="notice notice-wait"><strong>Your account is paused.</strong>' +
+      'You can still look and still ask for prices — ordering is switched off until it is reinstated.</div>';
+  } else if (cta === "ADMIN") {
+    ctaHtml = '<div class="notice"><strong>Admin view.</strong>Registrations are managed from the ' +
+      'items catalog in the admin bay.</div>';
+  } else {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-act="apply">Apply for Membership</button>' +
+      '<button class="btn btn-outline btn-lg" data-act="quote">Request a Quote</button>' +
+      '<p class="tiny dim" style="flex-basis:100%;margin:0;max-width:52ch">Anyone can get a price. ' +
+      'Buying needs membership, and then this item registered to your account — we do that once we ' +
+      'have priced it for you.</p>';
+  }
+
+  return topbar() +
+  '<section class="section" style="padding-top:clamp(2.5rem,6vw,4rem)"><div class="container">' +
+    '<a class="tiny dim" style="cursor:pointer" data-act="catalogue">&lsaquo; Catalogue</a>' +
+    '<div class="grid grid-2" style="margin-top:1.5rem;gap:clamp(2rem,4vw,3.5rem);align-items:start">' +
+      '<div>' + imageViewer(item.images, item.name, "cat-" + item.sku) + '</div>' +
+      '<div style="display:grid;gap:1.25rem">' +
+        '<div><div class="tiny mono dim">' + esc(item.cat) + ' · ' + esc(item.sku) + '</div>' +
+          '<h1 style="margin:.5rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem)">' + esc(item.name) + '</h1></div>' +
+        (rangeText(item)
+          ? '<div><div class="cat-range" style="font-size:1.6rem">' + rangeText(item) +
+            ' <span class="tiny dim">per unit</span></div>' +
+            (item.drivers ? '<p class="cat-range-note" style="margin-top:.6rem;max-width:52ch">' +
+              'What moves it: ' + esc(item.drivers) + '</p>' : '') + '</div>'
+          : '') +
+        '<div class="cat-meta">' +
+          (item.typicalMoq ? '<span><strong>MOQ</strong> ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
+          (item.typicalLead ? '<span><strong>Lead time</strong> ~' + item.typicalLead + ' days</span>' : '') +
+          '<span><strong>Origin</strong> China</span>' +
+        '</div>' +
+        (item.description ? '<p style="max-width:56ch">' + esc(item.description) + '</p>' : '') +
+        '<div class="row wrap" style="gap:.75rem">' + ctaHtml + '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div></section>' + footer();
 }
 
 function viewHow() {
@@ -1147,7 +1678,7 @@ function viewApplyDone() {
 function viewLogin() {
   return '<div class="auth-wrap"><div class="auth-card">' +
     '<div class="brand" data-act="home" style="margin-bottom:1.5rem"><span class="brand-mark">M</span>' +
-    '<span><span class="brand-name">Montano Makes That</span></span></div>' +
+    '<span><span class="brand-name">Monti Makes It</span></span></div>' +
     '<h2 style="margin-bottom:.4rem">Sign in</h2>' +
     '<p class="muted" style="font-size:.9rem">Member portals and the admin portal use the same door.</p>' +
     (S.loginError ? '<div class="notice notice-error" style="margin-top:1.25rem">' + esc(S.loginError) + '</div>' : '') +
@@ -1177,7 +1708,7 @@ function viewPortal() {
 
   var side = '<aside class="sidebar">' +
     '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
-      '<span><span class="brand-name" style="font-size:.95rem">Montano</span>' +
+      '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
       '<span class="brand-sub">Member portal</span></span></div>' +
     '<div class="side-group"><div class="side-title">' + esc(c.name) + '</div>' +
       nav.map(function (n) {
@@ -1251,7 +1782,7 @@ function viewPortal() {
         '<span class="stat-label">Your ranges</span>' +
         (c.tags || []).map(function (t) { return '<span class="tag tag-green">' + esc(t) + '</span>'; }).join("") +
       '</div>' +
-      '<div class="grid grid-3">' + mine.map(function (m) {
+      '<div class="grid grid-2">' + mine.map(function (m) {
         var it = m.item;
         return '<div class="card"><div class="row-between" style="align-items:flex-start">' +
           '<div style="min-width:0"><div class="tiny mono dim">' + esc(it.sku) + '</div>' +
@@ -1267,6 +1798,20 @@ function viewPortal() {
             '<div class="right"><div class="tiny dim">MOQ ' + it.moq.toLocaleString("en-US") + '</div>' +
             '<div class="tiny dim">' + it.lead + 'd lead</div></div></div>' +
           (it.negotiated ? '<p class="tiny dim" style="margin-top:.7rem">' + esc(it.negotiated) + '</p>' : '') +
+          '<div class="divider-label">Images</div>' +
+          imageViewer(it.images, it.name, "portal-" + it.sku) +
+          (it.genome ? '<div class="divider-label">What we know about making this</div>' +
+            '<dl class="kv">' + it.genome.map(function (g) {
+              return '<dt>' + esc(g.section) + '</dt><dd>' +
+                (g.unknown
+                  /* Appendix B: unknowns are marked unknown, never filled with a
+                     plausible default. A specification we were never given,
+                     printed as though we were, is worse than a visible gap. */
+                  ? '<span class="tag tag-wait">Not confirmed</span>' +
+                    '<div style="margin-top:.35rem">' + esc(g.body) + '</div>'
+                  : esc(g.body)) + '</dd>';
+            }).join("") + '</dl>' : '') +
+          (it.tool ? '<div class="divider-label">Tooling</div>' + toolingBlock(it, it.moq) : '') +
           '<button class="btn btn-primary btn-block btn-sm" style="margin-top:1rem" data-buy="' + it.sku + '">Order this</button>' +
         '</div>';
       }).join("") + '</div>')
@@ -1274,9 +1819,11 @@ function viewPortal() {
       '<div class="empty" style="padding:4rem 2rem">' +
         '<h3 style="font-size:1.1rem">No products available to order yet</h3>' +
         '<p class="muted" style="margin:.8rem auto 0;max-width:52ch;font-size:.95rem">' +
-          'Your account is quote-only. There\'s no catalogue to browse because we don\'t keep one — ' +
-          'we build what you ask for. Send us a detailed quote request and anything we price and produce ' +
-          'for you lands here at your agreed price, ready to reorder in two clicks.</p>' +
+          'Nothing is registered to your account yet. You can browse the public catalogue and see ' +
+          'what things cost — ordering is what needs a registration, and that follows once we have ' +
+          'priced an item for you. Send us a request and anything we price and produce for you ' +
+          'lands here at your agreed price, ready to reorder in two clicks.</p>' +
+        '<button class="btn btn-outline btn-lg" style="margin-top:1.75rem;margin-right:.6rem" data-act="catalogue">Browse the catalogue</button>' +
         '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Request a detailed quote</button>' +
       '</div></div>');
   } else if (S.portalTab === "purchases") {
@@ -1450,7 +1997,7 @@ function viewCheckout() {
 
   return '<div class="shell"><aside class="sidebar">' +
     '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
-    '<span><span class="brand-name" style="font-size:.95rem">Montano</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
     '<span class="brand-sub">Member portal</span></span></div>' +
     '<div class="side-group"><button class="side-link" data-act="portal">' +
     '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
@@ -1565,7 +2112,7 @@ function viewPaid() {
   var paidTotal = o.total !== undefined ? o.total : goods + fee;
   return '<div class="shell"><aside class="sidebar">' +
     '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
-    '<span><span class="brand-name" style="font-size:.95rem">Montano</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
     '<span class="brand-sub">Member portal</span></span></div>' +
     '<div class="side-group"><button class="side-link" data-act="portal">' +
     '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
@@ -1614,7 +2161,7 @@ function viewMemberQuote() {
   var c = client(S.user.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
   return '<div class="shell"><aside class="sidebar">' +
     '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
-    '<span><span class="brand-name" style="font-size:.95rem">Montano</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
     '<span class="brand-sub">Member portal</span></span></div>' +
     '<div class="side-group"><button class="side-link" data-act="portal">' +
     '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
@@ -1658,7 +2205,7 @@ function viewAdmin() {
 
   var side = '<aside class="sidebar">' +
     '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
-      '<span><span class="brand-name" style="font-size:.95rem">Montano</span>' +
+      '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
       '<span class="brand-sub">Admin portal</span></span></div>' +
     '<div class="side-group"><div class="side-title">Overview</div>' +
       nav.map(function (n) {
@@ -1676,7 +2223,7 @@ function viewAdmin() {
       }).join("") + '</div>' +
     '<div class="side-foot"><div class="row" style="padding:.4rem .65rem">' +
       '<div class="avatar avatar-accent">TM</div><div style="min-width:0">' +
-      '<div style="font-size:.84rem;font-weight:500">Tyler Montano</div>' +
+      '<div style="font-size:.84rem;font-weight:500">Tyler Monti</div>' +
       '<div class="tiny dim">Tyler1 · admin</div></div></div>' +
       '<div class="side-group" style="margin-top:.45rem">' +
       '<button class="side-link" data-act="home"><span class="side-icon">◱</span> Public site</button>' +
@@ -1973,6 +2520,8 @@ function render() {
   var html;
   switch (S.route) {
     case "home":        html = viewHome(); break;
+    case "catalogue":   html = viewCatalogue(); break;
+    case "catalogue-item": html = viewCatalogueItem(); break;
     case "how":         html = viewHow(); break;
     case "membership":  html = viewMembership(); break;
     case "quote":       html = viewQuote(); break;
@@ -2037,6 +2586,16 @@ function wire() {
   app.querySelectorAll("[data-range]").forEach(function (el) {
     el.addEventListener("click", function () { S.range = el.getAttribute("data-range"); go("admin"); });
   });
+
+  app.querySelectorAll("[data-cat]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      e.stopPropagation();
+      S.catSku = el.getAttribute("data-cat");
+      go("catalogue-item");
+    });
+  });
+
+  app.querySelectorAll("[data-iv]").forEach(wireViewer);
 
   app.querySelectorAll("[data-buy]").forEach(function (el) {
     el.addEventListener("click", function () {
@@ -2114,7 +2673,7 @@ function wire() {
     var ach = method === "ach";
     var q = S.quote, opt = q.opts.filter(function (o) { return o.key === method; })[0];
     S.placed.push({
-      ref: "MMT-O-" + (2600 + S.placed.length), clientId: S.user.id, sku: it.sku, name: it.name,
+      ref: "MMI-O-" + (2600 + S.placed.length), clientId: S.user.id, sku: it.sku, name: it.name,
       unit: it.price, qty: S.cart.qty, method: ach ? "ACH" : "CARD",
       goods: q.goods, freightEstimate: q.est.total, freightWaived: q.waived,
       freightCharged: q.charged, convenienceFee: q.fee, processingFee: opt.fee, total: opt.total,
@@ -2153,7 +2712,7 @@ function wire() {
     if (cycleUsed(c.id) >= c.quoteLimit) return;
     var n = QUOTES.length + S.submitted.length + 1001;
     S.submitted.push({
-      ref: "MMT-Q-" + n, clientId: c.id,
+      ref: "MMI-Q-" + n, clientId: c.id,
       title: (mq.title.value || "New project").trim(),
       qty: parseInt(mq.qty.value, 10) || null, unit: null, total: null,
       status: "NEW", created: TODAY, due: addDays(TODAY, 1)

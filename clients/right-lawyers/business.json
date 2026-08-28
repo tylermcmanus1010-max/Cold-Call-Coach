@@ -4,9 +4,9 @@
   "name": "Right Lawyers",
   "category": "lawyer",
   "owner": "",
-  "currentSite": "https://rightlawyers.com/.well-known/sgcaptcha/?r=%2Fsandiego&y=ipr:20.118.214.98:1787878226.505",
+  "currentSite": "https://rightlawyers.com/sandiego",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -121,10 +121,13 @@
     "score": 69,
     "gaps": 9,
     "rendered": true,
-    "currentSiteStatus": "live",
+    "currentSiteStatus": "bot check stood in front of the site, so we never saw it",
     "loadMs": 4004,
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-28: not a lead — we audited a SiteGround bot-check page at /.well-known/sgcaptcha/, not their site. Nothing claimable."
+  ]
 }

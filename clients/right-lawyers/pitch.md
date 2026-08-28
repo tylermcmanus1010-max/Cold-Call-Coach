@@ -1,6 +1,6 @@
 # Right Lawyers — pitch sheet
 
-**Current site:** https://rightlawyers.com/.well-known/sgcaptcha/?r=%2Fsandiego&y=ipr:20.118.214.98:1787878226.505
+**Current site:** https://rightlawyers.com/sandiego
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
 **Score:** 8/12
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates

@@ -648,6 +648,9 @@ ${b.phone ? `<div class="callbar">
     // A quote trade is not a booking trade. Nobody books a re-roof; they ask
     // someone to come and look at it.
     var QUOTES = ${JSON.stringify(!(b.services || []).some((s) => s.price))};
+    // Some trades travel to the customer; for everyone else the customer
+    // travels to them. "When could you come out?" to a dentist is nonsense.
+    var VISITS = ${JSON.stringify(/plumb|roof|electric|hvac|contractor|construct|carpenter|painter|glaz|floor|tiler|locksmith|garden|landscap|pool|spa service|hot tub|clean|pest|gutter|window|upholster|mov|haul/i.test(b.category || ''))};
 
     var money = function(c){ return '$' + (c/100).toFixed(2).replace(/\.00$/,''); };
     // People book in hours and minutes, not decimals. "3.3 hr" is not a time.
@@ -689,13 +692,18 @@ ${b.phone ? `<div class="callbar">
         return '• ' + p.name + (p.price ? ' (' + money(p.price) + (p.unit || '') + ')' : '');
       }).join('\\n');
       var msg = 'Hi ' + BIZ + ', ' +
-                (QUOTES ? 'could I get an estimate for:' : 'I would like to book:') + '\\n' + lines +
+                (!QUOTES ? 'I would like to book:'
+                 : VISITS ? 'could I get an estimate for:'
+                 : 'could I book in for:') + '\\n' + lines +
                 (priced ? '\\n\\nTotal: ' + priced : '') +
                 (dur ? '\\nAbout ' + time(dur) + ' on site' : '') +
-                '\\n\\n' + (QUOTES ? 'When could you come out?' : 'What times do you have?');
+                '\\n\\n' + (!QUOTES ? 'What times do you have?'
+                                : VISITS ? 'When could you come out?'
+                                : 'When could you fit me in?');
       var go = document.getElementById('bkGo');
       if (BOOKURL) { go.href = BOOKURL; go.textContent = 'Book online'; }
-      else if (QUOTES && TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg); go.textContent = 'Get a quote'; }
+      else if (QUOTES && TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg);
+                                go.textContent = VISITS ? 'Get a quote' : 'Request appointment'; }
       else if (TEL) { go.href = 'sms:' + TEL + '?&body=' + encodeURIComponent(msg); go.textContent = 'Text this'; }
       else if (MAIL) { go.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Booking request') +
                         '&body=' + encodeURIComponent(msg); go.textContent = 'Email this'; }

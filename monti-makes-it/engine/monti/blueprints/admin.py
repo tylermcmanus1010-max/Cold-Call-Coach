@@ -4,14 +4,16 @@ CRM, calendar, quote queue with the 24h SLA, private catalog with per-customer
 assignment, the full order log, and the manufacturer review gate.
 """
 import calendar as pycal
+import csv
+import io
 from datetime import date, datetime, timedelta
 
 from flask import (
-    Blueprint, current_app, flash, g, redirect, render_template, request,
-    session, url_for,
+    Blueprint, Response, abort, current_app, flash, g, redirect,
+    render_template, request, session, url_for,
 )
 
-from .. import analytics, catalog as catalog_mod, mail, membership
+from .. import analytics, catalog as catalog_mod, ledger, mail, membership
 from .. import orders as orders_mod
 from ..auth import admin_required, create_user, ensure_portal_user
 from ..db import execute, next_ref, query
@@ -879,6 +881,77 @@ def order_detail(order_id):
 
 # --------------------------------------------------------------------------
 # ops
+
+# --------------------------------------------------------------------------
+# the master ledger (ADM-13, §11.5)
+#
+# The surface is a projection: every number on it comes from `monti.ledger`,
+# which is also what the client ledger reads. Two implementations of "what did
+# this customer pay" is the inconsistency §11.6 calls the most damaging thing
+# this product could ship, so there is one.
+# --------------------------------------------------------------------------
+@bp.route("/ledger")
+@admin_required
+def ledger_view():
+    granularity = request.args.get("period", "month")
+    if granularity not in ("month", "quarter", "year"):
+        granularity = "month"
+
+    filters = {
+        "start": (request.args.get("start") or "").strip() or None,
+        "end": (request.args.get("end") or "").strip() or None,
+        "member": (request.args.get("member") or "").strip() or None,
+        "order_ref": (request.args.get("order_ref") or "").strip() or None,
+        "receipt_no": (request.args.get("receipt_no") or "").strip() or None,
+    }
+    found = ledger.search(**filters)
+    period_view = ledger.periods(granularity, start=filters["start"], end=filters["end"])
+    recon = ledger.reconcile(record=False)
+
+    return render_template("admin/ledger.html", rows=found["rows"], found=found,
+                           period_view=period_view, granularity=granularity,
+                           filters=filters, recon=recon,
+                           columns=ledger.ADMIN_COLUMNS)
+
+
+@bp.route("/ledger/export.csv")
+@admin_required
+def ledger_export():
+    """The export is the on-screen view for the active filter — same rows, same
+    columns, same order. It reads the same `search()` the page does rather than
+    running its own query, which is what lets A35 assert equality."""
+    filters = {
+        "start": (request.args.get("start") or "").strip() or None,
+        "end": (request.args.get("end") or "").strip() or None,
+        "member": (request.args.get("member") or "").strip() or None,
+        "order_ref": (request.args.get("order_ref") or "").strip() or None,
+        "receipt_no": (request.args.get("receipt_no") or "").strip() or None,
+    }
+    found = ledger.search(**filters)
+    columns, rows = ledger.to_export(found["rows"], client=False)
+    return _csv_response(columns, rows, "monti-ledger.csv")
+
+
+@bp.route("/ledger/receipt/<receipt_no>")
+@admin_required
+def ledger_receipt(receipt_no):
+    entry = ledger.receipt(receipt_no)
+    if entry is None:
+        abort(404)
+    return render_template("admin/receipt.html", entry=entry,
+                           chain=ledger.order_chain(entry["order_ref"] or ""))
+
+
+def _csv_response(columns, rows, filename):
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(columns)
+    for row in rows:
+        writer.writerow([row[c] for c in columns])
+    return Response(buf.getvalue(), mimetype="text/csv",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
 # --------------------------------------------------------------------------
 @bp.route("/emails")
 def emails():

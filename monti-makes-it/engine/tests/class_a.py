@@ -105,17 +105,17 @@ class Context:
         from monti.agents import provision_agent
         from monti.auth import create_user
         from monti.db import execute, query
-        from monti.launch import provision_boarshead
+        from monti.launch import provision_boars_head
 
         if not query("SELECT id FROM users WHERE role = 'ADMIN'", one=True):
             create_user("checks-admin@montimakesit.com", "checks-admin-pw",
                         name="Checks Admin", role="ADMIN")
 
-        boarshead_id = provision_boarshead()
-        boarshead = query("SELECT * FROM customers WHERE id = ?", (boarshead_id,), one=True)
-        if not query("SELECT id FROM users WHERE customer_id = ?", (boarshead_id,), one=True):
-            create_user(boarshead["email"], "checks-member-pw", name="Boarshead",
-                        role="CLIENT", customer_id=boarshead_id)
+        boars_head_id = provision_boars_head()
+        boars_head = query("SELECT * FROM customers WHERE id = ?", (boars_head_id,), one=True)
+        if not query("SELECT id FROM users WHERE customer_id = ?", (boars_head_id,), one=True):
+            create_user(boars_head["email"], "checks-member-pw", name="Boars Head",
+                        role="CLIENT", customer_id=boars_head_id)
 
         other = query("SELECT * FROM customers WHERE ref = 'MMI-C-9001'", one=True)
         if other is None:
@@ -146,10 +146,33 @@ class Context:
                 "'Packaging & print', 'Public, and registered to nobody.', 0, 1000, 30, "
                 "20, 40, 1000, 30, 'quantity and spec', 1, 1, 0)")
 
-        self.member_customer_id = boarshead_id
+        # Money events for the ledger checks. The launch database is deliberately
+        # empty of orders, so A32-A36 would have nothing to assert against —
+        # and a ledger check with no ledger is not a pass, it is an unexercised
+        # check. These are harness scaffolding, not fixtures (see above).
+        from monti import ledger
+        if not query("SELECT id FROM ledger_entries", one=True):
+            for cid, ref, cents, when, settled in (
+                    (boars_head_id, "MMI-O-L001", 250000, "2026-01-01 00:00:00", True),
+                    (boars_head_id, "MMI-O-L002", 180000, "2026-03-31 23:59:59", True),
+                    (boars_head_id, "MMI-O-L003", 90000, "2026-04-01 00:00:00", True),
+                    (other_id,      "MMI-O-L004", 320000, "2026-07-01 09:00:00", True),
+                    (boars_head_id, "MMI-O-L005", 47000, "2026-07-16 12:00:00", False)):
+                oid = execute(
+                    "INSERT INTO orders (ref, customer_id, status, payment_status, "
+                    "payment_method, total_cents, funds_confirmed_at, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (ref, cid, "IN_REVIEW" if settled else "PAYMENT_PROCESSING",
+                     "PAID" if settled else "PROCESSING",
+                     "CARD" if settled else "ACH", cents, when if settled else None, when))
+                order = query("SELECT * FROM orders WHERE id = ?", (oid,), one=True)
+                ledger.charge(order, "CARD" if settled else "ACH", cents,
+                              settled=settled, occurred_at=when)
+
+        self.member_customer_id = boars_head_id
         self.other_customer_id = other_id
         self.admin_email = "checks-admin@montimakesit.com"
-        self.member_email = boarshead["email"]
+        self.member_email = boars_head["email"]
 
     def _sign_in(self):
         """Sign both clients in, with a CSRF token minted the way a browser does.

@@ -1,0 +1,171 @@
+{#
+  The ledger, rendered — one set of macros for both surfaces (§11.5, §11.6).
+
+  The admin master ledger and the member's own ledger are the same projection
+  over different row sets, so they share the rendering. Two templates would
+  drift, and the thing they would drift about is money: §11.6 calls a client
+  ledger disagreeing with the admin ledger the most damaging inconsistency this
+  product could ship. Sharing the markup is not a tidiness argument.
+
+  What differs is passed in rather than branched on deep inside:
+  `columns` decides which fields appear, and the client column list has no fee
+  and no net — those are ours, not theirs.
+
+  At 320px the table scrolls inside its own container rather than pushing the
+  page sideways (E6.02), and the period cards stack.
+#}
+
+{% macro period_switch(endpoint, granularity, filters) %}
+<div class="ledger-periods" role="group" aria-label="Period format">
+  {% for key, label in [('month', 'Month over month'),
+                        ('quarter', 'Quarter over quarter'),
+                        ('year', 'Year over year')] %}
+    {# url_for drops None values, so the active filters carry across a period
+       switch and the empty ones stay out of the query string. §11.5.1: the
+       format selector changes the aggregation, never the data. #}
+    <a class="ledger-period-btn {{ 'active' if granularity == key }}"
+       aria-pressed="{{ 'true' if granularity == key else 'false' }}"
+       href="{{ url_for(endpoint, period=key, **filters) }}">{{ label }}</a>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+
+{% macro delta(value) %}
+  {%- if value is none -%}
+    <span class="delta flat">no prior period</span>
+  {%- elif value > 0.005 -%}
+    <span class="delta up">▲ {{ '%.1f'|format(value * 100) }}%</span>
+  {%- elif value < -0.005 -%}
+    <span class="delta down">▼ {{ '%.1f'|format(value * -100) }}%</span>
+  {%- else -%}
+    <span class="delta flat">level</span>
+  {%- endif -%}
+{% endmacro %}
+
+
+{% macro period_cards(period_view, client=False) %}
+{% if period_view.periods %}
+  <div class="ledger-grand">
+    <div>
+      <div class="stat-label">Total over this range</div>
+      <div class="stat-value">{{ period_view.grand.gross_cents|money }}</div>
+      <div class="tiny dim">
+        {{ period_view.grand.orders }} order{{ '' if period_view.grand.orders == 1 else 's' }}
+        · {{ period_view.periods|length }}
+        {{ period_view.granularity }}{{ '' if period_view.periods|length == 1 else 's' }}
+      </div>
+    </div>
+    {% if period_view.grand.pending_cents %}
+      {# §11.4.3 — an ACH debit in flight is labeled, and is not in the total
+         above. Showing it without saying so is how a pending debit gets read
+         as revenue. #}
+      <div class="ledger-pending">
+        <div class="stat-label">Pending, not counted</div>
+        <div class="stat-value">{{ period_view.grand.pending_cents|money }}</div>
+        <div class="tiny dim">Bank transfers still settling.</div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="table-wrap">
+    <table class="data ledger-table">
+      <thead>
+        <tr>
+          <th>{{ period_view.granularity|capitalize }}</th>
+          <th class="right">Gross</th>
+          <th class="right">Refunds</th>
+          {% if not client %}<th class="right">Fees</th>{% endif %}
+          <th class="right">{{ 'Paid' if client else 'Net' }}</th>
+          <th class="right">Orders</th>
+          <th class="right">Average</th>
+          <th>vs previous</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in period_view.periods %}
+          <tr>
+            <td><strong>{{ p.label }}</strong></td>
+            <td class="right mono tnum">{{ p.totals.gross_cents|money }}</td>
+            <td class="right mono tnum">{{ p.totals.refunded_cents|money }}</td>
+            {% if not client %}<td class="right mono tnum">{{ p.totals.fees_cents|money }}</td>{% endif %}
+            <td class="right mono tnum">{{ p.totals.net_cents|money }}</td>
+            <td class="right tnum">{{ p.totals.orders }}</td>
+            <td class="right mono tnum">{{ p.totals.aov_cents|money }}</td>
+            <td class="tiny">{{ delta(p.delta.gross_cents if p.delta else none) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="empty" style="padding:2.5rem 1rem">
+    <p>No transactions in this range.</p>
+  </div>
+{% endif %}
+{% endmacro %}
+
+
+{% macro transactions(rows, columns, found, receipt_endpoint, client=False) %}
+{% if found.truncated %}
+  {# §11.5.2 — a search that silently truncates is a P1. It says so, and offers
+     the export, which is not capped. #}
+  <div class="notice notice-wait">
+    <strong>Showing the first {{ found.cap }} of {{ found.matched }} matches.</strong>
+    Narrow the range, or export the full set.
+  </div>
+{% endif %}
+
+{% if rows %}
+  <div class="table-wrap">
+    <table class="data ledger-table">
+      <thead>
+        <tr>
+          <th>Receipt</th>
+          <th>When</th>
+          {% if not client %}<th>Member</th>{% endif %}
+          <th>Order</th>
+          <th>Event</th>
+          <th>Method</th>
+          <th class="right">Amount</th>
+          {% if not client %}<th class="right">Fee</th>{% endif %}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td class="mono tiny">{{ row.receipt_no }}</td>
+            <td class="tiny">{{ row.occurred_at|dt }}</td>
+            {% if not client %}<td>{{ row.company_name }}</td>{% endif %}
+            <td class="mono tiny">{{ row.order_ref or '—' }}</td>
+            <td>
+              <span class="badge badge-{{ 'green' if row.status == 'SETTLED'
+                                          else ('amber' if row.status == 'PENDING' else 'red') }}">
+                {{ row.kind|replace('_', ' ')|lower }}
+              </span>
+              {% if row.status == 'PENDING' %}
+                <div class="tiny dim">settling — not counted as revenue</div>
+              {% elif row.status == 'FAILED' %}
+                <div class="tiny dim">{{ row.note or 'failed' }}</div>
+              {% endif %}
+            </td>
+            <td class="tiny">{{ (row.method or '—')|lower }}</td>
+            <td class="right mono tnum">{{ row.gross_cents|money }}</td>
+            {% if not client %}<td class="right mono tnum">{{ row.fee_cents|money }}</td>{% endif %}
+            <td class="right">
+              <a class="btn btn-sm"
+                 href="{{ url_for(receipt_endpoint, receipt_no=row.receipt_no) }}">Receipt</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="empty" style="padding:2.5rem 1rem">
+    <p>Nothing matches this search.</p>
+    <p class="tiny dim">Try a wider date range, or clear the filters.</p>
+  </div>
+{% endif %}
+{% endmacro %}

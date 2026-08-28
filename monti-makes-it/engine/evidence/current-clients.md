@@ -3,7 +3,7 @@
 Appendix B as a live register. Generated from the database by
 `tests/evidence.py`, so it cannot drift from the records it describes.
 
-## Boarshead — MMI-C-1001
+## Boars Head — MMI-C-1001
 
 - **Status:** MEMBER, member since 2026-08-28 21:41:35
 - **Client agent:** CLI-01 (ACTIVE, scope verified 2026-08-28 21:41:35)

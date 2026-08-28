@@ -1,0 +1,41 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ entry.receipt_no }} · {{ company }}{% endblock %}
+{% block eyebrow %}Receipt{% endblock %}
+{% block heading %}{{ entry.receipt_no }}{% endblock %}
+{% block content %}
+<a class="btn btn-sm" href="{{ url_for('admin.ledger_view') }}">← Ledger</a>
+
+<div class="card card-lg" style="margin-top:1.25rem;max-width:640px">
+  <dl class="kv">
+    <dt>Member</dt><dd>{{ entry.company_name }} <span class="mono dim">{{ entry.customer_ref }}</span></dd>
+    <dt>When</dt><dd>{{ entry.occurred_at|dt }} <span class="tiny dim">({{ entry.period_tz }})</span></dd>
+    <dt>Event</dt><dd>{{ entry.kind|replace('_', ' ')|lower }} · {{ entry.status|lower }}</dd>
+    <dt>Method</dt><dd>{{ (entry.method or '—')|lower }}</dd>
+    <dt>Order</dt><dd class="mono">{{ entry.order_ref or '—' }}</dd>
+    <dt>Gross</dt><dd class="mono tnum">{{ entry.gross_cents|money }}</dd>
+    <dt>Fee</dt><dd class="mono tnum">{{ entry.fee_cents|money }}</dd>
+    <dt>Net</dt><dd class="mono tnum">{{ entry.net_cents|money }}</dd>
+    {% if entry.confirmed_by %}<dt>Confirmed by</dt><dd>{{ entry.confirmed_by }}</dd>{% endif %}
+    {% if entry.note %}<dt>Note</dt><dd>{{ entry.note }}</dd>{% endif %}
+  </dl>
+</div>
+
+{% if chain|length > 1 %}
+  {# §11.5.2 — an order search resolves to the full transaction chain in
+     sequence: the charge, the settlement, any refund, any reversal. #}
+  <div class="divider-label">This order's full chain</div>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Receipt</th><th>When</th><th>Event</th><th class="right">Amount</th></tr></thead>
+    <tbody>
+      {% for e in chain %}
+        <tr{% if e.receipt_no == entry.receipt_no %} style="background:var(--surface-2)"{% endif %}>
+          <td class="mono tiny">
+            <a class="cell-link" href="{{ url_for('admin.ledger_receipt', receipt_no=e.receipt_no) }}">{{ e.receipt_no }}</a></td>
+          <td class="tiny">{{ e.occurred_at|dt }}</td>
+          <td>{{ e.kind|replace('_', ' ')|lower }} · {{ e.status|lower }}</td>
+          <td class="right mono tnum">{{ e.gross_cents|money }}</td>
+        </tr>
+      {% endfor %}
+    </tbody></table></div>
+{% endif %}
+{% endblock %}

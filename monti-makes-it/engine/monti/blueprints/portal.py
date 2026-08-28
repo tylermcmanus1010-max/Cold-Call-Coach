@@ -7,16 +7,19 @@ return another customer's row.
 Browsing and quoting are open to any account with a login. Anything that spends
 money is wrapped in `member_only` — acceptance is what unlocks buying.
 """
+import csv
 import functools
+import io
 from pathlib import Path
 
 from flask import (
-    Blueprint, abort, current_app, flash, g, redirect, render_template,
-    request, send_from_directory, url_for,
+    Blueprint, Response, abort, current_app, flash, g, redirect,
+    render_template, request, send_from_directory, url_for,
 )
 
 from .. import catalog as catalog_mod
 from .. import catalogue
+from .. import ledger
 from .. import membership
 from .. import orders as orders_mod
 from .. import payments
@@ -361,6 +364,74 @@ def cart_checkout():
 # --------------------------------------------------------------------------
 # orders + checkout
 # --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# the client ledger (PORT-06, §11.6)
+#
+# The member's own projection of the same record the admin bay reads. Scope is
+# `_cid()` passed into every ledger call, so a cross-tenant fetch is not
+# refused — it returns nothing, because the row was never in the query's reach.
+#
+# The totals are computed by `ledger.totals()`, the same function the admin
+# ledger uses, over rows selected by the same filter. Two ledgers disagreeing
+# about what a client paid is the worst inconsistency this product could ship
+# (§11.6), and the way to prevent it is one implementation, not two that match.
+# --------------------------------------------------------------------------
+@bp.route("/ledger")
+@client_required
+def ledger_view():
+    granularity = request.args.get("period", "month")
+    if granularity not in ("month", "quarter", "year"):
+        granularity = "month"
+    start = (request.args.get("start") or "").strip() or None
+    end = (request.args.get("end") or "").strip() or None
+    order_ref = (request.args.get("order_ref") or "").strip() or None
+    receipt_no = (request.args.get("receipt_no") or "").strip() or None
+
+    found = ledger.search(customer_id=_cid(), start=start, end=end,
+                          order_ref=order_ref, receipt_no=receipt_no)
+    return render_template(
+        "portal/ledger.html",
+        rows=[ledger.client_row(r) for r in found["rows"]],
+        found=found,
+        period_view=ledger.periods(granularity, customer_id=_cid(), start=start, end=end),
+        granularity=granularity,
+        filters={"start": start, "end": end,
+                 "order_ref": order_ref, "receipt_no": receipt_no},
+        columns=ledger.CLIENT_COLUMNS)
+
+
+@bp.route("/ledger/export.csv")
+@client_required
+def ledger_export():
+    start = (request.args.get("start") or "").strip() or None
+    end = (request.args.get("end") or "").strip() or None
+    order_ref = (request.args.get("order_ref") or "").strip() or None
+    receipt_no = (request.args.get("receipt_no") or "").strip() or None
+    found = ledger.search(customer_id=_cid(), start=start, end=end,
+                          order_ref=order_ref, receipt_no=receipt_no)
+    columns, rows = ledger.to_export(found["rows"], client=True)
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(columns)
+    for row in rows:
+        writer.writerow([row[c] for c in columns])
+    return Response(buf.getvalue(), mimetype="text/csv",
+                    headers={"Content-Disposition": 'attachment; filename="my-ledger.csv"'})
+
+
+@bp.route("/ledger/receipt/<receipt_no>")
+@client_required
+def ledger_receipt(receipt_no):
+    # Scoped by customer inside the query: another member's receipt number does
+    # not 403, it 404s, because it was never selectable.
+    entry = ledger.receipt(receipt_no, customer_id=_cid())
+    if entry is None:
+        abort(404)
+    return render_template("portal/receipt.html", entry=ledger.client_row(entry),
+                           receipt_no=entry["receipt_no"])
+
+
 @bp.route("/orders")
 @client_required
 def orders():

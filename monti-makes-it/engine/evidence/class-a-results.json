@@ -15,19 +15,19 @@
     "title": "Order gating refused server-side at all three points",
     "findings": [],
     "proven": true,
-    "proof": "add-to-cart -> portal.cart_add \u2014 add-to-cart for unregistered item 3 returned 302, expected a refusal; order-create -> portal.cart_checkout \u2014 an order was created containing unregistered item 3; checkout-start -> portal.checkout \u2014 checkout opened for order 7 on unregistered item 3"
+    "proof": "add-to-cart -> portal.cart_add \u2014 add-to-cart for unregistered item 3 returned 302, expected a refusal; order-create -> portal.cart_checkout \u2014 an order was created containing unregistered item 3; checkout-start -> portal.checkout \u2014 checkout opened for order 12 on unregistered item 3"
   },
   "A08": {
     "title": "No negotiated price, customer or assignment field in a public response",
     "findings": [],
     "proven": true,
-    "proof": "payload: negotiated price added to the public serializer -> public_item(MMI-B-0102) \u2014 fields outside the public set: ['unit_price_cents']; rendered: owning customer printed on the public page -> render:/catalogue/MMI-B-0102 \u2014 customer name 'Boarshead' in a public response"
+    "proof": "payload: negotiated price added to the public serializer -> public_item(MMI-B-0102) \u2014 fields outside the public set: ['unit_price_cents']; rendered: owning customer printed on the public page -> render:/catalogue/MMI-B-0102 \u2014 customer name 'Boars Head' in a public response"
   },
   "A11": {
     "title": "An order cannot ship before its manufacturer review clears",
     "findings": [],
     "proven": true,
-    "proof": "ship_order's review guard removed -> orders.ship_order \u2014 shipped order 8 with no cleared review and did not raise"
+    "proof": "ship_order's review guard removed -> orders.ship_order \u2014 shipped order 13 with no cleared review and did not raise"
   },
   "A14": {
     "title": "Zero fixture rows, zero orphans, every customer has an agent",
@@ -52,5 +52,35 @@
     "findings": [],
     "proven": true,
     "proof": "a fifth fact added to the line -> tool MMI-T-2001 / lowest_cost \u2014 a fifth fact was added: ['expected_lifespan']; the ownership sentence stripped -> tool MMI-T-2001 / lowest_cost \u2014 the ownership sentence is missing from the tooling line; the materiality threshold moved off 5% -> tool MMI-T-2001 \u2014 at 119,999 units the share is 0.0500 but no callout fired"
+  },
+  "A32": {
+    "title": "Ledger completeness and reconciliation",
+    "findings": [],
+    "proven": true,
+    "proof": "a money event's row deleted -> order MMI-O-L001 \u2014 paid, but wrote no ledger row; one payment recorded twice -> order MMI-O-L001 \u2014 2 charge rows for one order \u2014 a money event wrote twice"
+  },
+  "A33": {
+    "title": "Period arithmetic: three views, one total, clean boundaries",
+    "findings": [],
+    "proven": true,
+    "proof": "the quarter boundary moved by one second -> ledger.periods(quarter) 2026-Q1 \u2014 holds 270000 but the months inside it sum to 430000 \u2014 the two views bucket by different clocks; a month bucket dropped from the view -> ledger.periods(month) \u2014 buckets sum to 590000 but the grand total is 840000"
+  },
+  "A34": {
+    "title": "Ledger tenancy, and client totals equal to the admin's for them",
+    "findings": [],
+    "proven": true,
+    "proof": "the client scope dropped from the ledger query -> ledger.search(client) \u2014 returned a row belonging to customer 2; our fee added to the client payload -> receipt MMI-R-100005 \u2014 client payload carries ['fee_cents']"
+  },
+  "A35": {
+    "title": "Export fidelity: the export is the screen",
+    "findings": [],
+    "proven": true,
+    "proof": "a column added to the export -> ledger.to_export \u2014 admin export columns are ['receipt_no', 'occurred_at', 'company_name', 'order_ref', 'kind', 'status', 'method', 'gross_cents', 'fee_cents', 'net_cents', 'internal_margin_cents'], expected ['receipt_no', 'occurred_at', 'company_name', 'order_ref', 'kind', 'status', 'method', 'gross_cents', 'fee_cents', 'net_cents']; a row dropped from the export -> ledger.to_export \u2014 exported 4 rows for 5 on screen"
+  },
+  "A36": {
+    "title": "Search completeness across all four modes",
+    "findings": [],
+    "proven": true,
+    "proof": "member search dropping a match -> ledger.search(member) \u2014 returned 8 rows for Boars Head, 9 exist; a search truncating silently -> ledger.search(date) \u2014 4 + 5 != 5 \u2014 the range boundary drops or double-counts a row"
   }
 }

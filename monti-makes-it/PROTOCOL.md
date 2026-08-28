@@ -4,6 +4,7 @@
 **Target session:** `cse_014vGddvmbYRh4VjDEvVfdm7`
 **Derived from:** BUILDER ASSIST Master Build & Launch Protocol v3.0. The governance system, evidence classes, gate ladder, adversarial certification, red team, runtime rules, and reporting contracts are carried over intact. Every domain requirement has been replaced.
 **Live surface to scan:** https://claude.ai/code/artifact/0e047879-af09-4239-ac54-8ebef2c13e57
+**Prototype to inventory:** session `cse_01B2fEc4ZUQ49QMhmcd672yq` — everything demonstrated there is enumerated in **Appendix E** and must now be built for real.
 
 ---
 
@@ -43,9 +44,11 @@ This run is not a continuation of the same spec. Nine things changed, and each o
 | **3** | **There is now a public catalogue.** The previous spec said "no catalogue and there never will be one." That is reversed. Example items with **pricing ranges** are visible to everyone, member or not. | New surface | **Group C** |
 | **4** | **Ordering is registered, not open.** A member may order **only** catalogue items registered to them. Everyone can look; only the assigned member can buy that item. | New gate | **Group C** |
 | **5** | **All test and example clients are deleted.** Every seeded, demo, or fixture customer — Halcyon Goods and any other — is purged. The database carries real clients only. | Destructive, verified | **Group X** |
-| **6** | **First real client: Boarshead.** Branded carry-out containers, **$0.20 → $0.14 per unit**, priced off both order quantity and container spec/complexity. | Real data | **Group X** |
+| **6** | **First real client: Boars Head.** Branded carry-out containers, **$0.20 → $0.14 per unit**, priced off both order quantity and container spec/complexity. | Real data | **Group X** |
 | **7** | **Every client gets a dedicated AI agent.** Registered to that customer, scoped to that customer's data only, provisioned from a template when a customer is created. | New tier | **Tier CLI** |
 | **8** | **Every item in the client portal gets a tappable image viewer.** Full-screen, swipeable, zoomable, with an annotated diagram layer. Mobile-first. | New component | **Group P** |
+| **10** | **The admin bay gets a master transaction ledger** — every transaction, three period formats (Month/Month, Quarter/Quarter, Year/Year), date and member and order and receipt search, exportable. **And the member portal gets their own version of it.** | New surface, both sides | **Group L** |
+| **11** | **Everything prototyped in `cse_01B2fEc4ZUQ49QMhmcd672yq` is now a build list**, not a demo — enumerated with owners, work items and acceptance criteria. | Prototype → implementation | **Appendix E** |
 | **9** | **A standing research agent owns making the site better.** Not a one-time audit — a continuous agent whose entire job is finding how the site becomes more useful and more functional for the actual user base. | New standing role | **`SITE-01`** |
 
 ## 0.4 — The five commitments carried from v3.0 that still bind
@@ -253,6 +256,11 @@ Minimum Class A check set for this run:
 | A28 | Visual regression | Screenshot diffs within threshold, or an explicitly intended new baseline |
 | A29 | **SLA clock accuracy** | The countdown rendered to a client and the queue position rendered to admin both derive from the same stored submission timestamp and agree to the second |
 | A30 | **Client-agent scope probe** | Every client agent, given a prompt naming another customer, returns no data belonging to that customer; its tool layer refuses the query at the data layer, not by refusal text |
+| A32 | **Ledger completeness and reconciliation** | Every money event (charge, settlement, refund, partial refund, reversal, manual confirmation, fee) has exactly one ledger row; the ledger reconciles line-for-line to the order log and to the payment provider's records; zero orphan rows, zero missing rows, zero duplicates |
+| A33 | **Period arithmetic** | Month/Month, Quarter/Quarter and Year/Year aggregates each sum to the same grand total as the underlying rows for the same date range; period boundaries are inclusive-exclusive and consistent; a transaction on a boundary date appears in exactly one period |
+| A34 | **Ledger tenancy** | The client ledger returns only the acting customer's rows; a cross-tenant ledger query or export returns 404; the client ledger's totals equal the admin ledger filtered to that customer |
+| A35 | **Export fidelity** | Every export contains exactly the rows and columns shown on screen for the active filter, in the same order, with the same totals; no export contains an internal field the on-screen view does not show; a re-import of the export reproduces the same totals |
+| A36 | **Ledger search correctness** | Date-range, member, order-reference and receipt-number searches each return the complete matching set and nothing else, asserted against a seeded fixture set with known boundaries |
 | A31 | **Tooling disclosure** | Per §11.3.6: exactly four Tooling Line facts and no fifth · ownership sentence present on every tooled item · treatment matches the displayed strategy · zero internal tooling fields in any client-facing payload · materiality callout fires at and above the 5% threshold, asserted at boundary quantities |
 
 **Rule: any criterion that *could* be Class A must be Class A.** Proposing judgment review for something a script can decide is rejected by the warden, who requires the script. Building the check counts as productive work.
@@ -367,6 +375,7 @@ Certification authority is delegated. The Manager audits wardens, not items.
 | `W-ADMIN` | Admin bay, pricing desk, CRM, calendar, impersonation audit | MGR-00 + RED-01 |
 | `W-PAY` | Checkout, ACH semantics, webhooks, review gate, orders email | MGR-00 + RED-01 |
 | `W-CLI` | Client agents, scoping, provisioning | MGR-00 + RED-01 |
+| `W-LED` | The transaction ledger, period aggregation, search, export, reconciliation | MGR-00 + RED-01 |
 | `W-VIS` | Visual system, captures, three-surface parity | MGR-00 + RED-01 |
 | `W-APP` | Application, data, persistence, access | MGR-00 + RED-01 |
 | `W-OPS` | Testing, security, reliability, release | MGR-00 + RED-01 |
@@ -379,7 +388,7 @@ Certification authority is delegated. The Manager audits wardens, not items.
 * Maximum **8 items per batch**, each with recorded re-execution. Bulk approval is a governance defect.
 * If a spot-check or the red team later finds a defect in a certified item, **the warden's entire batch containing it reopens**.
 * Wardens rotate into spot-checking tiers other than their own.
-* **`W-PAY` and `W-PORT` may never be held by the same agent instance.** Money and tenancy are the two P0 surfaces; they get independent certifiers.
+* **`W-PAY`, `W-PORT` and `W-LED` may never be held by the same agent instance.** Money, tenancy and the financial record are the three P0 surfaces; each gets an independent certifier. A ledger certified by the same warden that certified the payments it records is a governance defect.
 
 ## 2.8 — Rubber-stamp detection and non-waivable tripwires
 
@@ -485,7 +494,7 @@ The Manager does **not** review Class A results, approve routine builds, or sit 
 | **G0** | 0:00–0:10 | Roster, boundaries, warden assignment, zero orphans | Any system, agent, or criterion unowned |
 | **G0.5** | 0:35–0:55 | **Harness built; every Class A check proven against a broken input** | Any Class A criterion without a proven check |
 | **G1** | 1:00 | Live-site scan complete, brand inventory complete, baseline captures, Class A coverage 100% | Coverage <100%, or brand inventory incomplete |
-| **G2** | 1:00 | Scope, critical journey, requirements map, punch list classified | Any requirement without owner + verifier |
+| **G2** | 1:00 | Scope, critical journey, requirements map, punch list classified, **every Appendix E row mapped to a work item** | Any requirement without owner + verifier; any Appendix E row unmapped |
 | **G3** | continuous | Research mode declared; quotas tracked; `SITE-01` cycle 1 filed | Fabricated or unopened sources |
 | **G4** | 4:00–4:30 | Research audit, resampling, synthesis, traceability | Resampling done by original retriever |
 | **G5** | 2:00 | System inventory, risk register, **data purge verified** | Any orphan system; any surviving fixture client |
@@ -558,7 +567,7 @@ Format: `ID — Name` / **Owns** / **Verified by** / **Must never**
 
 | ID | Name | Owns | Reports to | Must never |
 |---|---|---|---|---|
-| `W-BRAND` `W-INTK` `W-MEM` `W-DR` `W-CAT` `W-PORT` `W-ADMIN` `W-PAY` `W-CLI` `W-VIS` `W-APP` `W-OPS` `W-RES` | Tier Wardens | Certification authority for their tier | `MGR-00` | Certify own work; batch >8; certify without re-executing evidence; hold both `W-PAY` and `W-PORT` |
+| `W-BRAND` `W-INTK` `W-MEM` `W-DR` `W-CAT` `W-PORT` `W-ADMIN` `W-PAY` `W-CLI` `W-LED` `W-VIS` `W-APP` `W-OPS` `W-RES` | Tier Wardens | Certification authority for their tier | `MGR-00` | Certify own work; batch >8; certify without re-executing evidence; hold both `W-PAY` and `W-PORT` |
 | `GOV-01` | Governance Telemetry | Reviewer metrics, tripwires, Class A coverage, demotion rate, queue depth | `MGR-00` + user | Let a tripwire be waived |
 | `HRN-01` | Harness Engineer | Building the Class A check suite | `HRN-02` | Count a check without a broken-input proof |
 | `HRN-02` | Check Prover | Proving every check against known-good and known-broken inputs | `W-OPS` | Prove a check it wrote itself |
@@ -614,7 +623,7 @@ Format: `ID — Name` / **Owns** / **Verified by** / **Must never**
 | ID | Name | Owns | Verified by | Must never |
 |---|---|---|---|---|
 | `CLI-00` | Client Agent Registry | The registry, the provisioning template, scope binding, lifecycle (provision on customer create, suspend on pause, revoke on decline) | `CLI-V` | Provision an agent whose scope binding is not enforced at the data layer |
-| `CLI-01` | **Client Agent — Boarshead** | Boarshead's containers, price matrix, run history, claims, on-time record, reorder cadence, Decision Room input preparation | `CLI-V` | Read, infer, or reference any other customer's data |
+| `CLI-01` | **Client Agent — Boars Head** | Boars Head's containers, price matrix, run history, claims, on-time record, reorder cadence, Decision Room input preparation | `CLI-V` | Read, infer, or reference any other customer's data |
 | `CLI-nn` | Client Agent — *(one per client, provisioned from the template)* | That customer only | `CLI-V` | Same |
 | `CLI-V` | Client Agent Verification | The `A30` scope probe; adversarial prompting including cross-client injection attempts | `W-CLI` + `RED-01` | Accept a refusal message as proof of scoping — the data layer must refuse |
 
@@ -697,6 +706,21 @@ Format: `ID — Name` / **Owns** / **Verified by** / **Must never**
 | `IMG-05` | Asset Pipeline & Protection | Responsive sizes, lazy loading, download disabled for non-owners, cross-tenant asset URL protection | `SEC-01` + `RED-01` | Serve an image asset without a tenancy check on its URL |
 | `IMG-V` | Viewer Verification | The `A16` check; capture at every viewport and on touch | `W-PORT` | Certify from a desktop capture alone |
 
+### Tier LED — The transaction ledger · warden `W-LED`
+
+**The ledger is the financial record of the business. It is derived from money events, never typed. It is append-only, and it must reconcile.**
+
+| ID | Name | Owns | Verified by | Must never |
+|---|---|---|---|---|
+| `LED-00` | Ledger Lead | The canonical transaction model; the rule that every money event writes exactly one immutable row | `LED-V` | Allow a ledger row to be created by hand or edited after the fact |
+| `LED-01` | Transaction Record | Row creation on every charge, settlement, refund, partial refund, reversal, manual confirmation and fee; the receipt number | `PAY-V` + `LED-V` | Write a row for an unsettled ACH debit as though it were revenue |
+| `LED-02` | Period Aggregation | Month/Month, Quarter/Quarter, Year/Year views; period-over-period deltas; boundary handling | `LED-V` | Let two period views disagree on the same date range |
+| `LED-03` | Search & Retrieval | Date-range search, member search, order-reference search, receipt-number search; deep link to the exact receipt | `LED-V` | Return a partial result set without saying it is partial |
+| `LED-04` | Export | Exportable in every offered format, matching the on-screen view exactly | `SEC-01` + `LED-V` | Export a field the on-screen view does not show |
+| `LED-05` | Client Ledger | The member-facing ledger: all of their purchases, their own periods, their own search, their own export | `PORT-V` + `SEC-01` | Show a row, a fee, or an internal field belonging to anyone else |
+| `LED-06` | Reconciliation | Continuous reconciliation of ledger ↔ order log ↔ payment provider; a named, surfaced break when they disagree | `W-LED` + `RED-01` | Close a reconciliation break by adjusting the ledger |
+| `LED-V` | Ledger Verification | `A32`–`A36` and their broken-input proofs | `W-LED` | Certify totals it computed itself |
+
 ### Tier PORT — Member portal · warden `W-PORT`
 
 | ID | Name | Owns | Verified by | Must never |
@@ -707,6 +731,7 @@ Format: `ID — Name` / **Owns** / **Verified by** / **Must never**
 | `PORT-03` | Security Log | Sign-ins **and every admin access to this account** with time, named admin, reason, and read/write mode | `ADM-11` + `RED-01` | Omit an impersonation event for any reason |
 | `PORT-04` | Account & Capacity | Contacts, addresses, payment methods, visible capacity ledger | `PORT-V` | Show a capacity number the ledger cannot reproduce |
 | `PORT-05` | Orders View | Status through production, review, and shipping; documents; tracking | `PORT-V` | Show a shipping state the order state machine has not reached |
+| `PORT-06` | Client Ledger Surface | The member's own ledger view, periods, search and export — implemented by `LED-05` | `PORT-V` + `SEC-01` | Render a total the admin ledger filtered to this customer does not reproduce |
 | `PORT-V` | Portal Verification | Independent test including the `A05` tenancy probe across every portal surface | `W-PORT` + `RED-01` | Certify tenancy from template inspection instead of request probing |
 
 ### Tier ADM — Admin bay · warden `W-ADMIN`
@@ -722,6 +747,7 @@ Format: `ID — Name` / **Owns** / **Verified by** / **Must never**
 | `ADM-06` | Calendar | Interviews, production milestones, ship dates, review deadlines | `ADM-V` | Create an event with no owning record |
 | `ADM-07` | Catalogue Management | Master catalogue, per-customer assignment, per-customer pricing, range publishing | `CAT-V` | Publish a public range derived from one customer's negotiated price |
 | `ADM-08` | Order Log | Every order, state, payment, review outcome; export | `ADM-V` | Export a field the export description does not name |
+| `ADM-13` | **Master Ledger Surface** | The admin-facing master ledger: all transactions, the three period views, search, receipt retrieval, export — implemented by `LED-00…04` | `LED-V` | Present a total that does not reconcile to the order log and the payment provider |
 | `ADM-09` | Review Queue | The 24h manufacturer review: clear / hold with reason / change request | `REV-01` | Clear an order without an attributed reviewer |
 | `ADM-10` | Email Log | Every outbound message: recipient, template, timestamp, delivery result | `ADM-V` | Record a send that did not occur |
 | `ADM-11` | **Impersonation & Audit** | Logged, timestamped, attributed, reason-required, read-only by default; write mode behind an explicit second step; every event mirrored to `PORT-03` | `SEC-01` + `RED-01` | Provide any impersonation path that does not write to the member's security log |
@@ -814,8 +840,8 @@ The roster is a **role map, not a headcount**. Agents activate when they hold a 
 |---|---|
 | **H1** | `MGR-*`, `GOV-01`, `HRN-01/02`, all tier leads, **`BRD-00…04`**, **`SITE-01`**, `VIS-01`, `DATA-00/01`, `SEC-01`, `RES-*`, `RED-01` |
 | **H2** | `DATA-02`, `CLIENT-01`, `CLI-00/01`, `CAT-00…02`, `INTK-00…04`, `MEM-00…04`, `PORT-00/01`, `ADM-00…03`, `CR-*`, wardens |
-| **H3** | Full `DR-*` and `GEN-*` tiers, `IMG-*`, `CAT-03…05`, `MEM-05…07`, `ADM-04…12`, `PAY-*`, `REV-01`, `ORD-*`, adversaries attacking continuously |
-| **H4** | `VIS-*`, `OPS-00`, `QA-*`, `SEC-01`, `ENV-01`, `DB-V`, `A11Y-*`, `PERF-01`, `OBS-01`, `DEP-01`, `CHAOS-01`, `CLI-V`, `RED-01` |
+| **H3** | Full `DR-*` and `GEN-*` tiers, `IMG-*`, `CAT-03…05`, `MEM-05…07`, `ADM-04…13`, `PAY-*`, `REV-01`, `ORD-*`, **`LED-00…05`**, adversaries attacking continuously |
+| **H4** | `VIS-*`, `OPS-00`, `QA-*`, `SEC-01`, `ENV-01`, `DB-V`, `A11Y-*`, `PERF-01`, `OBS-01`, `DEP-01`, `CHAOS-01`, `CLI-V`, **`LED-06`, `LED-V`**, `RED-01` |
 | **H5** | `QA-03`, `OPS-00`, `REL-01`, `INC-01`, `DOC-01`, `HYP-01`, `VAL-01/02`, `RED-02`, `MGR-00`, wardens |
 
 `RED-01` and `SITE-01` are active in **every** hour by design — `RED-01` starts attacking the first certified item rather than waiting; `SITE-01` starts finding improvements before the fleet has finished building the thing being improved.
@@ -994,11 +1020,13 @@ Continue beyond the floor while any of these hold:
 * Class A coverage is below 100%, or any Class A check lacks a broken-input proof.
 * The brand scan is not clean, or brand residue exists in generated output.
 * Any fixture or test client survives in the database.
-* Boarshead's record is incomplete against Appendix B.
+* Boars Head's record is incomplete against Appendix B.
 * Any client lacks a provisioned, scope-verified agent.
 * Any portal item lacks an image viewer.
 * Any Decision Room number lacks provenance.
 * Any catalogue item lacks correct order gating.
+* The ledger does not reconcile, two period views disagree, or a client ledger total disagrees with the admin ledger.
+* Any Appendix E row is unmapped, unbuilt, or shipping worse than the prototype demonstrated.
 * The research gate is incomplete in Mode A, or the Mode B declaration is not on the report.
 * The build is failing.
 * Data persistence, tenancy, or authorization is unverified.
@@ -1026,6 +1054,8 @@ TENANCY:      A05 routes covered <n/n>   cross-tenant hits <n>
 PROVENANCE:   Decision Room fields without an input id <n>
 CATALOGUE:    items <n>   assignments <n>   gating probe failures <n>
 VIEWER:       items missing a viewer <n>
+LEDGER:       rows <n>  reconciliation breaks <n>  period views agreeing y/n  client-vs-admin delta <n>
+PROTOTYPE:    Appendix E rows mapped <n/n>  built <n>  certified <n>
 CAPTURES:     <n> taken   regressions <n>   new baselines <n>
 SITE-01:      findings filed <n>   adopted <n>   measured improvements <n>
 SOURCING:     cycle <n> — <n> qualifying — <n> findings mapped to work items
@@ -1055,6 +1085,8 @@ OPEN DEFECTS:          <id | severity | owner | reproduction>
 OPEN REQUESTS:         <from -> to | filed at | overdue?>
 BASELINE CAPTURES:     <n> at <path> | NOT YET TAKEN
 SITE-01 QUEUE:         <n> filed, <n> adopted, <n> parked
+LEDGER STATE:          rows <n>, breaks <n>, period views agreeing y/n
+PROTOTYPE (APP. E):    mapped <n/n>, built <n>, certified <n>
 ARTIFACTS WRITTEN:     <path list — see Appendix C>
 AGENT STATES:          <id: state, rung>
 NEXT EXACT ACTION:     <one concrete step, resumable by someone with no context>
@@ -1399,7 +1431,7 @@ The member sees their own sign-ins **and every admin access to their account**: 
 
 ---
 
-# PART XI — TRUST: PRICING PROVENANCE, SAVINGS, AND PROOF
+# PART XI — TRUST: PRICING PROVENANCE, SAVINGS, PROOF, AND THE TRANSACTION LEDGER
 
 ## 11.1 — Every number traces to an admin input (`DR-08`)
 
@@ -1469,7 +1501,7 @@ The admin may override any of these per item on the pricing desk. **What the adm
 
 ### 11.3.4 — The materiality promotion rule
 
-Tooling that is trivial at high volume is severe at low volume, and the same disclosure cannot serve both. For Boarshead's containers this is not hypothetical: an $840 tooling charge is $0.0017 per unit across 500,000 containers and $0.042 per unit across 20,000 — the difference between invisible and **30% of a $0.14 unit price.**
+Tooling that is trivial at high volume is severe at low volume, and the same disclosure cannot serve both. For Boars Head's containers this is not hypothetical: an $840 tooling charge is $0.0017 per unit across 500,000 containers and $0.042 per unit across 20,000 — the difference between invisible and **30% of a $0.14 unit price.**
 
 So the rule is proportional:
 
@@ -1494,6 +1526,80 @@ Add to the §2.2 Class A set:
 | **A31** | **Tooling disclosure** | Every item with a tool renders exactly four Tooling Line facts and no fifth · the ownership sentence is present · the treatment matches the strategy being displayed · zero internal tooling fields appear in any client-facing payload · the materiality callout fires at and above the 5% threshold and not below it, asserted at boundary quantities · a reused tool renders the no-tooling-cost statement |
 
 **Broken-input proof for `A31`:** add a fifth field to one item's Tooling Line and confirm the check names the item and the field; strip the ownership sentence from one item and confirm it is named; set a quantity one unit either side of the 5% threshold and confirm the presentation flips exactly once; then revert all three.
+
+## 11.4 — The transaction ledger — doctrine
+
+**The ledger is the financial record of the business.** It is not a report generated from the order log on demand and it is not a convenience view. It is an append-only record with one immutable row per money event, and everything else — the admin master view, the client view, the three period reports, the exports — is a projection of it.
+
+Three rules govern it absolutely:
+
+1. **Derived, never typed.** A ledger row is written by a money event. No human and no agent creates, edits, or deletes a row. A correction is a new, linked reversing row — never a mutation.
+2. **It must reconcile.** Ledger ↔ order log ↔ payment provider must agree, continuously. When they disagree, the break is **named and surfaced**, never smoothed over. `LED-06` may not close a break by adjusting the ledger.
+3. **Revenue means settled.** The same rule that governs the review gate governs the ledger: an ACH debit in flight is recorded as *pending*, in its own state, and never as revenue. `A32` proves it.
+
+## 11.5 — The master ledger (admin)
+
+Lives in the admin bay as its own surface (`ADM-13`), implemented by `LED-00…04`.
+
+**Every transaction, in one place.** Charges, settlements, refunds, partial refunds, reversals, manual wire and PO confirmations, and payment-provider fees — each with: receipt number · date and time · customer · order reference · item(s) · quantity · gross · fees · net · payment method (card / ACH / wire / PO) · status · linked review outcome · linked reversing row if any.
+
+### 11.5.1 — Three period formats, all exportable
+
+The same underlying rows, presented three ways. The format selector never changes the data — only the aggregation.
+
+| Format | Shows | Comparison |
+|---|---|---|
+| **Month over Month** | Each calendar month | Current month vs the previous month: gross, net, order count, average order value, refund rate, and the delta on each |
+| **Quarter over Quarter** | Each calendar quarter | Current quarter vs the previous quarter, same measures |
+| **Year over Year** | Each calendar year | Current year vs the previous year, same measures, plus same-period-last-year for the year in progress |
+
+**`A33` asserts** that all three views sum to the same grand total over the same date range, that period boundaries are handled consistently (inclusive start, exclusive end, one named timezone stored with every row), and that a transaction dated on a boundary lands in exactly one period. A ledger whose month view and quarter view disagree is a P0 — it means the business's own numbers cannot be trusted.
+
+**Every view exports.** The export is the on-screen view: same rows, same columns, same order, same totals, same active filter. `A35` proves it. An export that quietly contains more or fewer rows than the screen is a P1, because it will be pasted into a spreadsheet and reconciled against something.
+
+### 11.5.2 — Search: finding the exact receipt
+
+The master ledger's search is not a convenience — it is how a dispute gets answered. Four search modes, combinable:
+
+| Mode | Behavior |
+|---|---|
+| **Date search** | A single date or a range. Presets for this month, last month, this quarter, this year, and a custom range. The active range drives every period view and every export. |
+| **Member search** | By company name, contact name, or customer reference. Selecting a member filters the whole ledger to them and shows their running total. |
+| **Order search** | By order reference. Resolves to that order's full transaction chain — the charge, the settlement, any refund, any reversal — in sequence. |
+| **Receipt search** | By receipt number. Resolves directly to the single receipt, deep-linkable so it can be sent to a colleague. |
+
+Every result is one click from **the receipt itself** — the document, not a summary of it. `A36` asserts each mode returns the complete matching set and nothing else, against a seeded fixture set with known boundary cases (a transaction on the first second of a month, a refund in a different period from its charge, two members with similar names, a reused-looking order reference).
+
+**A search that silently truncates is a P1.** If a result set is capped, the surface says so and offers the export.
+
+## 11.6 — The client ledger (member portal)
+
+Every member gets their own ledger (`PORT-06`, implemented by `LED-05`): **all of their purchases, in one place, with their own period views, their own search, and their own export.**
+
+Same three formats. Same search modes minus member search, which is meaningless inside a single account. Same one-click access to the receipt.
+
+**What the client ledger shows:** their transactions, their orders, their items and quantities, what they paid, refunds and reversals, running totals, and their period comparisons.
+
+**What it never shows:** anyone else's rows · Monti's fees, margin, or cost build-up · internal reconciliation state · another member's existence in any form.
+
+`A34` proves the tenancy: a cross-tenant ledger query or export returns 404, and — the check that actually matters — **the client's own totals equal the admin master ledger filtered to that customer.** Two ledgers that disagree about what a client paid is the single most damaging inconsistency this product could ship, and it is asserted, not assumed.
+
+The client ledger is also where the **Verified Savings Ledger** (§11.2) surfaces once it exists — the same rows, with the baseline comparison attached. Until that standard is written, the ledger shows what they paid and makes no savings claim.
+
+## 11.7 — Ledger and the payment sequence
+
+The ledger observes §9.1; it does not participate in it. Specifically:
+
+* Checkout started → **no row**.
+* Card authorized and captured → **one row**, status `settled`.
+* ACH initiated → **one row**, status `pending`, excluded from revenue in every period view and visibly labeled in both ledgers.
+* ACH settled → the pending row **transitions** to `settled` (it does not create a second row).
+* ACH failed → the pending row transitions to `failed` and a linked reversing row is written if anything downstream had been actioned.
+* Manual wire or PO confirmed → **one row**, status `settled`, marked as manually confirmed with the confirming admin named.
+* Refund or partial refund → **a new linked row**, never an edit to the original.
+* Provider fee → its own row, linked to the transaction it belongs to, visible in the admin ledger and **never** in the client ledger.
+
+`A32` asserts every one of these mappings and that no money event produces zero rows or two rows.
 
 ---
 
@@ -1584,7 +1690,7 @@ Assign each: launch criticality · status · test status · risk · dependencies
 
 Per risk: risk · affected user · affected system · probability · severity · detection method · prevention · recovery · owning agent · status · launch impact.
 
-**Standing entries that must be present and closed with evidence:** cross-tenant leakage · order gating bypass · ACH treated as settled · duplicate orders email · shipping without review · brand residue in generated output · surviving fixture data · a price with no admin input · an unscoped client agent · an unscoped asset URL.
+**Standing entries that must be present and closed with evidence:** cross-tenant leakage · order gating bypass · ACH treated as settled · duplicate orders email · shipping without review · brand residue in generated output · surviving fixture data · a price with no admin input · an unscoped client agent · an unscoped asset URL · **a ledger that does not reconcile** · **a client ledger total disagreeing with the admin ledger** · **an ACH pending row counted as revenue**.
 
 ## 14.3 — Production configuration (`ENV-01`)
 
@@ -1662,7 +1768,7 @@ A clean pass means: no unexpected client error · no unexpected server error · 
 
 Immediately after launch: verify application health · authentication · the critical journey · data writes · persistence · Stripe · webhooks · orders email · monitoring. Watch: client errors · server errors · checkout failures · settlement failures · orders-email failures · review-window latency · save failures · latency · support reports.
 
-**Boarshead-specific watch:** their first real order through the full sequence — checkout, settlement, orders email, review, release — is monitored end to end and confirmed by a human before the run is considered closed.
+**Boars Head-specific watch:** their first real order through the full sequence — checkout, settlement, orders email, review, release — is monitored end to end and confirmed by a human before the run is considered closed.
 
 Thresholds for: rollback · feature disablement · incident declaration · user communication · escalation · increased monitoring.
 
@@ -1693,6 +1799,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | **WI-G-11** | **Image-viewer presence checker** | HRN-01 | IMG-V | A | Every portal item exposes a viewer or an explicit empty state; proven by removing one |
 | **WI-G-12** | **Capacity ledger reconciler** | HRN-01 | MEM-06 | A | Debits, expiry, and earned credits reconcile on a synthetic account; refusal message names a correct next-slot time; proven by an off-by-one debit |
 | **WI-G-13** | **Client-agent scope prober** | HRN-01 | CLI-V | A | Prompts every client agent with another customer's name and id; asserts data-layer refusal; proven by loosening one scope binding |
+| **WI-G-19** | **Ledger harness** | HRN-01 | LED-V | A | Builds `A32`–`A36`; proven by dropping one money event, skewing one period boundary by a second, adding a column to an export, and running a cross-tenant ledger fetch — each must be named by the check, then reverted |
 | **WI-G-18** | **Tooling disclosure checker** | HRN-01 | DR-06 | A | Asserts four facts and no fifth, ownership sentence present, treatment matches strategy, threshold flip at boundary quantities; proven by adding a fifth field, stripping the ownership line, and testing either side of 5% |
 | **WI-G-14** | Token and palette scanner | HRN-01 | HRN-02 | A | Finds hard-coded values; compares state palettes across portal, admin, and lists; proven by hard-coding one hex value |
 | **WI-G-15** | Authorization prober | HRN-01 | SEC-01 | A | Every protected action refused server-side for an unauthorized principal; every admin route refused for a member |
@@ -1720,11 +1827,11 @@ Items may be added during the run. Items may not be removed without a written sc
 | **WI-X-01** | Fixture inventory across every table | DATA-00 | DATA-02 | A | Every seeded/demo/example record identified with the evidence that it is fixture data |
 | **WI-X-02** | Restorable backup taken before any deletion | DATA-01 | DB-V | A | Backup exists, restore tested, path recorded |
 | **WI-X-03** | **Purge all test and example clients** | DATA-01 | DATA-02 | A | `A14` clean; `Halcyon Goods` returns zero rows; zero orphan dependent rows anywhere |
-| **WI-X-04** | **Create Boarshead to Appendix B spec** | CLIENT-01 | DATA-02 | A | Every field in Appendix B populated; nothing invented beyond it; open questions filed, not guessed |
-| **WI-X-05** | **Boarshead price matrix entered on the pricing desk** | ADM-03 | DR-08 | A | Quantity tiers × spec tiers entered, spanning $0.20 → $0.14; every cell traces to an admin input; published deliberately |
-| **WI-X-06** | Boarshead catalogue items and registrations | CAT-02 | CAT-V | A | Their container SKUs exist, are assigned to them, and gate correctly for everyone else |
-| **WI-X-07** | Boarshead Product Genome per SKU | GEN-00 | GEN-V | B | Six client-facing sections populated with what is known; unknowns explicitly marked, never filled with plausible defaults |
-| **WI-X-08** | Boarshead image sets and viewer | IMG-03 | IMG-V | A | Every Boarshead SKU has an image set or an explicit empty state; viewer verified on touch |
+| **WI-X-04** | **Create Boars Head to Appendix B spec** | CLIENT-01 | DATA-02 | A | Every field in Appendix B populated; nothing invented beyond it; open questions filed, not guessed |
+| **WI-X-05** | **Boars Head price matrix entered on the pricing desk** | ADM-03 | DR-08 | A | Quantity tiers × spec tiers entered, spanning $0.20 → $0.14; every cell traces to an admin input; published deliberately |
+| **WI-X-06** | Boars Head catalogue items and registrations | CAT-02 | CAT-V | A | Their container SKUs exist, are assigned to them, and gate correctly for everyone else |
+| **WI-X-07** | Boars Head Product Genome per SKU | GEN-00 | GEN-V | B | Six client-facing sections populated with what is known; unknowns explicitly marked, never filled with plausible defaults |
+| **WI-X-08** | Boars Head image sets and viewer | IMG-03 | IMG-V | A | Every Boars Head SKU has an image set or an explicit empty state; viewer verified on touch |
 | **WI-X-09** | **Current Clients register** | CLIENT-01 | MGR-02 | A | Appendix B maintained as a live artifact; every client has an owning agent and a warden |
 
 ## Group C — Client agents
@@ -1732,7 +1839,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | ID | Work item | Owner | Adversary | Cls | Done when |
 |---|---|---|---|---|---|
 | **WI-C-01** | Client agent template and registry | CLI-00 | CLI-V | A | Provisioning a customer provisions their agent; scope binding enforced at the data layer |
-| **WI-C-02** | **Boarshead client agent** | CLI-01 | CLI-V | B | Answers correctly on Boarshead's containers, price matrix, run history, claims, on-time record; drafts their quotes; flags price-band drift |
+| **WI-C-02** | **Boars Head client agent** | CLI-01 | CLI-V | B | Answers correctly on Boars Head's containers, price matrix, run history, claims, on-time record; drafts their quotes; flags price-band drift |
 | **WI-C-03** | Scope enforcement across every client agent | CLI-00 | CLI-V + RED-01 | A | `A30` passes; cross-client prompt injection refused at the data layer, not by refusal text |
 | **WI-C-04** | Agent lifecycle | CLI-00 | CLI-V | B | Suspend on pause, revoke on decline, re-provision on reinstate — each verified |
 | **WI-C-05** | Agent output is proposal-only | CLI-00 | RED-01 | A | No client agent can publish a price, change an order state, or write to another customer's record |
@@ -1833,6 +1940,23 @@ Items may be added during the run. Items may not be removed without a written sc
 | **WI-Y-08** | **Centralized orders email, exactly once** | ORD-01 | PAY-V + RED-01 | A | Fires on confirmation only; idempotent under replay |
 | **WI-Y-09** | Order state machine | ORD-02 | QA-02 | A | No transition outside the machine is reachable |
 
+## Group L — The transaction ledger
+
+| ID | Work item | Owner | Adversary | Cls | Done when |
+|---|---|---|---|---|---|
+| **WI-L-01** | Append-only transaction model, one row per money event | LED-00, LED-01 | LED-V | A | `A32` passes; no path exists to create or edit a row by hand; corrections are linked reversing rows |
+| **WI-L-02** | Receipt numbering and the receipt document itself | LED-01 | LED-V | B | Every row resolves to a real receipt document, deep-linkable, one click from any search result |
+| **WI-L-03** | **Month/Month, Quarter/Quarter, Year/Year views** | LED-02 | LED-V | A | `A33` passes; all three sum to the same grand total over the same range; boundary transactions land in exactly one period; one stored timezone |
+| **WI-L-04** | Period-over-period comparison measures | LED-02 | LED-V | B | Gross, net, order count, AOV, refund rate and deltas correct against a fixture set |
+| **WI-L-05** | **Date, member, order and receipt search** | LED-03 | LED-V + RED-01 | A | `A36` passes on a seeded set with boundary cases; truncation is never silent |
+| **WI-L-06** | **Export in every offered format, matching the screen** | LED-04 | SEC-01 | A | `A35` passes; export equals the on-screen view for the active filter; no extra internal field |
+| **WI-L-07** | **Client ledger with their own periods, search and export** | LED-05 | PORT-V + SEC-01 | A | `A34` passes; cross-tenant returns 404; client totals equal the admin ledger filtered to that customer |
+| **WI-L-08** | Client ledger exclusions | LED-05 | RED-01 | A | Zero fees, margin, cost build-up, reconciliation state, or trace of another member in any client-facing payload or export |
+| **WI-L-09** | ACH pending never counted as revenue | LED-01 | PAY-V + RED-01 | A | A pending row is excluded from every period total and visibly labeled in both ledgers |
+| **WI-L-10** | **Continuous reconciliation ledger ↔ order log ↔ provider** | LED-06 | W-LED + RED-01 | A | A deliberately induced break is surfaced by name within one reconciliation cycle and cannot be closed by adjusting the ledger |
+| **WI-L-11** | Ledger performance at volume | LED-02, PERF-01 | RED-01 | B | Period views and search stay within budget against a seeded set at 100× current volume |
+| **WI-L-12** | Ledger on a phone | LED-02, MOB-02 | VIS-04 | B | All three period views and every search mode usable at 320px; captured on touch |
+
 ## Group V — Visual system
 
 | ID | Work item | Owner | Adversary | Cls | Done when |
@@ -1867,7 +1991,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | ID | Work item | Owner | Adversary | Cls | Done when |
 |---|---|---|---|---|---|
 | **WI-O-01** | Operational function register with baseline states | OPS-00 | RED-01 | A | Every function listed with an evidenced state |
-| **WI-O-02** | **Critical journey end-to-end, all 20 steps** | OPS-00 | QA-01 | B | Completed without developer intervention, captured |
+| **WI-O-02** | **Critical journey end-to-end, all 22 steps** | OPS-00 | QA-01 | B | Completed without developer intervention, captured |
 | **WI-O-03** | Console and network cleanliness | OBS-01 | RED-01 | A | Zero uncaught errors or unexplained non-2xx on the critical journey |
 | **WI-O-04** | Performance budgets set then measured | PERF-01 | RED-01 | A | Budgets documented before measurement |
 | **WI-O-05** | Observability proven by induced failure | OBS-01 | SEC-01 | B | An induced failure is detected by an operator using only the monitoring surface |
@@ -1878,11 +2002,11 @@ Items may be added during the run. Items may not be removed without a written sc
 | **WI-O-10** | Rollback walked, not described | REL-01 | RED-01 | B | Procedure executed; recovery time recorded |
 | **WI-O-11** | **Two clean critical-path passes** | QA-03, OPS-00 | RED-01 | A | Two consecutive passes meeting §14.11 |
 | **WI-O-12** | Launch docs, runbook, incident procedures, limitations | DOC-01 | RED-01 | C | Documents only verified behavior |
-| **WI-O-13** | Hypercare plan including the Boarshead first-order watch | HYP-01 | MGR-00 | C | Every §14.12 threshold defined with an owner |
+| **WI-O-13** | Hypercare plan including the Boars Head first-order watch | HYP-01 | MGR-00 | C | Every §14.12 threshold defined with an owner |
 
 ## Completion rule
 
-**Monti Makes It is finished when:** every work item is `CERTIFIED` or explicitly `BLOCKED-EXTERNAL` with a named blocker · at least 20% of items are `SPOT-CONFIRMED`, including every P0/P1 item · Class A coverage is 100% with every check proven · zero governance defects are open · the brand scan is clean including generated output · zero fixture records survive · Boarshead is complete and their agent is scope-verified · and `RED-02`'s NO-GO case has been answered point by point.
+**Monti Makes It is finished when:** every work item is `CERTIFIED` or explicitly `BLOCKED-EXTERNAL` with a named blocker · at least 20% of items are `SPOT-CONFIRMED`, including every P0/P1 item · Class A coverage is 100% with every check proven · zero governance defects are open · the brand scan is clean including generated output · zero fixture records survive · Boars Head is complete and their agent is scope-verified · and `RED-02`'s NO-GO case has been answered point by point.
 
 ---
 
@@ -1899,6 +2023,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | 0:00–0:10 | Fleet stand-up: roster, boundaries, wardens, zero-orphan check — **G0** | MGR-00, GOV-01 |
 | 0:00–0:25 | Parallel reconnaissance across every tier; baseline install/start/build/test | All tier leads |
 | 0:00–0:25 | **Scan the live surface** at the artifact URL and the local codebase; `SITE-01` baseline friction inventory — `WI-R-01` | SITE-01 |
+| 0:10–0:35 | **Open the prototype from `cse_01B2fEc4ZUQ49QMhmcd672yq`; confirm and map every Appendix E row to a work item** | MGR-02, SITE-01 |
 | 0:05–0:30 | **Brand occurrence inventory across every §7.1 surface** — `WI-B-01` | BRD-00 |
 | 0:05–0:30 | **Capture the baseline screenshot matrix** — the visual "before" | VIS-01 |
 | 0:10–0:30 | **Fixture inventory**; identify every test and example client — `WI-X-01` | DATA-00 |
@@ -1922,17 +2047,17 @@ Items may be added during the run. Items may not be removed without a written sc
 | 1:20–1:45 | **Ownership-claim rewrite to the manufacturer claim** — `WI-B-06` | BRD-01 |
 | 1:30–1:50 | Identity assets, filenames, domain, routes, redirects — `WI-B-05/08` | BRD-02, BRD-04 |
 | 1:00–1:25 | **Purge every test and example client** — `WI-X-03` | DATA-01 |
-| 1:25–1:50 | **Create Boarshead to Appendix B spec** — `WI-X-04` | CLIENT-01 |
-| 1:35–2:00 | **Boarshead price matrix entered and published on the pricing desk** — `WI-X-05` | ADM-03 |
+| 1:25–1:50 | **Create Boars Head to Appendix B spec** — `WI-X-04` | CLIENT-01 |
+| 1:35–2:00 | **Boars Head price matrix entered and published on the pricing desk** — `WI-X-05` | ADM-03 |
 | 1:00–1:40 | Catalogue data model: public fields vs assignments — `WI-K-01/02` | CAT-00…02 |
 | 1:00–1:40 | Intake surfaces and SLA clock — `WI-I-01/04` | INTK-00, INTK-04 |
 | 1:20–2:00 | Membership state machine and application surface — `WI-M-01/02` | MEM-00, MEM-01 |
 | 1:30–2:00 | Portal shell and tenancy layer — `WI-P-01/02` | PORT-00, AUTH-02 |
-| 1:40–2:00 | Client agent template built; Boarshead agent provisioned — `WI-C-01/02` | CLI-00, CLI-01 |
+| 1:40–2:00 | Client agent template built; Boars Head agent provisioned — `WI-C-01/02` | CLI-00, CLI-01 |
 | Continuous | Sourcing cycles 3–4 · `SITE-01` cycles 2–3 · `A06` after every rename commit | CR-*, SITE-01, BRD-03 |
 | **2:00** | **G5 + G6** | Wardens + MGR-00 |
 
-**Exit criteria:** `A06` clean on source, database, and at least one rendered document · `A14` clean, `Halcyon Goods` returns zero rows, zero orphan rows · Boarshead exists with a published price matrix spanning $0.20 → $0.14 · every P0/P1 has an owner, adversary, and warden · zero orphan systems.
+**Exit criteria:** `A06` clean on source, database, and at least one rendered document · `A14` clean, `Halcyon Goods` returns zero rows, zero orphan rows · Boars Head exists with a published price matrix spanning $0.20 → $0.14 · every P0/P1 has an owner, adversary, and warden · zero orphan systems.
 
 ### Hour 3 (3:00) — Build out the commercial surfaces
 
@@ -1947,12 +2072,13 @@ Items may be added during the run. Items may not be removed without a written sc
 | 2:15–2:55 | Product Genome six sections; internal partition | GEN-00…07 |
 | 2:00–2:50 | Admin bay: pricing desk, applications, CRM, calendar, catalogue, order log | ADM-02…08 |
 | 2:30–3:00 | **Checkout, ACH semantics, webhooks, review gate, orders email** | PAY-*, REV-01, ORD-01 |
-| 2:40–3:00 | Boarshead catalogue items, registrations, genome, image sets — `WI-X-06…08` | CAT-02, GEN-00, IMG-03 |
+| 2:30–3:00 | **Transaction ledger: rows, three period views, search, export, client ledger** | LED-00…05 |
+| 2:40–3:00 | Boars Head catalogue items, registrations, genome, image sets — `WI-X-06…08` | CAT-02, GEN-00, IMG-03 |
 | 2:00–3:00 | **Adversaries attack continuously as items land** | SEC-01, RED-01, QA-01, CAT-V, PAY-V, IMG-V, CLI-V |
 | Continuous | Sourcing cycles 5–6 · `SITE-01` cycles 4–5 | CR-*, SITE-01 |
 | **3:00** | **G7** — plus Class A proofs re-run to detect harness rot | Wardens + MGR-00 |
 
-**Exit criteria:** public catalogue live with ranges and zero price leaks · order gating refuses server-side at all three points · every Decision Room number traces to an admin input · image viewer present on every portal item and verified on touch · payment-first sequence working end to end in test mode · Boarshead's items visible in their portal and gated for everyone else · no `SURVIVED` verdict with an empty attack list.
+**Exit criteria:** public catalogue live with ranges and zero price leaks · order gating refuses server-side at all three points · every Decision Room number traces to an admin input · image viewer present on every portal item and verified on touch · payment-first sequence working end to end in test mode · Boars Head's items visible in their portal and gated for everyone else · no `SURVIVED` verdict with an empty attack list.
 
 ### Hour 4 (4:00) — Prove it, see it, break it
 
@@ -1963,6 +2089,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | 3:00–3:40 | Whole-system functional testing across the operational register | OPS-00 |
 | 3:10–3:45 | **Tenancy assault: id guessing, direct URL, stale session, role swap, two-tab race, asset URLs, client-agent injection** | SEC-01, RED-01, CLI-V |
 | 3:15–3:50 | **Payment assault: replay, out-of-order, unsigned, processing-vs-settled, double-click checkout** | PAY-V, RED-01 |
+| 3:20–3:55 | **Ledger assault: induced reconciliation break, boundary-date transactions, cross-tenant ledger fetch, export tampering** | LED-06, LED-V, RED-01 |
 | 3:20–3:50 | Security, production config, migration safety | SEC-01, ENV-01, DB-V |
 | 3:30–4:00 | Accessibility certification with captures, including the image viewer; performance measurement | A11Y-02, PERF-01 |
 | 3:40–4:00 | Chaos drill: Stripe unavailable mid-checkout, duplicate webhook, settlement failure, interrupted upload | CHAOS-01 |
@@ -1977,7 +2104,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | Time | Activity | Lead |
 |---|---|---|
 | 4:00–4:20 | Fix everything `RED-01` found; re-run every affected gate | Owning agents |
-| 4:00–4:30 | **Clean pass #1** of the full 20-step critical journey with captures | OPS-00, QA-03 |
+| 4:00–4:30 | **Clean pass #1** of the full 22-step critical journey with captures | OPS-00, QA-03 |
 | 4:20–4:40 | `ADOPT-NOW` value proposals and top `SITE-01` findings implemented and verified | Owning agents |
 | 4:30–4:50 | **Clean pass #2** — genuinely clean, not "clean except" | OPS-00, QA-03 |
 | 4:35–4:50 | Release candidate freeze; **final fixture and test-credential sweep**; rollback walked; runbook | REL-01, DOC-01, DATA-02 |
@@ -1985,7 +2112,7 @@ Items may be added during the run. Items may not be removed without a written sc
 | 4:50–5:00 | Manager answers point by point; final spot-check round; decision | MGR-00 |
 | **5:00** | **G11 + G12 + G14 + G15** | MGR-00 |
 
-**Exit criteria:** two genuinely clean passes · zero P0 · zero P1 · Class A proofs re-run and passing · brand scan clean · zero fixture records · Boarshead complete and agent scope-verified · `RED-02` challenged and answered in writing · no open tripwires · one recommendation with evidence.
+**Exit criteria:** two genuinely clean passes · zero P0 · zero P1 · Class A proofs re-run and passing · brand scan clean · zero fixture records · Boars Head complete and agent scope-verified · `RED-02` challenged and answered in writing · no open tripwires · one recommendation with evidence.
 
 ## 16.2 — Parallelism note
 
@@ -1996,10 +2123,10 @@ The hour plan assumes agents work in parallel within their boundaries. Wall-cloc
 If the plan runs long, cut in this **fixed order** — never improvise the order under pressure:
 
 1. **Cut first:** P3 polish · optional value proposals · captures beyond the required matrix · documentation beyond the runbook and known limitations · the Proof Library · the Verified Savings Ledger.
-2. **Cut second:** the annotated diagram layer on the image viewer (the viewer itself stays) · secondary admin workflows off the critical journey · self-serve interview scheduling · performance optimization beyond the documented budget.
+2. **Cut second:** the annotated diagram layer on the image viewer (the viewer itself stays) · the period-over-period **comparison measures** on the ledger (the three period views, the search and the export all stay) · secondary admin workflows off the critical journey · self-serve interview scheduling · performance optimization beyond the documented budget.
 3. **Cut third, with a written scope decision:** the Make This Box flow · the supplier-quote normalizer · weighted capacity units, falling back to the flat 10-per-30-days limit already built.
 
-**Never cut, under any time pressure:** the Class A harness · tenant isolation and its proof · the brand and ownership-claim scan · the fixture purge and its verification · Boarshead's data and their agent's scope verification · order gating · ACH settlement semantics · webhook idempotency · the 24h review gate · the orders email · number provenance · the Tooling Line and its ownership statement · the image viewer's core behavior · server-side authorization · persistence verification · the two clean passes · rollback verification · the `RED-02` challenge · spot-check quotas · honest reporting.
+**Never cut, under any time pressure:** the Class A harness · tenant isolation and its proof · the brand and ownership-claim scan · the fixture purge and its verification · Boars Head's data and their agent's scope verification · order gating · ACH settlement semantics · webhook idempotency · the 24h review gate · the orders email · number provenance · the Tooling Line and its ownership statement · **the ledger's append-only rule, its reconciliation, and its tenancy** · the image viewer's core behavior · server-side authorization · persistence verification · the two clean passes · rollback verification · the `RED-02` challenge · spot-check quotas · honest reporting.
 
 **If the required floor cannot be met, the recommendation is `NO-GO` or `CONDITIONAL GO` with the gap stated — never a `GO` with a shortened process.**
 
@@ -2107,7 +2234,7 @@ Every added feature or change — including every value proposal and every `SITE
 ## 19.1 — Final completion gates
 
 **Product**
-Every punch-list item `CERTIFIED` or explicitly `BLOCKED-EXTERNAL` · zero P0 · zero P1 · **zero cross-tenant reachability under assault** · **order gating refuses server-side at all three points** · **ACH treated as confirmed only on settlement** · **orders email exactly once per confirmed order** · **`ship_order()` raises on every uncleared order** · **every Decision Room number traced to an admin input** · **every tooled item carrying its four-fact Tooling Line and ownership statement, with the materiality callout firing correctly** · **every portal item carrying a working image viewer, verified on touch** · **public catalogue exposing ranges and zero negotiated prices** · **brand scan clean across source, database, and generated output** · **zero ownership claims anywhere** · **zero fixture records** · **Boarshead complete with a published price matrix and a scope-verified agent** · full screenshot matrix captured on pointer and touch, regressions resolved · three-surface parity verified · accessibility certified with captures · persistence verified by refresh and reopen · server-side authorization verified by attempted violation · production build passes · monitoring verified by inducing a failure and detecting it · rollback walked through · two genuinely clean critical-path passes with no shared-system change between them.
+Every punch-list item `CERTIFIED` or explicitly `BLOCKED-EXTERNAL` · zero P0 · zero P1 · **zero cross-tenant reachability under assault** · **order gating refuses server-side at all three points** · **ACH treated as confirmed only on settlement** · **orders email exactly once per confirmed order** · **`ship_order()` raises on every uncleared order** · **every Decision Room number traced to an admin input** · **every tooled item carrying its four-fact Tooling Line and ownership statement, with the materiality callout firing correctly** · **the ledger reconciling to the order log and the payment provider, all three period views agreeing on the same range, every search mode complete, every export matching its screen, and the client ledger's totals equalling the admin ledger filtered to that customer** · **every portal item carrying a working image viewer, verified on touch** · **public catalogue exposing ranges and zero negotiated prices** · **brand scan clean across source, database, and generated output** · **zero ownership claims anywhere** · **zero fixture records** · **Boars Head complete with a published price matrix and a scope-verified agent** · full screenshot matrix captured on pointer and touch, regressions resolved · three-surface parity verified · accessibility certified with captures · persistence verified by refresh and reopen · server-side authorization verified by attempted violation · production build passes · monitoring verified by inducing a failure and detecting it · rollback walked through · two genuinely clean critical-path passes with no shared-system change between them.
 
 **Research**
 Mode declared honestly with the actual qualifying count · in Mode A: ≥250 qualifying sources after audit across ≥60 domains, all quotas met, resampling by non-original retrievers passed, saturation reached · in Mode B: `RESEARCH STATUS: INCOMPLETE` on the face of the report and the recommendation capped at `CONDITIONAL GO` · `SITE-01` findings filed, routed, and their adoption outcomes reported · every P0/P1 requirement fully traced.
@@ -2119,11 +2246,11 @@ Zero orphan systems, agents, criteria, or clients · **Class A coverage 100% wit
 
 Exactly one, issued only by `MGR-00`, only after `RED-02`.
 
-**GO** — allowed only when: research is complete in Mode A · all gates pass · no P0 or P1 · two clean passes · Class A coverage 100% with proofs · brand and purge clean · Boarshead verified · production configuration verified · monitoring working · rollback credible · every agent `CERTIFIED` or externally blocked · Manager spot-checks passed · `RED-02` answered.
+**GO** — allowed only when: research is complete in Mode A · all gates pass · no P0 or P1 · two clean passes · Class A coverage 100% with proofs · brand and purge clean · Boars Head verified · production configuration verified · monitoring working · rollback credible · every agent `CERTIFIED` or externally blocked · Manager spot-checks passed · `RED-02` answered.
 
 **CONDITIONAL GO** — allowed only when: no P0 or P1 · the critical journey is dependable · remaining risks understood · workarounds exist · conditions explicit · the launch owner accepts those conditions. **This is the ceiling in research Mode B.**
 
-**NO-GO** — required when: a P0 or P1 remains · **any cross-tenant path exists** · **order gating can be bypassed** · **an order can ship without a cleared review** · **an unsettled ACH debit produces side effects** · **a banned brand or ownership string survives** · **a fixture client survives** · core behavior unverified · data integrity uncertain · critical configuration missing · a critical dependency unverified · rollback unavailable · monitoring cannot detect major failure · an orphan system exists · Class A coverage below 100% · a governance defect occurred and its gate was not re-run · `RED-02`'s case stands unanswered.
+**NO-GO** — required when: a P0 or P1 remains · **any cross-tenant path exists** · **order gating can be bypassed** · **an order can ship without a cleared review** · **an unsettled ACH debit produces side effects** · **the ledger does not reconcile, or two period views disagree, or a client ledger total disagrees with the admin ledger** · **a banned brand or ownership string survives** · **a fixture client survives** · core behavior unverified · data integrity uncertain · critical configuration missing · a critical dependency unverified · rollback unavailable · monitoring cannot detect major failure · an orphan system exists · Class A coverage below 100% · a governance defect occurred and its gate was not re-run · `RED-02`'s case stands unanswered.
 
 **Never convert `NO-GO` into `GO` through optimistic wording.**
 
@@ -2133,9 +2260,13 @@ Exactly one, issued only by `MGR-00`, only after `RED-02`.
 
 **Rebrand** — surfaces inventoried · occurrences replaced by surface · the ownership-claim rewrite before and after · `A06` results against source, database, and generated output · redirects verified · residue remaining, if any, named.
 
-**Data and clients** — fixture records removed by table · backup and restore evidence · orphan sweep result · **the Current Clients register** · Boarshead's record, price matrix, catalogue registrations, genome, image sets, and agent scope verification.
+**Data and clients** — fixture records removed by table · backup and restore evidence · orphan sweep result · **the Current Clients register** · Boars Head's record, price matrix, catalogue registrations, genome, image sets, and agent scope verification.
 
 **Commercial correctness** — number-provenance results · public price-leak results · order-gating probe results · capacity ledger reconciliation · savings-claim audit (that no unbacked claim exists).
+
+**Ledger** — reconciliation results per cycle · the three period views proven to agree over the same range · boundary-date handling · every search mode's completeness result · export fidelity results · client-vs-admin total agreement per customer.
+
+**Prototype parity (Appendix E)** — every row with its work item, build state, and evidence · every row where the shipped behavior is better than the prototype · every row where it is not, with the reason · the conflict table's resolutions as actually implemented.
 
 **Money** — card and ACH paths exercised · settlement semantics evidence · webhook replay and out-of-order evidence · orders-email idempotency evidence · review-gate assertion evidence · refund and reversal evidence.
 
@@ -2147,7 +2278,7 @@ Exactly one, issued only by `MGR-00`, only after `RED-02`.
 
 **Research and site improvement** — mode · status · counts · domain count · saturation result · loop cycles and yield · **`SITE-01`: findings filed, adopted, measured improvements, rejected with reason** · key buyer likes, dislikes, recurring flaws, trust killers, abandonment triggers · research-driven changes actually made.
 
-**Operations** — dependency, configuration, migration, chaos, monitoring, rollback results · performance budgets and measurements · launch steps · post-launch monitoring plan including the Boarshead first-order watch.
+**Operations** — dependency, configuration, migration, chaos, monitoring, rollback results · performance budgets and measurements · launch steps · post-launch monitoring plan including the Boars Head first-order watch.
 
 **Governance** — roster with final status per agent · **Class A coverage and the proof log** · demotion count and reasons · warden certification counts and spot-check outcomes · rejection rates per reviewer · Class C queue depth over time · tripwires triggered and how resolved · governance defects by name and count · `RED-01` findings each with its control fix · every agent's starting and ending rung.
 
@@ -2158,17 +2289,19 @@ Exactly one, issued only by `MGR-00`, only after `RED-02`.
 1. **`MGR-00` + `GOV-01`** — stand up the fleet and governance. Publish roster, warden assignments, zero-orphan check. Confirm `W-PAY` and `W-PORT` are separate. Classify every criterion A/B/C and publish the ratios.
 2. **`HRN-01` + `HRN-02`** — **build the Class A harness and prove every check against a deliberately broken input.** This blocks build work. It is the single highest-leverage thing in Hour 1.
 3. **`SITE-01`** — open the live surface at `https://claude.ai/code/artifact/0e047879-af09-4239-ac54-8ebef2c13e57` and the local codebase, and produce the baseline friction inventory before anyone changes anything.
-4. **`BRD-00`** — produce the brand occurrence inventory across every §7.1 surface, including database content and generated documents. Nothing renames until the inventory exists.
-5. **`DATA-00` + `DATA-01`** — inventory every fixture record, then take a restorable backup and test the restore. Nothing is deleted before that backup exists.
-6. **`VIS-01`** — capture the full baseline screenshot matrix, pointer and touch.
-7. **All tier leads** — parallel reconnaissance. Baseline install, start, build, test. Assume nothing works because it exists.
-8. **`SEC-01`** — sweep for immediately exploitable P0s, tenancy first; propose containment.
-9. **`CLI-00`** — design the client agent template and the scope binding that `A30` will prove.
-10. **`RED-01`** — begin sampling now. The first thing you should try to break is the first thing certified. Standing priority: cross-tenant reachability, order gating, ACH semantics, orders-email idempotency, the review gate, brand residue, surviving fixtures.
-11. **`RES-*` + `CR-*`** — declare the research mode honestly, then start sourcing cycle 1 at minute 45 and every 30 minutes for the rest of the run.
-12. **Every active agent** — run your first value-escalation cycle; submit through `VAL-01`'s throttle.
+4. **`MGR-02`** — open the prototype from `cse_01B2fEc4ZUQ49QMhmcd672yq`, confirm every Appendix E row against what it actually does, and map each row to a work item. An unmapped row blocks G2.
+5. **`BRD-00`** — produce the brand occurrence inventory across every §7.1 surface, including database content and generated documents. Nothing renames until the inventory exists.
+6. **`DATA-00` + `DATA-01`** — inventory every fixture record, then take a restorable backup and test the restore. Nothing is deleted before that backup exists.
+7. **`VIS-01`** — capture the full baseline screenshot matrix, pointer and touch, in **both themes**.
+8. **All tier leads** — parallel reconnaissance. Baseline install, start, build, test. Assume nothing works because it exists.
+9. **`SEC-01`** — sweep for immediately exploitable P0s, tenancy first; propose containment.
+10. **`CLI-00`** — design the client agent template and the scope binding that `A30` will prove.
+11. **`LED-00`** — design the append-only transaction model before any ledger surface is drawn. The record comes first; the views are projections.
+12. **`RED-01`** — begin sampling now. The first thing you should try to break is the first thing certified. Standing priority: cross-tenant reachability, order gating, ACH semantics, orders-email idempotency, the review gate, **ledger reconciliation and client-vs-admin total agreement**, brand residue, surviving fixtures.
+13. **`RES-*` + `CR-*`** — declare the research mode honestly, then start sourcing cycle 1 at minute 45 and every 30 minutes for the rest of the run.
+14. **Every active agent** — run your first value-escalation cycle; submit through `VAL-01`'s throttle.
 
-Then work the punch list in group priority: **G → B → X → C → I → M → R → P → A → K → Y → V → D → O**, with adversaries attacking continuously as items land rather than in a batch at the end.
+Then work the punch list in group priority: **G → B → X → C → I → M → R → P → A → K → Y → L → V → D → O**, with adversaries attacking continuously as items land rather than in a batch at the end.
 
 Run for four to five hours of productive wall-clock work. Do not stop early. Do not pad. When every gate passes, keep working down the `SITE-01` findings queue and the value queue, and keep sourcing.
 
@@ -2212,7 +2345,7 @@ At a desk · on a phone between meetings · in a warehouse · on a factory visit
 
 Quotes that take a week · quotes that are not comparable to each other · unit price quoted, landed cost discovered later · not knowing what drives the price · not knowing what would change it · MOQs that appear after the design work is done · no visibility into what is being made until it arrives · no record of what was agreed last run · having to re-explain the product every time · not being able to show the product to a colleague on a phone · not trusting that a supplier is not sharing their design · not being able to prove internally that a switch saved money.
 
-## A.6 — North-star outcome and the 20-step critical journey
+## A.6 — North-star outcome and the 22-step critical journey
 
 A company must be able to hand Monti Makes It whatever they have — a sketch, a photo, a competitor's product, an old supplier's quote — and receive a trustworthy, traceable, landed number within 24 hours, then buy against it, see it made, and reorder it without re-explaining anything.
 
@@ -2237,7 +2370,9 @@ A company must be able to hand Monti Makes It whatever they have — a sketch, a
 17. Funds confirmed — orders email fires once, review window opens *(PAY-02, ORD-01, REV-01)*
 18. Review cleared, order released and shipped, tracking visible *(REV-01, PORT-05)*
 19. Reorder from the catalogue at their registered price without re-explaining anything *(CAT-05)*
-20. See in their security log exactly when an admin looked at their account and why *(PORT-03, ADM-11)*
+20. Open their own ledger, switch between month, quarter and year views, search a date range, and open the exact receipt *(PORT-06, LED-05, LED-02, LED-03)*
+21. Admin finds that same receipt from the master ledger by date, by member, and by order reference — and the two ledgers agree *(ADM-13, LED-03, LED-06)*
+22. See in their security log exactly when an admin looked at their account and why *(PORT-03, ADM-11)*
 
 ## A.7 — Measuring satisfaction and "best"
 
@@ -2253,31 +2388,34 @@ Measure, do not assume: quote-to-first-number time · time from landing to submi
 
 **Before anything else in this appendix is acted on: every test, demo, example, and fixture client is deleted (`WI-X-03`), with a restorable backup taken first (`WI-X-02`). `Halcyon Goods` and every other seeded account must return zero rows. The database carries real clients only.**
 
-## Client 001 — Boarshead
+## Client 001 — Boars Head
 
 | Field | Value |
 |---|---|
-| **Client name** | Boarshead |
+| **Client name** | Boars Head |
 | **Status** | Live — first client on the platform |
 | **Product** | Branded carry-out containers |
 | **Price band** | **$0.20 → $0.14 per unit** |
 | **What drives the band** | **Both order quantity and container spec/complexity.** The pricing desk enters a **matrix** — quantity tiers × spec tiers — not a single line. Higher volume moves toward $0.14; simpler container size, material, and print coverage move toward $0.14. Lower volume and more complex spec, material, or print coverage move toward $0.20. |
-| **Dedicated agent** | `CLI-01` — Client Agent, Boarshead |
+| **Dedicated agent** | `CLI-01` — Client Agent, Boars Head |
 | **Owning agents** | `CLIENT-01` (record) · `ADM-03` (pricing matrix) · `CAT-02` (registrations) · `GEN-00` (genome) · `IMG-03` (image sets) · `CLI-01` (client agent) |
 | **Warden** | `W-APP` for the record, `W-CLI` for the agent, `W-CAT` for registrations |
 
-**What must exist for Boarshead before this run closes:**
+**What must exist for Boars Head before this run closes:**
 
 1. A customer record at `MEMBER` status with contacts, addresses, and terms.
 2. A published **price matrix** on the pricing desk spanning $0.20 → $0.14, with quantity tiers on one axis and spec/complexity tiers on the other. Every cell traces to an admin input with a publish timestamp (`A15`).
-3. **Catalogue items** for their container SKUs, with public pricing ranges, and **registrations** binding those SKUs to Boarshead at their matrix prices. Every other member and every visitor is gated out of ordering them (`A07`).
+3. **Catalogue items** for their container SKUs, with public pricing ranges, and **registrations** binding those SKUs to Boars Head at their matrix prices. Every other member and every visitor is gated out of ordering them (`A07`).
 4. A **Product Genome** per SKU with the six client-facing sections populated from what is actually known. **Unknowns are marked unknown — never filled with a plausible default.**
 5. An **image set per SKU** rendered through the standard image viewer, verified on touch (`A16`), with the annotated diagram layer showing dimensions, print areas, and carton config where those are known.
 6. A **Tooling Line per §11.3** on every tooled SKU — what it is, one cost figure, the ownership sentence, and the treatment in each strategy. At $0.14–$0.20 per container the materiality rule matters here: verify the 5% callout fires at low quantities and not at high ones, using their real matrix (`A31`).
 7. A **tool register entry** per tool: id, item, owning customer, paid date, location, condition, last used.
-8. **`CLI-01` provisioned and scope-verified** (`A30`).
+8. **Ledger rows** for every transaction they have made, reconciling to the order log and the provider, visible in **their** client ledger and in the master ledger, with totals that match (`A32`, `A34`).
+9. **`CLI-01` provisioned and scope-verified** (`A30`).
 
-**Open questions to file, not guess.** Any Boarshead detail not stated above — exact SKUs, material, board weight, print process, carton counts, MOQs, lead times, addresses, contacts, incoterm, freight lane — is **escalated to the user under §18.2**, not invented. A client agent that fabricates a spec is a P0.
+**Quantity range — resolve before Hour 3.** The prototype's Decision Room quantity slider runs **1,000–10,000 units** (Appendix E). At $0.14–$0.20 per container that is a **$140–$2,000 order** — far below any plausible real run for branded carry-out containers, and far below the volume at which the price band reaches $0.14. Shipping the prototype's range against this client's real matrix would make the product look like a toy on its first real order. `ADM-03` sets the slider bounds **from the published price matrix**, per item, not from a hard-coded constant; the bounds are a data field, not a UI decision. The actual Boars Head range is escalated to the user under §18.2 — it is not guessed.
+
+**Open questions to file, not guess.** Any Boars Head detail not stated above — exact SKUs, material, board weight, print process, carton counts, MOQs, lead times, addresses, contacts, incoterm, freight lane — is **escalated to the user under §18.2**, not invented. A client agent that fabricates a spec is a P0.
 
 ## Client agent contract (applies to every client, present and future)
 
@@ -2318,6 +2456,9 @@ Evidence that is not written to an artifact does not exist. Each artifact has on
 | **`purge-evidence.md`** | DATA-02 | Backup path, restore test, rows deleted by table, orphan sweep, `A14` result | Hour 2, blocking |
 | **`current-clients.md`** | CLIENT-01 | Appendix B maintained live: every client, agent, warden, and completion state | On every client change |
 | **`client-agent-registry.csv`** | CLI-00 | Every client agent: id, customer, scope binding, provisioning date, `A30` result | On every provision |
+| **`ledger-reconciliation.md`** | LED-06 | Every reconciliation cycle: ledger total, order-log total, provider total, breaks by name, resolution | Every cycle |
+| **`ledger-period-proofs.md`** | LED-V | `A33` runs showing all three period views summing identically over the same range, with boundary cases | Every gate |
+| **`prototype-inventory.md`** | MGR-02 | Appendix E maintained live: every prototyped behavior, its owning agent, its work item, and its build state | On every state change |
 | **`tool-register.csv`** | DR-06 | Every tool: id, item, owning customer, paid date, physical location, condition, last used, release procedure status | On every tool event |
 | **`pricing-inputs.csv`** | ADM-03 | Every admin pricing input: id, customer, item, field, value, entered by, published at | On every publish |
 | **`provenance-audit.md`** | DR-08 | `A15` results: every Decision Room field mapped to its input id | Every gate |
@@ -2393,6 +2534,106 @@ Evidence that is not written to an artifact does not exist. Each artifact has on
 
 **Tripwire** — an automatic, non-waivable governance alarm on a rubber-stamping signature.
 
+**Master ledger** — the admin-facing financial record: every transaction, three period formats, four search modes, exportable. Specified at §11.5.
+
+**Client ledger** — the member-facing projection of the same record, scoped to one customer. §11.6.
+
+**Reconciliation break** — a disagreement between ledger, order log and payment provider. Surfaced by name, never closed by adjusting the ledger.
+
 **Tooling Line** — the four facts shown to a client about a tool — what it is, what it costs, who owns it, how it is being handled in this strategy — and never a fifth. Specified at §11.3, enforced by `A31`.
 
 **Value rung** — an agent's position on the six-level value-escalation ladder.
+
+---
+
+# APPENDIX E — PROTOTYPE INVENTORY: WHAT MUST NOW BE BUILT FOR REAL
+
+**Source: session `cse_01B2fEc4ZUQ49QMhmcd672yq`.** Everything below was demonstrated in the prototype. **A prototype is not an implementation.** Each row is a behavior that must now exist against real data, real money, real tenancy, and the Class A harness — with an owning agent, a work item, and evidence.
+
+**How to use this appendix:**
+
+1. `MGR-02` maintains it live as `prototype-inventory.md` and maps **every row** to a work item at G2. A row with no work item is an orphan and blocks G2 under §3.3.
+2. `SITE-01` opens the prototype in Hour 1 alongside the live surface and records where the prototype is **better** than what shipped — those are findings, not assumptions.
+3. Where a row conflicts with a specification in Parts VII–XIV, **the specification wins** and the conflict is recorded in the `RESOLUTION` column, not silently absorbed.
+4. Prototype behavior is the **floor**, not the ceiling. Nothing here may ship in a state worse than the prototype demonstrated.
+
+## E.1 — Decision Room
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E1.01 | Two item lists — **awaiting approval** and **approved catalogue** — each with a live count | DR-01 | WI-R-02 | Counts derive from the lists and cannot disagree with them |
+| E1.02 | Clicking an item swaps the detail pane | DR-01 | WI-R-02 | Pane swap preserves scroll and selection state; works on touch |
+| E1.03 | **Inline rename on any item**, list updating as you type, **internal ref stays fixed** | DR-01 | WI-R-02 | Rename persists, is debounced, survives refresh; the auto-number never changes; empty and 200-character names both handled |
+| E1.04 | **Pending view**: three-stage tracker, what you sent, capacity charged, what we still need, locked-tools notice | DR-01, INTK-03, MEM-06 | WI-R-02, WI-I-03 | Each stage advances only on a recorded event; "capacity charged" equals the `A27` ledger debit; "what we still need" is a real outstanding list, not placeholder copy |
+| E1.05 | **Quantity slider**, recomputing everything downstream | DR-03 | WI-R-04 | **Bounds come from the published price matrix per item, never a hard-coded 1,000–10,000** (see Appendix B). Every downstream figure recomputes; `A15` holds at every position |
+| E1.06 | Target unit price and target delivery date | DR-04 | WI-R-05 | An unreachable target always produces recommendations, never silence |
+| E1.07 | Freight mode selector: **ocean / split / air** | DR-05 | WI-R-06 | Each mode traces to an admin input; presented as an estimate, never a booked rate |
+| E1.08 | **Tooling toggle: amortize into unit vs pay upfront** | DR-06 | WI-R-07 | Retained as a client control **and** reconciled with §11.3.3: the three strategies carry different defaults, the toggle overrides within a strategy, and the Tooling Line always states which is active |
+| E1.09 | **Three strategy cards** computing landed, ex-works, freight, duty, order total, arrival date | DR-02 | WI-R-03 | Every one of the six figures resolves to an admin input id (`A15`); no computed-from-nothing value |
+| E1.10 | Card **highlights when it beats your target** | DR-02, DR-04 | WI-R-03 | Highlight logic asserted at boundary values; never highlights on a figure with no provenance |
+| E1.11 | **What-would-need-to-change**: each lever priced independently, sentence rebuilt from whichever are ticked, engineered price with on-target or shortfall | DR-07 | WI-R-08 | Every lever price traces to the entered curve; no extrapolation beyond it; the rebuilt sentence is correct for all lever combinations, tested exhaustively |
+| E1.12 | **Freight comparison table** across all three lanes | DR-05 | WI-R-06 | Table and cards never disagree on the same lane |
+| E1.13 | **"Buy this route"** carries that strategy into checkout | DR-02, PAY-00 | WI-R-03, WI-Y-01 | The strategy, quantity, freight mode and tooling treatment all survive into the order; a changed strategy after the fact cannot silently alter a placed order |
+| E1.14 | **Genome link shown only on items with a production run** | GEN-00, GEN-06 | WI-R-09 | Link presence derives from real run history; an item with zero runs shows no link and says why |
+
+## E.2 — Checkout
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E2.01 | **Four-step flow: payment → funds settled → production acceptance → in production** | PAY-00, REV-01 | WI-Y-01, WI-Y-06 | Matches §9.1 exactly — payment first. "Production acceptance" is the 24h manufacturer review; `A11` proves nothing ships before it clears |
+| E2.02 | **ACH vs card with the fee difference and totals recalculating** | PAY-01 | WI-Y-01 | Fees are real provider fees, not illustrative; totals recalculate correctly on method change; the ACH total is labeled as pending until settlement |
+| E2.03 | Order summary derived from the selected item, strategy and quantity | PAY-00 | WI-Y-01 | Derived, never re-entered; a mismatch between summary and source item is impossible |
+| E2.04 | Guarantee panel | BRD-01, PAY-00 | WI-Y-01 | States only commitments that are actually operationalized elsewhere in this protocol; **no unbacked claim** (§11.2); reviewed by `W-BRAND` |
+
+## E.3 — Product Genome
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E3.01 | **Six sections: specification, golden sample, quality record, tooling, landed-cost profile, history** | GEN-00…06 | WI-R-09 | Reconciled with §3.2's six client-facing sections — **the prototype's naming is adopted**; the mapping is recorded once by `GEN-00` and used everywhere. Still six; never a seventh |
+| E3.02 | **Tooling section** | GEN-05, DR-06 | WI-R-07 | Renders the §11.3 Tooling Line — four facts, ownership sentence, no internal cost build-up (`A31`) |
+| E3.03 | **Price curve with hover tooltip** | DR-03, GEN-00 | WI-R-04 | Every plotted point is an entered curve point; interpolation between points labeled; tooltip works on touch as a tap |
+| E3.04 | **Table view of the curve** | DR-03 | WI-R-04 | Table and chart never disagree; table is the accessible equivalent and is keyboard-navigable |
+| E3.05 | Item image set in every section that shows the product | IMG-00…05 | WI-P-03 | The standard viewer (§10.3), verified on touch (`A16`) |
+
+## E.4 — Membership
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E4.01 | **Factory Plan** | MEM-05 | WI-M-06 | One page, both commitment columns populated from the real call, visible to the member |
+| E4.02 | **Both commitment lists with live performance against each** | MEM-05, MEM-07 | WI-M-06, WI-M-08 | Performance figures derive from real events — claims raised and on-time delivery — never from placeholder values; a commitment with no measurable source says so |
+| E4.03 | **Automatic performance credits** | MEM-07 | WI-M-08 | Credits accrue from recorded events only; the member can see why each credit was earned |
+| E4.04 | **Capacity: computed stats, usage bar, six-row ledger, weighting table, fairness rules** | MEM-06 | WI-M-07 | `A27` reconciles the ledger exactly; the weighting table is the one the system actually applies; fairness rules are stated before a refusal, not after |
+
+## E.5 — Admin bay
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E5.01 | **Quote queue and published lists** | ADM-02 | WI-A-02 | Time remaining visible; SLA breach cannot be hidden by sorting |
+| E5.02 | **Item name and portal assignment** | ADM-07, CAT-02 | WI-A-07, WI-K-02 | Assignment is the registration record (§8.3); only an admin creates it |
+| E5.03 | **Six cost inputs** | ADM-03 | WI-A-03 | Each is a stored, attributed, timestamped input; the six are named and fixed, not free-form |
+| E5.04 | **Three editable strategy rows** | ADM-03 | WI-A-03 | Editing a row before publish changes nothing member-facing; after publish it is an update, versioned |
+| E5.05 | **Two lever definitions plus the quantity-lever toggle** | ADM-03, DR-07 | WI-A-03, WI-R-08 | Lever definitions drive the what-would-need-to-change sentence exactly; the quantity lever can be disabled per item |
+| E5.06 | **Live preview of the price the member will see** | ADM-03 | WI-A-03 | Preview is byte-identical to the member view for the same inputs — asserted, not eyeballed |
+| E5.07 | **Publish → moves the item to their catalogue and unlocks its Decision Room; becomes "update pricing" once live** | ADM-03, CAT-02, DR-01 | WI-A-03, WI-K-02 | Nothing reaches a member before publish (`A15`); the control's label and behavior both change on the live state; republish is versioned and the member sees that pricing changed |
+| E5.08 | **Topbar switches to staff identity** | ADM-00, ADM-11 | WI-A-01, WI-A-11 | Any staff view of a member's data is an impersonation event under §10.4 — logged, reasoned, read-only by default, and **mirrored to the member's security log** |
+| E5.09 | **Master ledger** — three period formats, four search modes, export | ADM-13, LED-00…04 | **WI-L-01…06** | Per §11.5; `A32`, `A33`, `A35`, `A36` all pass |
+
+## E.6 — Global
+
+| # | Prototyped behavior | Owner | Work item | Done when |
+|---|---|---|---|---|
+| E6.01 | **Light and dark themes** | VIS-00 | WI-V-01, WI-V-02 | Both themes tokenized, captured across the full matrix, contrast verified in each (`A20`) |
+| E6.02 | **Responsive to phone width** | MOB-01, MOB-02 | WI-V-02, WI-A-01 | Every surface usable at 320px on touch — including the ledger's three period views, the price-curve table, and the image viewer |
+| E6.03 | Client ledger in the member portal | PORT-06, LED-05 | **WI-L-07, WI-L-08** | Per §11.6; `A34` passes; client totals equal the admin ledger filtered to that customer |
+
+## E.7 — Conflicts between the prototype and this protocol
+
+Recorded so no agent resolves them by preferring whichever it saw first. **In every case the protocol specification wins.**
+
+| Conflict | Prototype | Protocol | Resolution |
+|---|---|---|---|
+| Quantity slider bounds | Fixed 1,000–10,000 | Bounds derive from the published price matrix per item | **Protocol.** A fixed range cannot serve a $0.14 container and a tooled assembly. Bounds are data. |
+| Tooling treatment | A single global toggle | Differentiates the three strategies, with a client override (§11.3.3) | **Both.** Strategies carry defaults; the toggle overrides within a strategy; the Tooling Line always states which is active |
+| Genome section names | specification, golden sample, quality record, tooling, landed-cost profile, history | spec, drawings & references, BOM, quality, logistics, run history | **Prototype naming is adopted.** `GEN-00` records the mapping once. Content requirements from §3.2 are preserved under the prototype's labels; still exactly six |
+| "Production acceptance" placement | Step 3 of checkout, after settlement | The 24h manufacturer review gate opening at funds-confirmed | **Same thing, protocol naming.** §9.1 is authoritative on sequence |
+| Catalogue | Approved items appear in the member's catalogue on publish | Plus a **public** catalogue with ranges, gated ordering (Part VIII) | **Protocol.** The prototype's per-member catalogue is the *registered* half of §8.3; the public half is new and additional |

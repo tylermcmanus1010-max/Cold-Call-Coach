@@ -680,11 +680,11 @@ var RANGES = [
 // Demo accounts. The names are placeholders for testing — swap them before anyone
 // outside the team sees this, since a real person's name on a customer record
 // reads as a real customer.
-/* Account 1 is Boarshead, the real first client (Appendix B). The rest are
+/* Account 1 is Boars Head, the real first client (Appendix B). The rest are
    scaffolding so the admin bay has more than one row to show, and they are
    named as scaffolding — the previous set was five real people's names, which
    on a customer record reads as five real customers. */
-var DEMO_NAMES = ["Boarshead", "Demo account — packaging", "Demo account — apparel",
+var DEMO_NAMES = ["Boars Head", "Demo account — packaging", "Demo account — apparel",
                   "Demo account — hardware", "Demo account — beauty"];
 var CLIENTS = [1,2,3,4,5].map(function (n) {
   var joined = addDays(TODAY, -(140 - n * 17));
@@ -693,7 +693,7 @@ var CLIENTS = [1,2,3,4,5].map(function (n) {
     ref: "MMI-C-" + (1000 + n),
     name: DEMO_NAMES[n-1],
     contact: DEMO_NAMES[n-1],
-    email: n === 1 ? "orders@boarshead.example" : "demo" + n + "@montimakesit.example",
+    email: n === 1 ? "orders@boars_head.example" : "demo" + n + "@montimakesit.example",
     phone: "+1 555 010" + n,
     country: ["United States","United States","United States","United Kingdom","United States"][n-1],
     city: [null,"Los Angeles","Oakland","London","Miami"][n-1],
@@ -805,7 +805,7 @@ var BOARSHEAD_SPEC_TIERS = ["Plain — single size, no print", "One colour — l
 var BOARSHEAD_GRID = [[17,16,15,14],[18,17,16,15],[19,18,17,16],[20,19,18,17]];
 
 var CATALOG = [
-  /* Boarshead's containers. `public` and `range` are the half everyone sees;
+  /* Boars Head's containers. `public` and `range` are the half everyone sees;
      `price` and `negotiated` are the half only the registered member sees, and
      §8.6 is explicit that the range is entered deliberately rather than derived
      from anyone's negotiated price. */

@@ -939,3 +939,51 @@ body.iv-open { overflow: hidden; }
 .notice-wait { border-color: var(--wait); background: var(--wait-soft); }
 .notice-stop { border-color: var(--stop); background: var(--stop-soft); }
 .notice-good { border-color: var(--good); background: var(--good-soft); }
+
+/* ==========================================================================
+   The transaction ledger (§11.5, §11.6)
+   The same styles serve the admin master ledger and the member's own, because
+   the same macros render both. At 320px the search collapses to one column and
+   every table scrolls inside its own container rather than moving the page.
+   ========================================================================== */
+.ledger-search {
+  display: grid; gap: .75rem; margin-bottom: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: end;
+  padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.ledger-search label.field { margin-bottom: 0; }
+.ledger-search-actions { display: flex; gap: .5rem; }
+
+.ledger-periods {
+  display: flex; gap: .3rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+  background: var(--sunk); padding: .28rem; border-radius: var(--radius);
+  border: 1px solid var(--line); width: fit-content; max-width: 100%;
+}
+.ledger-period-btn {
+  padding: .5rem .9rem; border-radius: var(--radius-sm); cursor: pointer;
+  font-family: var(--mono); font-size: .74rem; letter-spacing: .05em;
+  color: var(--ink-2); min-height: 44px; display: inline-flex; align-items: center;
+}
+.ledger-period-btn:hover { color: var(--ink); }
+.ledger-period-btn.active { background: var(--green); color: var(--on-accent); }
+.ledger-period-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+.ledger-grand {
+  display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: flex-start;
+  padding: 1.25rem; margin-bottom: 1.25rem;
+  border: 1px solid var(--line); border-left: 2px solid var(--green);
+  border-radius: var(--radius); background: var(--surface);
+}
+/* A pending ACH debit is shown apart from the total it is deliberately not in
+   (§11.4.3). Putting it in the same column as revenue is how it gets read as
+   revenue. */
+.ledger-pending .stat-value { color: var(--wait); }
+.ledger-table { font-variant-numeric: tabular-nums; }
+.ledger-table th, .ledger-table td { white-space: nowrap; }
+
+@media (max-width: 560px) {
+  .ledger-search { grid-template-columns: minmax(0, 1fr); }
+  .ledger-grand { gap: 1.25rem; }
+}

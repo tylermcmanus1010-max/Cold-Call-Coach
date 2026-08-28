@@ -6,6 +6,7 @@
     <div class="side-title">Operations</div>
     <a class="side-link {{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}"><span class="side-icon">◈</span> Dashboard</a>
     <a class="side-link {{ 'active' if request.endpoint == 'admin.revenue' }}" href="{{ url_for('admin.revenue') }}"><span class="side-icon">$</span> Revenue</a>
+    <a class="side-link {{ 'active' if 'ledger' in (request.endpoint or '') or 'receipt' in (request.endpoint or '') }}" href="{{ url_for('admin.ledger_view') }}"><span class="side-icon">≡</span> Master ledger</a>
     <a class="side-link {{ 'active' if 'incoming' in (request.endpoint or '') or request.endpoint == 'admin.triage' }}" href="{{ url_for('admin.incoming') }}"><span class="side-icon">▼</span> Incoming quotes
       {% if nav_incoming_count %}<span class="side-count">{{ nav_incoming_count }}</span>{% endif %}</a>
     <a class="side-link {{ 'active' if 'quote' in (request.endpoint or '') }}" href="{{ url_for('admin.quotes') }}"><span class="side-icon">◷</span> Quote queue

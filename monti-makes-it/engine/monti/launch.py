@@ -1,7 +1,7 @@
-"""The first real client (Appendix B, Client 001 — Boarshead).
+"""The first real client (Appendix B, Client 001 — Boars Head).
 
 Everything here comes from Appendix B and nothing else. The appendix is explicit
-about the line between the two: any Boarshead detail it does not state — exact
+about the line between the two: any Boars Head detail it does not state — exact
 SKUs beyond the ones implied, board weight, print process, carton counts,
 addresses, contacts, incoterm, freight lane — is *filed as an open question*,
 not invented. A client agent that fabricates a spec is a P0, and the same rule
@@ -17,7 +17,7 @@ What the appendix does state, and what is therefore built here:
   * a customer record at MEMBER status
   * a published price matrix, quantity tiers × spec tiers, spanning $0.20 → $0.14
   * catalogue items for their container SKUs, with public ranges
-  * registrations binding those SKUs to Boarshead at their matrix prices
+  * registrations binding those SKUs to Boars Head at their matrix prices
   * a Product Genome per SKU, unknowns marked
   * an image set per SKU with an annotated diagram layer
   * a Tooling Line on every tooled SKU, and a tool register entry
@@ -59,7 +59,7 @@ PRICE_GRID = [
 ]
 
 # §18.2 — escalated to the user, not guessed. Each becomes an unknown-marked
-# section on the item so the gap is visible to Boarshead too.
+# section on the item so the gap is visible to Boars Head too.
 OPEN_QUESTIONS = [
     ("Materials", "Board grade and weight are not stated. We have not assumed one — tell us "
                   "what the current containers are made from, or send one and we will measure it."),
@@ -126,18 +126,18 @@ assert not _orphan_questions, (
     f"open questions filed against unknown genome sections: {sorted(_orphan_questions)}")
 
 
-def provision_boarshead():
+def provision_boars_head():
     """Idempotent. Returns the customer id."""
-    existing = query("SELECT * FROM customers WHERE company_name = 'Boarshead'", one=True)
+    existing = query("SELECT * FROM customers WHERE company_name = 'Boars Head'", one=True)
     if existing:
         return existing["id"]
 
     customer_id = execute(
         "INSERT INTO customers (ref, company_name, contact_name, email, country, stage, "
         "source, owner, membership_status, member_since, quote_limit, tags, notes, is_fixture) "
-        "VALUES (?, 'Boarshead', ?, ?, 'United States', 'ACTIVE', 'REFERRAL', ?, 'MEMBER', ?, "
+        "VALUES (?, 'Boars Head', ?, ?, 'United States', 'ACTIVE', 'REFERRAL', ?, 'MEMBER', ?, "
         "10, 'packaging, carry-out, first-client', ?, 0)",
-        ("MMI-C-1001", None, "orders@boarshead.example", ADMIN, now_str(),
+        ("MMI-C-1001", None, "orders@boars_head.example", ADMIN, now_str(),
          "First client on the platform. Branded carry-out containers, $0.20 to $0.14 per unit "
          "against a quantity x spec matrix. Contact name, phone and addresses are not yet on "
          "file — see the open questions on their items."))
@@ -220,7 +220,7 @@ def _add_genome(item_id, spec):
     """Six client-facing sections. Unknowns are marked, never filled in.
 
     Appendix B: "Unknowns are marked unknown — never filled with a plausible
-    default." A default here would be a specification Boarshead never gave us,
+    default." A default here would be a specification Boars Head never gave us,
     printed on their own page as though they had.
     """
     unknown = {section: text for section, text in OPEN_QUESTIONS}

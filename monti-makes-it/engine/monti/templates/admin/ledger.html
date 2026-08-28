@@ -1,0 +1,64 @@
+{% extends "admin/_base.html" %}
+{% from "_ledger.html" import period_switch, period_cards, transactions %}
+{% block title %}Ledger · {{ company }}{% endblock %}
+{% block eyebrow %}Money{% endblock %}
+{% block heading %}Master ledger{% endblock %}
+{% block content %}
+
+{#
+  §11.4.2 — reconciliation state is surfaced, never smoothed over. A break sits
+  at the top of the ledger where whoever opens it will see it, and the only
+  thing offered is to look at it: this page has no control that adjusts a
+  ledger row, because closing a break that way is forbidden.
+#}
+{% if recon.break_count %}
+  <div class="notice notice-stop" style="margin-bottom:1.5rem">
+    <strong>{{ recon.break_count }} reconciliation break{{ '' if recon.break_count == 1 else 's' }}.</strong>
+    The ledger says {{ recon.ledger_cents|money }}; the order log says
+    {{ recon.order_log_cents|money }}. These are fixed at the source, never by
+    editing the ledger.
+    <ul style="margin:.6rem 0 0;padding-left:1.1rem">
+      {% for b in recon.breaks[:6] %}
+        <li class="tiny">{{ b.name }}{% if b.order_ref %} — order {{ b.order_ref }}{% endif %}
+          {%- if b.receipt_no %} — receipt {{ b.receipt_no }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div class="notice notice-good" style="margin-bottom:1.5rem">
+    <strong>Reconciled.</strong>
+    Ledger and order log agree at {{ recon.ledger_cents|money }}.
+  </div>
+{% endif %}
+
+<form class="ledger-search" method="get" action="{{ url_for('admin.ledger_view') }}">
+  <input type="hidden" name="period" value="{{ granularity }}">
+  <label class="field"><span class="field-label">From</span>
+    <input type="date" name="start" value="{{ filters.start or '' }}"></label>
+  <label class="field"><span class="field-label">To</span>
+    <input type="date" name="end" value="{{ filters.end or '' }}"></label>
+  <label class="field"><span class="field-label">Member</span>
+    <input type="text" name="member" value="{{ filters.member or '' }}"
+           placeholder="Company, contact or ref"></label>
+  <label class="field"><span class="field-label">Order</span>
+    <input type="text" name="order_ref" value="{{ filters.order_ref or '' }}"
+           placeholder="MMI-O-…"></label>
+  <label class="field"><span class="field-label">Receipt</span>
+    <input type="text" name="receipt_no" value="{{ filters.receipt_no or '' }}"
+           placeholder="MMI-R-…"></label>
+  <div class="ledger-search-actions">
+    <button class="btn btn-primary" type="submit">Search</button>
+    <a class="btn" href="{{ url_for('admin.ledger_view') }}">Clear</a>
+  </div>
+</form>
+
+{{ period_switch('admin.ledger_view', granularity, filters) }}
+{{ period_cards(period_view) }}
+
+<div class="divider-label">
+  Transactions
+  <a class="btn btn-sm" style="margin-left:auto"
+     href="{{ url_for('admin.ledger_export', **filters) }}">Export this view (CSV)</a>
+</div>
+{{ transactions(rows, columns, found, 'admin.ledger_receipt') }}
+{% endblock %}

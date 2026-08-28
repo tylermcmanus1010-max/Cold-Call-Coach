@@ -89,7 +89,7 @@ def create_app(config_object=None):
 
     @app.cli.command("launch")
     def launch_command():
-        """Bring the database to its launch state: no fixtures, Boarshead live."""
+        """Bring the database to its launch state: no fixtures, Boars Head live."""
         from . import launch as launch_mod
         from .agents import provision_agent, unprovisioned_customers
         from .auth import create_user, generate_password
@@ -107,11 +107,11 @@ def create_app(config_object=None):
                         must_change_password=True)
             print(f"  admin@montimakesit.com / {pw}  (must change on first sign-in)")
 
-        customer_id = launch_mod.provision_boarshead()
+        customer_id = launch_mod.provision_boars_head()
         # The zero-orphan rule: no customer without an agent, including any that
         # predate this command.
         for row in unprovisioned_customers():
             provision_agent(row["id"])
-        print(f"Boarshead is live as customer #{customer_id}.")
+        print(f"Boars Head is live as customer #{customer_id}.")
 
     return app

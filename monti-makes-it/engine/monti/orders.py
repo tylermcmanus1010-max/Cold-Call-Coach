@@ -15,7 +15,7 @@ import json
 
 from flask import current_app
 
-from . import freight, mail
+from . import freight, ledger, mail
 from .db import execute, query
 from .utils import money, now_str, plus_hours, pretty_dt
 
@@ -242,7 +242,13 @@ def mark_processing(order_id, method="ACH", payment_ref=None, provider=None):
     )
     log_event(order_id, "PAYMENT_INITIATED",
               f"{method} payment initiated; awaiting settlement", "payments")
-    return get_order(order_id)
+    # §11.7 — one row, status PENDING. It is excluded from every revenue total
+    # until it settles, and settlement transitions this same row rather than
+    # writing a second one.
+    order = get_order(order_id)
+    if not ledger.entry_for_order(order_id, "CHARGE"):
+        ledger.charge(order, method, order["total_cents"], settled=False)
+    return order
 
 
 def confirm_funds(order_id, method="CARD", payment_ref=None, provider=None, actor="payments"):
@@ -269,6 +275,19 @@ def confirm_funds(order_id, method="CARD", payment_ref=None, provider=None, acto
               f"{method} funds confirmed — {hours}h manufacturer review opened", actor)
 
     order = get_order(order_id)
+
+    # §11.7 — the ledger observes the payment sequence; it does not drive it.
+    # An ACH debit already has a pending row, which transitions here; a card
+    # capture has none yet, so one is written settled. Either way exactly one
+    # charge row exists per order, which is what A32 asserts.
+    if ledger.entry_for_order(order_id, "CHARGE"):
+        ledger.settle(order_id, occurred_at=confirmed)
+    else:
+        ledger.charge(order, method, order["total_cents"], settled=True,
+                      occurred_at=confirmed)
+    if order["processing_fee_cents"]:
+        ledger.fee(order, order["processing_fee_cents"], method, occurred_at=confirmed)
+
     _notify_funds_confirmed(order)
 
     # Put the review deadline on the admin calendar so it can't be forgotten.
@@ -289,6 +308,7 @@ def fail_payment(order_id, reason="Payment failed", actor="payments"):
         "WHERE id = ?", (now_str(), order_id),
     )
     log_event(order_id, "PAYMENT_FAILED", reason, actor)
+    ledger.fail(order_id, note=reason)
     return get_order(order_id)
 
 

@@ -24,7 +24,7 @@ SECRET_KEY=test .venv/bin/python tests/smoke.py          # 210 end-to-end checks
 | Punch-list items tracked | 38 — 32 certified, 3 partial, 2 not started, 1 blocked external |
 | Old-brand occurrences | 190 before, **0** after, across source, database and rendered output |
 | Fixture rows | 509 inventoried, 509 deleted, **0 orphans** |
-| Live clients | 1 — Boarshead, with a published matrix, registrations, a genome, images, a tool and a scope-verified agent |
+| Live clients | 1 — Boars Head, with a published matrix, registrations, a genome, images, a tool and a scope-verified agent |
 
 Class A coverage is reported as *proven* coverage. A check that passes but whose
 proof did not catch a deliberate defect is reported UNPROVEN and excluded — §1.6
@@ -42,7 +42,7 @@ proof run four of the nine were exactly that.
 | 3 | Public catalogue with ranges | Done | `A08`, `/catalogue` |
 | 4 | Ordering registered, not open | Done | `A07`, three server-side gates |
 | 5 | Test and example clients deleted | Done | `A14`, `purge-evidence.md` |
-| 6 | First real client: Boarshead | Done | `current-clients.md` |
+| 6 | First real client: Boars Head | Done | `current-clients.md` |
 | 7 | A dedicated agent per client | Done | `A30`, `client_agents` |
 | 8 | Tappable image viewer on every item | Built, not captured | `A16`; see §5 |
 | 9 | A standing site-improvement agent | Not built | see §5 |

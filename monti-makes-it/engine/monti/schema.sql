@@ -372,7 +372,7 @@ CREATE TABLE IF NOT EXISTS pricing_inputs (
 CREATE INDEX IF NOT EXISTS idx_inputs_item ON pricing_inputs(item_id, customer_id);
 
 -- A price matrix is two axes, not a line (Appendix B): quantity tiers across,
--- spec/complexity tiers down. Boarshead's containers are priced off both.
+-- spec/complexity tiers down. Boars Head's containers are priced off both.
 CREATE TABLE IF NOT EXISTS price_matrices (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   customer_id  INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
@@ -509,3 +509,68 @@ CREATE TABLE IF NOT EXISTS security_log (
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_security_customer ON security_log(customer_id, created_at);
+
+-- ---------------------------------------------------------------------------
+-- The transaction ledger (§11.4)
+--
+-- The financial record of the business, and the shape of this table is the
+-- doctrine made structural:
+--
+--   Derived, never typed.   A row is written by a money event. There is no
+--                           admin route that creates or edits one, and a
+--                           correction is a new row pointing at the old one
+--                           through `reverses_id` — never an UPDATE.
+--   It must reconcile.      Every row carries the order it belongs to, so
+--                           ledger and order log can be compared line for line
+--                           rather than in aggregate.
+--   Revenue means settled.  `status` is the whole point. An ACH debit in flight
+--                           is PENDING and excluded from every revenue total;
+--                           it transitions to SETTLED in place rather than
+--                           spawning a second row, which is why settlement is
+--                           an UPDATE of `status` and not an INSERT.
+--
+-- `occurred_at` is stored UTC and `period_tz` names the timezone the period
+-- views bucket by, once, for the whole ledger. §11.5.1 requires one stored
+-- timezone: without it "which month is this in" has as many answers as there
+-- are readers, and the month and quarter views drift apart at every boundary.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ledger_entries (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  receipt_no    TEXT UNIQUE NOT NULL,
+  customer_id   INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  order_id      INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+  order_ref     TEXT,                            -- kept so a deleted order still reconciles
+  kind          TEXT NOT NULL,
+  -- CHARGE | SETTLEMENT | REFUND | PARTIAL_REFUND | REVERSAL | MANUAL_CONFIRMATION | FEE
+  status        TEXT NOT NULL,                   -- PENDING | SETTLED | FAILED
+  method        TEXT,                            -- CARD | ACH | WIRE | PO
+  gross_cents   INTEGER NOT NULL DEFAULT 0,      -- what the customer was charged
+  fee_cents     INTEGER NOT NULL DEFAULT 0,      -- provider fee, admin-only
+  net_cents     INTEGER NOT NULL DEFAULT 0,      -- gross - fee
+  currency      TEXT NOT NULL DEFAULT 'usd',
+  occurred_at   TEXT NOT NULL,                   -- UTC, the money event's own time
+  period_tz     TEXT NOT NULL DEFAULT 'UTC',
+  reverses_id   INTEGER REFERENCES ledger_entries(id) ON DELETE RESTRICT,
+  confirmed_by  TEXT,                            -- the admin, on a manual confirmation
+  review_outcome TEXT,                           -- the linked review, when there is one
+  note          TEXT,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_ledger_customer ON ledger_entries(customer_id, occurred_at);
+CREATE INDEX IF NOT EXISTS idx_ledger_order ON ledger_entries(order_id);
+CREATE INDEX IF NOT EXISTS idx_ledger_when ON ledger_entries(occurred_at);
+
+-- Reconciliation runs. A break is recorded and stays recorded; §11.4 forbids
+-- closing one by adjusting the ledger, so the resolution field describes what
+-- was done to the *other* side, never to a ledger row.
+CREATE TABLE IF NOT EXISTS reconciliation_runs (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  ran_at        TEXT NOT NULL DEFAULT (datetime('now')),
+  ledger_cents  INTEGER NOT NULL,
+  order_log_cents INTEGER NOT NULL,
+  provider_cents INTEGER,
+  break_count   INTEGER NOT NULL DEFAULT 0,
+  breaks        TEXT,                            -- JSON, one named break per entry
+  resolved_at   TEXT,
+  resolution    TEXT
+);

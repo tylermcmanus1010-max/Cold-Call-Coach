@@ -159,8 +159,8 @@ def current_clients(app):
     from monti.db import query
 
     with app.app_context():
-        from monti.launch import provision_boarshead
-        provision_boarshead()
+        from monti.launch import provision_boars_head
+        provision_boars_head()
 
         customers = query("SELECT * FROM customers WHERE is_fixture = 0 ORDER BY id")
         lines = [
@@ -267,14 +267,14 @@ PUNCH_LIST = [
     ("WI-X-02", "Restorable backup taken before any deletion", "A", "CERTIFIED",
      "evidence/purge-evidence.md — backup reopened, counted, integrity checked"),
     ("WI-X-03", "Purge all test and example clients", "A", "CERTIFIED", "A14"),
-    ("WI-X-04", "Create Boarshead to Appendix B spec", "A", "CERTIFIED",
+    ("WI-X-04", "Create Boars Head to Appendix B spec", "A", "CERTIFIED",
      "evidence/current-clients.md"),
-    ("WI-X-05", "Boarshead price matrix entered on the pricing desk", "A", "CERTIFIED",
+    ("WI-X-05", "Boars Head price matrix entered on the pricing desk", "A", "CERTIFIED",
      "16 cells, $0.14–$0.20, every cell carrying a published pricing_input id"),
-    ("WI-X-06", "Boarshead catalogue items and registrations", "A", "CERTIFIED", "A07, A08"),
-    ("WI-X-07", "Boarshead Product Genome per SKU", "B", "CERTIFIED",
+    ("WI-X-06", "Boars Head catalogue items and registrations", "A", "CERTIFIED", "A07, A08"),
+    ("WI-X-07", "Boars Head Product Genome per SKU", "B", "CERTIFIED",
      "six sections; three marked unknown rather than filled"),
-    ("WI-X-08", "Boarshead image sets and viewer", "A", "CERTIFIED", "A16"),
+    ("WI-X-08", "Boars Head image sets and viewer", "A", "CERTIFIED", "A16"),
     ("WI-X-09", "Current Clients register", "A", "CERTIFIED", "evidence/current-clients.md"),
     ("WI-C-01", "Client agent template and registry", "A", "CERTIFIED",
      "A14 asserts no customer without an agent"),

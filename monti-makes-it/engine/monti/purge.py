@@ -41,6 +41,8 @@ ORPHAN_CHECKS = [
     ("price_matrices", "customer_id", "customers"),
     ("price_matrix_cells", "matrix_id", "price_matrices"),
     ("security_log", "customer_id", "customers"),
+    ("ledger_entries", "customer_id", "customers"),
+    ("ledger_entries", "reverses_id", "ledger_entries"),
     ("users", "customer_id", "customers"),
 ]
 
@@ -50,7 +52,8 @@ def inventory():
     rows = []
     for table in FIXTURE_TABLES:
         label = "company_name" if table in ("customers", "applications") else (
-            "sku" if table == "catalog_items" else "ref")
+            "sku" if table == "catalog_items" else
+            "receipt_no" if table == "ledger_entries" else "ref")
         for r in query(f"SELECT id, {label} AS label FROM {table} WHERE is_fixture = 1"):
             rows.append({
                 "table": table,

@@ -1,0 +1,2723 @@
+<title>Monti Makes It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ==========================================================================
+   Monti Makes It — showroom (public + member portal) / workshop (admin)
+   ========================================================================== */
+:root{
+  --ground:#F5F4EF; --ground-2:#EDEDE6; --surface:#FFFFFF; --surface-2:#F9F8F4; --sunk:#EFEEE7;
+  --ink:#14211A; --ink-2:#55635B; --ink-3:#8A958D;
+  --line:#DEDDD3; --line-soft:#E9E8E0;
+  --green:#0F4D33; --green-deep:#0A3323; --green-bright:#16714A;
+  --green-soft:rgba(15,77,51,.07); --green-line:rgba(15,77,51,.22);
+  --brass:#B08D4F; --brass-soft:rgba(176,141,79,.13);
+  --good:#16714A; --good-soft:rgba(22,113,74,.10);
+  --info:#2C5A7A; --info-soft:rgba(44,90,122,.10);
+  --wait:#8A6A1F; --wait-soft:rgba(138,106,31,.11);
+  --stop:#97362F; --stop-soft:rgba(151,54,47,.10);
+  --quiet:#6E7A72; --quiet-soft:rgba(110,122,114,.10);
+  --on-accent:#F5F4EF;
+  --chart:#0F4D33; --chart-fill:rgba(15,77,51,.13); --grid:#E4E3DB;
+  --shadow:0 1px 2px rgba(20,33,26,.05), 0 10px 30px rgba(20,33,26,.06);
+  --shadow-lift:0 2px 6px rgba(20,33,26,.07), 0 18px 44px rgba(20,33,26,.10);
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --radius:6px; --radius-sm:4px; --radius-lg:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0A120E; --ground-2:#0D1712; --surface:#111C16; --surface-2:#15241C; --sunk:#0B140F;
+    --ink:#E8EFEA; --ink-2:#9AAAA1; --ink-3:#6D7D74;
+    --line:#20342B; --line-soft:#182821;
+    --green:#3FBF84; --green-deep:#0D3D2A; --green-bright:#5FD79E;
+    --green-soft:rgba(63,191,132,.12); --green-line:rgba(63,191,132,.30);
+    --brass:#C7A462; --brass-soft:rgba(199,164,98,.14);
+    --good:#4FC98C; --good-soft:rgba(79,201,140,.13);
+    --info:#6FA8D0; --info-soft:rgba(111,168,208,.13);
+    --wait:#DCB25C; --wait-soft:rgba(220,178,92,.13);
+    --stop:#E08078; --stop-soft:rgba(224,128,120,.13);
+    --quiet:#8FA098; --quiet-soft:rgba(143,160,152,.11);
+    --on-accent:#06120C;
+    --chart:#3FBF84; --chart-fill:rgba(63,191,132,.16); --grid:#1E3129;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.32);
+    --shadow-lift:0 2px 6px rgba(0,0,0,.55), 0 18px 40px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0A120E; --ground-2:#0D1712; --surface:#111C16; --surface-2:#15241C; --sunk:#0B140F;
+  --ink:#E8EFEA; --ink-2:#9AAAA1; --ink-3:#6D7D74;
+  --line:#20342B; --line-soft:#182821;
+  --green:#3FBF84; --green-deep:#0D3D2A; --green-bright:#5FD79E;
+  --green-soft:rgba(63,191,132,.12); --green-line:rgba(63,191,132,.30);
+  --brass:#C7A462; --brass-soft:rgba(199,164,98,.14);
+  --good:#4FC98C; --good-soft:rgba(79,201,140,.13);
+  --info:#6FA8D0; --info-soft:rgba(111,168,208,.13);
+  --wait:#DCB25C; --wait-soft:rgba(220,178,92,.13);
+  --stop:#E08078; --stop-soft:rgba(224,128,120,.13);
+  --quiet:#8FA098; --quiet-soft:rgba(143,160,152,.11);
+  --on-accent:#06120C;
+  --chart:#3FBF84; --chart-fill:rgba(63,191,132,.16); --grid:#1E3129;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.32);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.55), 0 18px 40px rgba(0,0,0,.4);
+}
+
+/* The admin portal is deliberately dark in every viewer theme — it is the
+   workshop behind the showroom, and it stays legible against either host ground. */
+body.workshop{
+  --ground:#08110D; --ground-2:#0C1712; --surface:#101C16; --surface-2:#14241C; --sunk:#0A140F;
+  --ink:#E8EFEA; --ink-2:#97A79E; --ink-3:#6A7A71;
+  --line:#1F332A; --line-soft:#172720;
+  --green:#2E9C6A; --green-deep:#0D3D2A; --green-bright:#3FBF84;
+  --green-soft:rgba(46,156,106,.13); --green-line:rgba(46,156,106,.30);
+  --brass:#C7A462; --brass-soft:rgba(199,164,98,.14);
+  --good:#4FC98C; --good-soft:rgba(79,201,140,.13);
+  --info:#6FA8D0; --info-soft:rgba(111,168,208,.13);
+  --wait:#DCB25C; --wait-soft:rgba(220,178,92,.13);
+  --stop:#E08078; --stop-soft:rgba(224,128,120,.13);
+  --quiet:#8FA098; --quiet-soft:rgba(143,160,152,.11);
+  --on-accent:#06120C;
+  --chart:#3FBF84; --chart-fill:rgba(63,191,132,.15); --grid:#1B2E26;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.3);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 18px 40px rgba(0,0,0,.38);
+  background:var(--ground); color:var(--ink); font-size:15px;
+}
+
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans);
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit;}
+h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.018em; line-height:1.2; text-wrap:balance;}
+h1{font-size:2.1rem; letter-spacing:-.028em;} h2{font-size:1.55rem; letter-spacing:-.024em;}
+h3{font-size:1.02rem;}
+p{margin:0 0 1em;} p:last-child{margin-bottom:0;}
+:focus-visible{outline:2px solid var(--green); outline-offset:2px; border-radius:3px;}
+
+.mono{font-family:var(--mono); font-size:.84em;}
+.tnum{font-variant-numeric:tabular-nums;}
+.muted{color:var(--ink-2);} .dim{color:var(--ink-3);}
+.tiny{font-size:.78rem;} .center{text-align:center;} .right{text-align:right;}
+.nowrap{white-space:nowrap;}
+.row{display:flex; gap:.75rem; align-items:center;}
+.row-between{display:flex; gap:1rem; align-items:center; justify-content:space-between;}
+.wrap{flex-wrap:wrap;} .grow{flex:1;}
+.stack>*+*{margin-top:1rem;} .stack-sm>*+*{margin-top:.5rem;}
+.container{width:min(1140px, 100% - 3rem); margin-inline:auto;}
+.container-narrow{width:min(680px, 100% - 3rem); margin-inline:auto;}
+.measure{max-width:62ch;}
+.eyebrow-label{font-family:var(--mono); font-size:.68rem; font-weight:500; letter-spacing:.17em;
+  text-transform:uppercase; color:var(--green);}
+.stat-label{font-family:var(--mono); font-size:.66rem; text-transform:uppercase;
+  letter-spacing:.13em; color:var(--ink-3);}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky; top:0; z-index:60; background:color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter:saturate(150%) blur(12px); border-bottom:1px solid var(--line-soft);}
+.topbar-inner{display:flex; align-items:center; gap:2rem; height:74px;}
+.brand{display:flex; align-items:center; gap:.7rem; cursor:pointer;}
+.brand-mark{width:34px; height:34px; border-radius:5px; display:grid; place-items:center;
+  background:var(--green); color:var(--on-accent); font-size:.82rem; font-weight:700; letter-spacing:-.02em;}
+.brand-name{display:block; font-size:1rem; font-weight:600; letter-spacing:-.015em; line-height:1.15;}
+.brand-sub{display:block; font-family:var(--mono); font-size:.56rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-3); margin-top:.1rem;}
+.nav-links{display:flex; gap:1.75rem; margin-left:auto; align-items:center; flex-wrap:wrap;}
+.nav-links a{color:var(--ink-2); font-size:.88rem; cursor:pointer; transition:color .18s;}
+.nav-links a:hover{color:var(--ink);}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  padding:.68rem 1.3rem; border-radius:var(--radius-sm); font-size:.875rem; font-weight:500;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  cursor:pointer; white-space:nowrap;
+  transition:background .18s, border-color .18s, color .18s, transform .08s;}
+.btn:hover{border-color:var(--ink-3);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--green); border-color:var(--green); color:var(--on-accent);}
+.btn-primary:hover{background:var(--green-deep); border-color:var(--green-deep); color:var(--on-accent);}
+.workshop .btn-primary:hover{background:var(--green-bright); border-color:var(--green-bright);}
+.btn-outline{background:transparent; border-color:var(--green); color:var(--green);}
+.btn-outline:hover{background:var(--green-soft); color:var(--green);}
+.btn-ghost{background:transparent; border-color:transparent; color:var(--ink-2);}
+.btn-ghost:hover{background:var(--sunk); color:var(--ink);}
+.btn-lg{padding:.95rem 2rem; font-size:.95rem;}
+.btn-xl{padding:1.1rem 2.4rem; font-size:1rem;}
+.btn-sm{padding:.38rem .8rem; font-size:.8rem;}
+.btn-block{width:100%;}
+
+/* ---------- badges, cards, tables ---------- */
+.badge{display:inline-flex; align-items:center; gap:.38rem; padding:.2rem .6rem; border-radius:100px;
+  font-family:var(--mono); font-size:.66rem; font-weight:500; letter-spacing:.07em;
+  text-transform:uppercase; border:1px solid transparent; white-space:nowrap;}
+.badge::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor;}
+.badge-green{background:var(--good-soft); color:var(--good); border-color:color-mix(in srgb,var(--good) 26%,transparent);}
+.badge-amber{background:var(--wait-soft); color:var(--wait); border-color:color-mix(in srgb,var(--wait) 26%,transparent);}
+.badge-blue{background:var(--info-soft); color:var(--info); border-color:color-mix(in srgb,var(--info) 26%,transparent);}
+.badge-brass{background:var(--brass-soft); color:var(--brass); border-color:color-mix(in srgb,var(--brass) 30%,transparent);}
+.badge-red{background:var(--stop-soft); color:var(--stop); border-color:color-mix(in srgb,var(--stop) 26%,transparent);}
+.badge-slate{background:var(--quiet-soft); color:var(--quiet); border-color:color-mix(in srgb,var(--quiet) 24%,transparent);}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:1.4rem;}
+.card-lg{padding:2rem; border-radius:var(--radius-lg);}
+.card-flush{padding:0; overflow:hidden;}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:1rem 1.4rem; border-bottom:1px solid var(--line); background:var(--surface-2);}
+.card-head h3{font-size:.88rem; font-weight:500;}
+.card-body{padding:1.4rem;}
+.card-accent{border-left:2px solid var(--green);}
+.grid{display:grid; gap:1rem;}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.grid-sidebar{grid-template-columns:minmax(0,1fr) 330px; align-items:start;}
+@media(max-width:1080px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .grid-sidebar{grid-template-columns:minmax(0,1fr);}}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4{grid-template-columns:minmax(0,1fr);}}
+
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:1.15rem 1.25rem;}
+.stat-value{font-size:1.7rem; font-weight:600; letter-spacing:-.028em; margin-top:.4rem;
+  line-height:1.1; font-variant-numeric:tabular-nums;}
+.stat-sub{font-size:.8rem; color:var(--ink-2); margin-top:.35rem;}
+.stat-accent .stat-value{color:var(--green);}
+.delta{font-family:var(--mono); font-size:.72rem; font-weight:500;}
+.delta.up{color:var(--good);} .delta.down{color:var(--stop);} .delta.flat{color:var(--ink-3);}
+
+.table-wrap{overflow-x:auto;}
+table.data{width:100%; border-collapse:collapse; font-size:.875rem;}
+table.data th{text-align:left; font-family:var(--mono); font-size:.64rem; text-transform:uppercase;
+  letter-spacing:.12em; color:var(--ink-3); font-weight:500; padding:.75rem 1.1rem;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+table.data td{padding:.82rem 1.1rem; border-bottom:1px solid var(--line-soft); vertical-align:middle;}
+table.data tbody tr:last-child td{border-bottom:0;}
+table.data tbody tr{transition:background .14s;}
+table.data tbody tr:hover{background:var(--surface-2);}
+table.data .cell-link{font-weight:500; cursor:pointer;}
+table.data .cell-link:hover{color:var(--green);}
+.empty{padding:3rem 1.5rem; text-align:center; color:var(--ink-2);}
+.empty h3{color:var(--ink);}
+
+label.field{display:block; margin-bottom:1.15rem;}
+.field-label{display:block; font-size:.875rem; font-weight:500; margin-bottom:.4rem;}
+.field-hint{display:block; font-size:.8rem; color:var(--ink-2); margin-top:.35rem;}
+.field-hint-top{display:block; font-size:.8rem; color:var(--ink-2); margin:-.1rem 0 .45rem;}
+input[type=text],input[type=email],input[type=password],input[type=number],textarea,select{
+  width:100%; padding:.72rem .85rem; font-size:.95rem; font-family:inherit;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line);
+  border-radius:var(--radius-sm); transition:border-color .18s, box-shadow .18s;}
+.workshop input,.workshop textarea,.workshop select{background:var(--sunk); padding:.58rem .7rem; font-size:.9rem;}
+input::placeholder,textarea::placeholder{color:var(--ink-3);}
+input:focus,textarea:focus,select:focus{outline:none; border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+textarea{min-height:110px; resize:vertical; line-height:1.55;}
+select{appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238A958D' d='M6 8.5 2 4h8z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right .75rem center; padding-right:2rem;}
+fieldset{border:0; padding:0; margin:0 0 2rem;}
+legend{font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.15em;
+  color:var(--green); padding:0 0 .9rem;}
+details.more>summary{cursor:pointer; list-style:none; font-size:.9rem; color:var(--green);
+  padding:.7rem 0; border-block:1px solid var(--line); display:flex; align-items:center;
+  justify-content:space-between; gap:1rem;}
+details.more>summary::-webkit-details-marker{display:none;}
+details.more>summary::after{content:"+"; font-size:1.1rem; line-height:1; color:var(--ink-3);}
+details.more[open]>summary::after{content:"\2013";}
+details.more>.more-body{padding-top:1.5rem;}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(3.5rem,8vw,6.5rem) 0 clamp(2.5rem,5vw,4rem); position:relative; overflow:hidden;}
+.hero::after{content:""; position:absolute; inset:-40% -20% 40% 20%; pointer-events:none; z-index:0;
+  background:radial-gradient(closest-side, var(--green-soft), transparent 72%);}
+.hero-inner{position:relative; z-index:2;}
+.wordmark{font-size:clamp(3.1rem,13.2vw,12rem); font-weight:700; letter-spacing:-.055em;
+  line-height:.88; margin:1.5rem 0 0;}
+.wordmark span{display:block;}
+.wordmark .accent{color:var(--green); display:inline;}
+.hero-rule{height:1px; background:var(--line); margin:2.75rem 0 2rem;}
+.hero-line{font-size:clamp(1.05rem,1.6vw,1.3rem); color:var(--ink-2); max-width:46ch; line-height:1.55;}
+.hero-cta{display:flex; gap:1rem; margin-top:2.5rem; flex-wrap:wrap;}
+.hero-note{font-size:.84rem; color:var(--ink-3); margin-top:1.5rem;}
+
+.chain{display:grid; gap:1px; background:var(--line); border-block:1px solid var(--line);}
+@media(min-width:760px){.chain{grid-template-columns:repeat(2,1fr);}}
+.chain-cell{background:var(--ground); padding:2rem max(0.35cm, 1.5rem);
+  display:flex; flex-direction:column; gap:.75rem;}
+.chain-cell .who{font-family:var(--mono); font-size:.66rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3);}
+.chain-cell p{margin:0; color:var(--ink-2); font-size:.95rem; line-height:1.55; max-width:44ch;}
+.chain-cell.ours{background:var(--surface);}
+.chain-cell.ours .who{color:var(--green);}
+.chain-cell.ours p{color:var(--ink);}
+/* the item image viewer (§10.3) — sized for a thumb first: every control is at
+   least 44px, and navigation sits where a thumb reaches on a phone held
+   one-handed rather than in the far corners. */
+.iv-thumbs{list-style:none; margin:0; padding:0; display:grid; gap:.75rem;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+.iv-thumb{width:100%; padding:0; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface); cursor:zoom-in; overflow:hidden; text-align:left;
+  display:flex; flex-direction:column; min-height:44px;}
+.iv-thumb:hover{border-color:var(--green-line);}
+.iv-thumb:focus-visible{outline:2px solid var(--green); outline-offset:2px;}
+.iv-thumb-media{display:block; background:var(--sunk);}
+.iv-thumb-media svg{width:100%; height:auto; display:block;}
+.iv-thumb-caption{padding:.55rem .7rem; font-size:.8rem; color:var(--ink-2); line-height:1.35;}
+.iv-dialog{position:fixed; inset:0; z-index:90; background:rgba(20,33,26,.97);
+  display:grid; grid-template-rows:auto 1fr;}
+body.iv-open{overflow:hidden;}
+.iv-bar{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:.6rem max(0.35cm,.75rem); color:var(--on-accent);}
+.iv-count{font-family:var(--mono); font-size:.78rem; letter-spacing:.08em; opacity:.8;}
+.iv-tools{display:flex; gap:.4rem;}
+.iv-btn{min-width:44px; min-height:44px; padding:0 .7rem; background:transparent;
+  color:var(--on-accent); border:1px solid rgba(255,255,255,.28);
+  border-radius:var(--radius-sm); font-size:1.05rem; cursor:pointer;}
+.iv-btn:focus-visible{outline:2px solid var(--on-accent); outline-offset:2px;}
+.iv-btn[aria-pressed="true"]{background:rgba(255,255,255,.18);}
+.iv-diagram{font-size:.82rem;}
+.iv-stage{display:grid; place-items:center; overflow:hidden; padding:0 .5rem 1rem;}
+.iv-slide{margin:0; display:grid; gap:.75rem; max-width:min(96vw,1100px);}
+.iv-media{position:relative; display:grid; place-items:center;
+  transition:transform .18s ease; transform-origin:center center;}
+.iv-media > svg:not(.iv-callouts){max-width:100%; max-height:66vh; display:block;
+  border-radius:var(--radius); background:var(--surface);}
+.iv-slide figcaption{color:var(--on-accent); font-size:.88rem; text-align:center;
+  display:flex; flex-direction:column; gap:.2rem;}
+.iv-source{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; opacity:.65;}
+/* callouts sit outside the subject on a leader line — a label drawn over the
+   part it names covers the part it names */
+.iv-callouts{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
+.iv-callouts line{stroke:var(--brass); stroke-width:1.25;}
+.iv-callouts circle{fill:var(--brass);}
+.iv-callouts text{fill:var(--on-accent); font-size:12px; font-family:var(--mono);
+  paint-order:stroke; stroke:rgba(20,33,26,.85); stroke-width:3px;}
+.iv-nav{position:fixed; bottom:1.1rem; width:56px; height:56px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.28); background:rgba(20,33,26,.6);
+  color:var(--on-accent); font-size:1.6rem; line-height:1; cursor:pointer;}
+.iv-prev{left:max(0.35cm,.9rem);} .iv-next{right:max(0.35cm,.9rem);}
+.iv-nav:focus-visible{outline:2px solid var(--on-accent); outline-offset:2px;}
+@media(min-width:860px){.iv-nav{top:50%; bottom:auto; transform:translateY(-50%);}}
+/* `hidden` sets display:none from the UA stylesheet, and any author `display`
+   rule beats it — so `.iv-dialog{display:grid}` left a full-screen fixed
+   overlay sitting over the page, invisible but swallowing every click on it.
+   This has to win over the display rule above, not sit before it. */
+.iv-dialog[hidden]{display:none !important;}
+.iv-callouts[hidden]{display:none !important;}
+.iv-slide[hidden]{display:none !important;}
+.iv-empty{border:1px dashed var(--line); border-radius:var(--radius); padding:1.5rem;
+  color:var(--ink-2); background:var(--surface-2);}
+.iv-empty p{margin:0 0 .35rem;}
+@media(prefers-reduced-motion:reduce){.iv-media{transition:none;}}
+
+/* the Tooling Line (§11.3) */
+.tooling{border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+  padding:1rem 1.1rem; display:grid; gap:.55rem; margin:0;}
+.tooling dt{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3);}
+.tooling dd{margin:0 0 .5rem; color:var(--ink); font-size:.93rem; line-height:1.5;}
+.tooling .cost{font-variant-numeric:tabular-nums; font-weight:600;}
+.tooling-callout{border:1px solid var(--wait); border-left-width:4px;
+  border-radius:var(--radius); background:var(--wait-soft); padding:.9rem 1.05rem;
+  color:var(--ink); font-size:.95rem; line-height:1.55; margin-bottom:.85rem;}
+
+/* the public catalogue (§8.2) — ranges, never a negotiated price */
+.cat-grid{display:grid; gap:1.25rem; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
+.cat-card{border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface); overflow:hidden; display:flex; flex-direction:column;
+  cursor:pointer;}
+.cat-card:hover{border-color:var(--green-line);}
+.cat-card-media{background:var(--sunk);}
+.cat-card-media svg{width:100%; height:auto; display:block;}
+.cat-card-body{padding:1.1rem; display:grid; gap:.5rem;}
+.cat-range{font-family:var(--mono); font-size:1.15rem; color:var(--green);
+  font-variant-numeric:tabular-nums;}
+.cat-range-note{font-size:.78rem; color:var(--ink-3);}
+.cat-meta{display:flex; gap:1rem; flex-wrap:wrap; font-size:.82rem; color:var(--ink-2);}
+.cat-cta{padding:0 1.1rem 1.1rem; display:flex; gap:.5rem; flex-wrap:wrap;}
+
+/* a stated condition with what to do about it — used where a state would
+   otherwise be a silent failure, such as a paused account meeting an item it
+   cannot order (§8.5) */
+.notice{border:1px solid var(--line); border-left-width:4px; border-radius:var(--radius);
+  padding:.9rem 1.05rem; font-size:.93rem; line-height:1.55; background:var(--surface-2);}
+.notice strong{display:block; margin-bottom:.2rem;}
+.notice-wait{border-color:var(--wait); background:var(--wait-soft);}
+
+.ladder-note{padding:1.25rem max(0.35cm, 1.5rem) 0; font-size:.84rem; color:var(--ink-3);
+  text-align:center; max-width:78ch; margin-inline:auto;}
+
+.quiet-band{background:var(--ground-2);}
+.section{padding:clamp(3rem,6vw,4.75rem) 0;}
+.section+.section{border-top:1px solid var(--line-soft);}
+.section h2{font-size:clamp(1.5rem,2.6vw,2rem);}
+.section-lede{color:var(--ink-2); margin-top:.9rem; max-width:58ch; font-size:1rem;}
+.pillar{display:flex; flex-direction:column; gap:.7rem;}
+.pillar-rule{width:28px; height:1px; background:var(--brass);}
+.pillar p{color:var(--ink-2); font-size:.95rem; margin:0;}
+.footer{border-top:1px solid var(--line); padding:2.5rem 0 3rem; color:var(--ink-3); font-size:.85rem;}
+.footer a{color:var(--ink-2); cursor:pointer;} .footer a:hover{color:var(--ink);}
+
+/* ---------- app shell ---------- */
+.shell{display:grid; grid-template-columns:244px minmax(0,1fr); min-height:100vh;}
+.sidebar{background:var(--ground-2); border-right:1px solid var(--line); padding:1.25rem .9rem;
+  display:flex; flex-direction:column; gap:1.5rem;}
+.side-group{display:grid; gap:.1rem;}
+.side-title{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.16em;
+  color:var(--ink-3); padding:0 .65rem .45rem;}
+.side-link{display:flex; align-items:center; gap:.65rem; padding:.52rem .65rem; border-radius:var(--radius-sm);
+  color:var(--ink-2); font-size:.88rem; cursor:pointer; transition:background .14s, color .14s;
+  border:0; background:transparent; width:100%; text-align:left;}
+.side-link:hover{background:var(--sunk); color:var(--ink);}
+.side-link.active{background:var(--green-soft); color:var(--green); font-weight:500;}
+.side-icon{width:16px; text-align:center; font-size:.9rem; opacity:.85;}
+.side-count{margin-left:auto; font-family:var(--mono); font-size:.66rem; color:var(--green);
+  background:var(--green-soft); padding:.08rem .4rem; border-radius:100px;}
+.side-foot{margin-top:auto; padding-top:1rem; border-top:1px solid var(--line);}
+.main{min-width:0; display:flex; flex-direction:column;}
+/* At 390px the heading and the action button do not fit on one line, and a
+   non-wrapping flex row pushes the button past the viewport edge — §1.6
+   counts a control leaving the safe viewport at a tested breakpoint as a P2. */
+.main-head{display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; flex-wrap:wrap;
+  padding:1.25rem 2rem; border-bottom:1px solid var(--line); background:var(--ground);}
+.main-head .eyebrow{font-family:var(--mono); font-size:.66rem; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--ink-3); margin-bottom:.25rem;}
+.main-body{padding:2rem; flex:1;}
+@media(max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);}
+  .sidebar{flex-direction:row; overflow-x:auto; align-items:center; gap:.6rem;}
+  .sidebar .side-title,.side-foot{display:none;}
+  .side-group{display:flex; gap:.3rem;}
+  .main-body{padding:1.25rem;} .main-head{padding:1.1rem 1.25rem;}
+}
+.avatar{width:34px; height:34px; border-radius:50%; display:grid; place-items:center;
+  background:var(--sunk); color:var(--ink-2); font-family:var(--mono); font-size:.68rem;
+  border:1px solid var(--line); flex-shrink:0;}
+.avatar-accent{background:var(--green-soft); color:var(--green); border-color:var(--green-line);}
+.auth-wrap{min-height:100vh; display:grid; place-items:center; padding:2rem 1.25rem;}
+.auth-card{width:min(430px,100%); background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-lg); padding:2.4rem; box-shadow:var(--shadow);}
+.kv{display:grid; grid-template-columns:150px minmax(0,1fr); gap:.55rem 1rem; font-size:.88rem;}
+.kv dt{color:var(--ink-3); font-size:.82rem;} .kv dd{margin:0;}
+@media(max-width:560px){.kv{grid-template-columns:minmax(0,1fr); gap:.1rem 0;} .kv dd{margin-bottom:.7rem;}}
+.divider-label{display:flex; align-items:center; gap:.85rem; color:var(--ink-3);
+  font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.14em;
+  margin:1.75rem 0 1rem;}
+.divider-label::after{content:""; flex:1; height:1px; background:var(--line);}
+.quota-dots{display:flex; gap:4px; flex-wrap:wrap;}
+.quota-dot{width:14px; height:5px; border-radius:100px; background:var(--green);}
+.quota-dot.spent{background:var(--line);}
+.notice{padding:.8rem 1rem; border-radius:var(--radius-sm); font-size:.88rem;
+  border:1px solid color-mix(in srgb,var(--good) 35%,transparent); background:var(--good-soft); color:var(--good);}
+.notice-error{border-color:color-mix(in srgb,var(--stop) 40%,transparent); background:var(--stop-soft); color:var(--stop);}
+
+/* ---------- revenue chart ---------- */
+.range-row{display:flex; gap:.3rem; flex-wrap:wrap; background:var(--sunk); padding:.28rem;
+  border-radius:var(--radius); border:1px solid var(--line);}
+.range-btn{border:0; background:transparent; color:var(--ink-2); font-family:var(--mono);
+  font-size:.74rem; letter-spacing:.06em; padding:.42rem .8rem; border-radius:var(--radius-sm);
+  cursor:pointer; transition:background .15s, color .15s;}
+.range-btn:hover{color:var(--ink);}
+.range-btn.active{background:var(--green); color:var(--on-accent);}
+.chart-wrap{position:relative;}
+.chart-svg{width:100%; height:auto; display:block; overflow:visible;}
+.chart-grid line{stroke:var(--grid); stroke-width:1;}
+.chart-axis text{font-family:var(--mono); font-size:10px; fill:var(--ink-3);}
+.chart-area{fill:var(--chart-fill);}
+.chart-line{fill:none; stroke:var(--chart); stroke-width:2; stroke-linejoin:round; stroke-linecap:round;}
+.chart-bar{fill:var(--chart); rx:2;}
+.chart-bar.dim{fill:color-mix(in srgb, var(--chart) 55%, transparent);}
+.chart-end{fill:var(--chart); stroke:var(--surface); stroke-width:2;}
+.chart-hit{fill:transparent; cursor:crosshair;}
+.chart-cross{stroke:var(--ink-3); stroke-width:1; stroke-dasharray:3 3;}
+.tooltip{position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-sm); padding:.5rem .7rem; box-shadow:var(--shadow-lift);
+  font-size:.8rem; white-space:nowrap; transform:translate(-50%,-115%); opacity:0; transition:opacity .1s;}
+.tooltip .t-date{font-family:var(--mono); font-size:.68rem; color:var(--ink-3);}
+.tooltip .t-val{font-weight:600; font-variant-numeric:tabular-nums; margin-top:.15rem;}
+.tooltip .t-sub{font-size:.72rem; color:var(--ink-2);}
+.spark{display:block; width:100%; height:34px;}
+
+/* ---------- order timeline ---------- */
+.track{list-style:none; margin:0; padding:0; display:grid; gap:0;}
+@media(min-width:860px){.track{grid-auto-flow:column; grid-auto-columns:1fr;}}
+.track-step{position:relative; padding:0 0 1.25rem 1.75rem;}
+@media(min-width:860px){.track-step{padding:1.75rem .75rem 0 0;}}
+.track-dot{position:absolute; width:11px; height:11px; border-radius:50%;
+  background:var(--surface); border:2px solid var(--line); left:0; top:.35rem;}
+@media(min-width:860px){.track-dot{left:0; top:0;}}
+.track-step::before{content:""; position:absolute; background:var(--line);
+  left:5px; top:1.1rem; bottom:0; width:1px;}
+@media(min-width:860px){
+  .track-step::before{left:11px; right:0; top:5px; bottom:auto; width:auto; height:1px;}
+  .track-step:last-child::before{display:none;}
+}
+.track-step.done .track-dot{background:var(--green); border-color:var(--green);}
+.track-step.done::before{background:var(--green-line);}
+.track-step.current .track-dot{box-shadow:0 0 0 4px var(--green-soft);}
+.track-name{font-size:.86rem; font-weight:500; color:var(--ink-3);}
+.track-step.done .track-name{color:var(--ink);}
+.track-step.current .track-name{color:var(--green);}
+.track-when{font-family:var(--mono); font-size:.7rem; color:var(--ink-2); margin-top:.2rem;}
+.track-detail{font-size:.76rem; color:var(--ink-3); margin-top:.15rem;}
+.tracking-card{display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  flex-wrap:wrap; margin-top:1.25rem; padding:1rem 1.15rem; border:1px solid var(--green-line);
+  background:var(--green-soft); border-radius:var(--radius);}
+
+/* ---------- order summary: the money block ---------- */
+table.data tfoot td{border-bottom:1px solid var(--line-soft);}
+table.data tfoot tr:last-child td{border-bottom:0;}
+.sum-row td{padding-block:1rem;}
+.sum-label{display:flex; flex-direction:column; align-items:flex-end; gap:.3rem;}
+.sum-label .sum-name{font-size:.95rem; color:var(--ink);}
+.sum-label .sum-note{font-size:.78rem; color:var(--ink-3); font-weight:400;}
+.sum-amount{font-size:1.02rem; font-variant-numeric:tabular-nums;}
+.sum-stack{display:flex; flex-direction:column; align-items:flex-end; gap:.15rem;}
+.sum-was{font-size:.95rem;}
+.sum-now{font-size:1.1rem; font-weight:600; color:var(--green); font-variant-numeric:tabular-nums;}
+.sum-total td{padding-block:1.35rem; background:var(--surface-2);}
+.sum-total .sum-name{font-size:1.08rem; font-weight:600;}
+.sum-total .sum-note{font-size:.78rem; color:var(--ink-2);}
+.sum-total-amount{font-size:1.85rem; font-weight:700; letter-spacing:-.03em; color:var(--green);
+  font-variant-numeric:tabular-nums; line-height:1.1;}
+.free-tag{display:inline-flex; align-items:center; gap:.4rem; padding:.3rem .7rem; border-radius:100px;
+  background:var(--green-soft); border:1px solid var(--green-line); font-family:var(--mono);
+  font-size:.68rem; letter-spacing:.04em; color:var(--green); text-transform:uppercase; white-space:nowrap;}
+.free-tag::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor;}
+@media(max-width:620px){.free-tag{white-space:normal; text-align:left;}}
+
+/* ---------- the owner's freight offer ---------- */
+.struck{color:var(--ink-3); text-decoration:line-through; text-decoration-color:var(--stop);
+  text-decoration-thickness:2px;}
+.waived-row td{vertical-align:top;}
+.waived-tag{display:inline-block; margin-top:.4rem; padding:.25rem .6rem; border-radius:100px;
+  background:var(--green-soft); border:1px solid var(--green-line); font-size:.72rem;
+  color:var(--green); font-weight:500; white-space:normal;}
+.owner-card{border:1px solid var(--green-line); background:var(--green-soft);}
+.owner-card h3{color:var(--green);}
+
+/* ---------- the fees ---------- */
+.fee-note{display:grid; grid-template-columns:auto minmax(0,1fr); gap:.7rem; align-items:start;
+  margin-top:1.25rem; padding:.85rem 1rem; border-radius:var(--radius);
+  background:var(--green-soft); border:1px solid var(--green-line);
+  font-size:.84rem; color:var(--ink-2); line-height:1.5;}
+.fee-badge{font-family:var(--mono); font-size:.74rem; font-weight:500; color:var(--on-accent);
+  background:var(--green); padding:.18rem .5rem; border-radius:100px; white-space:nowrap;}
+
+/* ---------- payment options ---------- */
+.pay-list{display:grid; gap:.65rem;}
+.pay-option{display:grid; grid-template-columns:auto minmax(0,1fr); gap:.8rem; align-items:start;
+  padding:1rem 1.15rem; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface); cursor:pointer; transition:border-color .15s, box-shadow .15s;}
+.pay-option:hover{border-color:var(--ink-3);}
+.pay-option:focus-within{border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+.pay-option:has(input:checked){border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+.pay-option input[type="radio"]{width:auto; margin:.3rem 0 0; accent-color:var(--green);}
+.pay-body{min-width:0;}
+.pay-title{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; font-size:.95rem;
+  font-weight:600; letter-spacing:-.01em;}
+.pay-note{display:block; font-size:.82rem; color:var(--ink-2); margin-top:.35rem; line-height:1.5;}
+
+/* ---------- checkline (plain checkbox rows) ---------- */
+.checkline{display:flex; align-items:flex-start; gap:.6rem; font-size:.9rem; color:var(--ink-2);}
+.checkline input{width:auto; margin-top:.28rem; accent-color:var(--green);}
+
+/* ---------- tags ---------- */
+.tag{display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .6rem; border-radius:100px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; background:var(--brass-soft);
+  color:var(--brass); border:1px solid color-mix(in srgb, var(--brass) 30%, transparent);}
+.tag-green{background:var(--green-soft); color:var(--green); border-color:var(--green-line);}
+.tag-wait{background:var(--wait-soft); color:var(--wait); border-color:var(--wait);}
+.tag-muted{background:var(--sunk); color:var(--ink-3); border-color:var(--line);}
+.tag-row{display:flex; flex-wrap:wrap; gap:.35rem;}
+button.tag{font-family:var(--mono);}
+@media(prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important;}}
+.demo-bar{background:var(--green-deep); color:#EAF2ED; font-family:var(--mono); font-size:.68rem;
+  letter-spacing:.1em; text-transform:uppercase; padding:.5rem 0;}
+:root[data-theme="dark"] .demo-bar,:root:not([data-theme="light"]) .demo-bar{color:#DFF2E8;}
+.demo-bar .container{display:flex; gap:1rem; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+.demo-bar button{border:1px solid rgba(255,255,255,.28); background:transparent; color:inherit;
+  font-family:inherit; font-size:inherit; letter-spacing:inherit; text-transform:inherit;
+  padding:.25rem .7rem; border-radius:3px; cursor:pointer;}
+.demo-bar button:hover{background:rgba(255,255,255,.12);}
+</style>
+<div id="app"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* ==========================================================================
+   Data. Deterministic, so the numbers are stable every time the page loads.
+   ========================================================================== */
+function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var rnd = mulberry(20260826);
+
+var TODAY = new Date(2026, 7, 26);          // 26 Aug 2026, fixed
+function addDays(d, n){var x=new Date(d); x.setDate(x.getDate()+n); return x;}
+var FEE_PERCENT = 1.5;                 // our convenience fee
+var CARD_PCT = 2.9, CARD_FIXED = 30;   // what Stripe charges, passed on at cost
+var ACH_PCT = 0.8, ACH_CAP = 500;
+function feeOn(cents){ return Math.round(cents * FEE_PERCENT / 100); }
+
+/* What the network takes, grossed up so the net actually lands. */
+function processingFor(net, method) {
+  if (!net) return 0;
+  if (method === "ach") {
+    var gross = net / (1 - ACH_PCT / 100);
+    return Math.min(Math.round(gross - net), ACH_CAP);
+  }
+  var g = (net + CARD_FIXED) / (1 - CARD_PCT / 100);
+  return Math.round(g - net);
+}
+
+/* Freight and customs, the way a forwarder works it out. The figure is shown to
+   the client struck through, so it has to be one we can defend line by line. */
+var LANE = {SEA: {perKg: 260, min: 45000, days: 32}, AIR: {perKg: 720, min: 28000, days: 9}};
+var DUTY = {"Bags & leather goods": 17.6, "Apparel & textiles": 14.9, "Packaging & print": 0,
+            "Metal & machined parts": 2.9, "Molded plastics": 5.3, "Silicone & rubber": 3.4,
+            "Ceramics & glass": 6.0, "Furniture & fixtures": 0, "default": 4.2};
+var UNIT_G = {"Bags & leather goods": 620, "Apparel & textiles": 280, "Packaging & print": 45,
+              "Metal & machined parts": 340, "Molded plastics": 120, "default": 300};
+var UNIT_CM3 = {"Bags & leather goods": 2600, "Apparel & textiles": 900, "Packaging & print": 260,
+                "Metal & machined parts": 420, "Molded plastics": 520, "default": 800};
+function pick(t, k){ return t[k] !== undefined ? t[k] : t["default"]; }
+
+function freightEstimate(valueCents, qty, category, destination, mode) {
+  mode = LANE[mode] ? mode : "SEA";
+  var lane = LANE[mode];
+  var grams = pick(UNIT_G, category), cm3 = pick(UNIT_CM3, category);
+  var actual = qty * grams / 1000, volumetric = qty * cm3 / 5000;
+  var chargeable = Math.max(actual, volumetric);
+  var freight = Math.max(lane.min, Math.round(chargeable * lane.perKg));
+  var handling = 12500 + (destination === "United States" ? 18000 : 25000);
+  var dutyRate = pick(DUTY, category);
+  var duty = Math.round(valueCents * dutyRate / 100);
+  var mpf = Math.min(62670, Math.max(3231, Math.round(valueCents * 0.3464 / 100)));
+  var hmf = mode === "SEA" ? Math.round(valueCents * 0.125 / 100) : 0;
+  return {
+    mode: mode, days: lane.days, chargeable: chargeable, perKg: lane.perKg,
+    freight: freight, handling: handling, dutyRate: dutyRate, duty: duty, mpf: mpf, hmf: hmf,
+    destination: destination || "your address",
+    total: freight + handling + duty + mpf + hmf,
+    lines: [
+      ["Chargeable weight (" + chargeable.toFixed(1) + " kg at $" + (lane.perKg / 100).toFixed(2) +
+       "/kg, " + mode.toLowerCase() + ")", freight],
+      ["Origin and destination handling", handling],
+      ["Import duty (" + dutyRate + "% of declared value)", duty],
+      ["Merchandise processing fee", mpf]
+    ].concat(hmf ? [["Harbour maintenance fee", hmf]] : [])
+  };
+}
+function money(c){var s=c<0?"-":""; c=Math.abs(Math.round(c));
+  return s+"$"+(c/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function moneyShort(c){var v=Math.abs(c)/100;
+  if(v>=1e6) return "$"+(v/1e6).toFixed(v>=1e7?0:1)+"M";
+  if(v>=1e3) return "$"+(v/1e3).toFixed(v>=1e4?0:1)+"k";
+  return "$"+v.toFixed(0);}
+function fmtDate(d,opts){return d.toLocaleDateString("en-US",opts||{month:"short",day:"numeric"});}
+function fmtFull(d){return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+/* --- 365 days of orders, so revenue and order counts always agree --- */
+var DAYS = [];
+for (var i = 364; i >= 0; i--) {
+  var date = addDays(TODAY, -i);
+  var dow = date.getDay();
+  var growth = 0.55 + 0.45 * ((365 - i) / 365);        // the business grows over the year
+  var weekend = (dow === 0 || dow === 6) ? 0.22 : 1;
+  var lambda = 2.1 * growth * weekend;
+  var orders = 0, cents = 0, r = rnd();
+  var n = Math.floor(lambda) + (r < (lambda % 1) ? 1 : 0);
+  for (var k = 0; k < n; k++) {
+    var size = 180000 + Math.floor(rnd() * 1400000);   // $1,800 – $15,800
+    if (rnd() > 0.9) size += Math.floor(rnd() * 3600000);
+    cents += size; orders++;
+  }
+  DAYS.push({date: date, cents: cents, orders: orders});
+}
+var HOURS = [];   // today, hour by hour
+(function(){
+  var todayTotal = DAYS[DAYS.length-1].cents, weights = [];
+  for (var h = 0; h < 24; h++) {
+    var w = (h >= 7 && h <= 19) ? 0.4 + rnd() : 0.05 + rnd() * 0.15;
+    weights.push(w);
+  }
+  var sum = weights.reduce(function(a,b){return a+b;},0);
+  for (var h2 = 0; h2 < 24; h2++) {
+    HOURS.push({hour: h2, cents: Math.round(todayTotal * weights[h2] / sum)});
+  }
+})();
+
+var RANGES = [
+  {key:"1d",   days:1,   label:"1D"},
+  {key:"7d",   days:7,   label:"7D"},
+  {key:"21d",  days:21,  label:"21D"},
+  {key:"45d",  days:45,  label:"45D"},
+  {key:"90d",  days:90,  label:"90D"},
+  {key:"180d", days:180, label:"180D"},
+  {key:"365d", days:365, label:"365D"}
+];
+
+/* --- the five client accounts --- */
+// Demo accounts. The names are placeholders for testing — swap them before anyone
+// outside the team sees this, since a real person's name on a customer record
+// reads as a real customer.
+/* Account 1 is Boarshead, the real first client (Appendix B). The rest are
+   scaffolding so the admin bay has more than one row to show, and they are
+   named as scaffolding — the previous set was five real people's names, which
+   on a customer record reads as five real customers. */
+var DEMO_NAMES = ["Boarshead", "Demo account — packaging", "Demo account — apparel",
+                  "Demo account — hardware", "Demo account — beauty"];
+var CLIENTS = [1,2,3,4,5].map(function (n) {
+  var joined = addDays(TODAY, -(140 - n * 17));
+  return {
+    id: n,
+    ref: "MMI-C-" + (1000 + n),
+    name: DEMO_NAMES[n-1],
+    contact: DEMO_NAMES[n-1],
+    email: n === 1 ? "orders@boarshead.example" : "demo" + n + "@montimakesit.example",
+    phone: "+1 555 010" + n,
+    country: ["United States","United States","United States","United Kingdom","United States"][n-1],
+    city: [null,"Los Angeles","Oakland","London","Miami"][n-1],
+    membership: "MEMBER",
+    memberSince: joined,
+    quoteLimit: n === 1 ? 16 : 10,
+    cycleDays: 30,
+    // The first account carries a tag, so the item tagged the same way appears in their portal.
+    // Clients 2-5 carry none, so theirs stay quote-only.
+    tags: n === 1 ? ["carry-out"] : [],
+    freightWaived: n === 1,          // the owner absorbs freight on this account
+    owner: "Tyler Monti"
+  };
+});
+
+/* --- quote requests, spread across the clients --- */
+var QUOTE_TITLES = [
+  "Waxed canvas tote, 18L", "Kraft coffee pouch with valve", "Anodized carabiner, custom profile",
+  "Airless pump bottle, 50ml", "Recycled ripstop packing cubes", "Solid oak side table, flat-pack",
+  "Powder-coated shelf bracket", "Silicone gasket set, 60mm", "Retail box, rigid, magnetic close",
+  "Stainless growler, 64oz", "Leather card holder", "Ceramic pour-over dripper"
+];
+var QUOTES = [];
+(function(){
+  var qn = 1000;
+  // three requests deliberately left untriaged, so the incoming queue has work in it
+  [[2, "Ceramic pour-over dripper, 2-cup", 3000, 4],
+   [3, "Aluminium travel tin, 90mm", 8000, 9],
+   [5, "Cotton drawstring dust bag", 15000, 20]].forEach(function (row) {
+    QUOTES.push({
+      ref: "MMI-Q-" + (++qn), clientId: row[0], title: row[1], qty: row[2],
+      unit: null, total: null, status: "NEW",
+      created: new Date(TODAY.getTime() - row[3] * 3600 * 1000),
+      due: new Date(TODAY.getTime() + (24 - row[3]) * 3600 * 1000)
+    });
+  });
+  CLIENTS.forEach(function (c, ci) {
+    var count = [4, 2, 3, 2, 1][ci];
+    for (var i = 0; i < count; i++) {
+      var age = 2 + Math.floor(rnd() * 24);
+      var status = i === 0 ? "ESTIMATE_SENT" : (rnd() > 0.55 ? "ESTIMATE_SENT" : "IN_REVIEW");
+      if (i === 0 && ci % 2 === 0) status = "ACCEPTED";
+      var qty = [500,1000,2500,5000,10000,25000][Math.floor(rnd()*6)];
+      var unit = 80 + Math.floor(rnd() * 3200);
+      QUOTES.push({
+        ref: "MMI-Q-" + (++qn),
+        clientId: c.id,
+        title: QUOTE_TITLES[(ci * 3 + i) % QUOTE_TITLES.length],
+        qty: qty,
+        unit: unit,
+        total: status === "NEW" || status === "IN_REVIEW" ? null : unit * qty + 120000 + Math.floor(rnd()*400000),
+        status: status,
+        created: addDays(TODAY, -age),
+        due: addDays(TODAY, -age + 1)
+      });
+    }
+  });
+})();
+
+/* --- the items catalog: what the floor can build. Nothing is assigned to a client yet. --- */
+/* §11.3 — the Tooling Line. Four facts, and never a fifth: what it is, what it
+   costs (one number), who owns it, and how it is being handled in the strategy
+   on screen. What the tool cost us, its lifespan, its amortization internals —
+   none of that is here, because none of it is ever shown. */
+var TOOLING_OWNERSHIP =
+  "You own it once it is paid for. We hold it, store it and maintain it here. " +
+  "If you ever want it moved, we release it to you or to another factory at your cost.";
+
+/* §11.3.4 — at or above 5% of landed unit cost the line is promoted to a
+   callout above the price. The second sentence of that callout is mandatory:
+   a high tooling percentage is bearable precisely because it does not recur,
+   and a client who is not told that reads it as the real price. */
+var TOOLING_THRESHOLD = 0.05;
+
+function toolingLine(tool, qty, landedUnitCents) {
+  var perUnit = tool.cost / qty;
+  var share = landedUnitCents ? perUnit / landedUnitCents : 0;
+  var material = share >= TOOLING_THRESHOLD;
+  return {
+    what: tool.what,
+    cost: tool.cost,
+    ownership: TOOLING_OWNERSHIP,
+    treatment: "Spread across this " + qty.toLocaleString("en-US") + "-unit run — adds " +
+               perUnitPrice(perUnit) + " per unit.",
+    share: share,
+    material: material,
+    callout: material
+      ? ("At this quantity, tooling is " + Math.round(share * 100) + "% of your unit cost. " +
+         "It is a one-time charge of " + money(tool.cost) + " — your next run of the same item " +
+         "has no tooling cost at all.")
+      : null
+  };
+}
+
+/* A third of a cent rendered as "$0.00" reads as free, and as "$0.0034000" it
+   claims a precision we do not have. Four decimals, trailing zeros dropped. */
+function perUnitPrice(cents) {
+  var d = cents / 100;
+  if (d >= 0.01) return money(cents);
+  return "$" + String(d.toFixed(4)).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+/* A drawing, not a photograph. We have not been sent product photography, and a
+   stock image of somebody else's container presented as Boarshead's would be
+   fabricated evidence. The callouts name only what the SKU itself states. */
+var CONTAINER_SVG =
+  '<svg viewBox="0 0 320 240" role="img" aria-label="Line drawing of a hinged-lid carry-out ' +
+  'container showing the lid, the tapered sidewall and the printable front panel." ' +
+  'xmlns="http://www.w3.org/2000/svg">' +
+  '<rect width="320" height="240" fill="#F9F8F4"/>' +
+  '<path d="M78 96 L242 96 L226 188 L94 188 Z" fill="#EDE7DA" stroke="#8A958D" stroke-width="2"/>' +
+  '<path d="M78 96 L242 96 L250 74 L70 74 Z" fill="#E3DBCA" stroke="#8A958D" stroke-width="2"/>' +
+  '<path d="M70 74 L250 74 L250 62 L70 62 Z" fill="#D8CEB8" stroke="#8A958D" stroke-width="2"/>' +
+  '<rect x="118" y="118" width="84" height="34" rx="3" fill="none" stroke="#B08D4F" ' +
+  'stroke-width="1.5" stroke-dasharray="5 3"/>' +
+  '<text x="160" y="140" text-anchor="middle" font-family="monospace" font-size="11" ' +
+  'fill="#B08D4F">PRINT AREA</text></svg>';
+
+var CONTAINER_IMAGES = [{
+  svg: CONTAINER_SVG,
+  caption: "Form and print area",
+  source: "Placeholder drawing · replaced when the client's own photographs arrive",
+  annotations: [
+    {x: 50, y: 26, label: "Hinged lid"},
+    {x: 50, y: 56, label: "Print area, one panel"},
+    {x: 30, y: 78, label: "Sidewall taper — stacks"},
+    {x: 72, y: 90, label: "Base"}
+  ]
+}];
+
+/* Appendix B: $0.20 → $0.14, driven by *both* order quantity and container
+   spec. That is a matrix, not a line. Rows are spec tiers, columns are quantity
+   tiers, and the corners are the two stated band ends. */
+var BOARSHEAD_QTY_TIERS = [[20000, 49999], [50000, 149999], [150000, 499999], [500000, null]];
+var BOARSHEAD_SPEC_TIERS = ["Plain — single size, no print", "One colour — logo, one panel",
+                            "Full colour — wrap print", "Complex — window, coating or insert"];
+var BOARSHEAD_GRID = [[17,16,15,14],[18,17,16,15],[19,18,17,16],[20,19,18,17]];
+
+var CATALOG = [
+  /* Boarshead's containers. `public` and `range` are the half everyone sees;
+     `price` and `negotiated` are the half only the registered member sees, and
+     §8.6 is explicit that the range is entered deliberately rather than derived
+     from anyone's negotiated price. */
+  {sku:"MMI-B-0101", name:"Branded carry-out container, 750ml", cat:"Packaging & print",
+   materials:"Not confirmed — see the open questions on this item",
+   price:16, moq:20000, lead:32, tags:["carry-out"], public:true,
+   range:[14, 20], typicalMoq:20000, typicalLead:32,
+   drivers:"how many you order, and how the container is specified — size, material, and how much " +
+           "of it is printed. More units and a simpler print move you toward the bottom of the " +
+           "range; smaller runs, full-wrap colour, a window or a coating move you up.",
+   description:"Hinged-lid carry-out container in the 750ml size, printed to your artwork. " +
+     "The everyday one — it is the volume line, and where the price band bottoms out.",
+   images:CONTAINER_IMAGES,
+   tool:{ref:"MMI-T-2001", what:"One cutting die and four print plates.", cost:84000},
+   negotiated:"Priced off your published quantity × spec matrix.",
+   genome:[
+     {section:"What it is", body:"Hinged-lid carry-out container, 750ml, printed to your artwork."},
+     {section:"Materials", unknown:true,
+      body:"Board grade and weight are not stated. We have not assumed one — tell us what the " +
+           "current containers are made from, or send one and we will measure it."},
+     {section:"How it is made",
+      body:"Die-cut and printed flat, then folded. The cutting die and the print plates are the " +
+           "tooling; the tooling line below says what that costs and who owns it."},
+     {section:"Quality", unknown:true,
+      body:"Food-contact certification requirements have not been confirmed for this line. " +
+           "Carry-out containers usually need them; we are not assuming which, and no run goes " +
+           "ahead until we have it in writing."},
+     {section:"Logistics", unknown:true,
+      body:"Destination, incoterm and freight lane are not yet on file, so no landed figure here " +
+           "includes freight. Country of origin is China."},
+     {section:"History", body:"First run not yet placed. This section fills in as orders complete."}
+   ]},
+  {sku:"MMI-B-0102", name:"Branded carry-out container, 1000ml", cat:"Packaging & print",
+   materials:"Not confirmed — see the open questions on this item",
+   price:17, moq:20000, lead:32, tags:["carry-out"], public:true,
+   range:[15, 20], typicalMoq:20000, typicalLead:32,
+   drivers:"the same two things as the 750ml — order quantity, and how the container is specified. " +
+           "The larger size uses more board, so its range starts a cent higher.",
+   description:"The larger size in the same family, on the same tooling family and the same board. " +
+     "Ordered alongside the 750ml on most runs.",
+   images:CONTAINER_IMAGES,
+   negotiated:"Priced off your published quantity × spec matrix."},
+  {sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition", cat:"Bags & leather goods",
+   materials:"18oz waxed cotton duck, vegetable-tanned leather, solid brass", price:2980, moq:250, lead:34,
+   tags:["client-1"],
+   description:"The tote we built for this account: 18oz waxed duck body, vegetable-tanned leather handles, " +
+     "solid brass hardware, interior zip pocket, debossed logo on the base panel.",
+   negotiated:"Locked at $29.80 through Q4 at 250+ units."},
+  {sku:"MMI-2001", name:"Waxed canvas tote, 18L", cat:"Bags & leather goods",
+   materials:"18oz waxed cotton duck, veg-tan leather, solid brass", price:298, moq:500, lead:38,
+   tags:["bags","leather"], public:true, range:[253, 372], typicalMoq:500, typicalLead:38,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2002", name:"Kraft coffee pouch, 12oz, valve", cat:"Packaging & print",
+   materials:"Kraft paper / PLA liner", price:36, moq:10000, lead:30, tags:["packaging","food-safe"], public:true, range:[30, 45], typicalMoq:10000, typicalLead:30,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2003", name:"Matte black growler, 64oz", cat:"Metal & machined parts",
+   materials:"304 stainless steel", price:1840, moq:500, lead:35, tags:["drinkware","metal"], public:true, range:[1564, 2300], typicalMoq:500, typicalLead:35,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2004", name:"Recycled padded mailer, 10x13", cat:"Packaging & print",
+   materials:"Recycled kraft, recycled paper padding", price:41, moq:20000, lead:24, tags:["packaging","shipping"], public:true, range:[34, 51], typicalMoq:20000, typicalLead:24,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2005", name:"Airless pump bottle, 50ml", cat:"Molded plastics",
+   materials:"Frosted PP, matte gold collar", price:168, moq:10000, lead:45, tags:["packaging","beauty"], public:true, range:[142, 210], typicalMoq:10000, typicalLead:45,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2006", name:"Rigid box, magnetic close", cat:"Packaging & print",
+   materials:"1200gsm greyboard, soft-touch lamination", price:212, moq:2000, lead:32, tags:["packaging","retail"], public:true, range:[180, 265], typicalMoq:2000, typicalLead:32,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2007", name:"Anodized carabiner, custom", cat:"Metal & machined parts",
+   materials:"6061 aluminum, hard anodize", price:186, moq:5000, lead:34, tags:["metal"], public:true, range:[158, 232], typicalMoq:5000, typicalLead:34,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."},
+  {sku:"MMI-2008", name:"Silicone gasket, food grade", cat:"Silicone & rubber",
+   materials:"Platinum-cure silicone, 40–70 Shore A", price:72, moq:8000, lead:28, tags:["food-safe"], public:true, range:[61, 90], typicalMoq:8000, typicalLead:28,
+   drivers:"order quantity, and how the item is specified — material, finish and how much decoration it carries."}
+];
+
+/* --- what the first account has already bought, so the timeline has something in it --- */
+var ORDERS = [
+  {ref:"MMI-O-2431", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+   unit:2980, qty:500, method:"ACH",
+   ordered:addDays(TODAY,-46), paid:addDays(TODAY,-45), reviewed:addDays(TODAY,-44),
+   production:addDays(TODAY,-44), shipped:addDays(TODAY,-28), delivered:addDays(TODAY,-9),
+   carrier:"Maersk", tracking:"MAEU7742019", status:"DELIVERED",
+   goods:1490000, freightEstimate:389400, freightWaived:true, freightCharged:0,
+   convenienceFee:22350, processingFee:45153, total:1557503},
+  {ref:"MMI-O-2478", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+   unit:2980, qty:250, method:"CARD",
+   ordered:addDays(TODAY,-11), paid:addDays(TODAY,-11), reviewed:addDays(TODAY,-10),
+   production:addDays(TODAY,-10), shipped:addDays(TODAY,-2), delivered:null,
+   carrier:"DHL Express", tracking:"DHL8830142255", status:"SHIPPED",
+   goods:745000, freightEstimate:210782, freightWaived:true, freightCharged:0,
+   convenienceFee:11175, processingFee:22589, total:778764},
+  {ref:"MMI-O-2502", clientId:1, sku:"MMI-3001", name:"Waxed canvas tote, 18L — " + DEMO_NAMES[0] + " edition",
+   unit:2980, qty:250, method:"ACH",
+   ordered:addDays(TODAY,-2), paid:addDays(TODAY,-1), reviewed:null,
+   production:null, shipped:null, delivered:null,
+   carrier:null, tracking:null, status:"IN_REVIEW",
+   goods:745000, freightEstimate:210782, freightWaived:true, freightCharged:0,
+   convenienceFee:11175, processingFee:500, total:756675}
+];
+
+function itemsForClient(c) {
+  var tags = (c.tags || []).map(function (t) { return t.toLowerCase(); });
+  return CATALOG.filter(function (it) {
+    return (it.tags || []).some(function (t) { return tags.indexOf(t.toLowerCase()) !== -1; });
+  }).map(function (it) {
+    return {item: it, matched: (it.tags || []).filter(function (t) {
+      return tags.indexOf(t.toLowerCase()) !== -1; })};
+  });
+}
+function clientsForItem(it) {
+  return CLIENTS.filter(function (c) {
+    return (c.tags || []).some(function (t) {
+      return (it.tags || []).map(function (x){return x.toLowerCase();}).indexOf(t.toLowerCase()) !== -1;
+    });
+  });
+}
+function allTags() {
+  var m = {};
+  CATALOG.forEach(function (it) { (it.tags || []).forEach(function (t) {
+    m[t] = m[t] || {tag:t, items:0, members:0}; m[t].items++; }); });
+  CLIENTS.forEach(function (c) { (c.tags || []).forEach(function (t) {
+    m[t] = m[t] || {tag:t, items:0, members:0}; m[t].members++; }); });
+  return Object.keys(m).map(function (k) { return m[k]; })
+    .sort(function (a, b) { return b.items - a.items || a.tag.localeCompare(b.tag); });
+}
+function ordersFor(id) {
+  return ORDERS.filter(function (o) { return o.clientId === id; })
+    .concat(S.placed.filter(function (o) { return o.clientId === id; }))
+    .sort(function (a, b) { return b.ordered - a.ordered; });
+}
+
+/* ==========================================================================
+   Revenue maths
+   ========================================================================== */
+function seriesFor(rangeKey) {
+  var r = RANGES.filter(function(x){return x.key===rangeKey;})[0] || RANGES[1];
+  if (r.key === "1d") {
+    return {
+      mode: "hour",
+      points: HOURS.map(function (h) {
+        return {label: (h.hour % 12 === 0 ? 12 : h.hour % 12) + (h.hour < 12 ? "am" : "pm"),
+                full: "Today, " + (h.hour % 12 === 0 ? 12 : h.hour % 12) + (h.hour < 12 ? "am" : "pm"),
+                cents: h.cents, orders: null};
+      })
+    };
+  }
+  var slice = DAYS.slice(DAYS.length - r.days);
+  return {
+    mode: r.days <= 21 ? "bar" : "area",
+    points: slice.map(function (d) {
+      return {label: fmtDate(d.date), full: fmtFull(d.date), cents: d.cents, orders: d.orders, date: d.date};
+    })
+  };
+}
+function totalsFor(rangeKey) {
+  var r = RANGES.filter(function(x){return x.key===rangeKey;})[0] || RANGES[1];
+  var cur = DAYS.slice(DAYS.length - r.days);
+  var prev = DAYS.slice(Math.max(0, DAYS.length - r.days * 2), DAYS.length - r.days);
+  function sum(a, f){return a.reduce(function(t,d){return t + f(d);}, 0);}
+  var revenue = sum(cur, function(d){return d.cents;});
+  var orders  = sum(cur, function(d){return d.orders;});
+  var pRev    = sum(prev, function(d){return d.cents;});
+  var pOrders = sum(prev, function(d){return d.orders;});
+  return {
+    revenue: revenue, orders: orders,
+    aov: orders ? Math.round(revenue / orders) : 0,
+    prevRevenue: pRev,
+    revenueDelta: pRev ? (revenue - pRev) / pRev : null,
+    ordersDelta: pOrders ? (orders - pOrders) / pOrders : null,
+    bestDay: cur.reduce(function(b,d){return !b || d.cents > b.cents ? d : b;}, null),
+    days: r.days
+  };
+}
+function deltaHtml(v) {
+  if (v == null) return '<span class="delta flat">no prior period</span>';
+  var pct = Math.round(v * 1000) / 10;
+  if (Math.abs(pct) < 0.5) return '<span class="delta flat">level</span>';
+  var cls = pct > 0 ? "up" : "down";
+  return '<span class="delta ' + cls + '">' + (pct > 0 ? "▲ " : "▼ ") +
+         Math.abs(pct).toFixed(1) + "% vs prior</span>";
+}
+
+/* ==========================================================================
+   App state + routing
+   ========================================================================== */
+var S = {
+  route: "home",
+  catSku: null,
+  user: null,               // {kind:'admin'} | {kind:'client', id:n}
+  adminTab: "revenue",
+  adminClient: null,
+  portalTab: "overview",
+  range: "30d",
+  loginError: "",
+  flash: "",
+  submitted: [],            // demo quote requests made in this session
+  placed: [],               // orders placed in this session
+  cart: null,               // {sku, qty}
+  payMethod: "card"
+};
+S.range = "7d";
+
+function go(route, opts) {
+  S.route = route;
+  if (opts) Object.keys(opts).forEach(function(k){ S[k] = opts[k]; });
+  S.loginError = "";
+  window.scrollTo(0, 0);
+  render();
+}
+function client(id){ return CLIENTS.filter(function(c){return c.id===id;})[0]; }
+function quotesFor(id){
+  return QUOTES.filter(function(q){return q.clientId===id;})
+    .concat(S.submitted.filter(function(q){return q.clientId===id;}))
+    .sort(function(a,b){return b.created - a.created;});
+}
+function cycleUsed(id) {
+  var c = client(id), since = addDays(TODAY, -c.cycleDays);
+  return quotesFor(id).filter(function(q){return q.created >= since;}).length;
+}
+var STATUS = {
+  NEW:{label:"Submitted", tone:"amber"}, IN_REVIEW:{label:"Being priced", tone:"blue"},
+  ESTIMATE_SENT:{label:"Estimate ready", tone:"brass"}, ACCEPTED:{label:"Accepted", tone:"green"},
+  DECLINED:{label:"Declined", tone:"slate"}
+};
+function statusBadge(s){var m=STATUS[s]||{label:s,tone:"slate"};
+  return '<span class="badge badge-'+m.tone+'">'+m.label+'</span>';}
+
+/* ==========================================================================
+   Chart
+   ========================================================================== */
+function renderChart(el, rangeKey) {
+  var s = seriesFor(rangeKey), pts = s.points;
+  var W = 1000, H = 260, PL = 56, PR = 16, PT = 18, PB = 30;
+  var iw = W - PL - PR, ih = H - PT - PB;
+  var max = Math.max.apply(null, pts.map(function(p){return p.cents;})) || 1;
+  var niceMax = Math.ceil(max / 100000) * 100000 || 1;
+  function x(i){ return pts.length === 1 ? PL + iw/2 : PL + (i / (pts.length - 1)) * iw; }
+  function y(v){ return PT + ih - (v / niceMax) * ih; }
+
+  var gridLines = "", axisY = "";
+  for (var g = 0; g <= 4; g++) {
+    var gv = niceMax * g / 4, gy = y(gv);
+    gridLines += '<line x1="'+PL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-PR)+'" y2="'+gy.toFixed(1)+'"/>';
+    axisY += '<text x="'+(PL-10)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end">'+moneyShort(gv)+'</text>';
+  }
+  var body = "", endDot = "";
+  if (s.mode === "area") {
+    var d = pts.map(function(p,i){return (i?"L":"M")+x(i).toFixed(1)+" "+y(p.cents).toFixed(1);}).join(" ");
+    body = '<path class="chart-area" d="'+d+' L '+x(pts.length-1).toFixed(1)+' '+(PT+ih)+' L '+x(0).toFixed(1)+' '+(PT+ih)+' Z"/>'
+         + '<path class="chart-line" d="'+d+'"/>';
+    endDot = '<circle class="chart-end" cx="'+x(pts.length-1).toFixed(1)+'" cy="'+y(pts[pts.length-1].cents).toFixed(1)+'" r="4.5"/>';
+  } else {
+    var slot = iw / pts.length, bw = Math.min(56, Math.max(3, slot - 8));
+    body = pts.map(function (p, i) {
+      var bx = PL + i * slot + (slot - bw) / 2;
+      var by = y(p.cents), bh = Math.max(1, PT + ih - by);
+      var cls = (s.mode === "hour" && i > new Date().getHours()) ? "chart-bar dim" : "chart-bar";
+      return '<rect class="'+cls+'" x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'"/>';
+    }).join("");
+  }
+  var step = Math.max(1, Math.ceil(pts.length / 8)), axisX = "";
+  pts.forEach(function (p, i) {
+    if (i % step === 0 || i === pts.length - 1) {
+      var tx = s.mode === "area" ? x(i) : PL + (i + 0.5) * (iw / pts.length);
+      axisX += '<text x="'+tx.toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(p.label)+'</text>';
+    }
+  });
+
+  el.innerHTML =
+    '<div class="chart-wrap">' +
+      '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" role="img" ' +
+        'aria-label="Revenue over the selected period, '+pts.length+' points">' +
+        '<g class="chart-grid">'+gridLines+'</g>' +
+        '<g class="chart-axis">'+axisY+axisX+'</g>' +
+        body + endDot +
+        '<line class="chart-cross" x1="0" y1="'+PT+'" x2="0" y2="'+(PT+ih)+'" style="opacity:0"/>' +
+        '<rect class="chart-hit" x="'+PL+'" y="'+PT+'" width="'+iw+'" height="'+ih+'"/>' +
+      '</svg>' +
+      '<div class="tooltip"></div>' +
+    '</div>';
+
+  var svg = el.querySelector("svg"), hit = el.querySelector(".chart-hit");
+  var cross = el.querySelector(".chart-cross"), tip = el.querySelector(".tooltip");
+  function at(evt) {
+    var box = svg.getBoundingClientRect();
+    var px = (evt.clientX - box.left) / box.width * W;
+    var i;
+    if (s.mode === "area") {
+      i = Math.round((px - PL) / iw * (pts.length - 1));
+    } else {
+      i = Math.floor((px - PL) / (iw / pts.length));
+    }
+    i = Math.max(0, Math.min(pts.length - 1, i));
+    var p = pts[i];
+    var cx = s.mode === "area" ? x(i) : PL + (i + 0.5) * (iw / pts.length);
+    cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.style.opacity = 1;
+    tip.style.opacity = 1;
+    tip.style.left = (cx / W * 100) + "%";
+    tip.style.top = (y(p.cents) / H * 100) + "%";
+    tip.innerHTML = '<div class="t-date">' + esc(p.full) + '</div>' +
+      '<div class="t-val">' + money(p.cents) + '</div>' +
+      (p.orders != null ? '<div class="t-sub">' + p.orders + (p.orders === 1 ? " order" : " orders") + '</div>' : '');
+  }
+  hit.addEventListener("mousemove", at);
+  hit.addEventListener("mouseleave", function () { cross.style.opacity = 0; tip.style.opacity = 0; });
+}
+
+function sparkline(values) {
+  var W = 200, H = 34, max = Math.max.apply(null, values) || 1;
+  var d = values.map(function (v, i) {
+    return (i ? "L" : "M") + (i / (values.length - 1) * W).toFixed(1) + " " + (H - (v / max) * (H - 4) - 2).toFixed(1);
+  }).join(" ");
+  return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">' +
+    '<path class="chart-line" d="'+d+'" stroke-width="1.6"/></svg>';
+}
+
+/* ==========================================================================
+   Chrome
+   ========================================================================== */
+function demoBar() {
+  var who = !S.user ? "Signed out" :
+    (S.user.kind === "admin" ? "Signed in as Tyler — admin portal" : "Signed in as " + client(S.user.id).name);
+  return '<div class="demo-bar"><div class="container">' +
+    '<span>Interactive prototype · ' + esc(who) + '</span>' +
+    '<span style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+      '<button data-act="admin-demo">Open admin portal</button>' +
+      '<button data-act="client-demo">Open a client portal</button>' +
+      (S.user ? '<button data-act="logout">Sign out</button>' : '') +
+    '</span></div></div>';
+}
+function topbar() {
+  return '<header class="topbar"><div class="container topbar-inner">' +
+    '<div class="brand" data-act="home"><span class="brand-mark">M</span>' +
+      '<span><span class="brand-name">Monti Makes It</span>' +
+      '<span class="brand-sub">Manufacturer · direct</span></span></div>' +
+    '<nav class="nav-links">' +
+      '<a data-act="catalogue">Catalogue</a>' +
+      '<a data-act="how">How it works</a>' +
+      '<a data-act="membership">Membership</a>' +
+      (S.user ? '<a data-act="' + (S.user.kind === "admin" ? "admin" : "portal") + '">' +
+                 (S.user.kind === "admin" ? "Admin portal" : "My portal") + '</a>'
+              : '<a data-act="login">Member login</a>') +
+    '</nav></div></header>';
+}
+function footer() {
+  return '<footer class="footer"><div class="container row-between wrap">' +
+    '<div class="row" style="gap:.7rem"><span class="brand-mark">M</span>' +
+    '<span class="tiny">Monti Makes It · we are the manufacturer</span></div>' +
+    '<div class="row wrap" style="gap:1.5rem">' +
+      '<a data-act="catalogue">Catalogue</a>' +
+      '<a data-act="quote">Request a quote</a><a data-act="apply">Apply for membership</a>' +
+      '<a data-act="how">How it works</a><a data-act="login">Member login</a>' +
+    '</div></div></footer>';
+}
+
+/* ==========================================================================
+   Public views
+   ========================================================================== */
+function viewHome() {
+  return topbar() +
+  '<section class="hero"><div class="container hero-inner">' +
+    '<span class="eyebrow-label">Manufacturer · direct from the floor</span>' +
+    '<h1 class="wordmark"><span>Monti</span><span>Makes <span class="accent">It</span></span></h1>' +
+    '<div class="hero-rule"></div>' +
+    '<p class="hero-line">We are the manufacturer. There is no middleman between you and the line ' +
+      'that makes your product — so you get the price it costs to make it properly, because we\'d ' +
+      'rather make everything you sell for the next ten years than squeeze you once.</p>' +
+    '<div class="hero-cta">' +
+      '<button class="btn btn-primary btn-xl" data-act="quote">Request a Quote</button>' +
+      '<button class="btn btn-outline btn-xl" data-act="apply">Apply for Membership</button>' +
+    '</div>' +
+    '<p class="hero-note">A quote is free and takes two minutes. Membership is how you buy — and not everyone is accepted.</p>' +
+  '</div></section>' +
+
+  '<section class="quiet-band"><div class="container"><div class="chain">' +
+    '<div class="chain-cell"><div class="who">The usual chain</div>' +
+      '<p>Agent, trading company, importer, distributor. Each one takes a margin, and each ' +
+        'margin is applied to the one before it.</p></div>' +
+    '<div class="chain-cell ours"><div class="who">Buying from us</div>' +
+      '<p>You and the line that makes your product. One margin, and you can see what it is ' +
+        'applied to.</p></div>' +
+  '</div><p class="ladder-note">We do not publish a savings percentage, because a percentage ' +
+    'without a baseline is not a number — it is a claim. Instead, once you are a member, every ' +
+    'item you order carries its own savings ledger, measured against a baseline you supply and ' +
+    'we record. Where there is no baseline we can source, that item shows no savings figure at all.</p>' +
+  '</div></section>' +
+
+  '<section class="section"><div class="container"><h2>Why we\'re this cheap</h2>' +
+    '<div class="grid grid-3" style="margin-top:2.25rem;gap:2.5rem">' +
+      '<div class="pillar"><div class="pillar-rule"></div><h3>One margin, not four</h3>' +
+        '<p>Agent, trading company, importer, distributor — each used to take a slice before your product reached you. Here there\'s one.</p></div>' +
+      '<div class="pillar"><div class="pillar-rule"></div><h3>Priced for the tenth order</h3>' +
+        '<p>We quote low because we\'re betting on the relationship, not on this run.</p></div>' +
+      '<div class="pillar"><div class="pillar-rule"></div><h3>Landed, not "ex-works"</h3>' +
+        '<p>Freight, duties and customs are in the number. The price you approve is the price you pay.</p></div>' +
+      '<div class="pillar"><div class="pillar-rule"></div><h3>Made in China</h3>' +
+        '<p>That is where the line is, and we would rather you read it here than find it on a ' +
+          'customs form. HS code, origin and duty rate sit on every estimate we send.</p></div>' +
+    '</div></div></section>' +
+
+  '<section class="section quiet-band"><div class="container"><div class="measure">' +
+    '<span class="eyebrow-label">Membership</span>' +
+    '<h2 style="margin-top:.9rem">We\'re careful about who we make things for</h2>' +
+    '<p class="section-lede">Not everyone who applies is accepted. Every application is read by a person ' +
+      'and includes a video call before any decision — we don\'t put the floor behind everyone who asks.</p>' +
+    '<div class="row wrap" style="margin-top:2rem;gap:1rem">' +
+      '<button class="btn btn-primary btn-lg" data-act="apply">Apply for Membership</button>' +
+      '<button class="btn btn-ghost btn-lg" data-act="membership">What members get</button>' +
+    '</div></div></div></section>' +
+
+  '<section class="section"><div class="container-narrow center"><h2>Tell us what you want made.</h2>' +
+    '<div class="row" style="justify-content:center;margin-top:1.75rem;gap:1rem;flex-wrap:wrap">' +
+      '<button class="btn btn-primary btn-xl" data-act="quote">Request a Quote</button>' +
+      '<button class="btn btn-outline btn-xl" data-act="apply">Apply for Membership</button>' +
+    '</div></div></section>' + footer();
+}
+
+/* --- the item image viewer (§10.3) --------------------------------------
+   One component, every surface that shows an item: the public catalogue, the
+   member's own item page, the genome. Mobile is the first case rather than the
+   fallback — a member opens this in a warehouse, on a phone, one-handed — so
+   swipe moves between images, double-tap zooms, and every control is 44px.
+   Pointer and keyboard get the same capability through the toolbar and arrow
+   keys.
+
+   An item with no images gets an explicit empty state, never blank space: a
+   missing viewer on a portal item is a P1, and silence reads as a broken page
+   rather than as an absence. */
+function imageViewer(images, itemName, id) {
+  if (!images || !images.length) {
+    return '<div class="iv-empty"><p>No images on this item yet.</p>' +
+      '<p class="tiny dim">We photograph and draw every item we make. If this one is yours and ' +
+      'you need to see it, ask and we will get the set up.</p></div>';
+  }
+  return '<div class="iv" data-iv="' + esc(id) + '">' +
+    '<ul class="iv-thumbs">' + images.map(function (img, i) {
+      return '<li><button type="button" class="iv-thumb" data-iv-open="' + i + '" ' +
+        'aria-label="Open image ' + (i + 1) + ' of ' + images.length + ': ' + esc(img.caption) + '">' +
+        '<span class="iv-thumb-media">' + img.svg + '</span>' +
+        '<span class="iv-thumb-caption">' + esc(img.caption) + '</span></button></li>';
+    }).join("") + '</ul>' +
+    '<div class="iv-dialog" role="dialog" aria-modal="true" aria-label="' + esc(itemName) + ' images" hidden>' +
+      '<div class="iv-bar">' +
+        '<span class="iv-count"><span class="iv-now">1</span> / ' + images.length + '</span>' +
+        '<span class="iv-tools">' +
+          '<button type="button" class="iv-btn iv-diagram" aria-pressed="false">Diagram</button>' +
+          '<button type="button" class="iv-btn iv-out" aria-label="Zoom out">&minus;</button>' +
+          '<button type="button" class="iv-btn iv-in" aria-label="Zoom in">+</button>' +
+          '<button type="button" class="iv-btn iv-close" aria-label="Close images">&times;</button>' +
+        '</span></div>' +
+      '<div class="iv-stage">' + images.map(function (img, i) {
+        return '<figure class="iv-slide"' + (i ? ' hidden' : '') +
+          (img.annotations ? " data-annotations='" + JSON.stringify(img.annotations) + "'" : "") + '>' +
+          '<div class="iv-media">' + img.svg +
+            '<svg class="iv-callouts" viewBox="0 0 100 100" preserveAspectRatio="none" hidden></svg>' +
+          '</div>' +
+          '<figcaption>' + esc(img.caption) +
+            '<span class="iv-source">' + esc(img.source) + '</span></figcaption></figure>';
+      }).join("") + '</div>' +
+      '<button type="button" class="iv-nav iv-prev" aria-label="Previous image">&lsaquo;</button>' +
+      '<button type="button" class="iv-nav iv-next" aria-label="Next image">&rsaquo;</button>' +
+    '</div></div>';
+}
+
+function wireViewer(root) {
+  var dialog = root.querySelector(".iv-dialog");
+  if (!dialog) return;
+  var slides = [].slice.call(root.querySelectorAll(".iv-slide"));
+  var nowEl = root.querySelector(".iv-now");
+  var diagramBtn = root.querySelector(".iv-diagram");
+  var steps = [1, 1.75, 3];
+  var index = 0, zoom = 0, opener = null;
+
+  function applyZoom() {
+    var media = slides[index].querySelector(".iv-media");
+    if (media) media.style.transform = "scale(" + steps[zoom] + ")";
+  }
+  function drawCallouts() {
+    var slide = slides[index], svg = slide.querySelector(".iv-callouts");
+    if (!svg) return;
+    var raw = slide.getAttribute("data-annotations");
+    var on = diagramBtn && diagramBtn.getAttribute("aria-pressed") === "true";
+    // `hidden` is a property of HTMLElement and an <svg> is an SVGElement, so
+    // `svg.hidden = false` sets a JavaScript expando and leaves the attribute
+    // exactly where it was. The attribute has to be moved directly.
+    if (!raw || !on) { svg.setAttribute("hidden", ""); svg.innerHTML = ""; return; }
+    var notes = JSON.parse(raw);
+
+    /* Draw in the element's real pixel box rather than a normalised viewBox.
+       A 0-100 box with preserveAspectRatio="none" stretches the glyphs along
+       with the geometry, so labels came out distorted and oversized on a wide
+       image — and a callout that is not legible is not a callout. */
+    var box = svg.getBoundingClientRect();
+    var w = box.width || 320, h = box.height || 240;
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    /* Labels sit against whichever edge is further from the point they name,
+       at a fixed inset — so a callout never covers its own subject, and a long
+       one never runs off the canvas at a narrow viewport. */
+    var inset = Math.max(8, w * 0.03);
+    svg.innerHTML = notes.map(function (n) {
+      var x = (n.x || 50) / 100 * w, y = (n.y || 50) / 100 * h;
+      var toLeft = x > w / 2;
+      var lx = toLeft ? inset : w - inset;
+      return '<line x1="' + x + '" y1="' + y + '" x2="' + lx + '" y2="' + y + '"/>' +
+        '<circle cx="' + x + '" cy="' + y + '" r="3"/>' +
+        '<text x="' + lx + '" y="' + (y - 6) + '" text-anchor="' +
+        (toLeft ? "start" : "end") + '">' + esc(n.label) + '</text>';
+    }).join("");
+    svg.removeAttribute("hidden");
+  }
+
+  function render() {
+    slides.forEach(function (s, i) { s.hidden = i !== index; });
+    if (nowEl) nowEl.textContent = String(index + 1);
+    if (diagramBtn) diagramBtn.hidden = !slides[index].getAttribute("data-annotations");
+    applyZoom(); drawCallouts();
+  }
+  function move(d) { index = (index + d + slides.length) % slides.length; zoom = 0; render(); }
+  function open(i, from) {
+    index = i; zoom = 0; opener = from || null;
+    dialog.hidden = false; document.body.classList.add("iv-open");
+    render(); dialog.querySelector(".iv-close").focus();
+  }
+  function close() {
+    dialog.hidden = true; document.body.classList.remove("iv-open");
+    /* Focus returns to the thumbnail that opened the dialog. Dropping it on the
+       body sends a keyboard user back to the top of a long catalogue page. */
+    if (opener) opener.focus();
+  }
+
+  root.querySelectorAll("[data-iv-open]").forEach(function (thumb) {
+    thumb.addEventListener("click", function () {
+      open(parseInt(thumb.getAttribute("data-iv-open"), 10) || 0, thumb);
+    });
+  });
+  dialog.querySelector(".iv-close").addEventListener("click", close);
+  dialog.querySelector(".iv-prev").addEventListener("click", function () { move(-1); });
+  dialog.querySelector(".iv-next").addEventListener("click", function () { move(1); });
+  dialog.querySelector(".iv-in").addEventListener("click", function () {
+    zoom = Math.min(steps.length - 1, zoom + 1); applyZoom(); });
+  dialog.querySelector(".iv-out").addEventListener("click", function () {
+    zoom = Math.max(0, zoom - 1); applyZoom(); });
+  if (diagramBtn) diagramBtn.addEventListener("click", function () {
+    var on = diagramBtn.getAttribute("aria-pressed") === "true";
+    diagramBtn.setAttribute("aria-pressed", on ? "false" : "true");
+    drawCallouts();
+  });
+
+  dialog.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowRight") move(1);
+    else if (e.key === "ArrowLeft") move(-1);
+    else if (e.key === "+" || e.key === "=") { zoom = Math.min(steps.length - 1, zoom + 1); applyZoom(); }
+    else if (e.key === "-") { zoom = Math.max(0, zoom - 1); applyZoom(); }
+    else if (e.key === "0") { zoom = 0; applyZoom(); }
+    else return;
+    e.preventDefault();
+  });
+
+  var sx = 0, sy = 0, st = 0, lastTap = 0;
+  var stage = dialog.querySelector(".iv-stage");
+  stage.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+  }, {passive: true});
+  stage.addEventListener("touchend", function (e) {
+    var tch = e.changedTouches[0], dx = tch.clientX - sx, dy = tch.clientY - sy;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5 && Date.now() - st < 600) {
+      move(dx < 0 ? 1 : -1); return;
+    }
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+      var now = Date.now();
+      if (now - lastTap < 320) { zoom = (zoom + 1) % steps.length; applyZoom(); lastTap = 0; }
+      else lastTap = now;
+    }
+  }, {passive: true});
+
+  render();
+}
+
+/* --- the Tooling Line, rendered (§11.3) --------------------------------- */
+function toolingBlock(item, qty) {
+  if (!item.tool) return "";
+  var line = toolingLine(item.tool, qty, item.price);
+  return (line.callout ? '<div class="tooling-callout">' + esc(line.callout) + '</div>' : '') +
+    '<dl class="tooling">' +
+      '<dt>What it is</dt><dd>' + esc(line.what) + '</dd>' +
+      '<dt>What it costs</dt><dd class="cost">' + money(line.cost) + ', one time</dd>' +
+      '<dt>Who owns it</dt><dd>' + esc(line.ownership) + '</dd>' +
+      '<dt>On this run</dt><dd>' + esc(line.treatment) + '</dd>' +
+    '</dl>';
+}
+
+/* --- the public catalogue (§8) ------------------------------------------
+   Open to everyone. What is gated is buying, not looking. These two views take
+   no account and read no negotiated price: `publicItem` is the only serializer
+   they use, so there is nothing customer-shaped in scope to leak. */
+function publicItem(it) {
+  return {sku: it.sku, name: it.name, cat: it.cat, description: it.description,
+          range: it.range, typicalMoq: it.typicalMoq, typicalLead: it.typicalLead,
+          drivers: it.drivers, images: it.images || []};
+}
+
+function rangeText(item) {
+  if (!item.range) return null;
+  var lo = item.range[0] / 100, hi = item.range[1] / 100;
+  return lo === hi ? "$" + lo.toFixed(2) : "$" + lo.toFixed(2) + " – $" + hi.toFixed(2);
+}
+
+/* §8.5 — five viewer states, and no viewer ever sees an Order control they
+   cannot use. This answers from the same registration test the order path
+   would apply, so the button and the refusal cannot disagree. */
+function ctaState(sku) {
+  if (!S.user) return "ANONYMOUS";
+  if (S.user.kind === "admin") return "ADMIN";
+  var c = client(S.user.id);
+  if (!c) return "ANONYMOUS";
+  if (c.membership === "PAUSED") return "PAUSED";
+  if (c.membership !== "MEMBER") return "NOT_MEMBER";
+  var registered = itemsForClient(c).some(function (m) { return m.item.sku === sku; });
+  return registered ? "ORDER" : "REQUEST";
+}
+
+function viewCatalogue() {
+  var items = CATALOG.filter(function (it) { return it.public; }).map(publicItem);
+  return topbar() +
+  '<section class="section" style="padding-top:clamp(3rem,7vw,5rem)"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Catalogue</span>' +
+    '<h1 style="margin-top:1rem">Things we make, and what they cost</h1>' +
+    '<p class="section-lede">Real items off our line, with real price ranges. Anyone can look — ' +
+      'you do not need an account and we do not ask for an email to show you a number.</p>' +
+    '<p class="tiny dim" style="margin-top:1rem;max-width:62ch">These are ranges, not quotes. ' +
+      'Where a price lands inside one depends on how many you order and how the item is specified — ' +
+      'each listing says which. To get your number, ask for a quote; to buy, you need to be a member ' +
+      'and the item needs to be registered to your account.</p>' +
+  '</div></section>' +
+  '<section class="section rule-top"><div class="container"><div class="cat-grid">' +
+    items.map(function (item) {
+      return '<article class="cat-card" data-cat="' + esc(item.sku) + '">' +
+        (item.images.length ? '<div class="cat-card-media">' + item.images[0].svg + '</div>' : '') +
+        '<div class="cat-card-body">' +
+          '<div class="tiny mono dim">' + esc(item.cat) + '</div>' +
+          '<h3 style="margin:0;font-size:1.05rem">' + esc(item.name) + '</h3>' +
+          (rangeText(item)
+            ? '<div class="cat-range">' + rangeText(item) + ' <span class="tiny dim">per unit</span></div>'
+            : '<div class="cat-range-note">Priced per specification — ask us.</div>') +
+          '<div class="cat-meta">' +
+            (item.typicalMoq ? '<span>MOQ ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
+            (item.typicalLead ? '<span>' + item.typicalLead + ' days typical</span>' : '') +
+          '</div></div>' +
+        '<div class="cat-cta"><button class="btn btn-outline btn-sm" data-cat="' +
+          esc(item.sku) + '">See it</button></div>' +
+      '</article>';
+    }).join("") +
+  '</div></div></section>' + footer();
+}
+
+function viewCatalogueItem() {
+  var raw = CATALOG.filter(function (x) { return x.sku === S.catSku; })[0];
+  if (!raw) return viewCatalogue();
+  var item = publicItem(raw);
+  var cta = ctaState(item.sku);
+
+  var ctaHtml;
+  if (cta === "ORDER") {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-buy="' + esc(item.sku) + '">Order at your price</button>' +
+      '<span class="tiny dim" style="align-self:center">Registered to your account.</span>';
+  } else if (cta === "REQUEST") {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-act="quote-member">Request this item</button>' +
+      '<span class="tiny dim" style="align-self:center;max-width:34ch">This one is not registered to ' +
+      'your account yet. Requesting it uses one of your quote slots, same as any other request.</span>';
+  } else if (cta === "PAUSED") {
+    ctaHtml = '<div class="notice notice-wait"><strong>Your account is paused.</strong>' +
+      'You can still look and still ask for prices — ordering is switched off until it is reinstated.</div>';
+  } else if (cta === "ADMIN") {
+    ctaHtml = '<div class="notice"><strong>Admin view.</strong>Registrations are managed from the ' +
+      'items catalog in the admin bay.</div>';
+  } else {
+    ctaHtml = '<button class="btn btn-primary btn-lg" data-act="apply">Apply for Membership</button>' +
+      '<button class="btn btn-outline btn-lg" data-act="quote">Request a Quote</button>' +
+      '<p class="tiny dim" style="flex-basis:100%;margin:0;max-width:52ch">Anyone can get a price. ' +
+      'Buying needs membership, and then this item registered to your account — we do that once we ' +
+      'have priced it for you.</p>';
+  }
+
+  return topbar() +
+  '<section class="section" style="padding-top:clamp(2.5rem,6vw,4rem)"><div class="container">' +
+    '<a class="tiny dim" style="cursor:pointer" data-act="catalogue">&lsaquo; Catalogue</a>' +
+    '<div class="grid grid-2" style="margin-top:1.5rem;gap:clamp(2rem,4vw,3.5rem);align-items:start">' +
+      '<div>' + imageViewer(item.images, item.name, "cat-" + item.sku) + '</div>' +
+      '<div style="display:grid;gap:1.25rem">' +
+        '<div><div class="tiny mono dim">' + esc(item.cat) + ' · ' + esc(item.sku) + '</div>' +
+          '<h1 style="margin:.5rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem)">' + esc(item.name) + '</h1></div>' +
+        (rangeText(item)
+          ? '<div><div class="cat-range" style="font-size:1.6rem">' + rangeText(item) +
+            ' <span class="tiny dim">per unit</span></div>' +
+            (item.drivers ? '<p class="cat-range-note" style="margin-top:.6rem;max-width:52ch">' +
+              'What moves it: ' + esc(item.drivers) + '</p>' : '') + '</div>'
+          : '') +
+        '<div class="cat-meta">' +
+          (item.typicalMoq ? '<span><strong>MOQ</strong> ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
+          (item.typicalLead ? '<span><strong>Lead time</strong> ~' + item.typicalLead + ' days</span>' : '') +
+          '<span><strong>Origin</strong> China</span>' +
+        '</div>' +
+        (item.description ? '<p style="max-width:56ch">' + esc(item.description) + '</p>' : '') +
+        '<div class="row wrap" style="gap:.75rem">' + ctaHtml + '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div></section>' + footer();
+}
+
+function viewHow() {
+  var steps = [
+    ["You tell us what you want made","A sentence, a photo, a drawing — whatever you have. Roughly how many, and where it ships."],
+    ["We price it inside 24 hours","Unit cost at your quantity, minimum order, tooling if it needs any, lead time, freight and duties. Landed at your door."],
+    ["You apply for membership","Anyone can get a price; members can buy. We read every application and meet you over video before deciding."],
+    ["You approve the estimate","It sits in your portal with a validity window. Accept it and it becomes an order."],
+    ["You pay by bank transfer or card","Two lines are added at checkout and nothing else: our 1.5% convenience fee, and what Stripe charges to move the money, at cost. Bank transfer costs a fraction of what a card does, and you see both totals before you choose."],
+    ["24 hours of manufacturer review","Every paid order is checked against its specs before production starts. A hard stop, not a promise."],
+    ["We build it and ship it","You watch it move from your portal: approved, in production, shipped, with tracking."]
+  ];
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">How it works</span>' +
+    '<h1 style="margin-top:1rem">Sketch to pallet, start to finish</h1>' +
+    '<div style="margin-top:2.5rem">' + steps.map(function (s, i) {
+      return '<div style="padding:1.5rem 0 1.5rem 4rem;border-bottom:1px solid var(--line-soft);position:relative">' +
+        '<span class="mono" style="position:absolute;left:0;top:1.6rem;color:var(--brass);font-size:.72rem">' +
+        String(i+1).padStart(2,"0") + '</span>' +
+        '<h3>' + esc(s[0]) + '</h3><p class="muted" style="margin-top:.35rem;font-size:.95rem">' + esc(s[1]) + '</p></div>';
+    }).join("") + '</div>' +
+    '<div class="row wrap" style="gap:1rem;margin-top:2.5rem">' +
+      '<button class="btn btn-primary btn-lg" data-act="quote">Request a Quote</button>' +
+      '<button class="btn btn-outline btn-lg" data-act="apply">Apply for Membership</button>' +
+    '</div></div></section>' + footer();
+}
+
+function viewMembership() {
+  var perks = [
+    ["Factory pricing","The number the floor works to. One margin, no agent, no importer."],
+    ["Your own portal","Your quotes, your estimates, your order history and tracking. Sealed from every other member."],
+    ["10 quotes every 30 days","Enough to develop a whole line. We raise the limit for members who work with us often."],
+    ["A 24-hour safety net","Every paid order sits in a manufacturer review before production. Last chance to change your mind."],
+    ["Two lines, both at cost","A 1.5% convenience fee, and what the payment network charges to move the money — passed on exactly, never marked up. No membership fee, no listing fee, no minimum spend."],
+    ["Freight, sometimes on us","Every order shows what freight and customs would cost, worked out line by line. On accounts we want to keep, we absorb it — and you see exactly what we absorbed."]
+  ];
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Membership</span>' +
+    '<h1 style="margin-top:1rem">A short list, on purpose</h1>' +
+    '<p class="section-lede">Anyone can ask us for a price. Membership is what lets you buy — and we\'re deliberate about who we give it to.</p>' +
+    '<div class="grid grid-2" style="margin-top:2.5rem;gap:2rem">' + perks.map(function (p) {
+      return '<div class="pillar"><div class="pillar-rule"></div><h3>' + esc(p[0]) + '</h3><p>' + esc(p[1]) + '</p></div>';
+    }).join("") + '</div>' +
+    '<div class="card card-lg" style="margin-top:3rem;background:var(--green-soft);border-color:var(--green-line)">' +
+      '<h2 style="font-size:1.4rem">Think you\'re a fit?</h2>' +
+      '<p class="muted" style="margin-top:.8rem">We\'re looking for people building something real who plan to still be here in five years. Size matters far less than that.</p>' +
+      '<button class="btn btn-primary btn-lg" style="margin-top:1.5rem" data-act="apply">Apply for Membership</button>' +
+    '</div></div></section>' + footer();
+}
+
+function viewQuote() {
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Step 1 of 1</span>' +
+    '<h1 style="margin-top:1rem">Request a quote</h1>' +
+    '<p class="section-lede">Four things and you\'re done. We\'ll email you a real landed price within 24 hours.</p>' +
+    '<form id="quote-form" style="margin-top:2.5rem">' +
+      '<label class="field"><span class="field-label">What do you want made?</span>' +
+        '<span class="field-hint-top">A plain sentence is fine. "A waxed canvas tote with leather handles."</span>' +
+        '<input type="text" name="title" required></label>' +
+      '<label class="field"><span class="field-label">Tell us more about it</span>' +
+        '<span class="field-hint-top">Materials, size, finish, packaging — whatever you know.</span>' +
+        '<textarea name="description" rows="5" required></textarea></label>' +
+      '<div class="grid grid-2">' +
+        '<label class="field"><span class="field-label">How many?</span>' +
+          '<input type="number" name="qty" min="1" placeholder="500">' +
+          '<span class="field-hint">A rough number is fine.</span></label>' +
+        '<label class="field"><span class="field-label">Where does it ship to?</span>' +
+          '<input type="text" name="country" placeholder="United States"></label>' +
+      '</div>' +
+      '<div class="divider-label">Who should we send it to</div>' +
+      '<div class="grid grid-2">' +
+        '<label class="field"><span class="field-label">Your name</span><input type="text" name="name" required></label>' +
+        '<label class="field"><span class="field-label">Email</span><input type="email" name="email" required></label>' +
+      '</div>' +
+      '<button class="btn btn-primary btn-xl btn-block" type="submit">Send it to the floor</button>' +
+      '<p class="tiny dim center" style="margin-top:1rem">Your specs stay private to your account. We don\'t shop your project around.</p>' +
+    '</form></div></section>' + footer();
+}
+
+function viewQuoteDone() {
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Received</span>' +
+    '<h1 style="margin-top:1rem">It\'s with the floor.</h1>' +
+    '<p class="section-lede">Your request is in the queue. You\'ll have a landed price by ' +
+      esc(fmtFull(addDays(TODAY,1))) + ' — inside 24 hours.</p>' +
+    '<div class="card card-lg" style="margin-top:2.5rem">' +
+      '<h3>You\'ll get the price either way — ordering needs membership</h3>' +
+      '<p class="muted" style="margin-top:.7rem">Anyone can ask us what something costs, and we\'ll answer honestly. ' +
+      'To place the order you\'ll need to be an accepted member: we review every application and meet you over video first.</p>' +
+      '<button class="btn btn-primary" style="margin-top:1.25rem" data-act="apply">Apply for Membership</button>' +
+    '</div></div></section>' + footer();
+}
+
+function viewApply() {
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">By acceptance only</span>' +
+    '<h1 style="margin-top:1rem">Apply for membership</h1>' +
+    '<p class="section-lede">Membership is what lets you order. It\'s also the part we\'re careful about.</p>' +
+    '<div class="card card-lg card-accent" style="margin-top:1.75rem">' +
+      '<p style="margin:0"><strong>Not everyone who applies is accepted.</strong> We\'re specific about who we ' +
+      'partner with and we don\'t hand our ability to produce to every applicant.</p>' +
+      '<p class="muted" style="margin:.8rem 0 0">Every application is read by a person and includes a ' +
+      '<strong>video call</strong> with our team before any decision. Only after that review can you be fully ' +
+      'accepted and start ordering against the quotes you upload. If we say no, we\'ll tell you why.</p>' +
+    '</div>' +
+    '<form id="apply-form" style="margin-top:2.25rem">' +
+      '<div class="grid grid-2">' +
+        '<label class="field"><span class="field-label">Company name</span><input type="text" name="company" required></label>' +
+        '<label class="field"><span class="field-label">Your name</span><input type="text" name="name" required></label>' +
+        '<label class="field"><span class="field-label">Email</span><input type="email" name="email" required></label>' +
+        '<label class="field"><span class="field-label">Website or store</span><input type="text" name="site" placeholder="yourbrand.com"></label>' +
+      '</div>' +
+      '<label class="field"><span class="field-label">What do you sell?</span><textarea name="sell" rows="3" required></textarea></label>' +
+      '<label class="field"><span class="field-label">Why do you want to work with us?</span>' +
+        '<span class="field-hint-top">This is the part we read closely.</span>' +
+        '<textarea name="why" rows="4" required></textarea></label>' +
+      '<label class="field"><span class="field-label">When can you take a video call?</span>' +
+        '<input type="text" name="when" placeholder="Weekday mornings, US Eastern"></label>' +
+      '<button class="btn btn-primary btn-xl btn-block" type="submit">Submit my application</button>' +
+      '<p class="tiny dim center" style="margin-top:1rem">We read every application. You\'ll hear from us either way.</p>' +
+    '</form></div></section>' + footer();
+}
+
+function viewApplyDone() {
+  var steps = [["We read it","Usually within two business days. Every application is read by a person, not filtered by a form."],
+    ["We meet you","A short video call to understand what you\'re building. This is a conversation, not an interrogation."],
+    ["We decide","Accepted members get a private portal, member pricing, and up to 10 new quote requests every 30 days."]];
+  return topbar() + '<section class="section"><div class="container-narrow">' +
+    '<span class="eyebrow-label">Application received</span>' +
+    '<h1 style="margin-top:1rem">Thank you — it\'s with us.</h1>' +
+    '<p class="section-lede">A person will read your application. If it looks like a fit, we\'ll email you to book ' +
+      'a video call. If it isn\'t, we\'ll tell you that too rather than leaving you waiting.</p>' +
+    '<div style="margin-top:2.5rem">' + steps.map(function (s, i) {
+      return '<div style="padding:1.4rem 0 1.4rem 4rem;border-bottom:1px solid var(--line-soft);position:relative">' +
+        '<span class="mono" style="position:absolute;left:0;top:1.5rem;color:var(--brass);font-size:.72rem">' +
+        String(i+1).padStart(2,"0") + '</span><h3>' + esc(s[0]) + '</h3>' +
+        '<p class="muted" style="margin-top:.35rem;font-size:.95rem">' + esc(s[1]) + '</p></div>';
+    }).join("") + '</div></div></section>' + footer();
+}
+
+function viewLogin() {
+  return '<div class="auth-wrap"><div class="auth-card">' +
+    '<div class="brand" data-act="home" style="margin-bottom:1.5rem"><span class="brand-mark">M</span>' +
+    '<span><span class="brand-name">Monti Makes It</span></span></div>' +
+    '<h2 style="margin-bottom:.4rem">Sign in</h2>' +
+    '<p class="muted" style="font-size:.9rem">Member portals and the admin portal use the same door.</p>' +
+    (S.loginError ? '<div class="notice notice-error" style="margin-top:1.25rem">' + esc(S.loginError) + '</div>' : '') +
+    '<form id="login-form" style="margin-top:1.5rem">' +
+      '<label class="field"><span class="field-label">Username</span>' +
+        '<input type="text" name="user" autocomplete="username" required autofocus></label>' +
+      '<label class="field"><span class="field-label">Password</span>' +
+        '<input type="password" name="pass" autocomplete="current-password" required></label>' +
+      '<button class="btn btn-primary btn-block btn-lg" type="submit">Sign in</button>' +
+    '</form>' +
+    '<div class="divider-label">Demo logins</div>' +
+    '<div class="stack-sm tiny">' +
+      '<div class="row-between"><span class="mono">Tyler1 / Tyler1</span><span class="dim">Admin portal</span></div>' +
+      '<div class="row-between"><span class="mono">client1 … client5 / client</span><span class="dim">Member portals</span></div>' +
+    '</div></div></div>';
+}
+
+/* ==========================================================================
+   Member portal — quote-only accounts
+   ========================================================================== */
+function viewPortal() {
+  var c = client(S.user.id);
+  var qs = quotesFor(c.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
+  var nav = [["overview","◈","Overview"],["quotes","◷","My quotes"],["catalog","▤","My products"],
+             ["purchases","▣","Purchased items"],["account","◎","Account"]];
+  var mine = itemsForClient(c), myOrders = ordersFor(c.id);
+
+  var side = '<aside class="sidebar">' +
+    '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
+      '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
+      '<span class="brand-sub">Member portal</span></span></div>' +
+    '<div class="side-group"><div class="side-title">' + esc(c.name) + '</div>' +
+      nav.map(function (n) {
+        return '<button class="side-link ' + (S.portalTab === n[0] ? "active" : "") + '" data-ptab="' + n[0] + '">' +
+          '<span class="side-icon">' + n[1] + '</span> ' + n[2] + '</button>';
+      }).join("") + '</div>' +
+    '<div class="side-group"><div class="side-title">Need something new</div>' +
+      '<button class="side-link" data-act="quote-member"><span class="side-icon">+</span> Request a detailed quote</button>' +
+    '</div>' +
+    '<div style="padding:0 .65rem"><div class="side-title" style="padding-left:0">This cycle</div>' +
+      '<div class="quota-dots" style="margin-bottom:.4rem">' +
+      Array.from({length: c.quoteLimit}).map(function (_, i) {
+        return '<span class="quota-dot ' + (i < used ? "spent" : "") + '"></span>';
+      }).join("") + '</div>' +
+      '<div class="tiny dim">' + left + ' of ' + c.quoteLimit + ' quote requests left</div></div>' +
+    '<div class="side-foot"><div class="row" style="padding:.4rem .65rem">' +
+      '<div class="avatar avatar-accent">C' + c.id + '</div>' +
+      '<div style="min-width:0"><div style="font-size:.84rem;font-weight:500">' + esc(c.contact) + '</div>' +
+      '<div class="tiny dim" style="overflow:hidden;text-overflow:ellipsis">' + esc(c.email) + '</div></div></div>' +
+      '<div class="side-group" style="margin-top:.45rem">' +
+      '<button class="side-link" data-act="logout"><span class="side-icon">→</span> Sign out</button></div></div>' +
+    '</aside>';
+
+  var body = "";
+  if (S.portalTab === "overview") {
+    body =
+      (S.flash ? '<div class="notice" style="margin-bottom:1.5rem">' + esc(S.flash) + '</div>' : '') +
+      '<div class="grid grid-4">' +
+        stat("Open quotes", qs.filter(function(q){return q.status==="NEW"||q.status==="IN_REVIEW";}).length, "in the pipeline") +
+        stat("Awaiting your decision", qs.filter(function(q){return q.status==="ESTIMATE_SENT";}).length, "estimates ready", true) +
+        stat("Products you can order", mine.length,
+             mine.length ? "in your catalog" : "quote-only account", mine.length > 0) +
+        stat("Quote requests left", left, "of " + c.quoteLimit + " this " + c.cycleDays + "-day cycle") +
+      '</div>' +
+      (mine.length ? '' :
+      '<div class="card card-accent" style="margin-top:1.5rem">' +
+        '<div class="row-between wrap"><div style="max-width:58ch">' +
+          '<h3>Nothing is stocked for you yet — and that\'s the point</h3>' +
+          '<p class="muted" style="margin-top:.5rem;font-size:.92rem">We don\'t sell from a shelf. Tell us what you ' +
+          'want built and we\'ll come back inside 24 hours with a detailed quote: unit cost, tooling, lead time, ' +
+          'freight and duties, landed at your door. Anything we make for you appears here as a product you can reorder.</p>' +
+        '</div>' +
+        '<button class="btn btn-primary" data-act="quote-member">Request a detailed quote</button></div>' +
+      '</div>') +
+      (mine.length ?
+      '<div class="card card-flush" style="margin-top:1.5rem">' +
+        '<div class="card-head"><h3>Ready to reorder</h3>' +
+          '<a class="tiny" style="color:var(--green);cursor:pointer" data-ptab="catalog">All products →</a></div>' +
+        '<div class="table-wrap"><table class="data"><thead><tr>' +
+          '<th>Item</th><th class="right">Your price</th><th class="right">MOQ</th><th class="right">Lead</th><th></th>' +
+        '</tr></thead><tbody>' + mine.map(function (m) {
+          return '<tr><td><div style="font-weight:500">' + esc(m.item.name) + '</div>' +
+            '<div class="tiny mono dim">' + esc(m.item.sku) + '</div></td>' +
+            '<td class="right mono tnum">' + money(m.item.price) + '</td>' +
+            '<td class="right tnum">' + m.item.moq.toLocaleString("en-US") + '</td>' +
+            '<td class="right tiny">' + m.item.lead + 'd</td>' +
+            '<td class="right"><button class="btn btn-primary btn-sm" data-buy="' + m.item.sku + '">Order</button></td></tr>';
+        }).join("") + '</tbody></table></div></div>' : '') +
+      '<div class="card card-flush" style="margin-top:1.5rem">' +
+        '<div class="card-head"><h3>Recent quote requests</h3>' +
+          '<a class="tiny" style="color:var(--green);cursor:pointer" data-ptab="quotes">View all →</a></div>' +
+        quoteTable(qs.slice(0, 6)) + '</div>';
+  } else if (S.portalTab === "quotes") {
+    body = '<div class="card card-flush">' +
+      '<div class="card-head"><h3>Every request you\'ve sent us</h3>' +
+      '<button class="btn btn-primary btn-sm" data-act="quote-member">Request a detailed quote</button></div>' +
+      quoteTable(qs) + '</div>';
+  } else if (S.portalTab === "catalog") {
+    body = mine.length ?
+      ('<div class="row wrap" style="gap:.4rem;margin-bottom:1.5rem;align-items:center">' +
+        '<span class="stat-label">Your ranges</span>' +
+        (c.tags || []).map(function (t) { return '<span class="tag tag-green">' + esc(t) + '</span>'; }).join("") +
+      '</div>' +
+      '<div class="grid grid-2">' + mine.map(function (m) {
+        var it = m.item;
+        return '<div class="card"><div class="row-between" style="align-items:flex-start">' +
+          '<div style="min-width:0"><div class="tiny mono dim">' + esc(it.sku) + '</div>' +
+          '<h3 style="margin-top:.25rem">' + esc(it.name) + '</h3></div>' +
+          (it.negotiated ? '<span class="badge badge-green badge-plain">Your price</span>' : '') + '</div>' +
+          (it.description ? '<p class="muted" style="margin-top:.6rem;font-size:.85rem">' +
+            esc(it.description.slice(0, 130)) + (it.description.length > 130 ? '…' : '') + '</p>' : '') +
+          '<div class="tag-row" style="margin-top:.7rem">' + m.matched.map(function (t) {
+            return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
+          '<div class="row-between" style="margin-top:1rem">' +
+            '<div><div class="stat-value" style="font-size:1.15rem;margin-top:0">' + money(it.price) + '</div>' +
+            '<div class="tiny dim">per unit</div></div>' +
+            '<div class="right"><div class="tiny dim">MOQ ' + it.moq.toLocaleString("en-US") + '</div>' +
+            '<div class="tiny dim">' + it.lead + 'd lead</div></div></div>' +
+          (it.negotiated ? '<p class="tiny dim" style="margin-top:.7rem">' + esc(it.negotiated) + '</p>' : '') +
+          '<div class="divider-label">Images</div>' +
+          imageViewer(it.images, it.name, "portal-" + it.sku) +
+          (it.genome ? '<div class="divider-label">What we know about making this</div>' +
+            '<dl class="kv">' + it.genome.map(function (g) {
+              return '<dt>' + esc(g.section) + '</dt><dd>' +
+                (g.unknown
+                  /* Appendix B: unknowns are marked unknown, never filled with a
+                     plausible default. A specification we were never given,
+                     printed as though we were, is worse than a visible gap. */
+                  ? '<span class="tag tag-wait">Not confirmed</span>' +
+                    '<div style="margin-top:.35rem">' + esc(g.body) + '</div>'
+                  : esc(g.body)) + '</dd>';
+            }).join("") + '</dl>' : '') +
+          (it.tool ? '<div class="divider-label">Tooling</div>' + toolingBlock(it, it.moq) : '') +
+          '<button class="btn btn-primary btn-block btn-sm" style="margin-top:1rem" data-buy="' + it.sku + '">Order this</button>' +
+        '</div>';
+      }).join("") + '</div>')
+    : ('<div class="card" style="padding:0">' +
+      '<div class="empty" style="padding:4rem 2rem">' +
+        '<h3 style="font-size:1.1rem">No products available to order yet</h3>' +
+        '<p class="muted" style="margin:.8rem auto 0;max-width:52ch;font-size:.95rem">' +
+          'Nothing is registered to your account yet. You can browse the public catalogue and see ' +
+          'what things cost — ordering is what needs a registration, and that follows once we have ' +
+          'priced an item for you. Send us a request and anything we price and produce for you ' +
+          'lands here at your agreed price, ready to reorder in two clicks.</p>' +
+        '<button class="btn btn-outline btn-lg" style="margin-top:1.75rem;margin-right:.6rem" data-act="catalogue">Browse the catalogue</button>' +
+        '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Request a detailed quote</button>' +
+      '</div></div>');
+  } else if (S.portalTab === "purchases") {
+    body = purchasesView(c, myOrders);
+  } else {
+    body = '<div class="grid grid-sidebar"><div class="card">' +
+      '<h3>Account</h3><dl class="kv" style="margin-top:1.25rem">' +
+      '<dt>Account</dt><dd>' + esc(c.name) + ' <span class="mono dim">' + esc(c.ref) + '</span></dd>' +
+      '<dt>Contact</dt><dd>' + esc(c.contact) + '</dd>' +
+      '<dt>Email</dt><dd class="mono">' + esc(c.email) + '</dd>' +
+      '<dt>Phone</dt><dd class="mono">' + esc(c.phone) + '</dd>' +
+      '<dt>Location</dt><dd>' + esc(c.city) + ', ' + esc(c.country) + '</dd>' +
+      '<dt>Member since</dt><dd>' + esc(fmtFull(c.memberSince)) + '</dd>' +
+      '<dt>Quote cycle</dt><dd>' + c.quoteLimit + ' requests every ' + c.cycleDays + ' days</dd>' +
+      '<dt>Account manager</dt><dd>' + esc(c.owner) + '</dd></dl></div>' +
+      '<div class="card"><div class="stat-label">Need more quotes?</div>' +
+      '<p class="tiny muted" style="margin-top:.6rem">We raise the limit for members we work with often. ' +
+      'Ask your account manager and it takes effect the same day.</p></div></div>';
+  }
+
+  return '<div class="shell">' + side + '<div class="main">' +
+    '<div class="main-head"><div><div class="eyebrow">' + esc(c.ref) + ' · Member</div>' +
+      '<h1>' + esc(c.name) + '</h1></div>' +
+      '<div class="row"><button class="btn btn-primary" data-act="quote-member">Request a detailed quote</button></div>' +
+    '</div><div class="main-body">' + body + '</div></div></div>';
+}
+
+/* ---------- purchased items + order timeline ---------- */
+function timeline(o) {
+  var stages = [
+    ["Ordered", o.ordered, "Your order was created"],
+    ["Paid", o.paid, "Funds confirmed" + (o.method ? " by " + (o.method === "ACH" ? "bank transfer" : "card") : "")],
+    ["Reviewed", o.reviewed, "24h manufacturer review cleared"],
+    ["In production", o.production, "On the floor"],
+    ["Shipped", o.shipped, o.tracking ? (o.carrier + " · " + o.tracking) : "Left the factory"],
+    ["Delivered", o.delivered, "Signed for"]
+  ];
+  var lastDone = -1;
+  stages.forEach(function (st, i) { if (st[1]) lastDone = i; });
+  return '<ol class="track">' + stages.map(function (st, i) {
+    var done = !!st[1];
+    return '<li class="track-step ' + (done ? "done " : "") + (i === lastDone ? "current" : "") + '">' +
+      '<span class="track-dot" aria-hidden="true"></span><div class="track-body">' +
+      '<div class="track-name">' + esc(st[0]) + '</div>' +
+      (done ? '<div class="track-when">' + esc(fmtFull(st[1])) + '</div>' +
+              '<div class="track-detail">' + esc(st[2]) + '</div>'
+            : '<div class="track-when dim">—</div>') +
+      '</div></li>';
+  }).join("") + '</ol>' +
+  (o.tracking
+    ? '<div class="tracking-card"><div><div class="stat-label">Tracking</div>' +
+      '<div class="mono" style="font-size:1.02rem;margin-top:.3rem">' + esc(o.tracking) + '</div>' +
+      '<div class="tiny dim">' + esc(o.carrier || "Carrier") +
+        (o.shipped ? " · shipped " + esc(fmtFull(o.shipped)) : "") + '</div></div>' +
+      '<button class="btn btn-sm" data-copy="' + esc(o.tracking) + '">Copy code</button></div>'
+    : (o.status === "IN_PRODUCTION" || o.status === "IN_REVIEW"
+       ? '<p class="tiny dim" style="margin-top:1rem">A tracking code appears here the moment your order leaves the factory.</p>'
+       : ''));
+}
+
+function purchasesView(c, orders) {
+  if (!orders.length) {
+    return '<div class="card" style="padding:0"><div class="empty" style="padding:4rem 2rem">' +
+      '<h3 style="font-size:1.1rem">Nothing purchased yet</h3>' +
+      '<p class="muted" style="margin:.8rem auto 0;max-width:50ch;font-size:.95rem">' +
+      'Once you accept an estimate and pay, every item lands here with its own timeline — ordered, ' +
+      'paid, reviewed, in production, shipped, delivered — and a tracking code as soon as it leaves ' +
+      'the factory.</p>' +
+      '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Request a detailed quote</button>' +
+      '</div></div>';
+  }
+  var units = orders.reduce(function (t, o) { return t + o.qty; }, 0);
+  var spend = orders.reduce(function (t, o) {
+    if (o.total !== undefined) return t + o.total;
+    var g = o.unit * o.qty;
+    return t + g + feeOn(g) + processingFor(g + feeOn(g), o.method === "ACH" ? "ach" : "card");
+  }, 0);
+  var inFlight = orders.filter(function (o) { return o.status !== "DELIVERED"; }).length;
+  return '<div class="grid grid-4">' +
+      stat("Items bought", units.toLocaleString("en-US"), "across " + orders.length +
+           (orders.length === 1 ? " order" : " orders")) +
+      stat("Total spend", money(spend), "fees included", true) +
+      stat("In flight", inFlight, "not yet delivered") +
+      stat("Reorderable", itemsForClient(c).length, "in your catalog now") +
+    '</div>' +
+    '<div class="stack" style="margin-top:1.5rem">' + orders.map(function (o) {
+      var m = {DELIVERED:["Delivered","green"], SHIPPED:["Shipped","green"],
+               IN_REVIEW:["Manufacturer review","brass"], IN_PRODUCTION:["In production","blue"],
+               PENDING:["Awaiting payment","amber"]}[o.status] || [o.status, "slate"];
+      return '<div class="card card-flush">' +
+        '<div class="card-head"><div class="row wrap" style="gap:.75rem">' +
+          '<span class="mono tiny">' + esc(o.ref) + '</span>' +
+          '<span class="badge badge-' + m[1] + '">' + esc(m[0]) + '</span>' +
+          '<span class="tiny dim">ordered ' + esc(fmtFull(o.ordered)) + '</span></div>' +
+          (o.tracking ? '<span class="tiny mono" style="color:var(--green)">' + esc(o.carrier) + ' ' + esc(o.tracking) + '</span>' : '') +
+        '</div>' +
+        '<div class="card-body" style="padding-bottom:.5rem">' + timeline(o) + '</div>' +
+        '<div class="table-wrap"><table class="data"><thead><tr>' +
+          '<th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Line total</th><th></th>' +
+        '</tr></thead><tbody><tr>' +
+          '<td><div style="font-weight:500">' + esc(o.name) + '</div>' +
+          '<div class="tiny mono dim">' + esc(o.sku) + '</div></td>' +
+          '<td class="right mono tnum">' + money(o.unit) + '</td>' +
+          '<td class="right mono tnum">' + o.qty.toLocaleString("en-US") + '</td>' +
+          '<td class="right mono tnum" style="font-weight:500">' + money(o.unit * o.qty) + '</td>' +
+          '<td class="right"><button class="btn btn-sm" data-buy="' + esc(o.sku) + '">Reorder</button></td>' +
+        '</tr></tbody>' +
+        (function () {
+          var g = o.goods !== undefined ? o.goods : o.unit * o.qty;
+          var cf = o.convenienceFee !== undefined ? o.convenienceFee : feeOn(g);
+          var pf = o.processingFee !== undefined ? o.processingFee
+                   : processingFor(g + cf, o.method === "ACH" ? "ach" : "card");
+          var tot = o.total !== undefined ? o.total : g + cf + pf;
+          return '<tfoot>' +
+            (o.freightWaived
+              ? '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+                '<span class="sum-name">Freight &amp; customs</span>' +
+                '<span class="free-tag">Client ' + esc(client(o.clientId).name) + ' marked as free in system</span>' +
+                '</div></td><td class="right"><div class="sum-stack">' +
+                '<span class="struck mono sum-was">' + money(o.freightEstimate || 0) + '</span>' +
+                '<span class="mono sum-now">$0.00</span></div></td><td></td></tr>'
+              : '') +
+            '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+              '<span class="sum-name">Convenience fee</span>' +
+              '<span class="sum-note">' + FEE_PERCENT + '% of the order</span></div></td>' +
+              '<td class="right mono sum-amount">' + money(cf) + '</td><td></td></tr>' +
+            '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+              '<span class="sum-name">Payment processing</span>' +
+              '<span class="sum-note">' + (o.method === "ACH"
+                ? ACH_PCT + '% capped at $' + (ACH_CAP / 100).toFixed(2)
+                : CARD_PCT + '% + ' + CARD_FIXED + '\u00A2') +
+              ' charged by Stripe, at cost</span></div></td>' +
+              '<td class="right mono sum-amount">' + money(pf) + '</td><td></td></tr>' +
+            '<tr class="sum-total"><td colspan="3" class="right"><div class="sum-label">' +
+              '<span class="sum-name">Paid</span></div></td>' +
+              '<td class="right mono sum-total-amount">' + money(tot) + '</td><td></td></tr></tfoot>';
+        })() +
+        '</table></div></div>';
+    }).join("") + '</div>';
+}
+
+/* ---------- checkout ---------- */
+function viewCheckout() {
+  var c = client(S.user.id), it = CATALOG.filter(function (x) { return x.sku === S.cart.sku; })[0];
+  var goods = it.price * S.cart.qty;
+  var est = freightEstimate(goods, S.cart.qty, it.cat, c.country, "SEA");
+  var waived = !!c.freightWaived;
+  var charged = waived ? 0 : est.total;
+  var fee = feeOn(goods + charged);
+  var net = goods + charged + fee;
+  var opts = [
+    {key: "card", label: "Card", fee: processingFor(net, "card"),
+     note: CARD_PCT + "% + " + CARD_FIXED + "\u00A2, charged by Stripe"},
+    {key: "ach", label: "Bank transfer (ACH)", fee: processingFor(net, "ach"),
+     note: ACH_PCT + "% capped at $" + (ACH_CAP / 100).toFixed(2) + ", charged by Stripe"}
+  ].map(function (o) { o.total = net + o.fee; return o; });
+  S.quote = {goods: goods, est: est, waived: waived, charged: charged, fee: fee, net: net, opts: opts};
+
+  var freightRow = waived
+    ? '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+        '<span class="sum-name">Freight &amp; customs to ' + esc(est.destination) + '</span>' +
+        '<span class="free-tag">Client ' + esc(c.name) + ' marked as free in system</span>' +
+      '</div></td><td class="right"><div class="sum-stack">' +
+        '<span class="struck mono sum-was">' + money(est.total) + '</span>' +
+        '<span class="mono sum-now">$0.00</span></div></td></tr>'
+    : '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+        '<span class="sum-name">Freight &amp; customs to ' + esc(est.destination) + '</span>' +
+        '<span class="sum-note">' + est.mode.toLowerCase() + ' freight, ' + est.days +
+        ' days transit</span></div></td>' +
+      '<td class="right mono sum-amount">' + money(est.total) + '</td></tr>';
+
+  return '<div class="shell"><aside class="sidebar">' +
+    '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
+    '<span class="brand-sub">Member portal</span></span></div>' +
+    '<div class="side-group"><button class="side-link" data-act="portal">' +
+    '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
+    '<div class="main"><div class="main-head"><div><div class="eyebrow">' + esc(c.name) + '</div>' +
+    '<h1>Checkout</h1></div></div><div class="main-body">' +
+    '<div class="grid grid-sidebar"><div class="stack">' +
+
+      '<div class="card card-flush"><div class="card-head"><h3>What you\'re buying</h3></div>' +
+        '<div class="table-wrap"><table class="data"><thead><tr>' +
+        '<th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Line total</th>' +
+        '</tr></thead><tbody><tr>' +
+        '<td>' + esc(it.name) + '<div class="tiny mono dim">' + esc(it.sku) + '</div></td>' +
+        '<td class="right mono tnum">' + money(it.price) + '</td>' +
+        '<td class="right mono tnum">' +
+          '<input type="number" id="qty" value="' + S.cart.qty + '" min="' + it.moq + '" step="1" ' +
+          'style="width:110px;text-align:right"></td>' +
+        '<td class="right mono tnum" id="line">' + money(goods) + '</td></tr></tbody>' +
+        '<tfoot>' +
+        '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+          '<span class="sum-name">Goods subtotal</span></div></td>' +
+          '<td class="right mono sum-amount" id="sub">' + money(goods) + '</td></tr>' +
+        freightRow +
+        '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+          '<span class="sum-name">Convenience fee</span>' +
+          '<span class="sum-note">' + FEE_PERCENT + '% of the order</span>' +
+          '</div></td><td class="right mono sum-amount" id="fee">' + money(fee) + '</td></tr>' +
+        '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+          '<span class="sum-name">Payment processing <span class="dim" id="proc-method">— card</span></span>' +
+          '<span class="sum-note" id="proc-note">' + CARD_PCT + '% + ' + CARD_FIXED +
+          '\u00A2 charged by Stripe, passed on at cost</span>' +
+          '</div></td><td class="right mono sum-amount" id="proc">' + money(opts[0].fee) + '</td></tr>' +
+        '<tr class="sum-total"><td colspan="3" class="right"><div class="sum-label">' +
+          '<span class="sum-name">Total due</span>' +
+          '<span class="sum-note">Everything included. Nothing added later.</span>' +
+          '</div></td><td class="right mono sum-total-amount" id="total">' +
+          money(opts[0].total) + '</td></tr></tfoot>' +
+        '</table></div>' +
+        '<details class="more" style="margin:0;border-top:1px solid var(--line)">' +
+          '<summary style="padding:.85rem 1.4rem;border:0">How that freight and customs figure is worked out</summary>' +
+          '<div class="more-body" style="padding:0 1.4rem 1.4rem">' +
+          '<table class="data" style="border:1px solid var(--line);border-radius:var(--radius)"><tbody>' +
+          est.lines.map(function (l) {
+            return '<tr><td>' + esc(l[0]) + '</td><td class="right mono tnum">' + money(l[1]) + '</td></tr>';
+          }).join("") +
+          '<tr style="background:var(--surface-2)"><td style="font-weight:600">' + est.mode.toLowerCase() +
+            ' freight, ' + est.days + ' days transit</td>' +
+            '<td class="right mono tnum" style="font-weight:700">' + money(est.total) + '</td></tr>' +
+          '</tbody></table>' +
+          '<p class="tiny dim" style="margin-top:.85rem">An estimate, priced on ' +
+            est.chargeable.toFixed(1) + ' kg chargeable weight at the current ' + est.mode.toLowerCase() +
+            ' rate. Duty is the published rate for this kind of good; your customs broker\'s entry is ' +
+            'what finally governs.</p></div></details>' +
+        '<div class="card-body tiny dim" style="border-top:1px solid var(--line-soft)">Minimum order ' +
+          it.moq.toLocaleString("en-US") + ' units.</div></div>' +
+
+      '<form class="card" id="pay-form"><h3>How would you like to pay?</h3>' +
+        '<div class="pay-list" style="margin-top:1.25rem">' +
+        opts.map(function (o, i) {
+          return '<label class="pay-option">' +
+            '<input type="radio" name="method" value="' + o.key + '"' + (i === 0 ? " checked" : "") +
+              ' data-fee="' + o.fee + '" data-total="' + o.total + '"' +
+              ' data-fee-text="' + money(o.fee) + '" data-total-text="' + money(o.total) + '"' +
+              ' data-label="' + esc(o.label) + '" data-rate="' + esc(o.note) + ', passed on at cost">' +
+            '<span class="pay-body">' +
+              '<span class="pay-title">' + esc(o.label) +
+                ' <span class="badge badge-slate badge-plain">' + money(o.total) + '</span></span>' +
+              '<span class="pay-note">' +
+                (o.key === "card"
+                  ? "Visa, Mastercard, Amex. Funds confirm immediately, so your 24-hour manufacturer review starts the moment you pay."
+                  : "Settles in 1\u20133 business days. Nothing is produced until the money actually lands.") +
+                '<br><span class="dim">Processing ' + money(o.fee) + ' — ' + esc(o.note) + '.</span>' +
+              '</span></span></label>';
+        }).join("") + '</div>' +
+        '<div class="fee-note"><span class="fee-badge">' + FEE_PERCENT + '%</span>' +
+          '<span>Two lines above, and that\'s everything: our ' + FEE_PERCENT + '% convenience fee, and ' +
+          'what Stripe charges to move the money, passed on at cost. No listing fee, no account fee, ' +
+          'no minimum, nothing added later.</span></div>' +
+        '<button class="btn btn-primary btn-xl btn-block" style="margin-top:1.25rem" type="submit" id="paybtn">' +
+          'Pay ' + money(opts[0].total) + '</button>' +
+        '<p class="tiny dim center" style="margin-top:.9rem">In the real site this hands you to Stripe. ' +
+          'We never see your card or account number.</p>' +
+      '</form></div>' +
+
+      '<div class="stack">' +
+        (waived ? '<div class="card owner-card"><span class="eyebrow-label">Owner offer</span>' +
+          '<h3 style="margin-top:.7rem">Freight &amp; customs on us</h3>' +
+          '<p class="tiny" style="margin-top:.6rem;color:var(--ink-2)">Client ' +
+          '<strong>' + esc(c.name) + '</strong> is marked as free in the system. The ' +
+          money(est.total) + ' it would cost to get ' +
+          'this to ' + esc(est.destination) + ' — sea freight, handling, duty and entry fees — is absorbed ' +
+          'by us on this order.</p>' +
+          '<p class="tiny dim" style="margin-top:.6rem">— Owner standing offer</p></div>' : '') +
+        '<div class="card" style="border-left:2px solid var(--green)">' +
+          '<div class="stat-label">What happens after you pay</div>' +
+          '<ol class="stack-sm" style="margin:.75rem 0 0;padding-left:1.1rem;font-size:.85rem;color:var(--ink-2)">' +
+            '<li>Funds confirmed — instant on a card, on settlement for ACH.</li>' +
+            '<li>A 24-hour manufacturer review. Last window to change anything.</li>' +
+            '<li>Production, then freight, with a tracking code on your order.</li>' +
+          '</ol></div>' +
+        '<div class="card"><div class="stat-label">Shipping to</div>' +
+          '<p class="tiny muted" style="margin-top:.5rem">1200 Industrial Way, Suite 400<br>' +
+          esc(c.city) + ', ' + esc(c.country) + '</p></div>' +
+      '</div></div></div></div></div>';
+}
+
+function viewPaid() {
+  var o = S.placed[S.placed.length - 1];
+  var ach = o.method === "ACH";
+  var goods = o.goods !== undefined ? o.goods : o.unit * o.qty;
+  var fee = o.convenienceFee !== undefined ? o.convenienceFee : feeOn(goods);
+  var proc = o.processingFee || 0;
+  var paidTotal = o.total !== undefined ? o.total : goods + fee;
+  return '<div class="shell"><aside class="sidebar">' +
+    '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
+    '<span class="brand-sub">Member portal</span></span></div>' +
+    '<div class="side-group"><button class="side-link" data-act="portal">' +
+    '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
+    '<div class="main"><div class="main-head"><div><div class="eyebrow">' + esc(o.ref) + '</div>' +
+    '<h1>' + (ach ? "Bank transfer started" : "Payment confirmed") + '</h1></div></div>' +
+    '<div class="main-body"><div style="max-width:680px">' +
+    '<div class="card card-lg" style="border-left:2px solid var(--green)">' +
+      '<span class="eyebrow-label">' + (ach ? "Awaiting settlement" : "Funds confirmed") + '</span>' +
+      '<h2 style="margin-top:.75rem">' + money(paidTotal) + ' · ' + esc(o.name) + '</h2>' +
+      '<p class="tiny dim" style="margin-top:.4rem">' + money(goods) + ' of goods' +
+        (o.freightWaived ? ', freight and customs absorbed by us' : '') +
+        ', plus a ' + FEE_PERCENT + '% convenience fee of ' + money(fee) +
+        ' and ' + money(proc) + ' of payment processing at cost.</p>' +
+      '<p class="muted" style="margin-top:1rem">' +
+      (ach
+        ? 'Your bank debit is on its way. ACH settles in 1–3 business days, and the moment the money ' +
+          'lands your 24-hour manufacturer review opens and we email you. Nothing is produced before then.'
+        : 'Your order is locked in and now sits in a mandatory <strong>24-hour manufacturer review</strong>. ' +
+          'The floor checks it against the specs before anything is produced.') + '</p>' +
+      '<button class="btn btn-primary" style="margin-top:1.5rem" data-ptab="purchases">See it in purchased items</button>' +
+    '</div>' +
+    '<div class="card" style="margin-top:1.25rem">' + timeline(o) + '</div>' +
+    '</div></div></div></div>';
+}
+
+function stat(label, value, sub, accent) {
+  return '<div class="stat' + (accent ? " stat-accent" : "") + '"><div class="stat-label">' + esc(label) + '</div>' +
+    '<div class="stat-value">' + esc(value) + '</div>' +
+    (sub ? '<div class="stat-sub">' + esc(sub) + '</div>' : '') + '</div>';
+}
+function quoteTable(list) {
+  if (!list.length) return '<div class="empty">No quote requests yet.</div>';
+  return '<div class="table-wrap"><table class="data"><thead><tr>' +
+    '<th>Ref</th><th>Project</th><th>Quantity</th><th>Sent</th><th>Status</th><th class="right">Estimate</th>' +
+    '</tr></thead><tbody>' + list.map(function (q) {
+      return '<tr><td class="mono tiny">' + esc(q.ref) + '</td>' +
+        '<td>' + esc(q.title) + '</td>' +
+        '<td class="muted tnum">' + (q.qty ? q.qty.toLocaleString("en-US") : "—") + '</td>' +
+        '<td class="tiny dim">' + esc(fmtFull(q.created)) + '</td>' +
+        '<td>' + statusBadge(q.status) + '</td>' +
+        '<td class="right mono tnum">' + (q.total ? money(q.total) : "—") + '</td></tr>';
+    }).join("") + '</tbody></table></div>';
+}
+
+function viewMemberQuote() {
+  var c = client(S.user.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
+  return '<div class="shell"><aside class="sidebar">' +
+    '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
+    '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
+    '<span class="brand-sub">Member portal</span></span></div>' +
+    '<div class="side-group"><button class="side-link" data-act="portal">' +
+    '<span class="side-icon">←</span> Back to my portal</button></div></aside>' +
+    '<div class="main"><div class="main-head"><div><div class="eyebrow">' + esc(c.name) + '</div>' +
+    '<h1>Request a detailed quote</h1></div></div><div class="main-body">' +
+    '<div class="container-narrow" style="margin:0;width:min(680px,100%)">' +
+      '<div class="card card-accent" style="margin-bottom:2rem"><div class="row-between wrap">' +
+        '<div><strong>' + left + ' of ' + c.quoteLimit + ' requests left</strong>' +
+        '<div class="tiny muted">In your current ' + c.cycleDays + '-day cycle.</div></div>' +
+        '<div class="quota-dots">' + Array.from({length:c.quoteLimit}).map(function(_,i){
+          return '<span class="quota-dot ' + (i<used?"spent":"") + '"></span>';}).join("") + '</div>' +
+      '</div></div>' +
+      (left === 0 ? '<div class="notice notice-error" style="margin-bottom:1.5rem">You\'ve used every request in ' +
+        'this cycle. Ask your account manager to raise the limit — we do it the same day for members we work with often.</div>' : '') +
+      '<form id="member-quote-form">' +
+        '<label class="field"><span class="field-label">What do you want made?</span>' +
+          '<input type="text" name="title" required ' + (left===0?"disabled":"") + '></label>' +
+        '<label class="field"><span class="field-label">Tell us everything you know about it</span>' +
+          '<span class="field-hint-top">Materials, dimensions, finish, packaging, certifications. The more you give us, the tighter the number.</span>' +
+          '<textarea name="description" rows="6" required ' + (left===0?"disabled":"") + '></textarea></label>' +
+        '<div class="grid grid-2">' +
+          '<label class="field"><span class="field-label">Quantity</span>' +
+            '<input type="number" name="qty" min="1" placeholder="2500" ' + (left===0?"disabled":"") + '></label>' +
+          '<label class="field"><span class="field-label">Target price per unit</span>' +
+            '<input type="text" name="target" placeholder="$2.10" ' + (left===0?"disabled":"") + '>' +
+            '<span class="field-hint">Optional — it tells us instantly whether it\'s viable.</span></label>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-xl btn-block" type="submit" ' + (left===0?"disabled":"") + '>' +
+          'Send it to the floor</button>' +
+        '<p class="tiny dim center" style="margin-top:1rem">A landed price comes back within 24 hours.</p>' +
+      '</form></div></div></div></div>';
+}
+
+/* ==========================================================================
+   Admin portal
+   ========================================================================== */
+function viewAdmin() {
+  var nav = [["revenue","◈","Revenue"],["incoming","▼","Incoming quotes"],["crm","◎","CRM"],
+             ["catalog","▤","Items catalog"],["clients","▣","Client portals"]];
+  var openQuotes = QUOTES.concat(S.submitted).filter(function(q){return q.status==="NEW"||q.status==="IN_REVIEW";}).length;
+
+  var side = '<aside class="sidebar">' +
+    '<div class="brand" data-act="home" style="padding:.2rem .65rem .5rem"><span class="brand-mark">M</span>' +
+      '<span><span class="brand-name" style="font-size:.95rem">Monti</span>' +
+      '<span class="brand-sub">Admin portal</span></span></div>' +
+    '<div class="side-group"><div class="side-title">Overview</div>' +
+      nav.map(function (n) {
+        var count = n[0] === "crm" ? CLIENTS.length
+                  : n[0] === "catalog" ? CATALOG.length
+                  : n[0] === "incoming" ? incomingQuotes().length : null;
+        return '<button class="side-link ' + (S.adminTab === n[0] && !S.adminClient ? "active" : "") + '" data-atab="' + n[0] + '">' +
+          '<span class="side-icon">' + n[1] + '</span> ' + n[2] +
+          (count ? '<span class="side-count">' + count + '</span>' : "") + '</button>';
+      }).join("") + '</div>' +
+    '<div class="side-group"><div class="side-title">Open client portals</div>' +
+      CLIENTS.map(function (c) {
+        return '<button class="side-link" data-openclient="' + c.id + '">' +
+          '<span class="side-icon">→</span> ' + esc(c.name) + '</button>';
+      }).join("") + '</div>' +
+    '<div class="side-foot"><div class="row" style="padding:.4rem .65rem">' +
+      '<div class="avatar avatar-accent">TM</div><div style="min-width:0">' +
+      '<div style="font-size:.84rem;font-weight:500">Tyler Monti</div>' +
+      '<div class="tiny dim">Tyler1 · admin</div></div></div>' +
+      '<div class="side-group" style="margin-top:.45rem">' +
+      '<button class="side-link" data-act="home"><span class="side-icon">◱</span> Public site</button>' +
+      '<button class="side-link" data-act="logout"><span class="side-icon">→</span> Sign out</button></div></div>' +
+    '</aside>';
+
+  var body, head;
+  if (S.adminClient) { head = adminClientHead(); body = adminClientBody(); }
+  else if (S.adminTab === "revenue") { head = ["Money", "Revenue"]; body = adminRevenue(); }
+  else if (S.adminTab === "incoming") { head = ["Triage", "Incoming quotes"]; body = adminIncoming(); }
+  else if (S.adminTab === "crm")     { head = ["Relationships", "CRM · " + CLIENTS.length + " clients"]; body = adminCrm(); }
+  else if (S.adminTab === "catalog") { head = ["Product", "Items catalog"]; body = adminCatalog(); }
+  else                                { head = ["Access", "Client portals"]; body = adminClients(); }
+
+  return '<div class="shell">' + side + '<div class="main">' +
+    '<div class="main-head"><div><div class="eyebrow">' + esc(head[0]) + '</div><h1>' + esc(head[1]) + '</h1></div>' +
+    '<div class="row"><span class="badge badge-slate">' + openQuotes + ' quotes on the clock</span></div></div>' +
+    '<div class="main-body">' + body + '</div></div></div>';
+}
+
+function incomingQuotes() {
+  return QUOTES.concat(S.submitted)
+    .filter(function (q) { return q.status === "NEW"; })
+    .sort(function (a, b) { return a.created - b.created; });
+}
+
+function adminIncoming() {
+  var list = incomingQuotes();
+  var decided = QUOTES.concat(S.submitted).filter(function (q) { return q.triaged; })
+    .sort(function (a, b) { return b.triaged - a.triaged; });
+
+  var body = list.length ? '<div class="stack">' + list.map(function (q) {
+    var c = client(q.clientId);
+    var due = new Date(q.created.getTime() + 24 * 3600 * 1000);
+    var hoursLeft = Math.round((due - TODAY) / 36000) / 100;
+    var late = hoursLeft < 0, urgent = !late && hoursLeft < 6;
+    return '<div class="card card-flush"' + (urgent || late ? ' style="border-left:2px solid var(--green)"' : '') + '>' +
+      '<div class="card-head"><div class="row wrap" style="gap:.75rem">' +
+        '<span class="mono tiny">' + esc(q.ref) + '</span>' +
+        '<span class="cell-link" data-client="' + c.id + '" style="font-weight:500">' + esc(c.name) + '</span>' +
+        '<span class="badge badge-green">Member</span>' +
+        '<span class="chip tiny">' + quotesFor(c.id).length + ' requests to date</span></div>' +
+        '<div class="right"><div class="mono" style="font-weight:600;font-size:.9rem;color:' +
+          (late ? "var(--stop)" : urgent ? "var(--wait)" : "var(--ink-2)") + '">' +
+          (late ? Math.abs(hoursLeft).toFixed(1) + "h over" : hoursLeft.toFixed(1) + "h left") + '</div>' +
+        '<div class="tiny dim">arrived ' + esc(fmtFull(q.created)) + '</div></div></div>' +
+      '<div class="card-body"><div class="grid grid-sidebar" style="gap:1.5rem">' +
+        '<div><h3>' + esc(q.title) + '</h3>' +
+          '<p class="muted" style="margin-top:.6rem;font-size:.92rem">' +
+          esc("Submitted through the portal. " + (q.qty ? q.qty.toLocaleString("en-US") + " units. " : "") +
+              "Full spec and any files are attached to the request.") + '</p>' +
+          '<dl class="kv" style="margin-top:1.25rem;grid-template-columns:130px minmax(0,1fr);font-size:.85rem">' +
+          (q.qty ? '<dt>Quantity</dt><dd class="tnum">' + q.qty.toLocaleString("en-US") + '</dd>' : '') +
+          '<dt>Account</dt><dd>' + esc(c.contact) + ' · ' + esc(c.email) + '</dd>' +
+          '<dt>Cycle</dt><dd class="tnum">' + cycleUsed(c.id) + ' of ' + c.quoteLimit + ' used</dd>' +
+          '</dl></div>' +
+        '<div class="stack">' +
+          '<button class="btn btn-primary btn-block" data-triage="accept:' + q.ref + '">Accept &amp; price it</button>' +
+          '<div class="card" style="background:var(--surface-2)">' +
+            '<span class="field-label">Decline this request</span>' +
+            '<textarea rows="3" data-reason="' + q.ref + '" ' +
+              'placeholder="Written for the client to read — e.g. below our practical minimum for this process."></textarea>' +
+            '<button class="btn btn-block" style="margin-top:.6rem;border-color:color-mix(in srgb,var(--stop) 40%,transparent);color:var(--stop)" ' +
+              'data-triage="reject:' + q.ref + '">Decline &amp; tell them</button>' +
+          '</div></div>' +
+      '</div></div></div>';
+  }).join("") + '</div>'
+  : '<div class="card empty"><div class="empty-icon">◷</div>Nothing waiting. Every request that has ' +
+    'come in has been accepted or declined.</div>';
+
+  if (decided.length) {
+    body += '<div class="card card-flush" style="margin-top:2rem">' +
+      '<div class="card-head"><h3>Recently triaged</h3></div>' +
+      '<div class="table-wrap"><table class="data"><thead><tr>' +
+      '<th>Ref</th><th>Client</th><th>Project</th><th>Decision</th></tr></thead><tbody>' +
+      decided.slice(0, 8).map(function (q) {
+        var isRej = q.status === "REJECTED";
+        return '<tr><td class="mono tiny">' + esc(q.ref) + '</td>' +
+          '<td>' + esc(client(q.clientId).name) + '</td>' +
+          '<td class="muted">' + esc(q.title) + '</td>' +
+          '<td><span class="badge badge-' + (isRej ? "red" : "blue") + '">' +
+            (isRej ? "We declined" : "Pricing") + '</span>' +
+            (q.reason ? '<div class="tiny dim">' + esc(q.reason) + '</div>' : '') + '</td></tr>';
+      }).join("") + '</tbody></table></div></div>';
+  }
+  return '<p class="muted" style="margin-bottom:1.5rem;max-width:64ch;font-size:.95rem">' +
+    'Everything that has just landed, oldest first. Accept it and it moves into the pricing queue with ' +
+    'the 24-hour clock still running. Decline it and the client is told why — nothing sits here silently.' +
+    '</p>' + body;
+}
+
+function adminRevenue() {
+  var t = totalsFor(S.range);
+  var r = RANGES.filter(function(x){return x.key===S.range;})[0];
+  var label = r.key === "1d" ? "today" : "last " + r.days + " days";
+  var spark = DAYS.slice(DAYS.length - 30).map(function(d){return d.cents;});
+
+  return '<div class="row-between wrap" style="margin-bottom:1.5rem;gap:1rem">' +
+      '<div><div class="stat-label">Revenue · ' + esc(label) + '</div>' +
+      '<div style="font-size:2.6rem;font-weight:600;letter-spacing:-.035em;line-height:1.1;margin-top:.35rem" class="tnum">' +
+        money(t.revenue) + '</div>' +
+      '<div style="margin-top:.4rem">' + deltaHtml(t.revenueDelta) + '</div></div>' +
+      '<div class="range-row" role="group" aria-label="Time period">' +
+        RANGES.map(function (x) {
+          return '<button class="range-btn ' + (S.range === x.key ? "active" : "") + '" data-range="' + x.key + '" ' +
+            'aria-pressed="' + (S.range === x.key) + '">' + x.label + '</button>';
+        }).join("") + '</div>' +
+    '</div>' +
+
+    '<div class="card" style="padding:1.5rem 1.5rem 1rem"><div id="chart"></div>' +
+      '<div class="row-between wrap tiny dim" style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--line-soft)">' +
+        '<span>' + (r.key === "1d" ? "Hour by hour, today" : "Daily revenue, " + esc(label)) + '</span>' +
+        '<span>Hover the chart for any single ' + (r.key === "1d" ? "hour" : "day") + '</span>' +
+      '</div></div>' +
+
+    '<div class="grid grid-4" style="margin-top:1.5rem">' +
+      stat("Orders", t.orders.toLocaleString("en-US"), (t.ordersDelta==null?"":""), false).replace('</div></div>',
+        '</div><div class="stat-sub">' + deltaHtml(t.ordersDelta) + '</div></div>') +
+      stat("Average order", money(t.aov), "across " + t.orders + " orders") +
+      stat("Best day", t.bestDay ? money(t.bestDay.cents) : "—", t.bestDay ? fmtFull(t.bestDay.date) : "") +
+      stat("Daily average", money(Math.round(t.revenue / Math.max(1, t.days))), "over " + t.days + " day" + (t.days===1?"":"s")) +
+    '</div>' +
+
+    '<div class="grid grid-sidebar" style="margin-top:1.5rem">' +
+      '<div class="card card-flush"><div class="card-head"><h3>Revenue by client · ' + esc(label) + '</h3></div>' +
+        revenueByClient(t) + '</div>' +
+      '<div class="stack">' +
+        '<div class="card"><div class="stat-label">Last 30 days</div>' +
+          '<div style="margin-top:.75rem">' + sparkline(spark) + '</div>' +
+          '<div class="tiny dim" style="margin-top:.5rem">' + money(spark.reduce(function(a,b){return a+b;},0)) + ' across 30 days</div></div>' +
+        '<div class="card"><div class="stat-label">How this is counted</div>' +
+          '<p class="tiny muted" style="margin-top:.6rem">Revenue books on the day funds are <strong>confirmed</strong>, ' +
+          'not when the order is placed. An ACH debit still settling isn\'t in these numbers.</p></div>' +
+      '</div></div>';
+}
+
+function revenueByClient(t) {
+  var share = [0.31, 0.24, 0.18, 0.16, 0.11];
+  var rows = CLIENTS.map(function (c, i) {
+    var rev = Math.round(t.revenue * share[i]);
+    var ord = Math.round(t.orders * share[i]);
+    return {c: c, rev: rev, ord: ord, pct: share[i]};
+  });
+  var max = Math.max.apply(null, rows.map(function(r){return r.rev;})) || 1;
+  return '<div class="table-wrap"><table class="data"><thead><tr>' +
+    '<th>Client</th><th>Share</th><th class="right">Orders</th><th class="right">Revenue</th><th></th>' +
+    '</tr></thead><tbody>' + rows.map(function (r) {
+      return '<tr><td><span class="cell-link" data-openclient="' + r.c.id + '">' + esc(r.c.name) + '</span>' +
+        '<div class="tiny mono dim">' + esc(r.c.ref) + '</div></td>' +
+        '<td style="min-width:120px"><div style="height:5px;border-radius:100px;background:var(--sunk);overflow:hidden">' +
+          '<span style="display:block;height:100%;width:' + (r.rev/max*100).toFixed(0) + '%;background:var(--chart)"></span></div>' +
+          '<div class="tiny dim" style="margin-top:.3rem">' + (r.pct*100).toFixed(0) + '%</div></td>' +
+        '<td class="right tnum">' + r.ord + '</td>' +
+        '<td class="right mono tnum" style="font-weight:500">' + money(r.rev) + '</td>' +
+        '<td class="right"><button class="btn btn-sm" data-openclient="' + r.c.id + '">Open portal</button></td></tr>';
+    }).join("") + '</tbody></table></div>';
+}
+
+function adminCrm() {
+  return '<p class="muted" style="margin-bottom:1.5rem;max-width:62ch;font-size:.95rem">' +
+    'Every account, what they\'ve asked us to price, and how much of their quote cycle they\'ve used. ' +
+    'A tag on an account opens every catalog item carrying that tag. One account carries one; the rest ' +
+    'are quote-only.</p>' +
+    '<div class="card card-flush"><div class="table-wrap"><table class="data"><thead><tr>' +
+      '<th>Client</th><th>Contact</th><th>Tags</th><th>Membership</th><th>Cycle</th>' +
+      '<th class="right">Quotes</th><th class="right">Products</th><th></th></tr></thead><tbody>' +
+    CLIENTS.map(function (c) {
+      var used = cycleUsed(c.id);
+      return '<tr>' +
+        '<td><div class="row" style="gap:.6rem"><div class="avatar">C' + c.id + '</div>' +
+          '<div><span class="cell-link" data-client="' + c.id + '">' + esc(c.name) + '</span>' +
+          '<div class="tiny mono dim">' + esc(c.ref) + '</div></div></div></td>' +
+        '<td class="tiny"><div>' + esc(c.contact) + '</div><div class="dim">' + esc(c.email) + '</div></td>' +
+        '<td class="tag-row">' + ((c.tags || []).length
+          ? c.tags.map(function (t) { return '<span class="tag tag-green">' + esc(t) + '</span>'; }).join("")
+          : '<span class="tiny dim">none</span>') + '</td>' +
+        '<td><span class="badge badge-green">Member</span></td>' +
+        '<td class="tiny mono tnum">' + used + '/' + c.quoteLimit +
+          '<div class="tiny dim">per ' + c.cycleDays + 'd</div></td>' +
+        '<td class="right tnum">' + quotesFor(c.id).length + '</td>' +
+        '<td class="right tnum">' + itemsForClient(c).length + '</td>' +
+        '<td class="right"><button class="btn btn-sm" data-openclient="' + c.id + '">Open portal</button></td>' +
+      '</tr>';
+    }).join("") + '</tbody></table></div></div>';
+}
+
+function adminCatalog() {
+  return '<p class="muted" style="margin-bottom:1rem;max-width:66ch;font-size:.95rem">' +
+    'What the floor can build, with our own costing. Nothing here is public. An item reaches a ' +
+    'client\'s portal when it carries a <strong>tag</strong> that client also carries — one tag opens ' +
+    'a whole range to a whole segment at once, and a client can hold as many tags as you like.</p>' +
+    '<div class="row wrap" style="gap:.4rem;margin-bottom:1.5rem;align-items:center">' +
+      '<span class="stat-label">Tags in use</span>' +
+      allTags().map(function (t) {
+        return '<span class="tag" title="' + t.items + ' items, ' + t.members + ' members">' +
+          esc(t.tag) + ' · ' + t.items + '/' + t.members + '</span>';
+      }).join("") + '<span class="tiny dim">items / members</span></div>' +
+    '<div class="card card-flush"><div class="table-wrap"><table class="data"><thead><tr>' +
+      '<th>SKU</th><th>Item</th><th>Tags</th><th class="right">Unit</th>' +
+      '<th class="right">MOQ</th><th class="right">Lead</th><th class="right">Reaches</th></tr></thead><tbody>' +
+    CATALOG.map(function (it) {
+      var reach = clientsForItem(it);
+      return '<tr><td class="mono tiny">' + esc(it.sku) + '</td>' +
+        '<td style="font-weight:500">' + esc(it.name) + '<div class="tiny dim">' + esc(it.cat) + '</div></td>' +
+        '<td class="tag-row">' + ((it.tags || []).length
+          ? it.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("")
+          : '<span class="tiny dim">untagged</span>') + '</td>' +
+        '<td class="right mono tnum">' + money(it.price) + '</td>' +
+        '<td class="right tnum">' + it.moq.toLocaleString("en-US") + '</td>' +
+        '<td class="right tiny">' + it.lead + 'd</td>' +
+        '<td class="right">' + (reach.length
+          ? '<span class="badge badge-green">' + reach.map(function (c) { return esc(c.name); }).join(", ") + '</span>'
+          : '<span class="badge badge-slate">no one</span>') + '</td></tr>';
+    }).join("") + '</tbody></table></div></div>';
+}
+
+function adminClients() {
+  return '<p class="muted" style="margin-bottom:1.5rem;max-width:62ch;font-size:.95rem">' +
+    'Open any client\'s portal exactly as they see it — their quotes, their cycle, their products. ' +
+    'Nothing is shared between accounts.</p>' +
+    '<div class="grid grid-3">' + CLIENTS.map(function (c) {
+      var used = cycleUsed(c.id);
+      return '<div class="card"><div class="row-between" style="align-items:flex-start">' +
+        '<div><div class="tiny mono dim">' + esc(c.ref) + '</div>' +
+        '<h3 style="margin-top:.25rem">' + esc(c.name) + '</h3>' +
+        '<div class="tiny muted">' + esc(c.contact) + '</div></div>' +
+        '<span class="badge badge-green">Member</span></div>' +
+        '<dl class="kv" style="margin-top:1.1rem;grid-template-columns:110px minmax(0,1fr);font-size:.82rem">' +
+          '<dt>Quotes</dt><dd class="tnum">' + quotesFor(c.id).length + '</dd>' +
+          '<dt>Cycle used</dt><dd class="tnum">' + used + ' of ' + c.quoteLimit + '</dd>' +
+          '<dt>Products</dt><dd>' + (itemsForClient(c).length || "none") + '</dd>' +
+        '</dl>' +
+        '<div class="row" style="gap:.5rem;margin-top:1.25rem">' +
+          '<button class="btn btn-primary btn-sm grow" data-openclient="' + c.id + '">Open dashboard</button>' +
+          '<button class="btn btn-sm" data-client="' + c.id + '">Record</button>' +
+        '</div></div>';
+    }).join("") + '</div>';
+}
+
+function adminClientHead() {
+  var c = client(S.adminClient);
+  return [c.ref + " · client record", c.name];
+}
+function adminClientBody() {
+  var c = client(S.adminClient), qs = quotesFor(c.id), used = cycleUsed(c.id);
+  return '<button class="btn btn-sm" data-atab="crm" style="margin-bottom:1.5rem">← Back to CRM</button>' +
+    '<div class="grid grid-4">' +
+      stat("Quote requests", qs.length, "all time") +
+      stat("Cycle used", used + " / " + c.quoteLimit, "per " + c.cycleDays + " days") +
+      stat("Products they can order", itemsForClient(c).length,
+           itemsForClient(c).length ? "via their tags" : "quote-only account") +
+      stat("Member since", fmtDate(c.memberSince, {month:"short", year:"numeric"}), esc(c.owner)) +
+    '</div>' +
+    '<div class="grid grid-sidebar" style="margin-top:1.5rem">' +
+      '<div class="card card-flush"><div class="card-head"><h3>Their quote requests</h3>' +
+        '<button class="btn btn-primary btn-sm" data-openclient="' + c.id + '">Open their portal</button></div>' +
+        quoteTable(qs) + '</div>' +
+      '<div class="stack">' +
+        '<div class="card"><div class="stat-label">Catalog tags</div>' +
+          '<p class="tiny muted" style="margin-top:.5rem">Give this account a tag and every item carrying ' +
+          'it appears in their portal straight away. Click to toggle.</p>' +
+          '<div class="tag-row" style="margin-top:.85rem">' + allTags().map(function (t) {
+            var on = (c.tags || []).indexOf(t.tag) !== -1;
+            return '<button class="tag ' + (on ? "tag-green" : "tag-muted") + '" ' +
+              'style="cursor:pointer" data-tag="' + c.id + ':' + esc(t.tag) + '">' +
+              (on ? "✓ " : "+ ") + esc(t.tag) + '</button>';
+          }).join("") + '</div></div>' +
+        '<div class="card"><div class="stat-label">Contact</div><dl class="kv" style="margin-top:.85rem;grid-template-columns:80px minmax(0,1fr);font-size:.85rem">' +
+          '<dt>Name</dt><dd>' + esc(c.contact) + '</dd>' +
+          '<dt>Email</dt><dd class="mono tiny">' + esc(c.email) + '</dd>' +
+          '<dt>Phone</dt><dd class="mono tiny">' + esc(c.phone) + '</dd>' +
+          '<dt>Where</dt><dd>' + esc(c.city) + ', ' + esc(c.country) + '</dd></dl></div>' +
+        '<div class="card"><div class="stat-label">What they can order</div>' +
+          (itemsForClient(c).length
+            ? '<div class="stack-sm" style="margin-top:.75rem">' + itemsForClient(c).map(function (m) {
+                return '<div class="row-between" style="gap:.75rem">' +
+                  '<span style="font-size:.85rem">' + esc(m.item.name) + '</span>' +
+                  '<span class="mono tiny">' + money(m.item.price) + '</span></div>';
+              }).join("") + '</div>'
+            : '<p class="tiny muted" style="margin-top:.6rem">Nothing yet — no tag on this account ' +
+              'matches a catalog item, so their portal is quote-only.</p>') +
+          '<button class="btn btn-sm btn-block" style="margin-top:.9rem" data-atab="catalog">Open the catalog</button></div>' +
+      '</div></div>';
+}
+
+/* ==========================================================================
+   Render + events
+   ========================================================================== */
+function render() {
+  var app = document.getElementById("app");
+  var isAdmin = S.route === "admin";
+  document.body.className = isAdmin ? "workshop" : "showroom";
+
+  var html;
+  switch (S.route) {
+    case "home":        html = viewHome(); break;
+    case "catalogue":   html = viewCatalogue(); break;
+    case "catalogue-item": html = viewCatalogueItem(); break;
+    case "how":         html = viewHow(); break;
+    case "membership":  html = viewMembership(); break;
+    case "quote":       html = viewQuote(); break;
+    case "quote-done":  html = viewQuoteDone(); break;
+    case "apply":       html = viewApply(); break;
+    case "apply-done":  html = viewApplyDone(); break;
+    case "login":       html = viewLogin(); break;
+    case "portal":      html = viewPortal(); break;
+    case "quote-member":html = viewMemberQuote(); break;
+    case "checkout":    html = viewCheckout(); break;
+    case "paid":        html = viewPaid(); break;
+    case "admin":       html = viewAdmin(); break;
+    default:            html = viewHome();
+  }
+  app.innerHTML = (S.route === "login" ? "" : demoBar()) + html;
+
+  if (S.route === "admin" && S.adminTab === "revenue" && !S.adminClient) {
+    var host = document.getElementById("chart");
+    if (host) renderChart(host, S.range);
+  }
+  wire();
+}
+
+function wire() {
+  var app = document.getElementById("app");
+
+  app.querySelectorAll("[data-act]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      e.preventDefault();
+      var act = el.getAttribute("data-act");
+      if (act === "logout") { S.user = null; S.flash = ""; go("home"); return; }
+      if (act === "admin-demo") { S.user = {kind:"admin"}; S.adminClient = null; S.adminTab = "revenue"; go("admin"); return; }
+      if (act === "client-demo") { S.user = {kind:"client", id:1}; S.portalTab = "overview"; go("portal"); return; }
+      if (act === "portal" && !S.user) { go("login"); return; }
+      if (act === "quote-member" && !S.user) { go("login"); return; }
+      if (act === "admin" && (!S.user || S.user.kind !== "admin")) { go("login"); return; }
+      go(act);
+    });
+  });
+
+  app.querySelectorAll("[data-atab]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.adminTab = el.getAttribute("data-atab"); S.adminClient = null; go("admin");
+    });
+  });
+  app.querySelectorAll("[data-ptab]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.portalTab = el.getAttribute("data-ptab"); S.flash = ""; go("portal");
+    });
+  });
+  app.querySelectorAll("[data-client]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.adminClient = parseInt(el.getAttribute("data-client"), 10); S.adminTab = "crm"; go("admin");
+    });
+  });
+  app.querySelectorAll("[data-openclient]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      S.user = {kind:"client", id: parseInt(el.getAttribute("data-openclient"), 10)};
+      S.portalTab = "overview"; S.flash = ""; go("portal");
+    });
+  });
+  app.querySelectorAll("[data-range]").forEach(function (el) {
+    el.addEventListener("click", function () { S.range = el.getAttribute("data-range"); go("admin"); });
+  });
+
+  app.querySelectorAll("[data-cat]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      e.stopPropagation();
+      S.catSku = el.getAttribute("data-cat");
+      go("catalogue-item");
+    });
+  });
+
+  app.querySelectorAll("[data-iv]").forEach(wireViewer);
+
+  app.querySelectorAll("[data-buy]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var sku = el.getAttribute("data-buy");
+      var it = CATALOG.filter(function (x) { return x.sku === sku; })[0];
+      S.cart = {sku: sku, qty: it.moq};
+      go("checkout");
+    });
+  });
+  app.querySelectorAll("[data-copy]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var text = el.getAttribute("data-copy");
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () { el.textContent = "Copied"; });
+      } else { el.textContent = text; }
+    });
+  });
+  app.querySelectorAll("[data-tag]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var parts = el.getAttribute("data-tag").split(":");
+      var c = client(parseInt(parts[0], 10)), tag = parts[1];
+      c.tags = c.tags || [];
+      var i = c.tags.indexOf(tag);
+      if (i === -1) { c.tags.push(tag); } else { c.tags.splice(i, 1); }
+      go("admin");
+    });
+  });
+  app.querySelectorAll("[data-triage]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var parts = el.getAttribute("data-triage").split(":");
+      var action = parts[0], ref = parts[1];
+      var q = QUOTES.concat(S.submitted).filter(function (x) { return x.ref === ref; })[0];
+      if (!q) return;
+      if (action === "accept") {
+        q.status = "IN_REVIEW"; q.triaged = TODAY;
+      } else {
+        var box = app.querySelector('[data-reason="' + ref + '"]');
+        var reason = box && box.value.trim();
+        if (!reason) { if (box) { box.focus(); box.style.borderColor = "var(--stop)"; } return; }
+        q.status = "REJECTED"; q.triaged = TODAY; q.reason = reason;
+      }
+      go("admin");
+    });
+  });
+
+  var qtyEl = app.querySelector("#qty");
+  if (qtyEl) {
+    var it = CATALOG.filter(function (x) { return x.sku === S.cart.sku; })[0];
+    qtyEl.addEventListener("input", function () {
+      var q = Math.max(it.moq, parseInt(qtyEl.value, 10) || it.moq);
+      S.cart.qty = q;
+      go("checkout");   // quantity changes the freight estimate too, so re-price the lot
+    });
+  }
+  var payForm = app.querySelector("#pay-form");
+  if (payForm) {
+    var paint = function () {
+      var el = payForm.querySelector('input[name="method"]:checked');
+      if (!el) return;
+      app.querySelector("#proc").textContent = el.dataset.feeText;
+      app.querySelector("#total").textContent = el.dataset.totalText;
+      app.querySelector("#paybtn").textContent = "Pay " + el.dataset.totalText;
+      app.querySelector("#proc-method").textContent = "\u2014 " + el.dataset.label.toLowerCase();
+      app.querySelector("#proc-note").textContent = el.dataset.rate;
+    };
+    payForm.querySelectorAll('input[name="method"]').forEach(function (el) {
+      el.addEventListener("change", paint);
+    });
+    paint();
+  }
+  if (payForm) payForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var it = CATALOG.filter(function (x) { return x.sku === S.cart.sku; })[0];
+    var method = payForm.querySelector('input[name="method"]:checked').value;
+    var ach = method === "ach";
+    var q = S.quote, opt = q.opts.filter(function (o) { return o.key === method; })[0];
+    S.placed.push({
+      ref: "MMI-O-" + (2600 + S.placed.length), clientId: S.user.id, sku: it.sku, name: it.name,
+      unit: it.price, qty: S.cart.qty, method: ach ? "ACH" : "CARD",
+      goods: q.goods, freightEstimate: q.est.total, freightWaived: q.waived,
+      freightCharged: q.charged, convenienceFee: q.fee, processingFee: opt.fee, total: opt.total,
+      ordered: TODAY, paid: ach ? null : TODAY, reviewed: null, production: null,
+      shipped: null, delivered: null, carrier: null, tracking: null,
+      status: ach ? "PENDING" : "IN_REVIEW"
+    });
+    S.cart = null;
+    go("paid");
+  });
+
+  var login = app.querySelector("#login-form");
+  if (login) login.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var u = (login.user.value || "").trim(), p = (login.pass.value || "").trim();
+    if (u === "Tyler1" && p === "Tyler1") {
+      S.user = {kind:"admin"}; S.adminTab = "revenue"; S.adminClient = null; go("admin"); return;
+    }
+    var m = /^client([1-5])$/i.exec(u);
+    if (m && p.toLowerCase() === "client") {
+      S.user = {kind:"client", id: parseInt(m[1], 10)}; S.portalTab = "overview"; go("portal"); return;
+    }
+    S.loginError = "Those credentials don't match an account. Try Tyler1 / Tyler1, or client1 / client.";
+    render();
+  });
+
+  var qf = app.querySelector("#quote-form");
+  if (qf) qf.addEventListener("submit", function (e) { e.preventDefault(); go("quote-done"); });
+  var af = app.querySelector("#apply-form");
+  if (af) af.addEventListener("submit", function (e) { e.preventDefault(); go("apply-done"); });
+
+  var mq = app.querySelector("#member-quote-form");
+  if (mq) mq.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var c = client(S.user.id);
+    if (cycleUsed(c.id) >= c.quoteLimit) return;
+    var n = QUOTES.length + S.submitted.length + 1001;
+    S.submitted.push({
+      ref: "MMI-Q-" + n, clientId: c.id,
+      title: (mq.title.value || "New project").trim(),
+      qty: parseInt(mq.qty.value, 10) || null, unit: null, total: null,
+      status: "NEW", created: TODAY, due: addDays(TODAY, 1)
+    });
+    S.flash = "Sent to the floor. A landed price comes back within 24 hours.";
+    S.portalTab = "overview";
+    go("portal");
+  });
+}
+
+render();
+})();
+</script>
+
+

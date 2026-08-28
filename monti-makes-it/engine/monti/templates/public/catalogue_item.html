@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "_image_viewer.html" import viewer %}
+{% block title %}{{ item.name }} · {{ company }}{% endblock %}
+{% block body %}
+
+<section class="section" style="padding-top:clamp(2.5rem,6vw,4rem)">
+  <div class="container">
+    <a class="tiny dim" href="{{ url_for('public.catalogue_index') }}">&lsaquo; Catalogue</a>
+
+    <div class="grid grid-2" style="margin-top:1.5rem;gap:clamp(2rem,4vw,3.5rem);align-items:start">
+      <div>
+        {{ viewer(item.images, item.name, 'cat-' ~ item.id) }}
+      </div>
+
+      <div style="display:grid;gap:1.25rem">
+        <div>
+          <div class="tiny mono dim">{{ item.category }} · {{ item.sku }}</div>
+          <h1 style="margin:.5rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem)">{{ item.name }}</h1>
+        </div>
+
+        {% set r = range_text(item) %}
+        {% if r %}
+          <div>
+            <div class="cat-range" style="font-size:1.6rem">{{ r }}
+              <span class="tiny dim" style="font-family:var(--sans)">per unit</span></div>
+            {# §8.2 — the catalogue publishes a range, and says in plain language what moves a
+               price inside it. A range with no stated driver is a number a buyer cannot act on. #}
+            {% if item.range_drivers %}
+              <p class="cat-range-note" style="margin-top:.6rem;max-width:52ch">
+                What moves it: {{ item.range_drivers }}
+              </p>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="cat-meta">
+          {% if item.typical_moq %}<span><strong>MOQ</strong> ~{{ '{:,}'.format(item.typical_moq) }}</span>{% endif %}
+          {% if item.typical_lead_time_days %}<span><strong>Lead time</strong> ~{{ item.typical_lead_time_days }} days</span>{% endif %}
+          <span><strong>Origin</strong> China</span>
+        </div>
+
+        {% if item.description %}<p style="max-width:56ch">{{ item.description }}</p>{% endif %}
+
+        {#
+          §8.5 — five viewer states, and no viewer ever sees an Order control
+          they cannot use. `cta` comes from the same function the server-side
+          gate calls, so the button and the refusal cannot disagree: an Order
+          button that then refuses is a P1.
+        #}
+        <div class="row wrap" style="gap:.75rem">
+          {% if cta == 'ORDER' %}
+            <a class="btn btn-primary btn-lg"
+               href="{{ url_for('portal.catalog_item', item_id=item.id) }}">Order at your price</a>
+            <span class="tiny dim" style="align-self:center">Registered to your account.</span>
+
+          {% elif cta == 'REQUEST' %}
+            <a class="btn btn-primary btn-lg"
+               href="{{ url_for('public.quote', item=item.sku) }}">Request this item</a>
+            <span class="tiny dim" style="align-self:center;max-width:34ch">
+              This one isn't registered to your account yet. Requesting it uses one of your
+              quote slots, same as any other request.</span>
+
+          {% elif cta == 'PAUSED' %}
+            <div class="notice notice-wait">
+              <strong>Your account is paused.</strong>
+              You can still look and still ask for prices — ordering is switched off until it is
+              reinstated. Reply to your last email from us, or write to
+              <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>, and we will
+              sort it out.
+            </div>
+
+          {% elif cta == 'NOT_MEMBER' %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+            <a class="btn btn-outline btn-lg" href="{{ url_for('public.quote', item=item.sku) }}">Request a Quote</a>
+            <p class="tiny dim" style="flex-basis:100%;margin:0;max-width:52ch">
+              Anyone can get a price. Buying needs membership, and then this item registered to
+              your account — we do that once we have priced it for you.</p>
+
+          {% else %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+            <a class="btn btn-outline btn-lg" href="{{ url_for('public.quote', item=item.sku) }}">Request a Quote</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/image-viewer.js') }}" defer></script>
+{% endblock %}

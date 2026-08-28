@@ -10,11 +10,11 @@ import uuid
 from pathlib import Path
 
 from flask import (
-    Blueprint, current_app, flash, g, redirect, render_template, request, url_for,
+    Blueprint, abort, current_app, flash, g, redirect, render_template, request, url_for,
 )
 from werkzeug.utils import secure_filename
 
-from .. import mail, membership
+from .. import catalogue, mail, membership
 from ..auth import ensure_portal_user
 from ..db import execute, next_ref, query
 from ..utils import money, now_str, plus_hours, pretty_dt, to_cents, to_int
@@ -56,6 +56,34 @@ def membership_page():
 @bp.route("/contact")
 def contact():
     return render_template("public/contact.html")
+
+
+# --------------------------------------------------------------------------
+# door three — browse the catalogue (§8.2)
+#
+# Open to everyone, signed in or not. What is gated is buying, not looking, so
+# these two routes take no customer parameter and never join a registration:
+# there is nothing customer-shaped in scope for a negotiated price to leak from.
+# The call to action is the one place the viewer's state matters, and it is
+# computed by the same function the server-side gate uses.
+# --------------------------------------------------------------------------
+@bp.route("/catalogue")
+def catalogue_index():
+    items = catalogue.public_items()
+    return render_template("public/catalogue.html", items=items,
+                           range_text=catalogue.range_text)
+
+
+@bp.route("/catalogue/<sku>")
+def catalogue_item(sku):
+    item = catalogue.public_item_by_sku(sku)
+    if item is None:
+        abort(404)
+    customer = g.get("customer")
+    return render_template("public/catalogue_item.html", item=item,
+                           range_text=catalogue.range_text,
+                           cta=catalogue.cta_state(customer, item["id"]),
+                           customer=customer)
 
 
 # --------------------------------------------------------------------------

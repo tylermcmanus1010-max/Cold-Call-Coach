@@ -24,6 +24,7 @@
         </span>
       </a>
       <nav class="nav-links">
+        <a href="{{ url_for('public.catalogue_index') }}">Catalogue</a>
         <a href="{{ url_for('public.how_it_works') }}">How it works</a>
         <a href="{{ url_for('public.membership_page') }}">Membership</a>
         {% if g.user %}
@@ -49,6 +50,7 @@
         <span class="tiny">{{ company }} · we are the manufacturer</span>
       </div>
       <div class="row wrap" style="gap:1.5rem">
+        <a href="{{ url_for('public.catalogue_index') }}">Catalogue</a>
         <a href="{{ url_for('public.quote') }}">Request a quote</a>
         <a href="{{ url_for('public.apply') }}">Apply for membership</a>
         <a href="{{ url_for('public.how_it_works') }}">How it works</a>
@@ -58,5 +60,6 @@
     </div>
   </footer>
 {% endblock %}
+{% block scripts %}{% endblock %}
 </body>
 </html>

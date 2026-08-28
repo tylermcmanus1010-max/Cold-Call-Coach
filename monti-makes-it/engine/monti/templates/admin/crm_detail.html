@@ -128,16 +128,16 @@
             <tr>
               <td class="mono tiny">{{ i.sku }}</td>
               <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ i.name }}</a>
-                {% if i.note %}<div class="tiny dim">{{ i.note }}</div>{% endif %}</td>
-              <td class="right mono">{{ (i.custom_price_cents if i.custom_price_cents is not none else i.unit_price_cents)|money }}
-                {% if i.custom_price_cents is not none %}<div class="tiny dim">list {{ i.unit_price_cents|money }}</div>{% endif %}</td>
-              <td class="right mono">{{ '{:,}'.format(i.custom_moq or i.moq) }}</td>
+                {% if i.registration_note %}<div class="tiny dim">{{ i.registration_note }}</div>{% endif %}</td>
+              <td class="right mono">{{ (i.their_price_cents if i.their_price_cents is not none else i.unit_price_cents)|money }}
+                {% if i.their_price_cents is not none %}<div class="tiny dim">list {{ i.unit_price_cents|money }}</div>{% endif %}</td>
+              <td class="right mono">{{ '{:,}'.format(i.their_moq or i.moq) }}</td>
               <td class="tiny dim">{{ i.assigned_at|relative }}</td>
               <td class="right">
                 <form method="post" action="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ csrf_input() }}
                   <input type="hidden" name="action" value="unassign">
                   <input type="hidden" name="customer_id" value="{{ customer.id }}">
-                  <button class="btn btn-ghost btn-sm" type="submit">Remove</button></form></td>
+                  <button class="btn btn-ghost btn-sm" type="submit">Deactivate</button></form></td>
             </tr>
           {% endfor %}</tbody></table></div>
       {% else %}<div class="empty" style="padding:2rem 1rem">Nothing assigned yet.</div>{% endif %}
@@ -159,8 +159,8 @@
           <form method="post" id="real-assign" style="display:none">{{ csrf_input() }}
             <input type="hidden" name="action" value="assign">
             <input type="hidden" name="customer_id" value="{{ customer.id }}">
-            <input type="hidden" name="custom_price" id="ra-price">
-            <input type="hidden" name="custom_moq" id="ra-moq">
+            <input type="hidden" name="unit_price" id="ra-price">
+            <input type="hidden" name="moq" id="ra-moq">
           </form>
           <script>
             function doAssign() {

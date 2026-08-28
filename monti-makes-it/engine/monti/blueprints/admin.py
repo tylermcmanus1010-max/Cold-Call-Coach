@@ -309,7 +309,7 @@ def quote_to_catalog(quote_id):
          "\n".join(filter(None, [quote["dimensions"], quote["color_finish"], quote["packaging"]])),
          estimate["unit_price_cents"], estimate["moq"], estimate["lead_time_days"], quote["id"]),
     )
-    execute("INSERT OR IGNORE INTO catalog_assignments (item_id, customer_id, assigned_by) VALUES (?, ?, ?)",
+    execute("INSERT OR IGNORE INTO catalogue_registrations (item_id, customer_id, assigned_by) VALUES (?, ?, ?)",
             (item_id, quote["customer_id"], g.user["email"]))
     flash(f"Added to the catalog as {sku} and assigned to this client.", "ok")
     return redirect(url_for("admin.catalog_detail", item_id=item_id))
@@ -556,12 +556,13 @@ def crm_detail(customer_id):
     orders_rows = query("SELECT * FROM orders WHERE customer_id = ? ORDER BY created_at DESC",
                         (customer_id,))
     assigned = query(
-        "SELECT i.*, a.custom_price_cents, a.custom_moq, a.note, a.assigned_at "
-        "FROM catalog_assignments a JOIN catalog_items i ON i.id = a.item_id "
+        "SELECT i.*, a.unit_price_cents AS their_price_cents, a.moq AS their_moq, "
+        "       a.notes AS registration_note, a.assigned_at "
+        "FROM catalogue_registrations a JOIN catalog_items i ON i.id = a.item_id AND a.active = 1 "
         "WHERE a.customer_id = ? ORDER BY a.assigned_at DESC", (customer_id,))
     unassigned = query(
         "SELECT * FROM catalog_items WHERE is_active = 1 AND id NOT IN "
-        "(SELECT item_id FROM catalog_assignments WHERE customer_id = ?) ORDER BY name",
+        "(SELECT item_id FROM catalogue_registrations WHERE customer_id = ? AND active = 1) ORDER BY name",
         (customer_id,))
     events = query(
         "SELECT * FROM calendar_events WHERE customer_id = ? ORDER BY starts_at DESC LIMIT 12",
@@ -672,7 +673,8 @@ def calendar_delete(event_id):
 @bp.route("/catalog")
 def catalog():
     items = query(
-        "SELECT i.*, (SELECT COUNT(*) FROM catalog_assignments a WHERE a.item_id = i.id) AS assignees "
+        "SELECT i.*, (SELECT COUNT(*) FROM catalogue_registrations a "
+        "        WHERE a.item_id = i.id AND a.active = 1) AS assignees "
         "FROM catalog_items i ORDER BY i.is_active DESC, i.created_at DESC")
     reach = {i["id"]: len(catalog_mod.customers_for_item(i)) for i in items}
     return render_template("admin/catalog.html", items=items, reach=reach,
@@ -726,32 +728,43 @@ def catalog_detail(item_id):
         elif action == "assign":
             cid = to_int(form.get("customer_id"))
             if cid:
+                # Re-registering a customer whose registration was deactivated
+                # reactivates it and clears the deactivation stamp, rather than
+                # leaving a row that says both things at once.
                 execute(
-                    "INSERT INTO catalog_assignments (item_id, customer_id, custom_price_cents, "
-                    "custom_moq, note, assigned_by) VALUES (?, ?, ?, ?, ?, ?) "
+                    "INSERT INTO catalogue_registrations (item_id, customer_id, unit_price_cents, "
+                    "moq, lead_time_days, notes, assigned_by) VALUES (?, ?, ?, ?, ?, ?, ?) "
                     "ON CONFLICT(item_id, customer_id) DO UPDATE SET "
-                    "custom_price_cents = excluded.custom_price_cents, custom_moq = excluded.custom_moq, "
-                    "note = excluded.note",
-                    (item_id, cid, to_cents(form.get("custom_price")) or None,
-                     to_int(form.get("custom_moq")) or None, form.get("note"), g.user["email"]))
+                    "unit_price_cents = excluded.unit_price_cents, moq = excluded.moq, "
+                    "lead_time_days = excluded.lead_time_days, notes = excluded.notes, "
+                    "active = 1, deactivated_by = NULL, deactivated_at = NULL, "
+                    "assigned_by = excluded.assigned_by, assigned_at = datetime('now')",
+                    (item_id, cid, to_cents(form.get("unit_price")) or None,
+                     to_int(form.get("moq")) or None, to_int(form.get("lead_time_days")) or None,
+                     form.get("note"), g.user["email"]))
                 execute("INSERT INTO crm_activities (customer_id, kind, body, author) VALUES (?, 'SYSTEM', ?, ?)",
                         (cid, f"Catalog item {item['sku']} assigned to their portal", g.user["email"]))
                 flash("Assigned — it's now visible in that client's portal.", "ok")
         elif action == "unassign":
+            # Deactivate, never delete. A member who reorders from history has
+            # to be refused by a record that says when the registration ended
+            # and who ended it (WI-K-05); a deleted row cannot say that.
             cid = to_int(form.get("customer_id"))
-            execute("DELETE FROM catalog_assignments WHERE item_id = ? AND customer_id = ?",
-                    (item_id, cid))
-            flash("Removed from that client's portal.", "ok")
+            execute(
+                "UPDATE catalogue_registrations SET active = 0, deactivated_by = ?, "
+                "deactivated_at = datetime('now') WHERE item_id = ? AND customer_id = ?",
+                (g.user["email"], item_id, cid))
+            flash("Registration deactivated — they can no longer order it.", "ok")
         return redirect(url_for("admin.catalog_detail", item_id=item_id))
 
     assignments = query(
-        "SELECT a.*, c.company_name, c.ref FROM catalog_assignments a "
-        "JOIN customers c ON c.id = a.customer_id WHERE a.item_id = ? ORDER BY a.assigned_at DESC",
-        (item_id,))
+        "SELECT a.*, c.company_name, c.ref FROM catalogue_registrations a "
+        "JOIN customers c ON c.id = a.customer_id WHERE a.item_id = ? AND a.active = 1 "
+        "ORDER BY a.assigned_at DESC", (item_id,))
     available = query(
         "SELECT * FROM customers WHERE id NOT IN "
-        "(SELECT customer_id FROM catalog_assignments WHERE item_id = ?) ORDER BY company_name",
-        (item_id,))
+        "(SELECT customer_id FROM catalogue_registrations WHERE item_id = ? AND active = 1) "
+        "ORDER BY company_name", (item_id,))
     return render_template("admin/catalog_detail.html", item=item, assignments=assignments,
                            available=available, reach=catalog_mod.customers_for_item(item),
                            all_tags=catalog_mod.all_tags())

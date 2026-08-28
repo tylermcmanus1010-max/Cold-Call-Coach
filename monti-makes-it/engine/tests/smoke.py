@@ -417,7 +417,7 @@ def main():
         with app.app_context():
             from monti.db import query
             order = query("SELECT * FROM orders WHERE customer_id = ? ORDER BY id DESC LIMIT 1",
-                          (item and query("SELECT customer_id FROM catalog_assignments "
+                          (item and query("SELECT customer_id FROM catalogue_registrations "
                                           "WHERE item_id = ?", (item["id"],), one=True)["customer_id"],),
                           one=True)
             check("the order is priced at their agreed rate",
@@ -687,14 +687,14 @@ def main():
             check("a second tag adds to the first, it doesn't replace it",
                   len(cat.items_for_customer(c2)) > len(granted))
             item = query("SELECT * FROM catalog_items WHERE sku = 'MMI-2002'", one=True)
-            execute("INSERT OR REPLACE INTO catalog_assignments (item_id, customer_id, "
-                    "custom_price_cents, assigned_by) VALUES (?, ?, ?, 'test')",
+            execute("INSERT OR REPLACE INTO catalogue_registrations (item_id, customer_id, "
+                    "unit_price_cents, assigned_by) VALUES (?, ?, ?, 'test')",
                     (item["id"], c2["id"], 29))
             c2 = account("client2")
             both = [i for i in cat.items_for_customer(c2) if i["id"] == item["id"]][0]
             check("a negotiated price beats the tag price", both["price_cents"] == 29 and
                   both["negotiated"], str(both["price_cents"]))
-            execute("DELETE FROM catalog_assignments WHERE customer_id = ?", (c2["id"],))
+            execute("DELETE FROM catalogue_registrations WHERE customer_id = ?", (c2["id"],))
             execute("UPDATE customers SET catalog_tags = NULL WHERE id = ?", (c2["id"],))
             c2 = account("client2")
             check("removing every tag closes the door again", cat.items_for_customer(c2) == [])
@@ -723,7 +723,7 @@ def main():
             check("the first demo account is a member", c1 and c1["membership_status"] == "MEMBER")
             c5 = account("client5")
             check("the fifth demo account is still quote-only", query(
-                "SELECT COUNT(*) AS c FROM catalog_assignments WHERE customer_id = ?",
+                "SELECT COUNT(*) AS c FROM catalogue_registrations WHERE customer_id = ? AND active = 1",
                 (c5["id"],), one=True)["c"] == 0 and not c5["catalog_tags"])
         r = c.get("/admin/clients/" + str(c1["id"]) + "/open", follow_redirects=True)
         check("admin lands in the client's portal",

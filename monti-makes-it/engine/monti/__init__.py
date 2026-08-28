@@ -72,8 +72,46 @@ def create_app(config_object=None):
 
     @app.cli.command("seed")
     def seed_command():
-        """Load demo data (customers, quotes, catalog, orders)."""
+        """Load demo data (customers, quotes, catalogue, orders). Never in production."""
         from .seed import run_seed
         run_seed()
+
+    @app.cli.command("purge-fixtures")
+    def purge_command():
+        """Delete every seeded row, after a verified backup. Prints the evidence."""
+        import json
+        from . import purge as purge_mod
+        from .db import init_db
+        init_db()
+        result = purge_mod.purge()
+        print(json.dumps({k: v for k, v in result.items() if k != "inventory"}, indent=2))
+        print(f"inventory: {len(result['inventory'])} fixture rows deleted")
+
+    @app.cli.command("launch")
+    def launch_command():
+        """Bring the database to its launch state: no fixtures, Boarshead live."""
+        from . import launch as launch_mod
+        from .agents import provision_agent, unprovisioned_customers
+        from .auth import create_user, generate_password
+        from .db import init_db, query
+        init_db()
+
+        if query("SELECT COUNT(*) AS c FROM customers WHERE is_fixture = 1", one=True)["c"]:
+            raise SystemExit(
+                "Fixture rows are still present. Run `flask purge-fixtures` first — "
+                "launching on top of demo data is how a demo customer reaches production.")
+
+        if not query("SELECT id FROM users WHERE role = 'ADMIN'", one=True):
+            pw = generate_password()
+            create_user("admin@montimakesit.com", pw, name="Admin", role="ADMIN",
+                        must_change_password=True)
+            print(f"  admin@montimakesit.com / {pw}  (must change on first sign-in)")
+
+        customer_id = launch_mod.provision_boarshead()
+        # The zero-orphan rule: no customer without an agent, including any that
+        # predate this command.
+        for row in unprovisioned_customers():
+            provision_agent(row["id"])
+        print(f"Boarshead is live as customer #{customer_id}.")
 
     return app

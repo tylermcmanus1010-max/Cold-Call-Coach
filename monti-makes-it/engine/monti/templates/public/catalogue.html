@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Catalogue · {{ company }}{% endblock %}
+{% block body %}
+
+<section class="section" style="padding-top:clamp(3rem,7vw,5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Catalogue</span>
+    <h1 style="margin-top:1rem">Things we make, and what they cost</h1>
+    <p class="section-lede">
+      Real items off our line, with real price ranges. Anyone can look — you do not need an
+      account and we do not ask for an email to show you a number.
+    </p>
+    <p class="tiny dim" style="margin-top:1rem;max-width:62ch">
+      These are ranges, not quotes. Where a price lands inside one depends on how many you order
+      and how the item is specified — each listing says which. To get your number, ask for a
+      quote; to buy, you need to be a member and the item needs to be registered to your account.
+    </p>
+  </div>
+</section>
+
+<section class="section rule-top">
+  <div class="container">
+    {% if items %}
+      <div class="cat-grid">
+        {% for item in items %}
+          <article class="cat-card">
+            {% if item.images %}
+              <div class="iv-thumb-media" aria-hidden="true">
+                {% set first = item.images[0] %}
+                {% if first.svg %}{{ first.svg|safe }}
+                {% else %}<img src="{{ url_for('static', filename='uploads/' ~ first.stored_name) }}"
+                               alt="{{ first.alt_text }}" loading="lazy">{% endif %}
+              </div>
+            {% endif %}
+            <div class="cat-card-body">
+              <div class="tiny mono dim">{{ item.category }}</div>
+              <h3 style="margin:0;font-size:1.05rem">{{ item.name }}</h3>
+              {% set r = range_text(item) %}
+              {% if r %}
+                <div class="cat-range">{{ r }} <span class="tiny dim">per unit</span></div>
+              {% else %}
+                <div class="cat-range-note">Priced per specification — ask us.</div>
+              {% endif %}
+              <div class="cat-meta">
+                {% if item.typical_moq %}<span>MOQ ~{{ '{:,}'.format(item.typical_moq) }}</span>{% endif %}
+                {% if item.typical_lead_time_days %}<span>{{ item.typical_lead_time_days }} days typical</span>{% endif %}
+              </div>
+            </div>
+            <div class="cat-cta">
+              <a class="btn btn-outline btn-sm"
+                 href="{{ url_for('public.catalogue_item', sku=item.sku) }}">See it</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty" style="padding:3rem 1rem">
+        <p>Nothing published to the catalogue yet.</p>
+        <p class="tiny dim">Tell us what you want made and we will price it inside
+          {{ cfg.QUOTE_SLA_HOURS }} hours.</p>
+        <a class="btn btn-primary" href="{{ url_for('public.quote') }}"
+           style="margin-top:1rem">Request a Quote</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

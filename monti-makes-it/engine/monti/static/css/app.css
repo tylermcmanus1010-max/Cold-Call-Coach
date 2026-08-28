@@ -765,3 +765,148 @@ table.data tfoot tr:last-child td { border-bottom: 0; }
 }
 .free-tag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 @media (max-width: 620px) { .free-tag { white-space: normal; text-align: left; } }
+
+/* ==========================================================================
+   The item image viewer (§10.3)
+   One component, four surfaces. Sized for a thumb first: every control is at
+   least 44px, and the close and navigation controls sit where a thumb reaches
+   on a phone held one-handed rather than in the far corners.
+   ========================================================================== */
+.iv-thumbs {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: .75rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+.iv-thumb {
+  width: 100%; padding: 0; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); cursor: zoom-in; overflow: hidden; text-align: left;
+  display: flex; flex-direction: column; min-height: 44px;
+}
+.iv-thumb:hover { border-color: var(--green-line); }
+.iv-thumb:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.iv-thumb-media { display: block; background: var(--sunk); aspect-ratio: 4 / 3; }
+.iv-thumb-media img, .iv-thumb-media svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.iv-thumb-caption {
+  padding: .55rem .7rem; font-size: .8rem; color: var(--ink-2); line-height: 1.35;
+}
+
+.iv-dialog {
+  position: fixed; inset: 0; z-index: 90;
+  background: color-mix(in srgb, var(--ink) 94%, transparent);
+  display: grid; grid-template-rows: auto 1fr;
+}
+body.iv-open { overflow: hidden; }
+.iv-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .6rem max(0.35cm, .75rem);
+  color: var(--on-accent);
+}
+.iv-count { font-family: var(--mono); font-size: .78rem; letter-spacing: .08em; opacity: .8; }
+.iv-tools { display: flex; gap: .4rem; }
+.iv-btn {
+  min-width: 44px; min-height: 44px; padding: 0 .7rem;
+  background: transparent; color: var(--on-accent);
+  border: 1px solid rgba(255,255,255,.28); border-radius: var(--radius-sm);
+  font-size: 1.05rem; cursor: pointer;
+}
+.iv-btn:focus-visible { outline: 2px solid var(--on-accent); outline-offset: 2px; }
+.iv-btn[aria-pressed="true"] { background: rgba(255,255,255,.18); }
+.iv-diagram { font-size: .82rem; letter-spacing: .02em; }
+
+.iv-stage { display: grid; place-items: center; overflow: hidden; padding: 0 .5rem 1rem; }
+.iv-slide { margin: 0; display: grid; gap: .75rem; max-width: min(96vw, 1100px); }
+.iv-media {
+  position: relative; display: grid; place-items: center;
+  transition: transform .18s ease; transform-origin: center center;
+}
+.iv-media img, .iv-media > svg {
+  max-width: 100%; max-height: 66vh; display: block; border-radius: var(--radius);
+  background: var(--surface);
+}
+.iv-slide figcaption {
+  color: var(--on-accent); font-size: .88rem; text-align: center;
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.iv-source { font-family: var(--mono); font-size: .7rem; letter-spacing: .08em; opacity: .65; }
+
+/* Callouts sit outside the subject on a leader line. A label drawn over the
+   part it names covers the part it names, which at 320px is most of it. */
+.iv-callouts { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.iv-callouts line { stroke: var(--brass); stroke-width: .35; }
+.iv-callouts circle { fill: var(--brass); }
+.iv-callouts text {
+  fill: var(--on-accent); font-size: 3.2px; font-family: var(--mono);
+  paint-order: stroke; stroke: rgba(20,33,26,.75); stroke-width: 1.1px;
+}
+
+.iv-nav {
+  position: fixed; bottom: 1.1rem; width: 56px; height: 56px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,.28);
+  background: rgba(20,33,26,.6); color: var(--on-accent);
+  font-size: 1.6rem; line-height: 1; cursor: pointer;
+}
+.iv-prev { left: max(0.35cm, .9rem); }
+.iv-next { right: max(0.35cm, .9rem); }
+.iv-nav:focus-visible { outline: 2px solid var(--on-accent); outline-offset: 2px; }
+@media (min-width: 860px) {
+  .iv-nav { top: 50%; bottom: auto; transform: translateY(-50%); }
+}
+
+.iv-empty {
+  border: 1px dashed var(--line); border-radius: var(--radius);
+  padding: 1.5rem; color: var(--ink-2); background: var(--surface-2);
+}
+.iv-empty p { margin: 0 0 .35rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .iv-media { transition: none; }
+}
+
+/* ==========================================================================
+   The Tooling Line (§11.3) — four facts, and the materiality callout
+   ========================================================================== */
+.tooling {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); padding: 1rem 1.1rem; display: grid; gap: .55rem;
+}
+.tooling dt {
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.tooling dd { margin: 0 0 .5rem; color: var(--ink); font-size: .93rem; line-height: 1.5; }
+.tooling .cost { font-variant-numeric: tabular-nums; font-weight: 600; }
+.tooling-callout {
+  border: 1px solid var(--wait); border-left-width: 4px; border-radius: var(--radius);
+  background: var(--wait-soft); padding: .9rem 1.05rem; color: var(--ink);
+  font-size: .95rem; line-height: 1.55; margin-bottom: .85rem;
+}
+.tooling-reused { color: var(--good); }
+
+/* ==========================================================================
+   The public catalogue (§8.2) — ranges, never a negotiated price
+   ========================================================================== */
+.cat-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.cat-card {
+  border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.cat-card-body { padding: 1.1rem; display: grid; gap: .5rem; }
+.cat-range {
+  font-family: var(--mono); font-size: 1.15rem; color: var(--green);
+  font-variant-numeric: tabular-nums;
+}
+.cat-range-note { font-size: .78rem; color: var(--ink-3); }
+.cat-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: .82rem; color: var(--ink-2); }
+.cat-cta { padding: 0 1.1rem 1.1rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* A stated condition with what to do about it — used where a state would
+   otherwise be a silent failure, such as a paused account meeting an item it
+   cannot order (§8.5). */
+.notice {
+  border: 1px solid var(--line); border-left-width: 4px; border-radius: var(--radius);
+  padding: .9rem 1.05rem; font-size: .93rem; line-height: 1.55; background: var(--surface-2);
+}
+.notice strong { display: block; margin-bottom: .2rem; }
+.notice-wait { border-color: var(--wait); background: var(--wait-soft); }
+.notice-stop { border-color: var(--stop); background: var(--stop-soft); }
+.notice-good { border-color: var(--good); background: var(--good-soft); }

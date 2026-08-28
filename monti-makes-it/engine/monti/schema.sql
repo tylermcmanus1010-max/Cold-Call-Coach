@@ -320,3 +320,192 @@ CREATE TABLE IF NOT EXISTS webhook_log (
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_webhook_event ON webhook_log(provider, event_id);
+
+-- ---------------------------------------------------------------------------
+-- The public catalogue, registrations, and the numbers behind them (§8, §11)
+--
+-- Two record shapes that must never touch. A catalogue item carries what
+-- everyone may see: a range, a typical MOQ, a lead time, and the plain-language
+-- reason the range is a range. A registration carries what exactly one customer
+-- may see: the price we agreed with them. §8.6 is explicit that the public
+-- range is entered deliberately by an admin and is never derived from anybody's
+-- negotiated price — so they live in different tables and are serialized by
+-- different code, and a customer's price sitting outside the public range is
+-- expected rather than an error.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS catalogue_registrations (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id        INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  customer_id    INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  unit_price_cents INTEGER,                      -- their negotiated price, if a flat one
+  matrix_id      INTEGER REFERENCES price_matrices(id) ON DELETE SET NULL,
+  moq            INTEGER,
+  lead_time_days INTEGER,
+  active         INTEGER NOT NULL DEFAULT 1,     -- deactivating gates them out immediately
+  assigned_by    TEXT NOT NULL,
+  assigned_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  deactivated_by TEXT,
+  deactivated_at TEXT,
+  notes          TEXT,
+  UNIQUE(item_id, customer_id)
+);
+CREATE INDEX IF NOT EXISTS idx_reg_customer ON catalogue_registrations(customer_id, active);
+CREATE INDEX IF NOT EXISTS idx_reg_item ON catalogue_registrations(item_id, active);
+
+-- Every number a client sees resolves to a row here (§11.1). A rendered field
+-- with no input id behind it is a P1, which is only enforceable if the input is
+-- a real record with an author and a publish time rather than a literal in a
+-- template.
+CREATE TABLE IF NOT EXISTS pricing_inputs (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id  INTEGER REFERENCES customers(id) ON DELETE CASCADE,
+  item_id      INTEGER REFERENCES catalog_items(id) ON DELETE CASCADE,
+  field        TEXT NOT NULL,                    -- what this number is
+  value_cents  INTEGER,
+  value_text   TEXT,
+  entered_by   TEXT NOT NULL,
+  entered_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  published_at TEXT,                             -- null until an admin publishes it
+  published_by TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_inputs_item ON pricing_inputs(item_id, customer_id);
+
+-- A price matrix is two axes, not a line (Appendix B): quantity tiers across,
+-- spec/complexity tiers down. Boarshead's containers are priced off both.
+CREATE TABLE IF NOT EXISTS price_matrices (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id  INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  item_id      INTEGER REFERENCES catalog_items(id) ON DELETE CASCADE,
+  name         TEXT NOT NULL,
+  spec_axis_label TEXT NOT NULL DEFAULT 'Spec complexity',
+  notes        TEXT,
+  created_by   TEXT NOT NULL,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  published_at TEXT,                             -- nothing reaches a member before this
+  published_by TEXT
+);
+
+CREATE TABLE IF NOT EXISTS price_matrix_cells (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  matrix_id     INTEGER NOT NULL REFERENCES price_matrices(id) ON DELETE CASCADE,
+  quantity_min  INTEGER NOT NULL,
+  quantity_max  INTEGER,                         -- null = open-ended top tier
+  spec_tier     TEXT NOT NULL,
+  unit_price_cents INTEGER NOT NULL,
+  input_id      INTEGER REFERENCES pricing_inputs(id) ON DELETE SET NULL,
+  UNIQUE(matrix_id, quantity_min, spec_tier)
+);
+CREATE INDEX IF NOT EXISTS idx_cells_matrix ON price_matrix_cells(matrix_id);
+
+-- ---------------------------------------------------------------------------
+-- Tooling (§11.3)
+--
+-- The client sees four facts and never a fifth, so the columns split by
+-- audience: `client_*` is renderable, everything else is internal and is the
+-- reason A31 can assert that no internal field reached a client payload.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS tools (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  ref            TEXT UNIQUE NOT NULL,
+  item_id        INTEGER REFERENCES catalog_items(id) ON DELETE SET NULL,
+  customer_id    INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  client_description TEXT NOT NULL,              -- fact 1: what it is, in plain words
+  client_cost_cents  INTEGER NOT NULL,           -- fact 2: one number, never a range
+  status         TEXT NOT NULL DEFAULT 'QUOTED', -- QUOTED|PAID|IN_USE|RELEASED|RETIRED
+  paid_at        TEXT,
+  location       TEXT,
+  condition      TEXT,
+  last_used_at   TEXT,
+  released_at    TEXT,
+  from_previous_supplier INTEGER NOT NULL DEFAULT 0,
+  arrival_condition TEXT,                        -- only for a tool that came from elsewhere
+  internal_cost_cents INTEGER,                   -- never rendered to a client
+  internal_notes TEXT,                           -- never rendered to a client
+  created_at     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_tools_item ON tools(item_id);
+
+-- ---------------------------------------------------------------------------
+-- Item images (Tier IMG) and the manufacturing memory (§10.3, Product Genome)
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS item_images (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id      INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  stored_name  TEXT,                             -- a file under UPLOAD_DIR
+  svg          TEXT,                             -- or an inline drawing, for a diagram
+  caption      TEXT NOT NULL,                    -- every image has one (WI-P-06)
+  source_label TEXT NOT NULL,                    -- and a source
+  alt_text     TEXT NOT NULL,
+  position     INTEGER NOT NULL DEFAULT 0,
+  is_public    INTEGER NOT NULL DEFAULT 0,       -- public catalogue images only
+  annotations  TEXT,                             -- JSON callouts for the diagram layer
+  created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_images_item ON item_images(item_id, position);
+
+CREATE TABLE IF NOT EXISTS item_genome (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id    INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  section    TEXT NOT NULL,                      -- one of the six client-facing sections
+  body       TEXT,
+  is_unknown INTEGER NOT NULL DEFAULT 0,         -- marked unknown, never a plausible default
+  is_internal INTEGER NOT NULL DEFAULT 0,        -- the admin-only partition (GEN-07)
+  updated_by TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(item_id, section, is_internal)
+);
+
+-- ---------------------------------------------------------------------------
+-- Client agents (Appendix B, "Client agent contract")
+--
+-- One agent, one customer, and the binding is a foreign key rather than a
+-- sentence in a prompt — which is what makes A30 provable. An agent proposes;
+-- everything it produces lands in agent_proposals and enters through the same
+-- admin publish step as any other input.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS client_agents (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  ref            TEXT UNIQUE NOT NULL,
+  customer_id    INTEGER NOT NULL UNIQUE REFERENCES customers(id) ON DELETE CASCADE,
+  status         TEXT NOT NULL DEFAULT 'ACTIVE', -- ACTIVE|SUSPENDED|REVOKED
+  template_version TEXT NOT NULL,
+  provisioned_at TEXT NOT NULL DEFAULT (datetime('now')),
+  status_changed_at TEXT,
+  status_reason  TEXT,
+  scope_verified_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS agent_proposals (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  agent_id    INTEGER NOT NULL REFERENCES client_agents(id) ON DELETE CASCADE,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  kind        TEXT NOT NULL,                     -- QUOTE_DRAFT|PRICE_NOTE|REORDER_NUDGE
+  body        TEXT NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'PROPOSED',  -- PROPOSED|ACCEPTED|REJECTED
+  created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  reviewed_by TEXT,
+  reviewed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS agent_access_log (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  agent_id    INTEGER REFERENCES client_agents(id) ON DELETE SET NULL,
+  agent_ref   TEXT NOT NULL,
+  bound_customer_id INTEGER NOT NULL,
+  requested   TEXT NOT NULL,                     -- what it asked for
+  refused     INTEGER NOT NULL DEFAULT 0,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Every admin look at a member's account, mirrored to the member (§10.4, ADM-11).
+CREATE TABLE IF NOT EXISTS security_log (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  actor       TEXT NOT NULL,
+  action      TEXT NOT NULL,
+  reason      TEXT,
+  mode        TEXT,                              -- READ_ONLY|WRITE
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_security_customer ON security_log(customer_id, created_at);

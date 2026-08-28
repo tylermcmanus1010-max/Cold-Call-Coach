@@ -16,6 +16,7 @@ from flask import (
 )
 
 from .. import catalog as catalog_mod
+from .. import catalogue
 from .. import membership
 from .. import orders as orders_mod
 from .. import payments
@@ -35,13 +36,27 @@ def _cid():
 def _cart_rows():
     return query(
         """SELECT ci.*, i.name, i.sku, i.unit_price_cents AS list_price, i.moq, i.lead_time_days,
-                  i.image_url, a.custom_price_cents, a.custom_moq
+                  i.image_url, r.unit_price_cents AS unit_price_cents, r.moq AS moq
            FROM cart_items ci
            JOIN catalog_items i ON i.id = ci.item_id
-           LEFT JOIN catalog_assignments a ON a.item_id = i.id AND a.customer_id = ci.customer_id
+           LEFT JOIN catalogue_registrations r
+                  ON r.item_id = i.id AND r.customer_id = ci.customer_id AND r.active = 1
            WHERE ci.customer_id = ? ORDER BY ci.id""",
         (_cid(),),
     )
+
+
+def _unregistered_lines(order_id):
+    """Names of any catalogue lines on this order the member may no longer buy.
+
+    Lines with no catalogue item behind them — an accepted estimate off a quote —
+    are not catalogue purchases and are not gated by registration.
+    """
+    blocked = []
+    for line in orders_mod.get_items(order_id):
+        if line["catalog_item_id"] and not catalogue.can_order(g.customer, line["catalog_item_id"]):
+            blocked.append(line["name"])
+    return blocked
 
 
 def _freight_lines(order):
@@ -57,14 +72,14 @@ def _cart_summary():
     lines = []
     subtotal = 0
     for r in rows:
-        unit = r["custom_price_cents"] if r["custom_price_cents"] is not None else r["list_price"]
+        unit = r["unit_price_cents"] if r["unit_price_cents"] is not None else r["list_price"]
         qty = max(1, r["quantity"])
         line_total = unit * qty
         subtotal += line_total
         lines.append({
             "cart_id": r["id"], "item_id": r["item_id"], "name": r["name"], "sku": r["sku"],
             "unit_price_cents": unit, "quantity": qty, "line_total_cents": line_total,
-            "moq": r["custom_moq"] or r["moq"], "lead_time_days": r["lead_time_days"],
+            "moq": r["moq"] or r["moq"], "lead_time_days": r["lead_time_days"],
         })
     return lines, subtotal
 
@@ -117,7 +132,8 @@ def dashboard():
             "SELECT COUNT(*) AS c FROM orders WHERE customer_id = ? AND status NOT IN "
             "('DELIVERED','CANCELLED','REFUNDED')", (cid,), one=True)["c"],
         "catalog_items": query(
-            "SELECT COUNT(*) AS c FROM catalog_assignments a JOIN catalog_items i ON i.id = a.item_id "
+            "SELECT COUNT(*) AS c FROM catalogue_registrations a "
+            "JOIN catalog_items i ON i.id = a.item_id AND a.active = 1 "
             "WHERE a.customer_id = ? AND i.is_active = 1", (cid,), one=True)["c"],
     }
     estimates = {
@@ -256,7 +272,11 @@ def catalog_item(item_id):
 @bp.route("/cart/add/<int:item_id>", methods=("POST",))
 @client_required
 def cart_add(item_id):
-    if not catalog_mod.can_customer_see(g.customer, item_id):
+    # Gate 1 of 3 (§8.4). Seeing an item and being able to order it are
+    # different questions, and this is the second one. The template hides the
+    # Order control for an unregistered item, but that is a courtesy — removing
+    # the client-side check has to leave this refusal standing.
+    if not catalogue.can_order(g.customer, item_id):
         abort(404)
     qty = max(1, to_int(request.form.get("quantity"), 1))
     existing = query("SELECT * FROM cart_items WHERE customer_id = ? AND item_id = ?",
@@ -293,7 +313,14 @@ def cart_checkout():
     if not lines:
         flash("Your order is empty.", "error")
         return redirect(url_for("portal.cart"))
+    # Gate 2 of 3 (§8.4). Re-asked at order creation rather than trusted from
+    # the add-to-cart call: a registration can be deactivated between the two,
+    # and a cart row that predates the deactivation must not become an order.
     for line in lines:
+        if line["item_id"] and not catalogue.can_order(g.customer, line["item_id"]):
+            flash(f"{line['name']} is no longer registered to your account. "
+                  "Request it and we'll pick it up from there.", "error")
+            return redirect(url_for("portal.cart"))
         if line["quantity"] < (line["moq"] or 1):
             flash(f"{line['name']} has a minimum order of {line['moq']:,}.", "error")
             return redirect(url_for("portal.cart"))
@@ -372,6 +399,14 @@ def checkout(order_id):
     order = own_or_404(orders_mod.get_order(order_id))
     if order["payment_status"] == "PAID":
         return redirect(url_for("portal.order_detail", order_id=order_id))
+    # Gate 3 of 3 (§8.4). The last point before money moves. An order can sit
+    # unpaid for days, so the registration is checked again here rather than
+    # inherited from whatever was true when the order was created.
+    blocked = _unregistered_lines(order_id)
+    if blocked:
+        flash("This order can't be paid: " + ", ".join(blocked)
+              + " is no longer registered to your account.", "error")
+        return redirect(url_for("portal.order_detail", order_id=order_id))
     net = orders_mod.net_before_processing(order)
     return render_template("portal/checkout.html", order=order,
                            items=orders_mod.get_items(order_id),
@@ -388,6 +423,11 @@ def pay(order_id):
     order = own_or_404(orders_mod.get_order(order_id))
     if order["payment_status"] == "PAID":
         flash("This order is already paid.", "ok")
+        return redirect(url_for("portal.order_detail", order_id=order_id))
+    blocked = _unregistered_lines(order_id)
+    if blocked:
+        flash("This order can't be paid: " + ", ".join(blocked)
+              + " is no longer registered to your account.", "error")
         return redirect(url_for("portal.order_detail", order_id=order_id))
     items = orders_mod.get_items(order_id)
     customer = query("SELECT * FROM customers WHERE id = ?", (order["customer_id"],), one=True)

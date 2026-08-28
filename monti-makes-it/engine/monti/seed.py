@@ -1,10 +1,21 @@
-"""Demo data — a believable slice of the business so every screen has something in it."""
+"""Demo data — a believable slice of the business so every screen has something in it.
+
+Every row this module writes is fixture data and is stamped as such before the
+function returns. §0.3.5 requires that zero seeded rows survive to launch, and
+the only way to prove that is to know which rows are seeded — recognising a name
+afterwards is not proof, it is a reviewer's memory. `flask purge-fixtures`
+sweeps on the stamp, and A14 asserts the sweep was total.
+
+This command refuses to run against a database that already carries real
+customers, because "load the demo data" and "you have live clients" is a
+combination that ends with Halcyon Goods in a production order log.
+"""
 from datetime import timedelta
 
 from flask import current_app
 
 from .auth import create_user
-from .db import execute, init_db, next_ref, query
+from .db import FIXTURE_TABLES, execute, init_db, next_ref, query
 from .utils import now_str, plus_hours, utcnow
 
 ADMIN_EMAIL = "Tyler1"
@@ -16,11 +27,28 @@ def _ts(days=0, hours=0):
     return (utcnow() + timedelta(days=days, hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def _mark_fixtures():
+    """Stamp everything this module wrote.
+
+    Applied wholesale at the end rather than column by column at each INSERT:
+    the demo seed's output is fixture data in its entirety, and a per-statement
+    flag is one forgotten INSERT away from a row that survives the purge.
+    """
+    for table in FIXTURE_TABLES:
+        execute(f"UPDATE {table} SET is_fixture = 1")
+
+
 def run_seed():
     init_db()
     if query("SELECT id FROM users WHERE email = ?", (ADMIN_EMAIL,), one=True):
         print("Already seeded — skipping. Delete the database file to reseed.")
         return
+
+    real = query("SELECT COUNT(*) AS c FROM customers WHERE is_fixture = 0", one=True)
+    if real["c"]:
+        raise SystemExit(
+            f"Refusing to seed: this database already has {real['c']} real customer(s). "
+            "Demo data and live clients must not share a database.")
 
     create_user(ADMIN_EMAIL, ADMIN_PASSWORD, name="Tyler Monti", role="ADMIN")
 
@@ -255,8 +283,8 @@ def run_seed():
     ]
     for item_id, cust_id, price, moq, note in assignments:
         execute(
-            "INSERT INTO catalog_assignments (item_id, customer_id, custom_price_cents, custom_moq, "
-            "note, assigned_by) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO catalogue_registrations (item_id, customer_id, unit_price_cents, moq, "
+            "notes, assigned_by) VALUES (?, ?, ?, ?, ?, ?)",
             (item_id, cust_id, price, moq, note, ADMIN_EMAIL))
 
     # --- orders in several states -------------------------------------------
@@ -374,8 +402,8 @@ def run_seed():
     execute("UPDATE customers SET catalog_tags = 'client-1', freight_waived_default = 1 "
             "WHERE id = ?", (client1,))
     execute(
-        "INSERT INTO catalog_assignments (item_id, customer_id, custom_price_cents, custom_moq, "
-        "note, assigned_by) VALUES (?, ?, ?, ?, ?, 'Tyler Monti')",
+        "INSERT INTO catalogue_registrations (item_id, customer_id, unit_price_cents, moq, "
+        "notes, assigned_by) VALUES (?, ?, ?, ?, ?, 'Tyler Monti')",
         (c1_item, client1, 2980, 250,
          "Locked at $29.80 through Q4 at 250+ units. Reorder any time."))
     execute("INSERT INTO crm_activities (customer_id, kind, body, author) "
@@ -463,3 +491,5 @@ def run_seed():
         print(f"           client{i} = {name}")
     print("  Members: dana@halcyongoods.com / member2026")
     print("           marcus@gritgrain.co / member2026")
+
+    _mark_fixtures()

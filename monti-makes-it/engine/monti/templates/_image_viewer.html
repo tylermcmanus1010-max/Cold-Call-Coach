@@ -1,0 +1,94 @@
+{#
+  The item image viewer — one component, every item type (§10.3, WI-P-03).
+
+  It is used by the public catalogue, the member portal, the Product Genome and
+  order lines. There is one implementation because four would drift, and a
+  viewer that behaves differently depending on which page opened it is a viewer
+  a member cannot learn once.
+
+  The requirements that shaped it:
+
+    mobile-first    a thumb, not a mouse. Swipe moves between images, the close
+                    control is inside the thumb arc, targets are 44px.
+    zoomable        double-tap and pinch, plus +/- for a pointer and a keyboard.
+    annotated       a diagram layer with callouts that must stay legible at
+                    320px and must never cover the thing they point at (§10.5),
+                    so callouts render outside the subject with a leader line.
+    operable        full keyboard: arrows, +/-, 0 to reset, Escape to close.
+                    Focus moves into the dialog and returns to the thumbnail
+                    that opened it. No focus trap that cannot be escaped.
+    honest          an item with no images gets an explicit empty state, not a
+                    blank space — a missing viewer on a portal item is a P1.
+
+  `images` is a list of dicts with caption, source_label, alt_text and either
+  `svg` or `stored_name`, plus optional `annotations` JSON.
+#}
+
+{% macro viewer(images, item_name, viewer_id) %}
+{% if images %}
+<div class="iv" data-iv="{{ viewer_id }}">
+  <ul class="iv-thumbs" role="list">
+    {% for img in images %}
+      <li>
+        <button type="button" class="iv-thumb" data-index="{{ loop.index0 }}"
+                aria-label="Open image {{ loop.index }} of {{ images|length }}: {{ img.caption }}">
+          <span class="iv-thumb-media">
+            {% if img.svg %}{{ img.svg|safe }}
+            {% else %}<img src="{{ url_for('static', filename='uploads/' ~ img.stored_name) }}"
+                           alt="{{ img.alt_text }}" loading="lazy">{% endif %}
+          </span>
+          <span class="iv-thumb-caption">{{ img.caption }}</span>
+        </button>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {# The dialog lives in the page rather than being built in script, so the
+     captions and alt text are in the HTML a screen reader and a scraper see
+     whether or not the script runs. #}
+  <div class="iv-dialog" role="dialog" aria-modal="true"
+       aria-label="{{ item_name }} images" hidden>
+    <div class="iv-bar">
+      <span class="iv-count"><span class="iv-now">1</span> / {{ images|length }}</span>
+      <span class="iv-tools">
+        <button type="button" class="iv-btn iv-diagram" aria-pressed="false"
+                title="Show the annotated diagram">Diagram</button>
+        <button type="button" class="iv-btn iv-out" aria-label="Zoom out">&minus;</button>
+        <button type="button" class="iv-btn iv-in" aria-label="Zoom in">+</button>
+        <button type="button" class="iv-btn iv-close" aria-label="Close images">&times;</button>
+      </span>
+    </div>
+
+    <div class="iv-stage">
+      {% for img in images %}
+        <figure class="iv-slide" data-index="{{ loop.index0 }}"
+                {% if img.annotations %}data-annotations='{{ img.annotations }}'{% endif %}
+                {% if not loop.first %}hidden{% endif %}>
+          <div class="iv-media">
+            {% if img.svg %}{{ img.svg|safe }}
+            {% else %}<img src="{{ url_for('static', filename='uploads/' ~ img.stored_name) }}"
+                           alt="{{ img.alt_text }}">{% endif %}
+            <svg class="iv-callouts" viewBox="0 0 100 100" preserveAspectRatio="none" hidden></svg>
+          </div>
+          <figcaption>
+            {{ img.caption }}
+            <span class="iv-source">{{ img.source_label }}</span>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+
+    <button type="button" class="iv-nav iv-prev" aria-label="Previous image">&lsaquo;</button>
+    <button type="button" class="iv-nav iv-next" aria-label="Next image">&rsaquo;</button>
+  </div>
+</div>
+{% else %}
+  {# WI-G-11: every item exposes a viewer or says plainly that it has no images.
+     Silence here reads as a broken page. #}
+  <div class="iv-empty" data-iv-empty="{{ viewer_id }}">
+    <p>No images on this item yet.</p>
+    <p class="tiny dim">We photograph and draw every item we make. If this one is yours and
+      you need to see it, ask and we will get the set up.</p>
+  </div>
+{% endif %}
+{% endmacro %}

@@ -45,9 +45,11 @@ def items_for_customer(customer, include_inactive=False):
     member_tags = set(parse_tags(_col(customer, "catalog_tags")))
 
     rows = query(
-        "SELECT i.*, a.custom_price_cents, a.custom_moq, a.note AS assign_note, a.assigned_at "
+        "SELECT i.*, a.unit_price_cents AS custom_price_cents, a.moq AS custom_moq, "
+        "       a.notes AS assign_note, a.assigned_at "
         "FROM catalog_items i "
-        "LEFT JOIN catalog_assignments a ON a.item_id = i.id AND a.customer_id = ? "
+        "LEFT JOIN catalogue_registrations a "
+        "       ON a.item_id = i.id AND a.customer_id = ? AND a.active = 1 "
         + ("" if include_inactive else "WHERE i.is_active = 1 ")
         + "ORDER BY i.name", (customer["id"],))
 
@@ -84,9 +86,11 @@ def customers_for_item(item):
     """Which members an item reaches, and how. Used on the catalog page."""
     item_tags = set(parse_tags(_col(item, "tags")))
     rows = query(
-        "SELECT c.*, a.custom_price_cents, a.custom_moq, a.note, a.assigned_at "
-        "FROM customers c LEFT JOIN catalog_assignments a "
-        "ON a.customer_id = c.id AND a.item_id = ? ORDER BY c.company_name", (item["id"],))
+        "SELECT c.*, a.unit_price_cents AS custom_price_cents, a.moq AS custom_moq, "
+        "       a.notes AS note, a.assigned_at "
+        "FROM customers c LEFT JOIN catalogue_registrations a "
+        "ON a.customer_id = c.id AND a.item_id = ? AND a.active = 1 "
+        "ORDER BY c.company_name", (item["id"],))
     out = []
     for r in rows:
         matched = sorted(set(parse_tags(_col(r, "catalog_tags"))) & item_tags)

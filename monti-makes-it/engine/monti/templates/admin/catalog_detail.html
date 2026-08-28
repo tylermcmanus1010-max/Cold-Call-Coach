@@ -21,7 +21,7 @@
               <td class="tag-row">
                 {% if r.via_assignment %}<span class="tag tag-green">direct</span>{% endif %}
                 {% for t in r.matched_tags %}<span class="tag">{{ t }}</span>{% endfor %}</td>
-              <td class="right mono tnum">{{ (r.row.custom_price_cents if r.row.custom_price_cents is not none else item.unit_price_cents)|money }}</td>
+              <td class="right mono tnum">{{ (r.row.unit_price_cents if r.row.unit_price_cents is not none else item.unit_price_cents)|money }}</td>
               <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.open_client', customer_id=r.row.id) }}">Open portal</a></td>
             </tr>
           {% endfor %}</tbody></table></div>
@@ -68,10 +68,10 @@
             <tr>
               <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=a.customer_id) }}">{{ a.company_name }}</a>
                 <div class="tiny mono dim">{{ a.ref }}</div></td>
-              <td class="right mono">{{ (a.custom_price_cents if a.custom_price_cents is not none else item.unit_price_cents)|money }}
-                {% if a.custom_price_cents is not none %}<div class="tiny dim">list {{ item.unit_price_cents|money }}</div>{% endif %}</td>
-              <td class="right mono">{{ '{:,}'.format(a.custom_moq or item.moq) }}</td>
-              <td class="tiny muted">{{ a.note or '—' }}</td>
+              <td class="right mono">{{ (a.unit_price_cents if a.unit_price_cents is not none else item.unit_price_cents)|money }}
+                {% if a.unit_price_cents is not none %}<div class="tiny dim">list {{ item.unit_price_cents|money }}</div>{% endif %}</td>
+              <td class="right mono">{{ '{:,}'.format(a.moq or item.moq) }}</td>
+              <td class="tiny muted">{{ a.notes or "—" }}</td>
               <td class="tiny dim">{{ a.assigned_at|relative }}</td>
               <td class="right"><form method="post">{{ csrf_input() }}
                 <input type="hidden" name="action" value="unassign">
@@ -89,9 +89,9 @@
               <select name="customer_id" style="width:100%">
                 {% for c in available %}<option value="{{ c.id }}">{{ c.company_name }}</option>{% endfor %}</select></label>
             <label style="flex:1;min-width:110px"><span class="field-label">Their price</span>
-              <input type="text" name="custom_price" placeholder="{{ (item.unit_price_cents / 100) }}"></label>
+              <input type="text" name="unit_price" placeholder="{{ (item.unit_price_cents / 100) }}"></label>
             <label style="flex:1;min-width:100px"><span class="field-label">Their MOQ</span>
-              <input type="number" name="custom_moq" placeholder="{{ item.moq }}"></label>
+              <input type="number" name="moq" placeholder="{{ item.moq }}"></label>
             <label style="flex:2;min-width:150px"><span class="field-label">Note</span>
               <input type="text" name="note" placeholder="Optional"></label>
             <button class="btn btn-primary" type="submit">Assign</button>

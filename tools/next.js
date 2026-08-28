@@ -69,6 +69,18 @@ function openNow(w, now) {
   return w.hours.some(([a, b]) => h >= a && h < b);
 }
 
+// "Wrong time" four minutes before the window opens is not useful. Say how
+// long, so he can hold rather than skip.
+function opensIn(w, now) {
+  if (!w || now.day === 0 || now.day === 6) return null;
+  if (w.badDays && w.badDays.includes(now.day)) return null;
+  const h = now.hours + now.minutes / 60;
+  const next = w.hours.map(([a]) => a).filter((a) => a > h).sort((x, y) => x - y)[0];
+  if (next === undefined) return null;
+  const mins = Math.round((next - h) * 60);
+  return mins <= 45 ? mins : null;
+}
+
 function rank({ now = marketNow() } = {}) {
   const out = [];
   for (const slug of fs.readdirSync(path.join(ROOT, 'clients')).sort()) {
@@ -91,7 +103,7 @@ function rank({ now = marketNow() } = {}) {
     // A booked callback outranks everything. After that: is it a good time,
     // is it a vertical that buys, and only then how broken the site is.
     const score = (warm ? 1000 : 0)
-      + (inWindow === true ? 200 : inWindow === false ? 0 : 100)
+      + (inWindow === true ? 200 : opensIn(w, now) != null ? 170 : inWindow === false ? 0 : 100)
       + (VERTICAL_WEIGHT[w?.label] ?? 1) * 20
       + gaps * 5
       - (b.attempts || 0) * 15;
@@ -99,7 +111,7 @@ function rank({ now = marketNow() } = {}) {
     out.push({
       slug, name: b.name, phone: b.phone, cat: b.category || '',
       gaps, warm, callbackAt: b.callbackAt || '', interested: b.status === 'replied', attempts: b.attempts || 0,
-      vertical: w?.label || 'other', inWindow, avoid: w?.avoid || '',
+      vertical: w?.label || 'other', inWindow, opensIn: opensIn(w, now), avoid: w?.avoid || '',
       windows: w ? w.hours.map(([a, c]) => `${a}–${c}`).join(', ') : '',
       why: reason(b, gaps),
       maybeNotTheirs: (b._scout || {}).namesBusiness === false,

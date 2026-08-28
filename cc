@@ -346,6 +346,7 @@ function cmdNext(args) {
     const when = l.callbackAt ? `BOOKED ${l.callbackAt}`
       : l.interested ? 'said yes — waiting on you'
       : l.inWindow === true ? 'good time now'
+      : l.opensIn != null ? `window opens in ${l.opensIn} min`
       : l.inWindow === false ? `wrong time — try ${l.windows}`
       : '';
     console.log(`  ${l.phone.padEnd(18)}${l.name.slice(0, 34)}`);

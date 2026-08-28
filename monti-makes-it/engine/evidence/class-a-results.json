@@ -35,6 +35,12 @@
     "proven": true,
     "proof": "a seeded customer put back -> customers \u2014 1 fixture row(s) survived the purge; an orphan line with no order -> order_items.order_id \u2014 1 row(s) point at a orders row that is gone"
   },
+  "A15": {
+    "title": "Every rendered Decision Room figure traces to a published input",
+    "findings": [],
+    "proven": true,
+    "proof": "provenance dropped from the arithmetic -> MMI-D-001 \u00b7 strategy 0.ex_works_cents \u2014 does not carry the material input (17) it was computed from \u2014 part of the trail was dropped; an input unpublished under a live price -> MMI-D-001 \u00b7 strategy 0 \u2014 rendered with no admin input behind it; the quantity band widened past the entered curve -> MMI-D-001 \u2014 quoted at 5,000,000 units, past the 500,000 an admin actually entered \u2014 that price was extrapolated"
+  },
   "A16": {
     "title": "Every item page carries a viewer or an explicit empty state",
     "findings": [],

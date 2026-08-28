@@ -1,0 +1,206 @@
+{% extends "admin/_base.html" %}
+{% block title %}Pricing desk · {{ company }}{% endblock %}
+{% block eyebrow %}Pricing desk{% endblock %}
+{% block heading %}Price the quote, then release it{% endblock %}
+{% block content %}
+
+<p class="muted" style="max-width:66ch">
+  Nothing reaches a member portal until someone here enters the numbers and publishes
+  them against a named item. Entering and publishing are separate acts — everything on
+  this page can be saved and revised without a member seeing any of it.
+</p>
+
+<div class="room-shell" style="margin-top:1.5rem">
+  <aside class="itemrail">
+    <div class="railgroup">
+      <span class="stat-label">Quote queue <b>{{ queue|length }}</b></span>
+      <ul class="itemlist">
+        {% for row in queue %}
+          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
+                 href="{{ url_for('admin.desk', ref=row.ref) }}">
+            <span class="iref mono">{{ row.ref }}</span>
+            <span class="iname {{ '' if row.client_name else 'unnamed' }}">
+              {{ row.client_name or row.auto_name }}</span>
+            <em>{{ row.company_name }}</em></a></li>
+        {% else %}<li class="emptyrow">Queue clear.</li>{% endfor %}
+      </ul>
+    </div>
+    <div class="railgroup">
+      <span class="stat-label">Published <b>{{ published|length }}</b></span>
+      <ul class="itemlist">
+        {% for row in published %}
+          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
+                 href="{{ url_for('admin.desk', ref=row.ref) }}">
+            <span class="iref mono">{{ row.ref }}</span>
+            <span class="iname">{{ row.client_name or row.auto_name }}</span>
+            <em>{{ row.company_name }} · live</em></a></li>
+        {% else %}<li class="emptyrow">Nothing published yet.</li>{% endfor %}
+      </ul>
+    </div>
+  </aside>
+
+  <div class="roompane">
+  {% if not item %}
+    <div class="empty" style="padding:3rem 1rem">
+      <p>No items on the desk.</p>
+      <p class="tiny dim">An item appears here when a quote request arrives.</p>
+    </div>
+  {% else %}
+    <form method="post" action="{{ url_for('admin.desk_save', ref=item.ref) }}"
+          class="card card-lg" style="display:grid;gap:1.5rem">
+      {{ csrf_input() }}
+
+      <div class="row-between wrap">
+        <div>
+          <span class="eyebrow-label">
+            {{ 'Published' if item.published_at else 'Pricing' }} ·
+            <span class="mono">{{ item.ref }}</span></span>
+          <h3 style="margin-top:.4rem">{{ item.client_name or item.auto_name }}</h3>
+          <p class="tiny dim" style="margin-top:.3rem">
+            {{ item.company_name }} · received {{ item.received_at|date }}
+            {% if item.source %} · {{ item.source }}{% endif %}</p>
+        </div>
+        <span class="badge badge-{{ 'green' if item.published_at else 'amber' }}">
+          {{ 'Live in portal' if item.published_at else 'Not yet published' }}</span>
+      </div>
+
+      <label class="field"><span class="field-label">Item name shown to the member</span>
+        <input type="text" name="client_name" value="{{ item.client_name or '' }}"
+               placeholder="{{ item.auto_name }}"></label>
+
+      <div>
+        <div class="divider-label">Cost inputs</div>
+        {#
+          Six named inputs, and no seventh (E5.03). Each save writes a new
+          attributed row rather than updating in place, so a price that moved
+          can always say what it was and who moved it.
+        #}
+        <div class="grid grid-2">
+          {% for field in cost_fields %}
+            {% set entry = costs.get(field) %}
+            <label class="field"><span class="field-label">{{ cost_labels[field] }}</span>
+              <input type="text" name="{{ field }}"
+                     value="{% if entry %}{{ '%g'|format(entry.value_cents / 100) }}{% endif %}"
+                     placeholder="{{ '0.0' if 'unit' in field else '0' }}">
+              <span class="field-hint">
+                {% if entry %}
+                  entered by {{ entry.entered_by }}
+                  {% if entry.published_at %}· published {{ entry.published_at|date }}
+                  {% else %}· <strong>not published</strong>{% endif %}
+                {% else %}not entered{% endif %}
+              </span></label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <div class="divider-label">Quantity band the member can price against</div>
+        <p class="tiny dim" style="margin-bottom:.75rem">
+          The slider bounds. They come from here, never from a constant — a fixed
+          1,000–10,000 cannot serve a $0.14 container and a tooled assembly at once.
+          {% if bounds and not item.qty_min %}
+            Currently taken from {{ bounds.source }}.
+          {% endif %}
+        </p>
+        <div class="grid grid-3">
+          <label class="field"><span class="field-label">Minimum</span>
+            <input type="number" name="qty_min" value="{{ item.qty_min or (bounds.min if bounds) or '' }}"></label>
+          <label class="field"><span class="field-label">Maximum</span>
+            <input type="number" name="qty_max" value="{{ item.qty_max or (bounds.max if bounds) or '' }}"></label>
+          <label class="field"><span class="field-label">Step</span>
+            <input type="number" name="qty_step" value="{{ item.qty_step }}"></label>
+        </div>
+      </div>
+
+      <div>
+        <div class="divider-label">The three strategies released to the member</div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Strategy</th><th>Route shown</th><th class="right">Extra / unit</th>
+              <th class="right">Lead days</th><th>Freight</th><th>Inspection</th><th>Lab</th></tr></thead>
+            <tbody>
+              {% for slot, default_label, treatment in slots %}
+                {% set s = (strategies | selectattr('slot', 'equalto', slot) | list | first) %}
+                <tr>
+                  <td><input type="text" name="label_{{ slot }}"
+                             value="{{ s.label if s else default_label }}" style="min-width:150px">
+                    <div class="tiny dim">tooling: {{ treatment|replace('_', ' ') }}</div></td>
+                  <td><input type="text" name="title_{{ slot }}" value="{{ s.title if s else '' }}"
+                             placeholder="e.g. Consolidated ocean, single batch" style="min-width:190px"></td>
+                  <td class="right"><input type="text" name="extra_{{ slot }}" style="width:90px"
+                             value="{% if s %}{{ '%g'|format(s.extra_cents / 100) }}{% endif %}"></td>
+                  <td class="right"><input type="number" name="lead_{{ slot }}" style="width:80px"
+                             value="{{ s.lead_days if s else '' }}"></td>
+                  <td><select name="mode_{{ slot }}">
+                    {% for mode in lanes %}
+                      <option value="{{ mode }}" {{ 'selected' if s and s.mode == mode }}>{{ mode }}</option>
+                    {% endfor %}</select></td>
+                  <td><input type="text" name="inspection_{{ slot }}"
+                             value="{{ s.inspection if s else '' }}" style="min-width:150px"></td>
+                  <td><input type="checkbox" name="lab_{{ slot }}"
+                             {{ 'checked' if s and s.includes_lab }}></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="divider-label">Cost levers offered under "what would need to change"</div>
+        <p class="tiny dim" style="margin-bottom:.75rem">
+          A lever with no label is not offered. A lever whose saving you have not entered
+          would be a number we guessed, and an absent row is better than that.
+        </p>
+        <div class="grid grid-2">
+          {% for kind, hint in [('spec', 'e.g. Wall 2.4 mm → 2.1 mm'),
+                                ('pkg', 'e.g. Standard carton instead of custom printed'),
+                                ('qty', 'Order QTYNEW instead of QTYNOW')] %}
+            {% set l = (levers | selectattr('kind', 'equalto', kind) | list | first) %}
+            <label class="field"><span class="field-label">{{ kind }} lever</span>
+              <input type="text" name="lever_{{ kind }}_label" value="{{ l.label if l else '' }}"
+                     placeholder="{{ hint }}"></label>
+            {% if kind == 'qty' %}
+              <div class="field"><span class="field-hint">
+                Priced automatically off the entered quantity band — it never offers a
+                quantity you have not priced.</span></div>
+            {% else %}
+              <label class="field"><span class="field-label">Saving per unit</span>
+                <input type="text" name="lever_{{ kind }}_saving"
+                       value="{% if l %}{{ '%g'|format(l.saving_cents / 100) }}{% endif %}"></label>
+            {% endif %}
+            <label class="field" style="grid-column:1/-1">
+              <span class="field-label">What the member should know about it</span>
+              <input type="text" name="lever_{{ kind }}_note" value="{{ l.note if l else '' }}"
+                     placeholder="The trade-off, in one sentence"></label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="row-between wrap" style="border-top:1px solid var(--line);padding-top:1.25rem">
+        <div>
+          <span class="stat-label">
+            Member will see, at {{ '{:,}'.format(bounds.min) if bounds else '—' }} units</span>
+          {# E5.06 — the same function their page calls, so the preview cannot be
+             a preview of something else. #}
+          <p class="stat-value">
+            {% if preview %}${{ '%.4f'|format(preview.landed_cents / 100) }}{% else %}—{% endif %}</p>
+          <span class="tiny dim">
+            {% if preview %}lowest landed cost{% else %}not priceable yet{% endif %}</span>
+        </div>
+        <div class="row" style="gap:.6rem">
+          <button class="btn" type="submit" name="action" value="save">Save without publishing</button>
+          <button class="btn btn-primary" type="submit" name="action" value="publish">
+            {{ 'Update pricing' if item.published_at else 'Publish to portal' }}</button>
+        </div>
+      </div>
+      <p class="tiny dim">
+        Publishing stamps every entered input at once and opens this item's Decision Room.
+        {% if item.published_at %}It is already live; publishing again updates what they
+        see and records the change.{% endif %}
+      </p>
+    </form>
+  {% endif %}
+  </div>
+</div>
+{% endblock %}

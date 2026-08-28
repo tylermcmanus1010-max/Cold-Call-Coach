@@ -111,6 +111,8 @@ class Context:
             create_user("checks-admin@montimakesit.com", "checks-admin-pw",
                         name="Checks Admin", role="ADMIN")
 
+        from monti.launch import provision_freight_lanes
+        provision_freight_lanes()
         boars_head_id = provision_boars_head()
         boars_head = query("SELECT * FROM customers WHERE id = ?", (boars_head_id,), one=True)
         if not query("SELECT id FROM users WHERE customer_id = ?", (boars_head_id,), one=True):

@@ -40,6 +40,12 @@ counting an unproven check toward coverage is itself a P0.
 - **Proof:** caught
 - **Defect introduced and reverted:** a seeded customer put back -> customers — 1 fixture row(s) survived the purge; an orphan line with no order -> order_items.order_id — 1 row(s) point at a orders row that is gone
 
+## A15 — Every rendered Decision Room figure traces to a published input
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** provenance dropped from the arithmetic -> MMI-D-001 · strategy 0.ex_works_cents — does not carry the material input (17) it was computed from — part of the trail was dropped; an input unpublished under a live price -> MMI-D-001 · strategy 0 — rendered with no admin input behind it; the quantity band widened past the entered curve -> MMI-D-001 — quoted at 5,000,000 units, past the 500,000 an admin actually entered — that price was extrapolated
+
 ## A16 — Every item page carries a viewer or an explicit empty state
 
 - **Result on the current build:** pass

@@ -1,0 +1,350 @@
+{% extends "portal/_base.html" %}
+
+{% macro name_field(item) %}
+  {# E1.03 — their name, our reference. The ref never changes underneath. #}
+  <form class="namefield" method="post"
+        action="{{ url_for('portal.room_rename', ref=item.ref) }}">
+    {{ csrf_input() }}
+    <label class="field-label" for="nm">Your name for it</label>
+    <input id="nm" type="text" name="client_name" value="{{ item.client_name or '' }}"
+           placeholder="{{ item.auto_name }}" autocomplete="off">
+    <button class="btn btn-sm" type="submit">Save</button>
+    <span class="tiny dim">Ref <span class="mono">{{ item.ref }}</span> never changes.</span>
+  </form>
+{% endmacro %}
+
+{% block title %}Decision Room · {{ company }}{% endblock %}
+{% block eyebrow %}Decision Room{% endblock %}
+{% block heading %}{{ (item.client_name or item.auto_name) if item else 'Your items' }}{% endblock %}
+{% block content %}
+
+<div class="room-shell">
+  {#
+    Two rails (E1.01). The counts are derived from the lists in the same
+    expression that renders them, so they cannot disagree with what is below —
+    a count and a list computed separately is how a "3" ends up over two rows.
+  #}
+  <aside class="itemrail">
+    <div class="railgroup">
+      <span class="stat-label">Awaiting approval <b>{{ pending|length }}</b></span>
+      <ul class="itemlist">
+        {% for row in pending %}
+          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
+                 href="{{ url_for('portal.room', ref=row.ref) }}">
+            <span class="iref mono">{{ row.ref }}</span>
+            <span class="iname {{ '' if row.client_name else 'unnamed' }}">
+              {{ row.client_name or row.auto_name }}</span>
+            <em>{{ stages[row.stage - 1] }}</em>
+          </a></li>
+        {% else %}
+          <li class="emptyrow">Nothing waiting. Send us something.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="railgroup">
+      <span class="stat-label">Approved catalogue <b>{{ approved|length }}</b></span>
+      <ul class="itemlist">
+        {% for row in approved %}
+          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
+                 href="{{ url_for('portal.room', ref=row.ref) }}">
+            <span class="iref mono">{{ row.ref }}</span>
+            <span class="iname {{ '' if row.client_name else 'unnamed' }}">
+              {{ row.client_name or row.auto_name }}</span>
+            <em>priced {{ row.published_at|date }}</em>
+          </a></li>
+        {% else %}
+          <li class="emptyrow">No approved items yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <p class="railnote tiny dim">Items arrive unnamed and numbered. Name yours whenever
+      you like — no other member can see this list.</p>
+  </aside>
+
+  <div class="roompane">
+  {% if not item %}
+    <div class="empty" style="padding:3rem 1rem">
+      <h3>Nothing here yet</h3>
+      <p class="muted">Tell us what you want made and it appears on the left, unnamed and
+        numbered, while we work out what it costs.</p>
+      <a class="btn btn-primary" style="margin-top:1.25rem"
+         href="{{ url_for('public.quote') }}">Request a quote</a>
+    </div>
+
+  {% elif item.status == 'PENDING' or not item.published_at %}
+    {# E1.04 — the pending view. Every stage advances on a recorded event, and
+       "what we still need" is a real outstanding question, not filler. #}
+    <div class="card card-lg">
+      <span class="eyebrow-label">Awaiting approval · <span class="mono">{{ item.ref }}</span></span>
+      <h2 style="margin-top:.6rem">{{ item.client_name or item.auto_name }}</h2>
+      <p class="muted" style="margin-top:.7rem;max-width:62ch">
+        No prices yet. An item gets its Decision Room the moment a manufacturing engineer
+        signs the specification and the pricing desk publishes the strategies.
+      </p>
+
+      {{ name_field(item) }}
+
+      <ol class="dr-tracker">
+        {% for stage in stages %}
+          <li class="{{ 'done' if loop.index < item.stage else ('now' if loop.index == item.stage else '') }}">
+            <span class="tk">{{ loop.index }}</span><strong>{{ stage }}</strong>
+          </li>
+        {% endfor %}
+      </ol>
+
+      <dl class="kv" style="margin-top:1.5rem">
+        <dt>Received</dt><dd>{{ item.received_at|date }}</dd>
+        <dt>What you sent</dt><dd>{{ item.source or 'Not recorded' }}</dd>
+      </dl>
+
+      {% if item.outstanding %}
+        <div class="notice notice-wait" style="margin-top:1.25rem">
+          <strong>What we still need</strong>
+          {{ item.outstanding }}
+        </div>
+      {% endif %}
+
+      <div class="lockedroom">
+        <span class="tag tag-muted">Locked</span>
+        <span class="tiny dim">Three strategies, the quantity slider and the target-price
+          tools unlock here on approval.</span>
+      </div>
+    </div>
+
+  {% elif view.incomplete %}
+    {# Published, but something the arithmetic needs is missing. Say which,
+       rather than rendering a page of zeros that looks like a price. #}
+    <div class="notice notice-stop">
+      <strong>This item is released but not yet priceable.</strong>
+      {% if not view.has_costs %}The cost inputs have not been published.{% endif %}
+      {% if not view.has_lanes %} No freight lane has been entered.{% endif %}
+      {% if not view.bounds %} No quantity band has been priced, so there is nothing to
+        show a price against.{% endif %}
+    </div>
+
+  {% else %}
+    {{ name_field(item) }}
+
+    <form method="get" class="dr-controls" action="{{ url_for('portal.room', ref=item.ref) }}">
+      <div class="dr-control">
+        <span class="stat-label">Order quantity</span>
+        <output class="dr-qty" id="qtyRead">{{ '{:,}'.format(view.qty) }}</output>
+        {#
+          §11.1 and Appendix B: the bounds come from entered data, never a
+          constant. Dragging past what the desk priced would be asking the page
+          to invent a price at the far end.
+        #}
+        <input type="range" name="qty" id="qty"
+               min="{{ view.bounds.min }}" max="{{ view.bounds.max }}"
+               step="{{ view.bounds.step }}" value="{{ view.qty }}"
+               aria-label="Order quantity">
+        <div class="rangeticks">
+          <span>{{ '{:,}'.format(view.bounds.min) }}</span>
+          <span>{{ '{:,}'.format(view.bounds.max) }}</span>
+        </div>
+        <p class="tiny dim">Priced from {{ view.bounds.source }}.</p>
+      </div>
+
+      <label class="field"><span class="field-label">Target unit price</span>
+        <input type="text" name="target"
+               value="{{ '%.4f'|format(view.target_cents / 100) if view.target_cents else '' }}"
+               placeholder="e.g. 0.16"></label>
+
+      <div class="dr-control">
+        <span class="stat-label">Freight</span>
+        <div class="seg">
+          {% for mode, lane in view.lanes.items() %}
+            <button type="submit" name="mode" value="{{ mode }}"
+                    aria-pressed="{{ 'true' if view.mode == mode else 'false' }}"
+                    class="{{ 'on' if view.mode == mode }}">{{ mode|capitalize }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="dr-control">
+        <span class="stat-label">Tooling · {{ view.tooling_total_cents|money }}</span>
+        <div class="seg">
+          <button type="submit" name="tooling" value="amortized"
+                  class="{{ 'on' if view.treatment == 'amortized' }}">Amortise into unit</button>
+          <button type="submit" name="tooling" value="upfront"
+                  class="{{ 'on' if view.treatment != 'amortized' }}">Pay upfront</button>
+        </div>
+        <p class="tiny dim">
+          {% if view.treatment == 'amortized' %}
+            Adds {{ view.tooling_unit_cents|round(4) }}¢ per unit at this quantity.
+            The tool remains your property.
+          {% else %}
+            Invoiced once at {{ view.tooling_total_cents|money }}, before the run.
+            Unit prices exclude it.
+          {% endif %}
+        </p>
+      </div>
+
+      {# Carrying the other controls forward so a submit does not reset them. #}
+      <input type="hidden" name="qty" value="{{ view.qty }}">
+      {% for kind in view.chosen_kinds %}<input type="hidden" name="lever" value="{{ kind }}">{% endfor %}
+      <noscript><button class="btn btn-primary btn-sm" type="submit">Recalculate</button></noscript>
+    </form>
+
+    {# E1.09 — three strategy cards. Every figure on them comes back from
+       `strategy_view` with the input ids that produced it. #}
+    <div class="strategies">
+      {% for card in view.cards %}
+        <article class="card strat {{ 'hits' if card.hits_target }}" data-slot="{{ card.slot }}">
+          <header>
+            <span class="tag">{{ card.label }}</span>
+            <h3>{{ card.title }}</h3>
+          </header>
+          <div class="strat-price">
+            <span class="stat-label">Landed per unit</span>
+            <p class="strat-big">${{ '%.4f'|format(card.landed_cents / 100) }}</p>
+            <p class="tiny dim mono">
+              ${{ '%.4f'|format(card.ex_works_cents / 100) }} ex-works ·
+              ${{ '%.4f'|format(card.freight_cents / 100) }} freight ·
+              ${{ '%.4f'|format(card.duty_cents / 100) }} duty
+            </p>
+          </div>
+          <dl class="strat-specs">
+            <div><dt>Lead time</dt><dd>{{ card.lead_days }} days</dd></div>
+            <div><dt>Route</dt><dd>{{ card.mode }}</dd></div>
+            {% if card.production %}<div><dt>Production</dt><dd>{{ card.production }}</dd></div>{% endif %}
+            {% if card.inspection %}<div><dt>Inspection</dt><dd>{{ card.inspection }}</dd></div>{% endif %}
+            <div><dt>Order total</dt><dd>{{ card.order_total_cents|round|int|money }}</dd></div>
+          </dl>
+          <footer>
+            <form method="post" action="{{ url_for('portal.room_accept', ref=item.ref) }}">
+              {{ csrf_input() }}
+              <input type="hidden" name="slot" value="{{ card.slot }}">
+              <input type="hidden" name="qty" value="{{ view.qty }}">
+              <input type="hidden" name="mode" value="{{ card.mode }}">
+              <input type="hidden" name="tooling" value="{{ card.treatment }}">
+              <button class="btn btn-sm" type="submit">Buy this route</button>
+            </form>
+            {% if card.footnote %}<span class="tiny dim">{{ card.footnote }}</span>{% endif %}
+          </footer>
+        </article>
+      {% endfor %}
+    </div>
+
+    {# E1.11 — what would need to change. Each lever is priced on its own
+       against the entered curve; the sentence is rebuilt from whichever are
+       ticked, and there is never silence when a target is out of reach. #}
+    {% if view.levers %}
+      <div class="card card-lg wwntc">
+        <span class="eyebrow-label">What would need to change?</span>
+        <h3 style="margin-top:.6rem">Engineering the economics toward your target</h3>
+
+        <div class="gap-read">
+          <div><span class="stat-label">Your target</span>
+            <p class="stat-value">{% if view.target_cents %}${{ '%.4f'|format(view.target_cents / 100) }}{% else %}—{% endif %}</p></div>
+          <div><span class="stat-label">Best today</span>
+            <p class="stat-value">${{ '%.4f'|format(view.current_landed_cents / 100) }}</p></div>
+          {% if view.target_cents %}
+            {% set gap = view.current_landed_cents - view.target_cents %}
+            <div><span class="stat-label">Gap</span>
+              <p class="stat-value" style="color:{{ 'var(--stop)' if gap > 0 else 'var(--good)' }}">
+                {{ '+' if gap > 0 else '−' }}${{ '%.4f'|format((gap if gap > 0 else -gap) / 100) }}</p></div>
+          {% endif %}
+        </div>
+
+        <form method="get" action="{{ url_for('portal.room', ref=item.ref) }}">
+          <input type="hidden" name="qty" value="{{ view.qty }}">
+          <input type="hidden" name="mode" value="{{ view.mode }}">
+          <input type="hidden" name="tooling" value="{{ view.treatment }}">
+          {% if view.target_cents %}<input type="hidden" name="target"
+             value="{{ '%.4f'|format(view.target_cents / 100) }}">{% endif %}
+          <div class="levers">
+            {% for lever in view.levers %}
+              <label class="lever">
+                <input type="checkbox" name="lever" value="{{ lever.kind }}"
+                       {{ 'checked' if lever.kind in view.chosen_kinds }}
+                       onchange="this.form.submit()">
+                <span><strong>{{ lever.label_rendered }}</strong>
+                  {% if lever.note %}<em>{{ lever.note }}</em>{% endif %}</span>
+                <span class="delta mono">−${{ '%.4f'|format(lever.saving / 100) }}</span>
+              </label>
+            {% endfor %}
+          </div>
+          <noscript><button class="btn btn-sm" type="submit"
+                            style="margin-top:.75rem">Price these changes</button></noscript>
+        </form>
+
+        {% if view.engineered.landed_cents is not none %}
+          {% set hit = view.target_cents and view.engineered.landed_cents <= view.target_cents %}
+          <div class="outcome {{ 'hit' if hit else 'miss' }}">
+            <div><span class="stat-label">Engineered price</span>
+              <p class="stat-value">${{ '%.4f'|format(view.engineered.landed_cents / 100) }}</p></div>
+            <div style="flex:1;min-width:220px">
+              {% if not view.chosen_kinds %}
+                Tick a change above and we will price it.
+              {% elif hit %}
+                <strong>On target.</strong>
+                {{ ((view.current_landed_cents - view.engineered.landed_cents) * view.engineered.quantity)|round|int|money }}
+                saved against the current specification at
+                {{ '{:,}'.format(view.engineered.quantity) }} units.
+              {% else %}
+                {# Never silence on an unreachable target (E1.06). #}
+                <strong>Still short of your target.</strong>
+                These changes reach ${{ '%.4f'|format(view.engineered.landed_cents / 100) }}.
+                Raising the quantity toward {{ '{:,}'.format(view.bounds.max) }} is the
+                largest lever left inside what we have priced; beyond that we would need
+                to re-quote rather than guess.
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {# E1.12 — the freight comparison. Same `landed()` as the cards, so a lane
+       cannot read one price here and another there. #}
+    <div class="card card-lg" style="margin-top:1.25rem">
+      <span class="eyebrow-label">Freight at {{ '{:,}'.format(view.qty) }} units</span>
+      <h3 style="margin-top:.6rem">Every route we have a rate for</h3>
+      <div class="table-wrap" style="margin-top:1rem">
+        <table class="data">
+          <thead><tr><th>Route</th><th>Transit</th><th class="right">Freight / unit</th>
+            <th class="right">Freight total</th><th class="right">Landed / unit</th></tr></thead>
+          <tbody>
+            {% for row in view.freight_rows %}
+              <tr>
+                <td>{{ row.lane_label }}
+                  {% if row.mode == view.mode %}<span class="tag tag-green">selected</span>{% endif %}</td>
+                <td class="tiny">{{ row.transit_label }}</td>
+                <td class="right mono tnum">${{ '%.4f'|format(row.freight_unit_cents / 100) }}</td>
+                <td class="right mono tnum">{{ row.freight_total_cents|round|int|money }}</td>
+                <td class="right mono tnum">${{ '%.4f'|format(row.landed_cents / 100) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny dim" style="margin-top:.75rem">Every figure here is an estimate built
+        from a lane rate we entered, not a booked rate. Duty is applied to the ex-works
+        value, which is how a customs entry computes it.</p>
+    </div>
+  {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% block scripts %}
+<script>
+/* The slider is a plain form control that submits on release, so the page works
+   with scripting off — the noscript button is the same submit. This only makes
+   the number under the thumb move while dragging. */
+(function () {
+  var slider = document.getElementById("qty");
+  var read = document.getElementById("qtyRead");
+  if (!slider || !read) { return; }
+  slider.addEventListener("input", function () {
+    read.textContent = Number(slider.value).toLocaleString("en-US");
+  });
+  slider.addEventListener("change", function () { slider.form.submit(); });
+})();
+</script>
+{% endblock %}

@@ -107,6 +107,7 @@ def create_app(config_object=None):
                         must_change_password=True)
             print(f"  admin@montimakesit.com / {pw}  (must change on first sign-in)")
 
+        launch_mod.provision_freight_lanes()
         customer_id = launch_mod.provision_boars_head()
         # The zero-orphan rule: no customer without an agent, including any that
         # predate this command.

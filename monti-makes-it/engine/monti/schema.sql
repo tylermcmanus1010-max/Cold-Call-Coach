@@ -574,3 +574,231 @@ CREATE TABLE IF NOT EXISTS reconciliation_runs (
   resolved_at   TEXT,
   resolution    TEXT
 );
+
+-- ---------------------------------------------------------------------------
+-- The Decision Room (Appendix E.1, §3.2 DR-*)
+--
+-- The unit is an *item*, not a quote. A quote request becomes one, auto-numbered
+-- and unnamed; the client renames it whenever they like and the internal ref
+-- never changes, so their name and our reference can both be true at once.
+--
+-- An item has no prices until an admin enters the cost inputs and publishes.
+-- `published_at` is the gate: every read path filters on it, so "nothing
+-- reaches a member before publish" is a WHERE clause rather than a habit.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS decision_items (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  ref           TEXT UNIQUE NOT NULL,            -- MMI-D-nnn, never changes
+  auto_name     TEXT NOT NULL,                   -- "Unapproved item 003"
+  client_name   TEXT,                            -- theirs, renameable, may be null
+  customer_id   INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  quote_id      INTEGER REFERENCES quotes(id) ON DELETE SET NULL,
+  catalog_item_id INTEGER REFERENCES catalog_items(id) ON DELETE SET NULL,
+  status        TEXT NOT NULL DEFAULT 'PENDING', -- PENDING | APPROVED
+  stage         INTEGER NOT NULL DEFAULT 1,      -- 1 received, 2 in review, 3 priced
+  source        TEXT,                            -- what they actually sent us
+  outstanding   TEXT,                            -- what we still need, in their words
+  received_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  published_at  TEXT,                            -- the gate; null = no prices exist
+  published_by  TEXT,
+  qty_min       INTEGER,                         -- slider bounds, entered not hard-coded
+  qty_max       INTEGER,
+  qty_step      INTEGER NOT NULL DEFAULT 100,
+  target_unit_cents INTEGER,                     -- the client's target, theirs to set
+  target_date   TEXT,
+  is_fixture    INTEGER NOT NULL DEFAULT 0,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_ditems_customer ON decision_items(customer_id, status);
+
+-- The three strategies, entered by the desk and published together. Each row is
+-- what differentiates one route from another; the arithmetic that turns them
+-- into a price lives in monti/decisionroom.py and reads only from here and from
+-- the cost inputs.
+CREATE TABLE IF NOT EXISTS item_strategies (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id       INTEGER NOT NULL REFERENCES decision_items(id) ON DELETE CASCADE,
+  slot          INTEGER NOT NULL,                -- 0 lowest cost, 1 fastest, 2 certainty
+  label         TEXT NOT NULL,
+  title         TEXT NOT NULL,
+  extra_cents   INTEGER NOT NULL DEFAULT 0,      -- what this route adds per unit
+  lead_days     INTEGER NOT NULL,
+  mode          TEXT NOT NULL DEFAULT 'ocean',   -- ocean | split | air
+  production    TEXT,
+  inspection    TEXT,
+  footnote      TEXT,
+  includes_lab  INTEGER NOT NULL DEFAULT 0,
+  tooling_treatment TEXT NOT NULL DEFAULT 'amortized',
+  UNIQUE(item_id, slot)
+);
+
+-- The levers offered under "what would need to change". Each is priced
+-- independently against the entered curve — §11.1 forbids extrapolation, so a
+-- lever whose saving was not entered simply is not offered.
+CREATE TABLE IF NOT EXISTS item_levers (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id       INTEGER NOT NULL REFERENCES decision_items(id) ON DELETE CASCADE,
+  kind          TEXT NOT NULL,                   -- spec | qty | pkg
+  label         TEXT NOT NULL,
+  note          TEXT,
+  saving_cents  INTEGER NOT NULL DEFAULT 0,      -- qty levers price themselves
+  active        INTEGER NOT NULL DEFAULT 1,
+  UNIQUE(item_id, kind)
+);
+
+-- Freight lanes as admin inputs rather than constants. Every freight figure a
+-- client sees resolves here (§11.1), and a lane nobody entered cannot be shown.
+CREATE TABLE IF NOT EXISTS freight_lanes (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  mode          TEXT UNIQUE NOT NULL,            -- ocean | split | air
+  per_unit_cents INTEGER NOT NULL,
+  fixed_cents   INTEGER NOT NULL,                -- spread across the run
+  transit_label TEXT NOT NULL,
+  lane_label    TEXT NOT NULL,
+  entered_by    TEXT NOT NULL,
+  entered_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ---------------------------------------------------------------------------
+-- The Product Genome (Appendix E.3)
+--
+-- E.7 resolves the naming conflict in the prototype's favour, so the six
+-- sections are: specification, golden sample, quality record, tooling,
+-- landed-cost profile, history. `item_genome` already holds the six section
+-- bodies; these tables hold the structured parts that are not prose.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS item_revisions (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id     INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  rev         TEXT NOT NULL,
+  changed_at  TEXT NOT NULL,
+  change      TEXT NOT NULL,
+  reason      TEXT NOT NULL,
+  signed_by   TEXT,
+  UNIQUE(item_id, rev)
+);
+
+CREATE TABLE IF NOT EXISTS golden_samples (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id     INTEGER NOT NULL UNIQUE REFERENCES catalog_items(id) ON DELETE CASCADE,
+  ref         TEXT NOT NULL,
+  sealed_at   TEXT,
+  stored_at   TEXT,
+  duplicate_held_by TEXT,
+  reverify_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS quality_checks (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id     INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  check_name  TEXT NOT NULL,
+  method      TEXT NOT NULL,
+  frequency   TEXT NOT NULL,
+  accept      TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS item_claims (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id     INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  run_ref     TEXT,
+  raised_at   TEXT NOT NULL,
+  summary     TEXT NOT NULL,
+  resolution  TEXT,
+  closed_at   TEXT
+);
+
+CREATE TABLE IF NOT EXISTS item_runs (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id     INTEGER NOT NULL REFERENCES catalog_items(id) ON DELETE CASCADE,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  order_id    INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+  run_no      INTEGER NOT NULL,
+  po_ref      TEXT,
+  quantity    INTEGER NOT NULL,
+  shipped_at  TEXT,
+  promised_at TEXT,
+  on_time     INTEGER,
+  landed_unit_cents INTEGER,
+  UNIQUE(item_id, run_no)
+);
+
+-- ---------------------------------------------------------------------------
+-- Membership: capacity, the Factory Plan, and performance credits (E.4)
+-- ---------------------------------------------------------------------------
+-- §0.3 / MEM-06: ten quotes was the wrong unit. Capacity is weighted by the
+-- engineering a request actually consumes, and the fairness rules run in the
+-- member's favour — a declined or incomplete request costs nothing, and a
+-- missed deadline returns the units automatically.
+CREATE TABLE IF NOT EXISTS capacity_ledger (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  quote_id    INTEGER REFERENCES quotes(id) ON DELETE SET NULL,
+  item_id     INTEGER REFERENCES decision_items(id) ON DELETE SET NULL,
+  label       TEXT NOT NULL,
+  classified  TEXT NOT NULL,                     -- the weight class, in words
+  weight      INTEGER NOT NULL,                  -- 1 | 2 | 4
+  outcome     TEXT NOT NULL,
+  charged     INTEGER NOT NULL DEFAULT 0,        -- what was actually debited
+  reason      TEXT,                              -- why it was not charged, if not
+  occurred_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_capacity_customer ON capacity_ledger(customer_id, occurred_at);
+
+CREATE TABLE IF NOT EXISTS factory_plans (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL UNIQUE REFERENCES customers(id) ON DELETE CASCADE,
+  written_at  TEXT NOT NULL,
+  revised_at  TEXT,
+  interview_by TEXT,
+  first_product TEXT,
+  annual_demand TEXT,
+  method      TEXT,
+  open_questions TEXT,
+  testing     TEXT,
+  first_order_path TEXT
+);
+
+-- Both commitment columns. §E4.02: a commitment with no measurable source says
+-- so, rather than showing a figure nobody measured.
+CREATE TABLE IF NOT EXISTS commitments (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  side        TEXT NOT NULL,                     -- MEMBER | MONTI
+  commitment  TEXT NOT NULL,
+  measure     TEXT,                              -- null = not measurable yet
+  met         INTEGER,                           -- null = unmeasured
+  position    INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS performance_credits (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  ledger_id   INTEGER REFERENCES ledger_entries(id) ON DELETE SET NULL,
+  amount_cents INTEGER NOT NULL,
+  reason      TEXT NOT NULL,
+  detail      TEXT,
+  issued_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Make This Box — a physical sample, tracked from the moment it leaves their
+-- hands. Every stage advances on a recorded event (WI-I-07), never on a guess.
+CREATE TABLE IF NOT EXISTS sample_boxes (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  ref         TEXT UNIQUE NOT NULL,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  item_id     INTEGER REFERENCES decision_items(id) ON DELETE SET NULL,
+  requested_at TEXT NOT NULL DEFAULT (datetime('now')),
+  stage       INTEGER NOT NULL DEFAULT 0,        -- 0 requested … 6 returned/stored
+  seal_code   TEXT,
+  disposition TEXT
+);
+
+CREATE TABLE IF NOT EXISTS sample_events (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  box_id      INTEGER NOT NULL REFERENCES sample_boxes(id) ON DELETE CASCADE,
+  stage       INTEGER NOT NULL,
+  happened_at TEXT NOT NULL DEFAULT (datetime('now')),
+  detail      TEXT,
+  recorded_by TEXT NOT NULL
+);

@@ -19,6 +19,7 @@ from flask import (
 
 from .. import catalog as catalog_mod
 from .. import catalogue
+from .. import decisionroom as dr
 from .. import ledger
 from .. import membership
 from .. import orders as orders_mod
@@ -26,7 +27,7 @@ from .. import payments
 from .. import tooling
 from ..auth import client_required, own_or_404
 from ..db import execute, query
-from ..utils import money, now_str, to_int
+from ..utils import money, now_str, to_cents, to_int
 
 bp = Blueprint("portal", __name__, url_prefix="/portal")
 
@@ -363,6 +364,156 @@ def cart_checkout():
 
 # --------------------------------------------------------------------------
 # orders + checkout
+# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# the Decision Room (Appendix E.1)
+#
+# Two rails: what is waiting on us, and what has been priced and released. An
+# item only reaches the second rail when an admin publishes, and the read below
+# filters on `published_at` — so "no prices before publish" is a WHERE clause,
+# not a convention.
+# --------------------------------------------------------------------------
+def _items_for_member():
+    rows = query(
+        "SELECT * FROM decision_items WHERE customer_id = ? ORDER BY received_at DESC",
+        (_cid(),))
+    return ([r for r in rows if r["status"] == "PENDING"],
+            [r for r in rows if r["status"] == "APPROVED" and r["published_at"]])
+
+
+@bp.route("/room")
+@bp.route("/room/<ref>")
+@client_required
+def room(ref=None):
+    pending, approved = _items_for_member()
+    chosen = None
+    for row in pending + approved:
+        if ref is None or row["ref"] == ref:
+            chosen = row
+            break
+
+    view = None
+    if chosen is not None and chosen["status"] == "APPROVED" and chosen["published_at"]:
+        view = _room_view(chosen)
+
+    return render_template("portal/room.html", pending=pending, approved=approved,
+                           item=chosen, view=view, stages=DR_STAGES)
+
+
+DR_STAGES = ["Received", "Specification in review", "Priced — awaiting release"]
+
+
+def _room_view(item):
+    """Everything the priced view renders, computed once from the entered inputs."""
+    costs = dr.cost_inputs(item["id"])
+    lane_rows = dr.lanes()
+    bounds = dr.quantity_bounds(item)
+    if not costs or not lane_rows or not bounds:
+        # Published but unpriceable: say so rather than rendering zeros.
+        return {"incomplete": True, "bounds": bounds, "has_costs": bool(costs),
+                "has_lanes": bool(lane_rows)}
+
+    qty = to_int(request.args.get("qty"), 0) or bounds["min"]
+    qty = max(bounds["min"], min(bounds["max"], qty))
+    mode = request.args.get("mode") or "ocean"
+    if mode not in lane_rows:
+        mode = next(iter(lane_rows))
+    treatment = request.args.get("tooling") or "amortized"
+    chosen_kinds = set(request.args.getlist("lever"))
+    target = to_cents(request.args.get("target")) or item["target_unit_cents"]
+
+    cards = []
+    for strat in dr.strategies(item["id"]):
+        card = dr.strategy_view(item, strat, costs, lane_rows, qty, mode, treatment)
+        if card:
+            # §E1.10 — a card is only highlighted against a target the client
+            # set, and never on a figure with no provenance behind it.
+            card["hits_target"] = bool(target and card["input_ids"]
+                                       and card["landed_cents"] <= target)
+            cards.append(card)
+
+    base = dr.landed(costs, lane_rows, qty, mode,
+                     amortize_tooling=(treatment == "amortized"))
+    lever_rows = dr.lever_savings(item, costs, lane_rows, qty, mode, treatment, bounds)
+    engineered = dr.engineered_price(item, costs, lane_rows, qty, mode, treatment,
+                                     chosen_kinds, bounds)
+
+    tooling = costs.get("tooling_total")
+    return {
+        "incomplete": False,
+        "qty": qty, "bounds": bounds, "mode": mode, "treatment": treatment,
+        "target_cents": target, "chosen_kinds": chosen_kinds,
+        "cards": cards,
+        "current_landed_cents": base["landed_cents"] if base else None,
+        "levers": lever_rows,
+        "engineered": engineered,
+        "freight_rows": dr.freight_comparison(costs, lane_rows, qty, treatment),
+        "tooling_total_cents": tooling["value_cents"] if tooling else 0,
+        "tooling_unit_cents": (tooling["value_cents"] / qty) if (tooling and qty) else 0,
+        "lanes": lane_rows,
+    }
+
+
+@bp.route("/room/<ref>/accept", methods=("POST",))
+@client_required
+@member_only
+def room_accept(ref):
+    """"Buy this route" — the strategy, quantity, freight mode and tooling
+    treatment all travel into the order (E1.13).
+
+    Snapshotted onto the order rather than referenced: a strategy edited on the
+    desk afterwards must not silently change what someone already bought.
+    """
+    item = own_or_404(query("SELECT * FROM decision_items WHERE ref = ?", (ref,), one=True))
+    if not item["published_at"]:
+        abort(404)
+
+    slot = to_int(request.form.get("slot"), 0)
+    qty = to_int(request.form.get("qty"), 0)
+    mode = request.form.get("mode") or "ocean"
+    treatment = request.form.get("tooling") or "amortized"
+
+    costs = dr.cost_inputs(item["id"])
+    lane_rows = dr.lanes()
+    strat = query("SELECT * FROM item_strategies WHERE item_id = ? AND slot = ?",
+                  (item["id"], slot), one=True)
+    bounds = dr.quantity_bounds(item)
+    if strat is None or not costs or not lane_rows or not bounds:
+        flash("That route is no longer available. Ask us and we will re-price it.", "error")
+        return redirect(url_for("portal.room", ref=ref))
+
+    qty = max(bounds["min"], min(bounds["max"], qty or bounds["min"]))
+    card = dr.strategy_view(item, strat, costs, lane_rows, qty, mode, treatment)
+    if card is None:
+        flash("That route is no longer priceable.", "error")
+        return redirect(url_for("portal.room", ref=ref))
+
+    order = orders_mod.create_order(
+        customer_id=_cid(),
+        lines=[{"name": item["client_name"] or item["auto_name"],
+                "sku": item["ref"],
+                "unit_price_cents": int(round(card["landed_cents"])),
+                "quantity": qty,
+                "catalog_item_id": item["catalog_item_id"]}],
+        actor=g.user["email"],
+        notes=(f"{card['label']} — {card['title']}. {card['mode']} freight, "
+               f"tooling {card['treatment']}, {qty:,} units."),
+        destination=g.customer["country"],
+    )
+    return redirect(url_for("portal.checkout", order_id=order["id"]))
+
+
+@bp.route("/room/<ref>/name", methods=("POST",))
+@client_required
+def room_rename(ref):
+    """Their name for it. The internal ref never moves (E1.03)."""
+    item = own_or_404(query("SELECT * FROM decision_items WHERE ref = ?", (ref,), one=True))
+    name = (request.form.get("client_name") or "").strip()[:200]
+    execute("UPDATE decision_items SET client_name = ? WHERE id = ?",
+            (name or None, item["id"]))
+    return redirect(url_for("portal.room", ref=ref))
+
+
 # --------------------------------------------------------------------------
 # --------------------------------------------------------------------------
 # the client ledger (PORT-06, §11.6)

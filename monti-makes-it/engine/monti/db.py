@@ -97,12 +97,13 @@ LATE_COLUMNS = {
     ],
     "applications": [("is_fixture", "INTEGER NOT NULL DEFAULT 0")],
     "ledger_entries": [("is_fixture", "INTEGER NOT NULL DEFAULT 0")],
+    "decision_items": [("is_fixture", "INTEGER NOT NULL DEFAULT 0")],
 }
 
 # Tables that can carry seeded rows. `flask purge-fixtures` sweeps exactly these
 # and A14 asserts the sweep left nothing behind, including orphans.
 FIXTURE_TABLES = ("customers", "applications", "quotes", "orders", "catalog_items",
-                  "ledger_entries")
+                  "ledger_entries", "decision_items")
 
 # Every fixture table needs the marker column, or the purge cannot sweep it.
 for _table in FIXTURE_TABLES:

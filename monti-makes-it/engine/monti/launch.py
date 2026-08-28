@@ -126,6 +126,29 @@ assert not _orphan_questions, (
     f"open questions filed against unknown genome sections: {sorted(_orphan_questions)}")
 
 
+# Freight lanes. Rates a forwarder would quote for a consolidated carton lane
+# out of South China — entered here so every freight figure on the site resolves
+# to a row someone put in, rather than to a constant in the arithmetic. They are
+# estimates and the Decision Room says so; §11.1 requires provenance, not
+# certainty.
+FREIGHT_LANES = [
+    # mode, per-unit cents, fixed cents spread over the run, transit, lane label
+    ("ocean", 2, 54_000, "32 days at sea", "Ocean, consolidated"),
+    ("split", 5, 65_000, "14 days average", "Split — 30% air, 70% ocean"),
+    ("air", 14, 90_000, "6 days in the air", "Air, direct"),
+]
+
+
+def provision_freight_lanes():
+    for mode, per_unit, fixed, transit, label in FREIGHT_LANES:
+        if query("SELECT id FROM freight_lanes WHERE mode = ?", (mode,), one=True):
+            continue
+        execute(
+            "INSERT INTO freight_lanes (mode, per_unit_cents, fixed_cents, transit_label, "
+            "lane_label, entered_by) VALUES (?, ?, ?, ?, ?, ?)",
+            (mode, per_unit, fixed, transit, label, ADMIN))
+
+
 def provision_boars_head():
     """Idempotent. Returns the customer id."""
     existing = query("SELECT * FROM customers WHERE company_name = 'Boars Head'", one=True)
@@ -163,7 +186,141 @@ def provision_boars_head():
                           "published; container SKUs registered.", ADMIN))
 
     provision_agent(customer_id)
+    _provision_decision_items(customer_id)
+    _provision_capacity_and_plan(customer_id)
     return customer_id
+
+
+def _provision_decision_items(customer_id):
+    """One priced item and one still waiting, both real.
+
+    The priced one is the 750ml container: its cost inputs are derived from the
+    published matrix rather than invented, so the Decision Room's arithmetic and
+    the matrix agree about the same product. The waiting one is a genuine open
+    question — Appendix B lists board grade among the details to escalate, and
+    an item sitting on stage 2 asking for it is what that looks like in the
+    product rather than in a footnote.
+    """
+    item = query("SELECT * FROM catalog_items WHERE sku = 'MMI-B-0101'", one=True)
+    if item is None or query("SELECT id FROM decision_items WHERE customer_id = ?",
+                             (customer_id,), one=True):
+        return
+
+    # The matrix's own band, so the slider cannot offer a quantity nobody priced.
+    band = query(
+        "SELECT MIN(quantity_min) AS lo, MAX(COALESCE(quantity_max, quantity_min)) AS hi "
+        "FROM price_matrix_cells c JOIN price_matrices m ON m.id = c.matrix_id "
+        "WHERE m.customer_id = ?", (customer_id,), one=True)
+
+    # `published_at` is the gate every member-facing read filters on, so an
+    # APPROVED row without it renders as pending — which is correct behaviour and
+    # was exactly the bug when this seed forgot to set it.
+    priced_id = execute(
+        "INSERT INTO decision_items (ref, auto_name, client_name, customer_id, "
+        "catalog_item_id, status, stage, source, received_at, published_at, "
+        "published_by, qty_min, qty_max, qty_step, is_fixture) "
+        "VALUES ('MMI-D-001', 'Unapproved item 001', ?, ?, ?, 'APPROVED', 3, ?, ?, ?, ?, "
+        "?, ?, 5000, 0)",
+        ("Carry-out container, 750ml", customer_id, item["id"],
+         "Existing production part — specification supplied by the client",
+         now_str(), now_str(), ADMIN, band["lo"], band["hi"]))
+
+    # The six cost inputs. Material is the matrix's own floor cell minus the
+    # freight and duty the Decision Room adds back, so the two surfaces agree
+    # about the same container rather than quoting each other's numbers.
+    for field, cents in (("material_unit", 11),
+                         ("tooling_total", 84_000),
+                         ("packaging_custom_unit", 1),
+                         ("packaging_standard_unit", 0),
+                         ("duty_rate_pct", 0),          # carry-out cartons: 0%
+                         ("lab_total", 65_000)):
+        execute(
+            "INSERT INTO pricing_inputs (customer_id, item_id, field, value_cents, "
+            "entered_by, published_at, published_by) "
+            "VALUES (?, ?, ?, ?, ?, datetime('now'), ?)",
+            (customer_id, priced_id, field, cents, ADMIN, ADMIN))
+
+    for slot, label, treatment, title, extra, lead, mode, prod, inspect, foot, lab in (
+        (0, "Lowest landed cost", "amortized", "Consolidated ocean, single batch",
+         0, 62, "ocean", "One batch, standard queue", "AQL 2.5 sampling",
+         "The cheapest route we can actually run", 0),
+        (1, "Fastest arrival", "upfront", "Air freight, priority line",
+         2, 26, "air", "Priority slot", "AQL 2.5 sampling",
+         "Slot held 48 hours", 0),
+        (2, "Highest certainty", "upfront_with_sample", "Ocean, full inspection, sample run",
+         3, 74, "ocean", "Reserved capacity", "100% functional plus third-party lab",
+         "Includes the certification pack", 1),
+    ):
+        execute(
+            "INSERT INTO item_strategies (item_id, slot, label, title, extra_cents, "
+            "lead_days, mode, production, inspection, footnote, includes_lab, "
+            "tooling_treatment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (priced_id, slot, label, title, extra, lead, mode, prod, inspect, foot,
+             lab, treatment))
+
+    for kind, label, note, saving in (
+        ("qty", "Order QTYNEW instead of QTYNOW",
+         "Spreads the tooling across more units and fills the container better.", 0),
+        ("pkg", "Plain carton instead of printed",
+         "Your artwork moves to an applied label. No change to protection.", 0),
+    ):
+        execute("INSERT INTO item_levers (item_id, kind, label, note, saving_cents) "
+                "VALUES (?, ?, ?, ?, ?)", (priced_id, kind, label, note, saving))
+
+    # The waiting item. Stage 2, with the real outstanding question on it.
+    execute(
+        "INSERT INTO decision_items (ref, auto_name, customer_id, status, stage, source, "
+        "outstanding, received_at, is_fixture) VALUES ('MMI-D-002', 'Unapproved item 002', "
+        "?, 'PENDING', 2, ?, ?, ?, 0)",
+        (customer_id,
+         "Existing container sent for measurement",
+         "Board grade and weight. Appendix B lists it as an open question and we are not "
+         "assuming one — send a sample or tell us what the current containers are made "
+         "from, and this moves to pricing.",
+         now_str()))
+
+
+def _provision_capacity_and_plan(customer_id):
+    """The Factory Plan and the commitments, with unmeasured ones marked.
+
+    E4.02: a commitment with no measurable source says so. Boars Head has not
+    placed a run yet, so most of these have nothing to measure against — and
+    `met = NULL` renders as "not yet measured" rather than as a tick.
+    """
+    if query("SELECT id FROM factory_plans WHERE customer_id = ?", (customer_id,), one=True):
+        return
+
+    execute(
+        "INSERT INTO factory_plans (customer_id, written_at, first_product, annual_demand, "
+        "method, open_questions, testing, first_order_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (customer_id, now_str(),
+         "Branded carry-out containers, 750ml and 1000ml",
+         "Not yet stated — to be agreed with the client",
+         "Die-cut and printed flat, then folded",
+         "Board grade and weight; food-contact certification; MOQ and lead time",
+         "Not yet confirmed — depends on the certification answer",
+         "Sample or spec → price matrix published → first run"))
+
+    for side, rows in (
+        ("MEMBER", [
+            ("Honest volume expectations", None),
+            ("Complete and lawful product information", None),
+            ("Timely approvals", None),
+            ("A named decision-maker", None),
+            ("Payment on agreed terms", None),
+        ]),
+        ("MONTI", [
+            ("Quote within 24 hours", None),
+            ("Confidentiality of your designs", None),
+            ("Documented quality controls", None),
+            ("Honest capacity information", None),
+            ("No undisclosed substitutions", None),
+        ]),
+    ):
+        for position, (text, measure) in enumerate(rows):
+            execute(
+                "INSERT INTO commitments (customer_id, side, commitment, measure, met, position) "
+                "VALUES (?, ?, ?, ?, NULL, ?)", (customer_id, side, text, measure, position))
 
 
 def _publish_matrix(customer_id):

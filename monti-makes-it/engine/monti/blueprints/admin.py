@@ -14,6 +14,7 @@ from flask import (
 )
 
 from .. import analytics, catalog as catalog_mod, ledger, mail, membership
+from .. import decisionroom as dr
 from .. import orders as orders_mod
 from ..auth import admin_required, create_user, ensure_portal_user
 from ..db import execute, next_ref, query
@@ -881,6 +882,153 @@ def order_detail(order_id):
 
 # --------------------------------------------------------------------------
 # ops
+
+# --------------------------------------------------------------------------
+# the pricing desk (ADM-03, Appendix E.5)
+#
+# The only place a member-facing number is created. Entering and publishing are
+# two separate acts: an entered input has no `published_at` and is invisible to
+# every member-facing read, so "nothing reaches a member before publish" holds
+# without anyone having to remember it at the call site.
+# --------------------------------------------------------------------------
+@bp.route("/desk")
+@bp.route("/desk/<ref>")
+@admin_required
+def desk(ref=None):
+    rows = query("SELECT d.*, c.company_name FROM decision_items d "
+                 "JOIN customers c ON c.id = d.customer_id ORDER BY d.received_at DESC")
+    queue = [r for r in rows if r["status"] == "PENDING"]
+    published = [r for r in rows if r["status"] == "APPROVED"]
+
+    item = None
+    for row in queue + published:
+        if ref is None or row["ref"] == ref:
+            item = row
+            break
+
+    context = {"queue": queue, "published": published, "item": item,
+               "cost_fields": dr.COST_FIELDS, "cost_labels": dr.COST_LABELS,
+               "slots": dr.STRATEGY_SLOTS, "lanes": dr.lanes()}
+    if item is not None:
+        # Unpublished inputs are shown here — this is the desk, and an admin has
+        # to see what they have entered before deciding to publish it.
+        context["costs"] = dr.cost_inputs(item["id"], published_only=False)
+        context["strategies"] = dr.strategies(item["id"])
+        context["levers"] = dr.levers(item["id"])
+        context["bounds"] = dr.quantity_bounds(item)
+        context["preview"] = _desk_preview(item, context["costs"], context["bounds"])
+    return render_template("admin/desk.html", **context)
+
+
+def _desk_preview(item, costs, bounds):
+    """What the member will see, from the same functions their page uses.
+
+    E5.06 asks for a preview that is identical to the member view for the same
+    inputs. The only way to mean that is to call the same code, so this does —
+    a second implementation would be a preview of something else.
+    """
+    if not costs or not bounds:
+        return None
+    lane_rows = dr.lanes()
+    strat = query("SELECT * FROM item_strategies WHERE item_id = ? ORDER BY slot LIMIT 1",
+                  (item["id"],), one=True)
+    if strat is None or not lane_rows:
+        return None
+    return dr.strategy_view(item, strat, costs, lane_rows, bounds["min"])
+
+
+@bp.route("/desk/<ref>", methods=("POST",))
+@admin_required
+def desk_save(ref):
+    item = query("SELECT * FROM decision_items WHERE ref = ?", (ref,), one=True)
+    if item is None:
+        abort(404)
+    action = request.form.get("action")
+
+    # --- the six cost inputs -------------------------------------------------
+    # Each one is a new row, never an update: §11.4's append-only reasoning
+    # applies to pricing inputs too. A price that changed needs to say what it
+    # was, who changed it, and when.
+    for field in dr.COST_FIELDS:
+        raw = (request.form.get(field) or "").strip()
+        if raw == "":
+            continue
+        cents = to_cents(raw) if field != "duty_rate_pct" else int(round(float(raw) * 100))
+        existing = dr.cost_inputs(item["id"], published_only=False).get(field)
+        if existing and existing["value_cents"] == cents:
+            continue
+        execute(
+            "INSERT INTO pricing_inputs (customer_id, item_id, field, value_cents, "
+            "entered_by) VALUES (?, ?, ?, ?, ?)",
+            (item["customer_id"], item["id"], field, cents, g.user["email"]))
+
+    # --- the quantity band ---------------------------------------------------
+    qty_min, qty_max = to_int(request.form.get("qty_min")), to_int(request.form.get("qty_max"))
+    if qty_min and qty_max and qty_max > qty_min:
+        execute("UPDATE decision_items SET qty_min = ?, qty_max = ?, qty_step = ? WHERE id = ?",
+                (qty_min, qty_max, to_int(request.form.get("qty_step")) or 100, item["id"]))
+
+    execute("UPDATE decision_items SET client_name = COALESCE(NULLIF(?, ''), client_name) "
+            "WHERE id = ?", ((request.form.get("client_name") or "").strip(), item["id"]))
+
+    # --- the three strategies ------------------------------------------------
+    for slot, default_label, default_treatment in dr.STRATEGY_SLOTS:
+        title = (request.form.get(f"title_{slot}") or "").strip()
+        if not title:
+            continue
+        execute(
+            "INSERT INTO item_strategies (item_id, slot, label, title, extra_cents, "
+            "lead_days, mode, production, inspection, footnote, includes_lab, "
+            "tooling_treatment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+            "ON CONFLICT(item_id, slot) DO UPDATE SET label = excluded.label, "
+            "title = excluded.title, extra_cents = excluded.extra_cents, "
+            "lead_days = excluded.lead_days, mode = excluded.mode, "
+            "production = excluded.production, inspection = excluded.inspection, "
+            "footnote = excluded.footnote, includes_lab = excluded.includes_lab",
+            (item["id"], slot, request.form.get(f"label_{slot}") or default_label, title,
+             to_cents(request.form.get(f"extra_{slot}")) or 0,
+             to_int(request.form.get(f"lead_{slot}")) or 30,
+             request.form.get(f"mode_{slot}") or "ocean",
+             request.form.get(f"production_{slot}"), request.form.get(f"inspection_{slot}"),
+             request.form.get(f"footnote_{slot}"),
+             1 if request.form.get(f"lab_{slot}") else 0,
+             default_treatment))
+
+    # --- the levers ----------------------------------------------------------
+    for kind in ("spec", "pkg", "qty"):
+        label = (request.form.get(f"lever_{kind}_label") or "").strip()
+        if not label:
+            execute("UPDATE item_levers SET active = 0 WHERE item_id = ? AND kind = ?",
+                    (item["id"], kind))
+            continue
+        execute(
+            "INSERT INTO item_levers (item_id, kind, label, note, saving_cents, active) "
+            "VALUES (?, ?, ?, ?, ?, 1) ON CONFLICT(item_id, kind) DO UPDATE SET "
+            "label = excluded.label, note = excluded.note, "
+            "saving_cents = excluded.saving_cents, active = 1",
+            (item["id"], kind, label, request.form.get(f"lever_{kind}_note"),
+             to_cents(request.form.get(f"lever_{kind}_saving")) or 0))
+
+    if action == "publish":
+        # Publishing is one deliberate act that stamps every entered input at
+        # once, so a member never sees half a price change.
+        now = now_str()
+        execute("UPDATE pricing_inputs SET published_at = ?, published_by = ? "
+                "WHERE item_id = ? AND published_at IS NULL", (now, g.user["email"], item["id"]))
+        execute("UPDATE decision_items SET status = 'APPROVED', stage = 3, "
+                "published_at = ?, published_by = ? WHERE id = ?",
+                (now, g.user["email"], item["id"]))
+        execute("INSERT INTO crm_activities (customer_id, kind, body, author) "
+                "VALUES (?, 'SYSTEM', ?, ?)",
+                (item["customer_id"],
+                 f"Pricing published for {item['ref']} — its Decision Room is now open.",
+                 g.user["email"]))
+        flash(f"Published. {item['ref']} is live in their Decision Room.", "ok")
+    else:
+        flash("Saved. Nothing is visible to the member until you publish.", "ok")
+
+    return redirect(url_for("admin.desk", ref=ref))
+
 
 # --------------------------------------------------------------------------
 # the master ledger (ADM-13, §11.5)

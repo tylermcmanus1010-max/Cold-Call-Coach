@@ -1,0 +1,59 @@
+# Class A proofs
+
+One block per check. A check counts toward Class A coverage only when the
+defect its proof introduced was caught and named — §2.4, and §1.6's rule that
+counting an unproven check toward coverage is itself a P0.
+
+## A05 — Tenant isolation on every member-scoped route and asset URL
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** own_or_404 scoping clause removed -> /portal/quotes/1 — returned 200 — another member's row was served
+
+## A06 — Brand and claim scanner (source, database, rendered, email)
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** source: 'we own the factory' in home.html -> monti/templates/public/home.html:26; database: old brand in settings.value -> db:settings.value#1; rendered: old brand injected into config, not source -> render:/:6
+
+## A07 — Order gating refused server-side at all three points
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** add-to-cart -> portal.cart_add — add-to-cart for unregistered item 3 returned 302, expected a refusal; order-create -> portal.cart_checkout — an order was created containing unregistered item 3; checkout-start -> portal.checkout — checkout opened for order 7 on unregistered item 3
+
+## A08 — No negotiated price, customer or assignment field in a public response
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** payload: negotiated price added to the public serializer -> public_item(MMI-B-0102) — fields outside the public set: ['unit_price_cents']; rendered: owning customer printed on the public page -> render:/catalogue/MMI-B-0102 — customer name 'Boarshead' in a public response
+
+## A11 — An order cannot ship before its manufacturer review clears
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** ship_order's review guard removed -> orders.ship_order — shipped order 8 with no cleared review and did not raise
+
+## A14 — Zero fixture rows, zero orphans, every customer has an agent
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** a seeded customer put back -> customers — 1 fixture row(s) survived the purge; an orphan line with no order -> order_items.order_id — 1 row(s) point at a orders row that is gone
+
+## A16 — Every item page carries a viewer or an explicit empty state
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** viewer removed from the public item page -> public:/catalogue/MMI-B-0101 — neither an image viewer nor an explicit empty state is present
+
+## A30 — A client agent's queries cannot reach another customer
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** customer_id dropped from the agent's WHERE clause -> CLI-01.search_customers — reached customer 2 with prompt 'Probe Counterparty'
+
+## A31 — Tooling disclosure: four facts, ownership, treatment, threshold
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** a fifth fact added to the line -> tool MMI-T-2001 / lowest_cost — a fifth fact was added: ['expected_lifespan']; the ownership sentence stripped -> tool MMI-T-2001 / lowest_cost — the ownership sentence is missing from the tooling line; the materiality threshold moved off 5% -> tool MMI-T-2001 — at 119,999 units the share is 0.0500 but no callout fired

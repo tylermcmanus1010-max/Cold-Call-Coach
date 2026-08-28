@@ -1,4 +1,5 @@
 {% extends "portal/_base.html" %}
+{% from "_image_viewer.html" import viewer %}
 {% block title %}{{ item.name }} · {{ company }}{% endblock %}
 {% block eyebrow %}<div class="eyebrow">{{ item.sku }}</div>{% endblock %}
 {% block heading %}{{ item.name }}{% endblock %}
@@ -20,6 +21,47 @@
       <div class="divider-label">Note on your account</div>
       <p class="muted" style="font-size:.9rem">{{ item.note }}</p>
     {% endif %}
+
+    <div class="divider-label">Images</div>
+    {{ viewer(images, item.name, 'portal-' ~ item.id) }}
+
+    {% if genome %}
+      <div class="divider-label">What we know about making this</div>
+      <dl class="kv">
+        {% for section in genome %}
+          <dt>{{ section.section }}</dt>
+          <dd>
+            {% if section.is_unknown %}
+              {#- An unknown is marked, never filled with a plausible default.
+                  A specification we were never given, printed as though we were,
+                  is worse than a gap a client can see and answer. -#}
+              <span class="tag tag-wait">Not confirmed</span>
+              <div style="margin-top:.35rem">{{ section.body }}</div>
+            {% else %}{{ section.body }}{% endif %}
+          </dd>
+        {% endfor %}
+      </dl>
+    {% endif %}
+
+    {% if tooling_lines %}
+      <div class="divider-label">Tooling</div>
+      {% for line in tooling_lines %}
+        {% if line.callout %}
+          {#- §11.3.4 — above the price, before the client can accept. -#}
+          <div class="tooling-callout">{{ line.callout }}</div>
+        {% endif %}
+        <dl class="tooling">
+          <dt>What it is</dt><dd>{{ line.what_it_is }}</dd>
+          <dt>What it costs</dt>
+          <dd class="cost">
+            {% if line.reused %}<span class="tooling-reused">Already made and paid — nothing on this run.</span>
+            {% else %}{{ line.cost_cents|money }}, one time{% endif %}
+          </dd>
+          <dt>Who owns it</dt><dd>{{ line.ownership }}</dd>
+          <dt>On this run</dt><dd>{{ line.treatment }}</dd>
+        </dl>
+      {% endfor %}
+    {% endif %}
   </div>
   <div class="card sticky-side">
     <div class="stat-label">Your price</div>
@@ -33,4 +75,8 @@
     <p class="tiny dim" style="margin-top:1rem">Checkout by ACH or card. Every paid order gets a {{ cfg.ORDER_REVIEW_HOURS }}h manufacturer review before it ships.</p>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/image-viewer.js') }}" defer></script>
 {% endblock %}

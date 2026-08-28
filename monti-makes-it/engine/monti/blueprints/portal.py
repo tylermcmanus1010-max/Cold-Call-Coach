@@ -20,6 +20,7 @@ from .. import catalogue
 from .. import membership
 from .. import orders as orders_mod
 from .. import payments
+from .. import tooling
 from ..auth import client_required, own_or_404
 from ..db import execute, query
 from ..utils import money, now_str, to_int
@@ -266,7 +267,24 @@ def catalog_item(item_id):
     match = [i for i in catalog_mod.items_for_customer(g.customer) if i["id"] == item_id]
     if not match:
         abort(404)   # not reachable by this account = does not exist, as far as they know
-    return render_template("portal/catalog_item.html", item=match[0])
+    item = match[0]
+
+    # The genome's internal partition never leaves the admin side (GEN-07), so
+    # it is excluded in the query rather than filtered in the template — a
+    # template filter is one `{% for %}` away from being forgotten.
+    genome = query(
+        "SELECT section, body, is_unknown FROM item_genome "
+        "WHERE item_id = ? AND is_internal = 0 ORDER BY id", (item_id,))
+
+    lines = []
+    if catalogue.can_order(g.customer, item_id):
+        quantity = max(item["moq"] or 1, 1)
+        lines = tooling.lines_for(item_id, _cid(), quantity,
+                                  item["price_cents"] or 0, strategy="lowest_cost")
+
+    return render_template("portal/catalog_item.html", item=item,
+                           images=catalogue.item_images(item_id),
+                           genome=genome, tooling_lines=lines)
 
 
 @bp.route("/cart/add/<int:item_id>", methods=("POST",))

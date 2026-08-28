@@ -1,0 +1,56 @@
+{
+  "A05": {
+    "title": "Tenant isolation on every member-scoped route and asset URL",
+    "findings": [],
+    "proven": true,
+    "proof": "own_or_404 scoping clause removed -> /portal/quotes/1 \u2014 returned 200 \u2014 another member's row was served"
+  },
+  "A06": {
+    "title": "Brand and claim scanner (source, database, rendered, email)",
+    "findings": [],
+    "proven": true,
+    "proof": "source: 'we own the factory' in home.html -> monti/templates/public/home.html:26; database: old brand in settings.value -> db:settings.value#1; rendered: old brand injected into config, not source -> render:/:6"
+  },
+  "A07": {
+    "title": "Order gating refused server-side at all three points",
+    "findings": [],
+    "proven": true,
+    "proof": "add-to-cart -> portal.cart_add \u2014 add-to-cart for unregistered item 3 returned 302, expected a refusal; order-create -> portal.cart_checkout \u2014 an order was created containing unregistered item 3; checkout-start -> portal.checkout \u2014 checkout opened for order 7 on unregistered item 3"
+  },
+  "A08": {
+    "title": "No negotiated price, customer or assignment field in a public response",
+    "findings": [],
+    "proven": true,
+    "proof": "payload: negotiated price added to the public serializer -> public_item(MMI-B-0102) \u2014 fields outside the public set: ['unit_price_cents']; rendered: owning customer printed on the public page -> render:/catalogue/MMI-B-0102 \u2014 customer name 'Boarshead' in a public response"
+  },
+  "A11": {
+    "title": "An order cannot ship before its manufacturer review clears",
+    "findings": [],
+    "proven": true,
+    "proof": "ship_order's review guard removed -> orders.ship_order \u2014 shipped order 8 with no cleared review and did not raise"
+  },
+  "A14": {
+    "title": "Zero fixture rows, zero orphans, every customer has an agent",
+    "findings": [],
+    "proven": true,
+    "proof": "a seeded customer put back -> customers \u2014 1 fixture row(s) survived the purge; an orphan line with no order -> order_items.order_id \u2014 1 row(s) point at a orders row that is gone"
+  },
+  "A16": {
+    "title": "Every item page carries a viewer or an explicit empty state",
+    "findings": [],
+    "proven": true,
+    "proof": "viewer removed from the public item page -> public:/catalogue/MMI-B-0101 \u2014 neither an image viewer nor an explicit empty state is present"
+  },
+  "A30": {
+    "title": "A client agent's queries cannot reach another customer",
+    "findings": [],
+    "proven": true,
+    "proof": "customer_id dropped from the agent's WHERE clause -> CLI-01.search_customers \u2014 reached customer 2 with prompt 'Probe Counterparty'"
+  },
+  "A31": {
+    "title": "Tooling disclosure: four facts, ownership, treatment, threshold",
+    "findings": [],
+    "proven": true,
+    "proof": "a fifth fact added to the line -> tool MMI-T-2001 / lowest_cost \u2014 a fifth fact was added: ['expected_lifespan']; the ownership sentence stripped -> tool MMI-T-2001 / lowest_cost \u2014 the ownership sentence is missing from the tooling line; the materiality threshold moved off 5% -> tool MMI-T-2001 \u2014 at 119,999 units the share is 0.0500 but no callout fired"
+  }
+}

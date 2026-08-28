@@ -1,0 +1,172 @@
+{% extends "portal/_base.html" %}
+{% block title %}Describe it badly · {{ company }}{% endblock %}
+{% block eyebrow %}Start a product{% endblock %}
+{% block heading %}Describe it badly{% endblock %}
+{% block content %}
+
+<p class="section-lede" style="max-width:60ch">
+  Send a sketch, a photograph, a voice note, a competitor's listing, your current
+  supplier's quote, or a CAD file. We structure the rest into a manufacturable
+  specification — and a person signs it before it becomes a price.
+</p>
+
+<div class="dimrule" style="margin:1.75rem 0 1.5rem"><i></i></div>
+
+<div class="grid grid-sidebar">
+  <form method="post" action="{{ url_for('portal.intake') }}" class="card card-lg"
+        style="display:grid;gap:1.5rem">
+    {{ csrf_input() }}
+
+    <div>
+      <span class="eyebrow">What you already have</span>
+      {#
+        The chips are not a picker — they are the answer to "will you even take
+        this?". Each says what happens to that kind of thing, because the reason
+        people do not send a voice note is that they assume it is not usable.
+      #}
+      <div class="chips" style="margin-top:.7rem">
+        {% for label, note in formats %}
+          <button class="chip" type="button" data-note="{{ note }}"
+                  aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ label }}</button>
+        {% endfor %}
+      </div>
+      <p class="note-line" id="chipNote">
+        <span class="mono" aria-hidden="true">&rarr;</span> {{ formats[0][1] }}
+      </p>
+      <label class="field" style="margin-top:.5rem">
+        <span class="field-label">What are you sending?</span>
+        <input type="text" name="brought"
+               placeholder="e.g. Four phone photos with a ruler in frame">
+      </label>
+    </div>
+
+    <div class="dimrule"><i></i></div>
+
+    <div>
+      <span class="eyebrow">Rough answers are fine</span>
+      <div class="qgrid" style="margin-top:.8rem">
+        <label>What does it need to do?
+          <input type="text" name="summary" required
+                 placeholder="Hold a takeaway meal without going soft"></label>
+        <label>Roughly how many?
+          <input type="text" name="quantity" placeholder="A few hundred thousand a year"></label>
+        <label>Made of what? A guess is fine
+          <input type="text" name="material" placeholder="Board of some kind"></label>
+        <label>When do you need it?
+          <input type="text" name="needed_by" placeholder="Before the summer menu"></label>
+      </div>
+    </div>
+
+    <div>
+      <span class="eyebrow">How much engineering is this, roughly?</span>
+      {# The weight is shown before sending, with the rule that a declined or
+         incomplete request is never charged (E4.04). Guessing wrong costs the
+         member nothing — we reclassify it, and the ledger records why. #}
+      <div class="weightpick" style="margin-top:.8rem">
+        {% for key, weight, label in weights %}
+          <label class="pay-option">
+            <input type="radio" name="weight" value="{{ weight }}"
+                   {{ 'checked' if weight == 2 }}>
+            <span>
+              <span class="pay-title">{{ label }}
+                <span class="tag">{{ weight }} unit{{ '' if weight == 1 else 's' }}</span></span>
+              <span class="pay-note">If we decline it, or send it back for missing
+                information, you are not charged.</span>
+            </span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row wrap" style="gap:.75rem">
+      <button class="btn btn-primary" type="submit">Send it to engineering</button>
+      <span class="tiny dim">A structured draft comes back within 24 hours.</span>
+    </div>
+  </form>
+
+  <aside class="stack">
+    <div class="card card-accent" style="padding:20px 22px">
+      <span class="eyebrow">How this is read</span>
+      <p class="tiny" style="margin-top:.6rem;color:var(--ink-2)">
+        Software structures what you send — transcription, frame extraction, dimension
+        inference, quote normalisation.
+      </p>
+      {#
+        WI-I-03: no specification reaches a price without a recorded human
+        approval. Saying so here is the point — it is the difference between a
+        quote and a guess, and it is the reason the item sits at stage 1 rather
+        than returning a number immediately.
+      #}
+      <p class="tiny" style="margin-top:.6rem;color:var(--ink-2)">
+        <strong>A named manufacturing engineer signs the final specification.</strong>
+        No specification reaches a price without a human approval on the record.
+      </p>
+    </div>
+
+    <div class="card" style="background:var(--green-soft);border-color:color-mix(in srgb,var(--green) 26%,transparent)">
+      <span class="eyebrow" style="color:var(--green-deep)">Your quote capacity</span>
+      <p class="stat-value" style="color:var(--green-deep)">
+        {{ capacity.left }}<span class="tiny muted"> of {{ capacity.total }} units left</span>
+      </p>
+      <p class="tiny dim" style="margin-top:.3rem">
+        Declined or incomplete requests never consume a unit.
+      </p>
+      <p style="margin-top:.8rem">
+        <a class="reqlink tiny" href="{{ url_for('portal.membership_record') }}">How capacity
+          is weighted</a>
+      </p>
+    </div>
+
+    <div class="card">
+      <span class="eyebrow" style="color:var(--brass)">When words are not enough</span>
+      <h3 style="margin-top:.5rem">Make This Box</h3>
+      <p class="tiny" style="margin-top:.5rem;color:var(--ink-2)">
+        Some products cannot be described, only handed over. We ship you a prepaid,
+        tamper-evident box. Put the thing inside, scan the code on the lid, drop it off.
+      </p>
+      {% if boxes %}
+        <ul class="commitlist">
+          {% for entry in boxes %}
+            <li><span class="mono tiny">{{ entry.box.ref }}</span>
+              <b class="ok">{{ entry.stages[entry.stage] }}</b></li>
+          {% endfor %}
+        </ul>
+        <p class="tiny dim" style="margin-top:.6rem">
+          Tracked stage by stage in <a class="reqlink"
+            href="{{ url_for('portal.membership_record') }}">your membership record</a>.
+        </p>
+      {% else %}
+        <form method="post" action="{{ url_for('portal.request_box') }}"
+              style="margin-top:.9rem">
+          {{ csrf_input() }}
+          <button class="btn btn-sm" type="submit"
+                  style="border-color:var(--brass);background:var(--brass);color:#fff">
+            Request a box</button>
+        </form>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* The chips explain, they do not filter — clicking one swaps the sentence under
+   them. The form works without this; the note simply stays on the first. */
+(function () {
+  var chips = document.querySelector(".chips");
+  var note = document.getElementById("chipNote");
+  if (!chips || !note) { return; }
+  chips.addEventListener("click", function (e) {
+    var chip = e.target.closest(".chip");
+    if (!chip) { return; }
+    chips.querySelectorAll(".chip").forEach(function (c) {
+      c.setAttribute("aria-pressed", "false");
+    });
+    chip.setAttribute("aria-pressed", "true");
+    note.innerHTML = '<span class="mono" aria-hidden="true">&rarr;</span> ' +
+      chip.dataset.note.replace(/[<&>]/g, "");
+  });
+})();
+</script>
+{% endblock %}

@@ -367,6 +367,114 @@ def cart_checkout():
 # orders + checkout
 # --------------------------------------------------------------------------
 # --------------------------------------------------------------------------
+# intake — "describe it badly" (Appendix E, INTK-00…03)
+#
+# The door. It accepts whatever the member already has, says what happens to
+# each kind of thing, and turns a submission into an unapproved item in their
+# Decision Room. Two rules shape it:
+#
+#   No spec reaches a price without a person (WI-I-03). Submitting creates an
+#   item at stage 1, not a price. The item advances only when a named engineer
+#   has signed the specification, which is a recorded event, not a timer.
+#
+#   A request that costs nothing says so before it is sent (E4.04's fairness
+#   rules). The capacity a submission will consume is shown on the form, with
+#   the rule that a declined or incomplete request is never charged.
+# --------------------------------------------------------------------------
+INTAKE_FORMATS = [
+    ("Voice note", "A transcript, then a structured feature list you confirm. "
+                   "Most members do this from the floor."),
+    ("Phone video", "We pull still frames, identify construction, and mark what we "
+                    "still need to see."),
+    ("Sketch", "We redraw it to scale and send it back with the assumptions we made "
+               "highlighted."),
+    ("Photo with something for scale", "Put a coin, a ruler or a caliper in frame and "
+                                       "we can scale the whole part from it."),
+    ("A competitor's listing", "We treat the listing as a requirements document, not a "
+                               "target to copy."),
+    ("Your current supplier's quote", "We normalise it into a true landed cost and show "
+                                      "you every line it left out."),
+    ("CAD or a drawing", "STEP, IGES, DXF or PDF go straight to a manufacturability "
+                         "review."),
+    ("The thing itself", "Ask for a Make This Box. Prepaid, tamper-evident, and tracked "
+                         "from the moment it leaves your hands."),
+]
+
+# §MEM-06 — the weight a request consumes is decided by the engineering it takes,
+# not by counting requests. Shown before sending, never after.
+INTAKE_WEIGHTS = [
+    ("variation", 1, "A change to something we already make for you"),
+    ("new", 2, "A new product — one part, one process"),
+    ("assembly", 4, "A complex assembly — several parts, tooling, or sub-suppliers"),
+]
+
+
+@bp.route("/intake", methods=("GET", "POST"))
+@client_required
+def intake():
+    if request.method == "GET":
+        return render_template("portal/intake.html",
+                               formats=INTAKE_FORMATS, weights=INTAKE_WEIGHTS,
+                               capacity=genome_mod.capacity(g.customer),
+                               boxes=genome_mod.boxes(_cid()))
+
+    summary = (request.form.get("summary") or "").strip()
+    if not summary:
+        flash("Tell us what you want made — a sentence is enough.", "error")
+        return redirect(url_for("portal.intake"))
+
+    weight = to_int(request.form.get("weight"), 2)
+    classified = next((label for key, w, label in INTAKE_WEIGHTS if w == weight),
+                      "New product")
+
+    count = query("SELECT COUNT(*) AS c FROM decision_items", one=True)["c"]
+    ref = f"MMI-D-{count + 1:03d}"
+    detail = " · ".join(filter(None, [
+        (request.form.get("quantity") or "").strip(),
+        (request.form.get("material") or "").strip(),
+        (request.form.get("needed_by") or "").strip(),
+    ]))
+
+    item_id = execute(
+        "INSERT INTO decision_items (ref, auto_name, customer_id, status, stage, "
+        "source, outstanding, is_fixture) VALUES (?, ?, ?, 'PENDING', 1, ?, ?, 0)",
+        (ref, f"Unapproved item {count + 1:03d}", _cid(),
+         (request.form.get("brought") or "A written description").strip()
+         + (f" — {detail}" if detail else ""),
+         "Nothing yet. We will come back within 24 hours with a structured draft, "
+         "and a named engineer signs it before it becomes a price."))
+
+    # The capacity debit is recorded with the request, so the ledger and the
+    # header can never disagree about what was charged (E4.04).
+    execute(
+        "INSERT INTO capacity_ledger (customer_id, item_id, label, classified, "
+        "weight, outcome, charged) VALUES (?, ?, ?, ?, ?, 'In progress', ?)",
+        (_cid(), item_id, summary[:120], classified, weight, weight))
+
+    execute("INSERT INTO crm_activities (customer_id, kind, body, author) "
+            "VALUES (?, 'SYSTEM', ?, 'portal')",
+            (_cid(), f"Intake {ref}: {summary[:160]}"))
+
+    flash(f"{ref} is in your Decision Room. We will come back within 24 hours.", "ok")
+    return redirect(url_for("portal.room", ref=ref))
+
+
+@bp.route("/intake/box", methods=("POST",))
+@client_required
+def request_box():
+    """Make This Box. Stage 0 until something is actually recorded against it."""
+    count = query("SELECT COUNT(*) AS c FROM sample_boxes", one=True)["c"]
+    ref = f"MMI-BOX-{4001 + count}"
+    box_id = execute("INSERT INTO sample_boxes (ref, customer_id, stage) VALUES (?, ?, 0)",
+                     (ref, _cid()))
+    execute("INSERT INTO sample_events (box_id, stage, detail, recorded_by) "
+            "VALUES (?, 0, 'Requested from the portal', 'portal')", (box_id,))
+    flash(f"Box {ref} requested. It ships prepaid — put the thing inside and scan the "
+          f"code on the lid.", "ok")
+    return redirect(url_for("portal.intake"))
+
+
+# --------------------------------------------------------------------------
 # the Decision Room (Appendix E.1)
 #
 # Two rails: what is waiting on us, and what has been priced and released. An

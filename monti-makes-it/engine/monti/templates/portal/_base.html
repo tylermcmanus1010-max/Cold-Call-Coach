@@ -8,6 +8,7 @@
     <a class="side-link {{ 'active' if 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.catalog') }}"><span class="side-icon">▤</span> My catalog</a>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.purchases' }}" href="{{ url_for('portal.purchases') }}"><span class="side-icon">▣</span> Purchased items</a>
     <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('portal.orders') }}"><span class="side-icon">◱</span> Orders</a>
+    <a class="side-link {{ 'active' if 'intake' in (request.endpoint or '') }}" href="{{ url_for('portal.intake') }}"><span class="side-icon">+</span> Describe it badly</a>
     <a class="side-link {{ 'active' if 'room' in (request.endpoint or '') }}" href="{{ url_for('portal.room') }}"><span class="side-icon">◆</span> Decision Room</a>
     <a class="side-link {{ 'active' if 'ledger' in (request.endpoint or '') }}" href="{{ url_for('portal.ledger_view') }}"><span class="side-icon">≡</span> My ledger</a>
     <a class="side-link {{ 'active' if 'membership_record' in (request.endpoint or '') }}" href="{{ url_for('portal.membership_record') }}"><span class="side-icon">◎</span> Membership</a>
@@ -16,7 +17,7 @@
   </div>
   <div class="side-group">
     <div class="side-title">Need something new</div>
-    <a class="side-link" href="{{ url_for('public.quote') }}"><span class="side-icon">+</span> New quote request</a>
+    <a class="side-link" href="{{ url_for('portal.intake') }}"><span class="side-icon">+</span> New quote request</a>
     <a class="side-link" href="mailto:{{ cfg.SUPPORT_EMAIL }}"><span class="side-icon">✉</span> Contact us</a>
   </div>
   {% if quota %}

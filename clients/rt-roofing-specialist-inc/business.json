@@ -168,22 +168,26 @@
     "ink": "#131c22"
   },
   "audit": {
-    "mobile": false,
-    "https": false,
+    "https": true,
+    "mobile": true,
     "speed": false,
-    "phoneTap": false,
+    "phoneTap": true,
     "hours": false,
-    "address": false,
+    "address": true,
     "services": false,
     "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "cta": true,
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "_scout": {
-    "currentSiteStatus": "awaiting re-audit of his real site",
-    "rendered": false
+    "currentSiteStatus": "live",
+    "rendered": true,
+    "gaps": 4,
+    "namesBusiness": true,
+    "loadMs": 15596,
+    "pageKb": 245
   },
   "callNotes": [
     "2026-08-28: he DOES have a site — rtroofingspecialist.com, linked from his Google listing. Our lead had rtroofing.com, which is parked and for sale and not his. Findings reset."

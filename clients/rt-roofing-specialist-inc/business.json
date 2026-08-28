@@ -1,47 +1,76 @@
 {
-  "_status": "WARM — owner interested on the call, did not know rtroofing.com was parked and for sale. His email is rt@rtroofingspecial.com, which means he owns rtroofingspecial.com. CHECK WHAT IS AT rtroofingspecial.com BEFORE SENDING ANYTHING — if there is already a site there, the whole pitch changes. Everything marked below needs his confirmation: hours, service area, licence number, and the four highlight boxes. No reviews on the page; we do not invent them. Roofing is the most visual trade there is — photos of his work matter more here than on any page we have built.",
-
+  "_status": "WARM — interested. His REAL site is https://www.rtroofingspecialist.com/ (found via his Google listing). rtroofing.com is a different, parked domain he no longer owns — still worth telling him, but it is not his website. Everything previously measured was against that parked domain and has been cleared. Do not claim anything until the re-audit lands.",
   "slug": "rt-roofing-specialist-inc",
   "name": "RT Roofing Specialist",
   "shortName": "RT Roofing",
   "category": "Roofing contractor",
   "owner": "",
-  "currentSite": "https://rtroofing.com/",
+  "currentSite": "https://www.rtroofingspecialist.com/",
   "liveUrl": "",
   "status": "replied",
   "tier": "onepage",
-
   "headline": "Know what's wrong with your roof before you spend a dollar on it.",
   "subhead": "Roof repair, replacement and inspection across Poway and North County. We walk the roof, photograph everything we find, and put it in writing — then you decide.",
   "tagline": "Roof repair and replacement in Poway and North County.",
   "heroNote": "Free written estimates · Licensed, bonded and insured",
-
   "phone": "(858) 486-4977",
   "email": "rt@rtroofingspecial.com",
-  "address": { "street": "12528 Kirkham Court", "city": "Poway", "state": "CA", "zip": "92064" },
+  "address": {
+    "street": "12528 Kirkham Court",
+    "city": "Poway",
+    "state": "CA",
+    "zip": "92064"
+  },
   "serviceArea": [
-    "Poway", "Rancho Bernardo", "Escondido", "San Marcos", "Scripps Ranch",
-    "Carmel Mountain", "Rancho Peñasquitos", "Ramona", "Santee", "San Diego"
+    "Poway",
+    "Rancho Bernardo",
+    "Escondido",
+    "San Marcos",
+    "Scripps Ranch",
+    "Carmel Mountain",
+    "Rancho Peñasquitos",
+    "Ramona",
+    "Santee",
+    "San Diego"
   ],
   "license": "",
   "priceRange": "$$",
-
   "hours": [
-    { "days": "Mon–Fri", "time": "7:00 AM – 5:00 PM", "schema": "Mo-Fr 07:00-17:00" },
-    { "days": "Saturday", "time": "By appointment", "schema": "Sa 08:00-12:00" },
-    { "days": "Sunday", "time": "Emergencies only" }
+    {
+      "days": "Mon–Fri",
+      "time": "7:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 07:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "By appointment",
+      "schema": "Sa 08:00-12:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Emergencies only"
+    }
   ],
-
   "highlights": [
-    { "value": "Free", "label": "Written estimates" },
-    { "value": "Photos", "label": "Of everything we find" },
-    { "value": "Licensed", "label": "Bonded and insured" },
-    { "value": "Poway", "label": "And all North County" }
+    {
+      "value": "Free",
+      "label": "Written estimates"
+    },
+    {
+      "value": "Photos",
+      "label": "Of everything we find"
+    },
+    {
+      "value": "Licensed",
+      "label": "Bonded and insured"
+    },
+    {
+      "value": "Poway",
+      "label": "And all North County"
+    }
   ],
-
   "servicesHeading": "What do you need looking at?",
   "servicesLede": "Pick what applies and send it over. We come out, photograph the roof and put a written number on it — no charge for the visit.",
-
   "services": [
     {
       "group": "Something is leaking",
@@ -63,7 +92,6 @@
       "name": "Skylight leak",
       "desc": "Reseal or replace, and we tell you honestly which one it needs."
     },
-
     {
       "group": "Repairs and upkeep",
       "name": "Tile repair and replacement",
@@ -84,7 +112,6 @@
       "name": "Annual maintenance visit",
       "desc": "Once a year, before the rain. Cheaper than every repair it prevents."
     },
-
     {
       "group": "Whole roof",
       "name": "Asphalt shingle re-roof",
@@ -105,7 +132,6 @@
       "name": "Underlayment replacement",
       "desc": "When the tile is sound but what is underneath it has given up."
     },
-
     {
       "group": "Inspections and paperwork",
       "name": "Roof inspection and written report",
@@ -122,10 +148,8 @@
       "desc": "Photographs and a report in the form an adjuster will actually accept."
     }
   ],
-
   "aboutHeading": "You cannot see your own roof",
   "about": "That is the whole problem with this trade. You are trusting whoever climbs up there to tell you the truth about something you will never look at yourself, and plenty of people in this business know it.\n\nSo we photograph everything. Every problem area, before we touch it, and the same spots again when the work is done. It goes to you with the written estimate, and if something can safely wait a year we will tell you that rather than sell you a roof.\n\nThe estimate is free and there is no charge for coming out. If the number is wrong for you, keep the photos — you will need them for the next quote anyway.",
-
   "points": [
     "We walk the whole roof, not just the part you called about",
     "Every problem area photographed before anything is touched",
@@ -134,22 +158,34 @@
     "Told plainly what needs doing now and what can wait",
     "The same photographs again when the work is finished"
   ],
-
   "ctaHeading": "Get it looked at properly",
   "ctaLede": "Call or text and tell us what you are seeing. The visit and the written estimate cost nothing either way.",
-  "cta": { "primary": "Call for a free estimate" },
-
-  "theme": { "accent": "#1d3f53", "ink": "#131c22" },
-
-  "audit": {
-    "mobile": false, "https": false, "speed": false, "phoneTap": false,
-    "hours": false, "address": false, "services": false, "reviews": false,
-    "cta": false, "seo": false, "meta": false, "social": false
+  "cta": {
+    "primary": "Call for a free estimate"
   },
-
+  "theme": {
+    "accent": "#1d3f53",
+    "ink": "#131c22"
+  },
+  "audit": {
+    "mobile": false,
+    "https": false,
+    "speed": false,
+    "phoneTap": false,
+    "hours": false,
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
+  },
   "_scout": {
-    "score": 111, "gaps": 12, "rendered": true,
-    "currentSiteStatus": "rtroofing.com is parked and listed for sale — not his any more",
-    "loadMs": 7970, "pageKb": 32
-  }
+    "currentSiteStatus": "awaiting re-audit of his real site",
+    "rendered": false
+  },
+  "callNotes": [
+    "2026-08-28: he DOES have a site — rtroofingspecialist.com, linked from his Google listing. Our lead had rtroofing.com, which is parked and for sale and not his. Findings reset."
+  ]
 }

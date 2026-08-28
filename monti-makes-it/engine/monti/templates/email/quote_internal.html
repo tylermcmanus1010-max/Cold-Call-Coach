@@ -1,0 +1,18 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:19px;margin:0 0 6px;color:#14211A">New quote request — {{ quote.ref }}</h1>
+<p style="color:#8A958D;margin:0 0 18px;font-size:13px">{{ sla }}h clock started. Due {{ pretty_dt(quote.due_at) }} UTC.</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;color:#55635B">
+  <tr><td style="padding:5px 0;color:#8A958D;width:150px">Customer</td><td style="color:#14211A">{{ customer.company_name }} ({{ customer.ref }})</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Contact</td><td>{{ customer.contact_name }} · {{ customer.email }}{{ ' · ' + customer.phone if customer.phone }}</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Project</td><td style="color:#14211A">{{ quote.title }}</td></tr>
+  {% if quote.quantity %}<tr><td style="padding:5px 0;color:#8A958D">Quantity</td><td>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</td></tr>{% endif %}
+  {% if quote.target_unit_price_cents %}<tr><td style="padding:5px 0;color:#8A958D">Target unit price</td><td style="color:#0F4D33">{{ money(quote.target_unit_price_cents) }}</td></tr>{% endif %}
+  {% if quote.materials %}<tr><td style="padding:5px 0;color:#8A958D">Materials</td><td>{{ quote.materials }}</td></tr>{% endif %}
+  {% if quote.destination_country %}<tr><td style="padding:5px 0;color:#8A958D">Destination</td><td>{{ quote.destination_city }} {{ quote.destination_country }} · {{ quote.incoterm }}</td></tr>{% endif %}
+  <tr><td style="padding:5px 0;color:#8A958D">Priority</td><td>{{ quote.priority }}</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Files</td><td>{{ files|length }}</td></tr>
+</table>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:8px;padding:14px;margin:18px 0;color:#55635B;font-size:14px;white-space:pre-wrap">{{ quote.description }}</div>
+<a href="{{ site_url }}/admin/quotes/{{ quote.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">Price it in the admin bay</a>
+{% endblock %}

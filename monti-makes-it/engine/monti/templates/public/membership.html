@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Membership · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(3rem,7vw,5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Membership</span>
+    <h1 style="margin-top:1rem">A short list, on purpose</h1>
+    <p class="section-lede">
+      Anyone can ask us for a price. Membership is what lets you buy — and we're deliberate about
+      who we give it to.
+    </p>
+  </div>
+</section>
+
+<section class="section quiet-band rule-top">
+  <div class="container-narrow">
+    <h2>What members get</h2>
+    <div class="grid grid-2" style="margin-top:2rem;gap:2rem">
+      <div class="pillar"><div class="pillar-rule"></div><h3>Manufacturer-direct pricing</h3>
+        <p>The number the floor works to. One margin, no agent, no importer.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>Your own portal</h3>
+        <p>Your quotes, your estimates, your order history and tracking. Sealed from every other member.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>A private catalogue</h3>
+        <p>Everything we've built for you, at your agreed price, ready to reorder without re-quoting.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>{{ cfg.QUOTE_LIMIT }} quotes every {{ cfg.QUOTE_CYCLE_DAYS }} days</h3>
+        <p>Enough to develop a whole line. We raise the limit for members who work with us often — just ask.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>A {{ cfg.ORDER_REVIEW_HOURS }}-hour safety net</h3>
+        <p>Every paid order sits in a manufacturer review before production. Last chance to change your mind, catch an error, or stop.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>Someone who answers</h3>
+        <p>A real person on our side who knows your products, not a ticket queue.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>Two lines, both at cost</h3>
+        <p>A {{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% {{ cfg.FEE_LABEL|lower }}, and what the payment
+          network charges to move the money — passed on exactly, never marked up. No membership fee, no
+          listing fee, no minimum spend, nothing added at the end.</p></div>
+      <div class="pillar"><div class="pillar-rule"></div><h3>Freight, sometimes on us</h3>
+        <p>Every order shows what freight and customs would cost, worked out line by line. On accounts we
+          want to keep, we absorb it — and you see exactly what we absorbed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow">
+    <h2>How we decide</h2>
+    <p class="section-lede">
+      We say no to applications, and we'd rather be upfront about that than waste your time.
+      Our capacity is finite, and everything that leaves the floor carries our name.
+    </p>
+    <ol class="step-list" style="margin-top:2rem">
+      <li><h3>Apply</h3><p>Three minutes. Tell us what you sell, what you'd want made, and why you want to work with us.</p></li>
+      <li><h3>We read it</h3><p>A person on our team reads every application, usually within two business days.</p></li>
+      <li><h3>A video call</h3><p>Every serious application includes one. We want to understand what you're building and whether we're the right manufacturer for it. It goes both ways — bring your questions.</p></li>
+      <li><h3>A decision</h3><p>Accepted, waitlisted, or declined, with a reason. Accepted members get portal credentials the same day and can order against any quote they've uploaded.</p></li>
+    </ol>
+    <div class="gate-band" style="margin-top:3rem">
+      <h2 style="font-size:1.6rem">Think you're a fit?</h2>
+      <p class="muted" style="margin-top:.8rem;max-width:48ch">
+        We're looking for people building something real who plan to still be here in five years.
+        Size matters far less than that.
+      </p>
+      <div class="row wrap" style="margin-top:1.75rem;gap:1rem">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+        <a class="btn btn-ghost btn-lg" href="{{ url_for('public.quote') }}">Just get a price first</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

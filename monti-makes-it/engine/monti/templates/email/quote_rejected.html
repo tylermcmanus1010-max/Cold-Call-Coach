@@ -1,0 +1,15 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">We're not the right shop for this one.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Thanks for sending us <strong style="color:#14211A">{{ quote.title }}</strong>
+  (<span style="font-family:monospace">{{ quote.ref }}</span>). We looked at it properly and we're
+  not going to quote it — here's why, straight:
+</p>
+<div style="background:#F9F8F4;border-left:3px solid #0F4D33;padding:14px 16px;margin-bottom:20px;color:#55635B;font-size:14px;white-space:pre-wrap">{{ reason }}</div>
+<p style="color:#55635B;margin:0 0 18px">
+  This is about the project, not about you. Send us the next one — most of what comes through here
+  we can build.
+</p>
+<a href="{{ site_url }}/quote" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Send us another project</a>
+{% endblock %}

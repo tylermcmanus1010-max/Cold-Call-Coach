@@ -1,0 +1,37 @@
+{% extends "admin/_base.html" %}
+{% block title %}Applications · {{ company }}{% endblock %}
+{% block heading %}Membership applications{% endblock %}
+{% block content %}
+<div class="tabs">
+  <a class="tab {{ 'active' if status == 'open' }}" href="{{ url_for('admin.applications', status='open') }}">Open</a>
+  {% for key, label in [('SUBMITTED','New'),('SCREENING','Screening'),('INTERVIEW_SCHEDULED','Interview booked'),('APPROVED','Accepted'),('WAITLISTED','Waitlisted'),('DECLINED','Declined'),('all','All')] %}
+    <a class="tab {{ 'active' if status == key }}" href="{{ url_for('admin.applications', status=key) }}">
+      {{ label }}{% if counts.get(key) %} ({{ counts.get(key) }}){% endif %}</a>
+  {% endfor %}
+</div>
+
+<div class="card card-flush">
+  {% if applications %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Ref</th><th>Company</th><th>Contact</th><th>What they sell</th><th>Volume</th><th>Status</th><th>Interview</th><th>Applied</th></tr></thead>
+    <tbody>
+    {% for a in applications %}
+      {% set label, tone = application_label.get(a.status, (a.status, 'slate')) %}
+      <tr>
+        <td class="mono tiny">{{ a.ref }}</td>
+        <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}">{{ a.company_name }}</a>
+          {% if a.website %}<div class="tiny dim">{{ a.website }}</div>{% endif %}</td>
+        <td class="tiny"><div>{{ a.contact_name }}</div><div class="dim">{{ a.email }}</div></td>
+        <td class="tiny muted">{{ (a.what_they_sell or '')[:60] }}{{ '…' if (a.what_they_sell or '')|length > 60 }}</td>
+        <td class="tiny muted nowrap">{{ a.annual_volume or '—' }}</td>
+        <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+        <td class="tiny">{{ a.interview_at|dt if a.interview_at else '—' }}</td>
+        <td class="tiny dim">{{ a.created_at|relative }}</td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% else %}
+    <div class="empty"><div class="empty-icon">◇</div>Nothing in this view.</div>
+  {% endif %}
+</div>
+{% endblock %}

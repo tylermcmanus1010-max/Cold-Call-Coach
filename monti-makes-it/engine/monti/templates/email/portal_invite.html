@@ -1,0 +1,13 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A">Your portal is open.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  {{ customer.company_name }} now has a private portal with {{ company }} — your quotes, your catalog, your orders.
+  Nobody else can see it.
+</p>
+<div style="background:#F9F8F4;border:1px dashed rgba(15,77,51,.35);border-radius:8px;padding:16px;margin-bottom:20px">
+  <div style="color:#55635B;font-size:14px">Email: <span style="font-family:monospace">{{ customer.email }}</span></div>
+  <div style="color:#55635B;font-size:14px;margin-top:6px">Temporary password: <span style="font-family:monospace;color:#0F4D33;font-size:16px">{{ password }}</span></div>
+</div>
+<a href="{{ site_url }}/login" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">Sign in</a>
+{% endblock %}

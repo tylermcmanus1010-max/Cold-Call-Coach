@@ -1,0 +1,42 @@
+{% extends "_shell.html" %}
+{% block body_class %}workshop{% endblock %}
+{% block shell_name %}Admin portal{% endblock %}
+{% block sidebar %}
+  <div class="side-group">
+    <div class="side-title">Operations</div>
+    <a class="side-link {{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}"><span class="side-icon">◈</span> Dashboard</a>
+    <a class="side-link {{ 'active' if request.endpoint == 'admin.revenue' }}" href="{{ url_for('admin.revenue') }}"><span class="side-icon">$</span> Revenue</a>
+    <a class="side-link {{ 'active' if 'incoming' in (request.endpoint or '') or request.endpoint == 'admin.triage' }}" href="{{ url_for('admin.incoming') }}"><span class="side-icon">▼</span> Incoming quotes
+      {% if nav_incoming_count %}<span class="side-count">{{ nav_incoming_count }}</span>{% endif %}</a>
+    <a class="side-link {{ 'active' if 'quote' in (request.endpoint or '') }}" href="{{ url_for('admin.quotes') }}"><span class="side-icon">◷</span> Quote queue
+      {% if nav_quote_count %}<span class="side-count">{{ nav_quote_count }}</span>{% endif %}</a>
+    <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('admin.orders') }}"><span class="side-icon">▣</span> Order log
+      {% if nav_review_count %}<span class="side-count">{{ nav_review_count }}</span>{% endif %}</a>
+  </div>
+  <div class="side-group">
+    <div class="side-title">Membership</div>
+    <a class="side-link {{ 'active' if 'application' in (request.endpoint or '') }}" href="{{ url_for('admin.applications') }}"><span class="side-icon">◇</span> Applications
+      {% if nav_application_count %}<span class="side-count">{{ nav_application_count }}</span>{% endif %}</a>
+  </div>
+  <div class="side-group">
+    <div class="side-title">Relationships</div>
+    <a class="side-link {{ 'active' if 'crm' in (request.endpoint or '') }}" href="{{ url_for('admin.crm') }}"><span class="side-icon">◎</span> CRM</a>
+    <a class="side-link {{ 'active' if 'calendar' in (request.endpoint or '') }}" href="{{ url_for('admin.calendar_view') }}"><span class="side-icon">▦</span> Calendar</a>
+  </div>
+  <div class="side-group">
+    <div class="side-title">Open a client portal</div>
+    {% for c in nav_clients %}
+      <a class="side-link" href="{{ url_for('admin.open_client', customer_id=c.id) }}"><span class="side-icon">→</span> {{ c.company_name }}</a>
+    {% endfor %}
+  </div>
+  <div class="side-group">
+    <div class="side-title">Product</div>
+    <a class="side-link {{ 'active' if 'catalog' in (request.endpoint or '') }}" href="{{ url_for('admin.catalog') }}"><span class="side-icon">▤</span> Private catalog</a>
+  </div>
+  <div class="side-group">
+    <div class="side-title">System</div>
+    <a class="side-link {{ 'active' if request.endpoint == 'admin.emails' }}" href="{{ url_for('admin.emails') }}"><span class="side-icon">✉</span> Email log</a>
+    <a class="side-link {{ 'active' if request.endpoint == 'admin.settings' }}" href="{{ url_for('admin.settings') }}"><span class="side-icon">⚙</span> Settings</a>
+    <a class="side-link" href="{{ url_for('public.home') }}"><span class="side-icon">◱</span> Public site</a>
+  </div>
+{% endblock %}

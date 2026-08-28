@@ -1,0 +1,35 @@
+{% extends "admin/_base.html" %}
+{% block title %}Add customer · {{ company }}{% endblock %}
+{% block heading %}Add customer{% endblock %}
+{% block content %}
+<div class="container-narrow" style="margin:0">
+  <div class="card card-lg">
+    <form method="post">{{ csrf_input() }}
+      <fieldset><legend>Company</legend>
+        <div class="grid grid-2">
+          <label class="field"><span class="field-label">Company name *</span><input type="text" name="company_name" required></label>
+          <label class="field"><span class="field-label">Contact name</span><input type="text" name="contact_name"></label>
+          <label class="field"><span class="field-label">Email *</span><input type="email" name="email" required></label>
+          <label class="field"><span class="field-label">Phone</span><input type="tel" name="phone"></label>
+          <label class="field"><span class="field-label">Website</span><input type="text" name="website"></label>
+          <label class="field"><span class="field-label">Country</span><input type="text" name="country"></label>
+          <label class="field"><span class="field-label">City</span><input type="text" name="city"></label>
+          <label class="field"><span class="field-label">Tags</span><input type="text" name="tags" placeholder="apparel, repeat, west-coast"></label>
+        </div>
+        <label class="field"><span class="field-label">Address</span><textarea name="address" rows="2"></textarea></label>
+      </fieldset>
+      <fieldset><legend>Pipeline</legend>
+        <div class="grid grid-3">
+          <label class="field"><span class="field-label">Stage</span>
+            <select name="stage">{% for s in ['LEAD','QUOTING','NEGOTIATING','ACTIVE','DORMANT','LOST'] %}<option value="{{ s }}">{{ s|title }}</option>{% endfor %}</select></label>
+          <label class="field"><span class="field-label">Source</span>
+            <select name="source">{% for s in ['WEBSITE','REFERRAL','OUTBOUND','TRADE_SHOW','OTHER'] %}<option value="{{ s }}">{{ s|replace('_',' ')|title }}</option>{% endfor %}</select></label>
+          <label class="field"><span class="field-label">Owner</span><input type="text" name="owner" value="{{ g.user.name or g.user.email }}"></label>
+        </div>
+        <label class="field"><span class="field-label">Notes</span><textarea name="notes" rows="3"></textarea></label>
+      </fieldset>
+      <button class="btn btn-primary btn-lg" type="submit">Create customer</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

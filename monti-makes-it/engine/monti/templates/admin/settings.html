@@ -1,0 +1,65 @@
+{% extends "admin/_base.html" %}
+{% block title %}Settings · {{ company }}{% endblock %}
+{% block heading %}Settings{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Admin users</h3></div>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Name</th><th>Email</th><th>Last sign-in</th><th>Created</th></tr></thead>
+        <tbody>{% for a in admins %}
+          <tr><td>{{ a.name or '—' }}</td><td class="mono tiny">{{ a.email }}</td>
+            <td class="tiny dim">{{ a.last_login_at|relative if a.last_login_at else 'never' }}</td>
+            <td class="tiny dim">{{ a.created_at|date }}</td></tr>
+        {% endfor %}</tbody></table></div>
+      <div class="card-body" style="border-top:1px solid var(--line);background:var(--surface-2)">
+        <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">{{ csrf_input() }}
+          <input type="hidden" name="action" value="add_admin">
+          <label style="flex:1;min-width:140px"><span class="field-label">Name</span><input type="text" name="name"></label>
+          <label style="flex:1;min-width:180px"><span class="field-label">Email</span><input type="email" name="email" required></label>
+          <label style="flex:1;min-width:150px"><span class="field-label">Password</span><input type="password" name="password" required minlength="8"></label>
+          <button class="btn btn-primary" type="submit">Add admin</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Recent payment webhooks</h3></div>
+      {% if webhooks %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Received</th><th>Type</th><th>Event id</th><th>Handled as</th></tr></thead>
+          <tbody>{% for w in webhooks %}
+            <tr><td class="tiny dim">{{ w.created_at|dt }}</td><td class="tiny">{{ w.event_type }}</td>
+              <td class="tiny mono dim">{{ w.event_id }}</td><td class="tiny">{{ w.note or '—' }}</td></tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">No webhooks received yet.</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="stat-label">Live configuration</div>
+      <dl class="kv" style="margin-top:.75rem;grid-template-columns:120px minmax(0,1fr);font-size:.8rem">
+        <dt>Quote SLA</dt><dd>{{ cfg.QUOTE_SLA_HOURS }} hours</dd>
+        <dt>Review window</dt><dd>{{ cfg.ORDER_REVIEW_HOURS }} hours</dd>
+        <dt>Orders inbox</dt><dd class="mono tiny">{{ cfg.ORDERS_EMAIL }}</dd>
+        <dt>Quotes inbox</dt><dd class="mono tiny">{{ cfg.QUOTES_EMAIL }}</dd>
+        <dt>Mail provider</dt><dd class="mono">{{ cfg.MAIL_PROVIDER }}</dd>
+        <dt>Payments</dt><dd class="mono">{{ cfg.PAYMENT_PROVIDER }}</dd>
+        <dt>Card</dt><dd>{{ 'enabled' if cfg.ENABLE_CARD else 'off' }}</dd>
+        <dt>ACH</dt><dd>{{ 'enabled' if cfg.ENABLE_ACH else 'off' }}</dd>
+        <dt>Stripe key</dt><dd class="mono tiny">{{ (cfg.STRIPE_SECRET_KEY[:11] + '…') if cfg.STRIPE_SECRET_KEY else 'not set' }}</dd>
+        <dt>Site URL</dt><dd class="mono tiny">{{ cfg.SITE_URL }}</dd>
+      </dl>
+      <p class="tiny dim" style="margin-top:1rem">These come from environment variables — change them in your <span class="mono">.env</span> or your host's config and restart.</p>
+    </div>
+    <div class="card">
+      <div class="stat-label">Stripe webhook endpoint</div>
+      <div class="code-block" style="margin-top:.6rem">{{ cfg.SITE_URL }}/webhooks/stripe</div>
+      <p class="tiny dim" style="margin-top:.6rem">Subscribe to: checkout.session.completed, checkout.session.async_payment_succeeded,
+        checkout.session.async_payment_failed, charge.refunded.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

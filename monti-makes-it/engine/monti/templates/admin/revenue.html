@@ -1,0 +1,145 @@
+{% extends "admin/_base.html" %}
+{% block title %}Revenue · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Money</div>{% endblock %}
+{% block heading %}Revenue{% endblock %}
+{% block content %}
+{% set label = 'today' if summary.days == 1 else 'last ' ~ summary.days ~ ' days' %}
+
+<div class="row-between wrap" style="margin-bottom:1.5rem;gap:1rem">
+  <div>
+    <div class="stat-label">Revenue · {{ label }}</div>
+    <div style="font-size:2.4rem;font-weight:600;letter-spacing:-.035em;line-height:1.1;margin-top:.35rem"
+         class="tnum">{{ summary.revenue|money }}</div>
+    <div style="margin-top:.4rem">
+      {% if summary.revenue_delta is none %}
+        <span class="tiny dim mono">no prior period</span>
+      {% else %}
+        {% set pct = (summary.revenue_delta * 100)|round(1) %}
+        <span class="mono tiny" style="color:{{ 'var(--good)' if pct > 0 else ('var(--stop)' if pct < 0 else 'var(--ink-3)') }}">
+          {{ '▲' if pct > 0 else ('▼' if pct < 0 else '·') }} {{ pct|abs }}% vs prior period
+        </span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="range-row" role="group" aria-label="Time period">
+    {% for key, days, text in periods %}
+      <a class="range-btn {{ 'active' if period == key }}" href="{{ url_for('admin.revenue', period=key) }}"
+         aria-pressed="{{ 'true' if period == key else 'false' }}">{{ text }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card" style="padding:1.5rem 1.5rem 1rem">
+  {% set points = series.points %}
+  {% set maxv = (points | map(attribute='revenue') | max) or 1 %}
+  {% set nice = ((maxv / 100000) | round(0, 'ceil') * 100000) or 1 %}
+  <div class="chart-wrap">
+    <svg class="chart-svg" viewBox="0 0 1000 260" role="img"
+         aria-label="Revenue for the {{ label }}, {{ points|length }} points">
+      <g class="chart-grid">
+        {% for g in range(5) %}
+          {% set gy = 18 + 212 - (212 * g / 4) %}
+          <line x1="56" y1="{{ gy }}" x2="984" y2="{{ gy }}"></line>
+        {% endfor %}
+      </g>
+      <g class="chart-axis">
+        {% for g in range(5) %}
+          {% set gy = 18 + 212 - (212 * g / 4) %}
+          {% set gv = nice * g / 4 %}
+          <text x="46" y="{{ gy + 3.5 }}" text-anchor="end">{{ '$0' if gv == 0 else ('$' ~ (gv / 100000)|round|int ~ 'k') }}</text>
+        {% endfor %}
+      </g>
+      {% set slot = 928 / points|length %}
+      {% set bw = [56, [3, slot - 8]|max]|min %}
+      {% for p in points %}
+        {% set bh = [1, 212 * p.revenue / nice]|max %}
+        <rect class="chart-bar" x="{{ 56 + loop.index0 * slot + (slot - bw) / 2 }}"
+              y="{{ 18 + 212 - bh }}" width="{{ bw }}" height="{{ bh }}">
+          <title>{{ p.full }} — {{ p.revenue|money }} · {{ p.orders }} order{{ 's' if p.orders != 1 }}</title>
+        </rect>
+      {% endfor %}
+      <g class="chart-axis">
+        {% set step = [1, (points|length / 8)|round(0, 'ceil')|int]|max %}
+        {% for p in points %}
+          {% if loop.index0 % step == 0 or loop.last %}
+            <text x="{{ 56 + (loop.index0 + 0.5) * slot }}" y="252" text-anchor="middle">{{ p.label }}</text>
+          {% endif %}
+        {% endfor %}
+      </g>
+    </svg>
+  </div>
+  <div class="row-between wrap tiny dim" style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--line-soft)">
+    <span>{{ 'Hour by hour, today' if summary.days == 1 else 'Daily revenue, ' ~ label }}</span>
+    <span>Hover a bar for that {{ 'hour' if summary.days == 1 else 'day' }}</span>
+  </div>
+</div>
+
+<div class="grid grid-4" style="margin-top:1.5rem">
+  <div class="stat"><div class="stat-label">Orders</div>
+    <div class="stat-value">{{ summary.orders }}</div>
+    <div class="stat-sub">
+      {% if summary.orders_delta is not none %}
+        {% set opct = (summary.orders_delta * 100)|round(1) %}
+        <span class="mono" style="color:{{ 'var(--good)' if opct > 0 else ('var(--stop)' if opct < 0 else 'var(--ink-3)') }}">
+          {{ '▲' if opct > 0 else ('▼' if opct < 0 else '·') }} {{ opct|abs }}% vs prior</span>
+      {% else %}no prior period{% endif %}
+    </div></div>
+  <div class="stat"><div class="stat-label">Average order</div>
+    <div class="stat-value">{{ summary.aov|money }}</div>
+    <div class="stat-sub">across {{ summary.orders }} order{{ 's' if summary.orders != 1 }}</div></div>
+  <div class="stat"><div class="stat-label">Daily average</div>
+    <div class="stat-value">{{ summary.daily_average|money }}</div>
+    <div class="stat-sub">over {{ summary.days }} day{{ 's' if summary.days != 1 }}</div></div>
+  <div class="stat"><div class="stat-label">Prior period</div>
+    <div class="stat-value">{{ summary.prev_revenue|money }}</div>
+    <div class="stat-sub">the {{ summary.days }} days before</div></div>
+</div>
+
+<div class="grid grid-sidebar" style="margin-top:1.5rem">
+  <div class="card card-flush">
+    <div class="card-head"><h3>Revenue by client · {{ label }}</h3></div>
+    {% if by_customer %}
+      {% set top = by_customer[0].revenue or 1 %}
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Client</th><th>Share</th><th class="right">Orders</th><th class="right">Revenue</th><th></th></tr></thead>
+        <tbody>{% for r in by_customer %}
+          <tr>
+            <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=r.id) }}">{{ r.company_name }}</a>
+              <div class="tiny mono dim">{{ r.ref }}</div></td>
+            <td style="min-width:120px">
+              <div class="meter"><span style="width:{{ (r.revenue / top * 100)|round|int }}%"></span></div>
+              <div class="tiny dim" style="margin-top:.3rem">{{ (r.revenue / (summary.revenue or 1) * 100)|round|int }}%</div></td>
+            <td class="right tnum">{{ r.orders }}</td>
+            <td class="right mono tnum" style="font-weight:500">{{ r.revenue|money }}</td>
+            <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.open_client', customer_id=r.id) }}">Open portal</a></td>
+          </tr>
+        {% endfor %}</tbody></table></div>
+    {% else %}
+      <div class="empty">No confirmed revenue in this period.</div>
+    {% endif %}
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Open a client portal</h3></div>
+      <div style="padding:.35rem 0">
+        {% for c in clients %}
+          <a href="{{ url_for('admin.open_client', customer_id=c.id) }}"
+             style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem 1.4rem;border-bottom:1px solid var(--line-soft)">
+            <span style="font-size:.88rem">{{ c.company_name }}</span>
+            <span class="tiny" style="color:var(--green)">Open →</span>
+          </a>
+        {% else %}
+          <div class="empty" style="padding:1.75rem 1rem">No members yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="stat-label">How this is counted</div>
+      <p class="tiny muted" style="margin-top:.6rem">Revenue books on the day funds are
+        <strong>confirmed</strong>, not when the order is placed. An ACH debit still settling isn't
+        in these numbers — the same rule the review gate uses.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

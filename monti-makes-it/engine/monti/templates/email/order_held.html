@@ -1,0 +1,10 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A">{{ order.ref }} is on hold.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  We paused this order during the manufacturer review rather than build something wrong.
+</p>
+<div style="background:#F9F8F4;border-left:3px solid #97362F;padding:12px 14px;color:#55635B;font-size:14px;margin-bottom:18px">{{ reason }}</div>
+<p style="color:#55635B;font-size:14px">Someone from our team is reaching out. Your funds are untouched.</p>
+<a href="{{ site_url }}/portal/orders/{{ order.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">View order</a>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:22px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">You're in.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  {{ application.company_name }} is now a member of {{ company }}. That means manufacturer-direct pricing, a private
+  portal, and the ability to order against any quote you send us.
+</p>
+{% if password %}
+<div style="background:#F9F8F4;border:1px dashed rgba(15,77,51,.35);border-radius:6px;padding:18px;margin-bottom:20px">
+  <div style="color:#14211A;font-weight:500;margin-bottom:10px">Your portal</div>
+  <div style="color:#55635B;font-size:14px">Sign in at <a href="{{ site_url }}/login" style="color:#0F4D33">{{ site_url }}/login</a></div>
+  <div style="color:#55635B;font-size:14px;margin-top:6px">Email: <span style="font-family:monospace">{{ customer.email }}</span></div>
+  <div style="color:#55635B;font-size:14px;margin-top:6px">Temporary password: <span style="font-family:monospace;color:#0F4D33;font-size:16px">{{ password }}</span></div>
+  <div style="color:#8A958D;font-size:12px;margin-top:10px">Change it after your first sign-in.</div>
+</div>
+{% endif %}
+<table style="width:100%;border-collapse:collapse;font-size:14px;color:#55635B;margin-bottom:20px">
+  <tr><td style="padding:6px 0;color:#8A958D;width:200px">Quote requests</td><td style="color:#14211A">{{ quote_limit }} every 30 days</td></tr>
+  <tr><td style="padding:6px 0;color:#8A958D">Pricing</td><td style="color:#14211A">Member rates on everything we make for you</td></tr>
+  <tr><td style="padding:6px 0;color:#8A958D">Reordering</td><td style="color:#14211A">Two clicks, from your private catalogue</td></tr>
+</table>
+<p style="color:#55635B;margin:0 0 20px">
+  Need more than {{ quote_limit }} quotes in a cycle? Ask. We raise it for members we work with often.
+</p>
+<a href="{{ site_url }}/login" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Open my portal</a>
+{% endblock %}

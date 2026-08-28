@@ -1,0 +1,31 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<div style="background:rgba(22,113,74,.10);border:1px solid rgba(22,113,74,.30);border-radius:8px;padding:12px 14px;margin-bottom:18px">
+  <span style="color:#16714A;font-weight:650;font-size:14px">FUNDS CONFIRMED — {{ money(order.total_cents) }}</span>
+</div>
+<h1 style="font-size:19px;margin:0 0 6px;color:#14211A">New order {{ order.ref }}</h1>
+<p style="color:#8A958D;margin:0 0 18px;font-size:13px">
+  {{ review_hours }}h manufacturer review is now open. Closes {{ pretty_dt(order.review_release_at) }} UTC.
+  Nothing ships until it is cleared.
+</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;color:#55635B">
+  <tr><td style="padding:5px 0;color:#8A958D;width:150px">Customer</td><td style="color:#14211A">{{ customer.company_name }} ({{ customer.ref }})</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Contact</td><td>{{ customer.contact_name }} · {{ customer.email }}</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Payment</td><td>{{ order.payment_method }} · confirmed {{ pretty_dt(order.funds_confirmed_at) }}</td></tr>
+  {% if order.payment_ref %}<tr><td style="padding:5px 0;color:#8A958D">Payment ref</td><td style="font-family:monospace;font-size:12px">{{ order.payment_ref }}</td></tr>{% endif %}
+  {% if order.ship_to %}<tr><td style="padding:5px 0;color:#8A958D">Ship to</td><td style="white-space:pre-wrap">{{ order.ship_to }}</td></tr>{% endif %}
+</table>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:18px 0;background:#F9F8F4;border:1px solid #DEDDD3;border-radius:8px">
+  {% for i in items %}
+  <tr><td style="padding:9px 14px;color:#14211A">{{ i.name }}<div style="color:#8A958D;font-size:12px;font-family:monospace">{{ i.sku or '' }}</div></td>
+    <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(i.unit_price_cents) }} × {{ '{:,}'.format(i.quantity) }}</td>
+    <td style="padding:9px 14px;text-align:right;color:#14211A;font-family:monospace">{{ money(i.line_total_cents) }}</td></tr>
+  {% endfor %}
+  {% if order.fee_cents %}<tr><td colspan="2" style="padding:9px 14px;color:#55635B">{{ fee_label }} ({{ fee_percent }}%)</td>
+    <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(order.fee_cents) }}</td></tr>{% endif %}
+  <tr style="background:#F1F0EA"><td colspan="2" style="padding:11px 14px;color:#14211A;font-weight:650">Total</td>
+    <td style="padding:11px 14px;text-align:right;color:#0F4D33;font-weight:700;font-family:monospace">{{ money(order.total_cents) }}</td></tr>
+</table>
+{% if order.notes %}<p style="color:#55635B;font-size:14px">Client note: {{ order.notes }}</p>{% endif %}
+<a href="{{ site_url }}/admin/orders/{{ order.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">Open the review gate</a>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% set stages = [
+  ('PENDING_PAYMENT','Payment', order.created_at),
+  ('IN_REVIEW', cfg.ORDER_REVIEW_HOURS ~ 'h review', order.funds_confirmed_at),
+  ('IN_PRODUCTION','Production', order.production_started_at),
+  ('SHIPPED','Shipped', order.shipped_at),
+] %}
+{% set order_index = {'PENDING_PAYMENT':0,'PAYMENT_PROCESSING':0,'IN_REVIEW':1,'ON_HOLD':1,'APPROVED':2,'IN_PRODUCTION':2,'SHIPPED':3,'DELIVERED':3}.get(order.status, 0) %}
+<ol class="steps">
+  {% for key, name, when in stages %}
+    {% set idx = loop.index0 %}
+    <li class="step {{ 'done' if idx < order_index or (idx == order_index and order.status in ('SHIPPED','DELIVERED')) else ('current' if idx == order_index else '') }}">
+      <div class="step-name">{{ name }}</div>
+      <div class="step-when">{{ when|dt if when else '—' }}</div>
+    </li>
+  {% endfor %}
+</ol>

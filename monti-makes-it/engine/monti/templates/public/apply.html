@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Apply for membership · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">By acceptance only</span>
+    <h1 style="margin-top:1rem;font-size:clamp(1.9rem,3.6vw,2.6rem)">Apply for membership</h1>
+    <p class="section-lede">Membership is what lets you order. It's also the part we're careful about.</p>
+
+    <div class="card card-lg card-accent" style="margin-top:1.75rem">
+      <p style="margin:0">
+        <strong>Not everyone who applies is accepted.</strong> We're specific about who we partner
+        with and we don't hand our ability to produce to every applicant.
+      </p>
+      <p class="muted" style="margin:.8rem 0 0">
+        Every application is read by a person and includes a <strong>video call</strong> with our team
+        before any decision. Only after that review can you be fully accepted and start ordering
+        against the quotes you upload. If we say no, we'll tell you why.
+      </p>
+    </div>
+
+    <form method="post" style="margin-top:2.25rem" novalidate>{{ csrf_input() }}
+      <div class="grid grid-2">
+        <label class="field"><span class="field-label">Company name</span>
+          <input type="text" name="company_name" required autofocus value="{{ form.company_name or '' }}"></label>
+        <label class="field"><span class="field-label">Your name</span>
+          <input type="text" name="contact_name" required value="{{ form.contact_name or '' }}"></label>
+        <label class="field"><span class="field-label">Email</span>
+          <input type="email" name="email" required value="{{ form.email or '' }}"></label>
+        <label class="field"><span class="field-label">Website or store</span>
+          <input type="text" name="website" placeholder="yourbrand.com" value="{{ form.website or '' }}">
+          <span class="field-hint">The fastest way for us to understand you.</span></label>
+      </div>
+
+      <label class="field"><span class="field-label">What do you sell?</span>
+        <textarea name="what_they_sell" required rows="3">{{ form.what_they_sell or '' }}</textarea></label>
+
+      <label class="field"><span class="field-label">Why do you want to work with us?</span>
+        <span class="field-hint-top">This is the part we read closely.</span>
+        <textarea name="why" required rows="4">{{ form.why or '' }}</textarea></label>
+
+      <label class="field"><span class="field-label">When can you take a video call?</span>
+        <input type="text" name="availability" placeholder="Weekday mornings, US Eastern"
+               value="{{ form.availability or '' }}"></label>
+
+      <details class="more" style="margin-bottom:2rem">
+        <summary>Add more detail — optional, but it helps</summary>
+        <div class="more-body">
+          <div class="grid grid-2">
+            <label class="field"><span class="field-label">Phone</span>
+              <input type="tel" name="phone" value="{{ form.phone or '' }}"></label>
+            <label class="field"><span class="field-label">Country</span>
+              <input type="text" name="country" value="{{ form.country or '' }}"></label>
+            <label class="field"><span class="field-label">Which best describes you?</span>
+              <select name="business_type">
+                {% for t in business_types %}<option {{ 'selected' if form.business_type == t }}>{{ t }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">How long have you been trading?</span>
+              <select name="years_trading">
+                {% for y in ['Not launched yet','Under a year','1–3 years','3–10 years','Over 10 years'] %}
+                  <option {{ 'selected' if form.years_trading == y }}>{{ y }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">Roughly what do you buy a year?</span>
+              <select name="annual_volume">
+                {% for v in volumes %}<option {{ 'selected' if form.annual_volume == v }}>{{ v }}</option>{% endfor %}
+              </select>
+              <span class="field-hint">Honest beats impressive. We take on small brands we believe in.</span></label>
+            <label class="field"><span class="field-label">Who makes your products now?</span>
+              <input type="text" name="current_manufacturer" placeholder="Nobody yet / an agent / a factory in…"
+                     value="{{ form.current_manufacturer or '' }}"></label>
+            <label class="field"><span class="field-label">What would you want us to make?</span>
+              <input type="text" name="categories" placeholder="Bags, packaging, small metal parts…"
+                     value="{{ form.categories or '' }}"></label>
+            <label class="field"><span class="field-label">How did you hear about us?</span>
+              <input type="text" name="referral" value="{{ form.referral or '' }}"></label>
+          </div>
+          <label class="field"><span class="field-label">Where do you want to be in three years?</span>
+            <textarea name="goals" rows="3">{{ form.goals or '' }}</textarea></label>
+        </div>
+      </details>
+
+      <button class="btn btn-primary btn-xl btn-block" type="submit">Submit my application</button>
+      <p class="tiny dim center" style="margin-top:1rem">We read every application. You'll hear from us either way.</p>
+    </form>
+  </div>
+</section>
+{% endblock %}

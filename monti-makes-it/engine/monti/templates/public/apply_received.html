@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Application received · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(3rem,7vw,5.5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Application {{ application.ref }}</span>
+    <h1 style="margin-top:1rem">Thank you — it's with us.</h1>
+    <p class="section-lede">
+      A person will read your application for {{ application.company_name }}. If it looks like a fit,
+      we'll email you to book a video call. If it isn't, we'll tell you that too rather than leaving
+      you waiting.
+    </p>
+
+    <ol class="step-list" style="margin-top:2.5rem">
+      <li><h3>We read it</h3><p>Usually within two business days. Every application is read by a person on our team, not filtered by a form.</p></li>
+      <li><h3>We meet you</h3><p>A short video call to understand what you're building. This is a conversation, not an interrogation — we're deciding together whether this works.</p></li>
+      <li><h3>We decide</h3><p>Accepted members get a private portal, member pricing, and up to {{ cfg.QUOTE_LIMIT }} new quote requests every {{ cfg.QUOTE_CYCLE_DAYS }} days.</p></li>
+    </ol>
+
+    <div class="card card-lg" style="margin-top:2.5rem">
+      <h3>You don't have to wait to get a price</h3>
+      <p class="muted" style="margin-top:.7rem">
+        Quote requests are open to everyone, member or not. Send us something now and you'll have a
+        landed number within {{ cfg.QUOTE_SLA_HOURS }} hours — it'll be waiting in your portal the day
+        you're accepted.
+      </p>
+      <a class="btn btn-primary" style="margin-top:1.25rem" href="{{ url_for('public.quote') }}">Request a Quote</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

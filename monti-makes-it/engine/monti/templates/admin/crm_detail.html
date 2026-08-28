@@ -1,0 +1,301 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ customer.company_name }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ customer.ref }} · {{ customer.stage|title }}</div>{% endblock %}
+{% block heading %}{{ customer.company_name }}{% endblock %}
+{% block head_actions %}
+  <form method="post" class="row" style="gap:.4rem">{{ csrf_input() }}
+    <input type="hidden" name="action" value="stage">
+    <select name="stage" onchange="this.form.submit()" style="width:150px">
+      {% for s in ['LEAD','QUOTING','NEGOTIATING','ACTIVE','DORMANT','LOST'] %}
+        <option value="{{ s }}" {{ 'selected' if customer.stage == s }}>{{ s|title }}</option>{% endfor %}
+    </select>
+  </form>
+{% endblock %}
+{% block content %}
+<div class="grid grid-4" style="margin-bottom:1.5rem">
+  <div class="stat"><div class="stat-label">Lifetime value</div><div class="stat-value">{{ customer.lifetime_value_cents|money }}</div></div>
+  <div class="stat"><div class="stat-label">Quotes</div><div class="stat-value">{{ quotes|length }}</div>
+    <div class="stat-sub">{{ quotes|selectattr('status','equalto','ESTIMATE_SENT')|list|length }} awaiting their decision</div></div>
+  <div class="stat"><div class="stat-label">Orders</div><div class="stat-value">{{ orders|length }}</div>
+    <div class="stat-sub">{{ orders|rejectattr('status','in',['DELIVERED','CANCELLED','REFUNDED'])|list|length }} active</div></div>
+  <div class="stat"><div class="stat-label">Catalog items</div><div class="stat-value">{{ assigned|length }}</div>
+    <div class="stat-sub">visible in their portal</div></div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="row-between wrap" style="gap:1.5rem">
+    <div>
+      <div class="stat-label">Membership</div>
+      <div class="row" style="margin-top:.5rem">
+        {% set mlabel, mtone = membership_label.get(customer.membership_status, (customer.membership_status, 'slate')) %}
+        <span class="badge badge-{{ mtone }}">{{ mlabel }}</span>
+        {% if customer.member_since %}<span class="tiny dim">since {{ customer.member_since|date }}</span>{% endif %}
+      </div>
+    </div>
+    <div style="min-width:220px">
+      <div class="stat-label">Quote cycle</div>
+      <div class="row" style="margin-top:.5rem;gap:.6rem">
+        <div class="quota-dots">
+          {% for i in range(quota.limit) %}<span class="quota-dot {{ 'spent' if i < quota.used }}"></span>{% endfor %}
+        </div>
+        <span class="tiny muted nowrap">{{ quota.used }}/{{ quota.limit }} in {{ quota.days }}d</span>
+      </div>
+    </div>
+    <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">
+      {{ csrf_input() }}<input type="hidden" name="action" value="membership">
+      <label style="width:170px"><span class="field-label">Set membership</span>
+        <select name="membership_status">
+          {% for k in ['PROSPECT','APPLIED','INTERVIEW','MEMBER','PAUSED','DECLINED'] %}
+            <option value="{{ k }}" {{ 'selected' if customer.membership_status == k }}>{{ membership_label.get(k)[0] }}</option>{% endfor %}
+        </select></label>
+      <button class="btn btn-sm" type="submit">Update</button>
+    </form>
+    <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">
+      {{ csrf_input() }}<input type="hidden" name="action" value="freight_offer">
+      <label class="checkline" style="align-items:center">
+        <input type="checkbox" name="freight_waived_default" value="1"
+               {{ 'checked' if customer.freight_waived_default }} onchange="this.form.submit()">
+        <span class="tiny">Absorb freight &amp; customs on every order<br>
+          <span class="dim">Shown to them as struck through, tagged to {{ customer.ref }}</span></span>
+      </label>
+    </form>
+    <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">
+      {{ csrf_input() }}<input type="hidden" name="action" value="quota">
+      <label style="width:110px"><span class="field-label">Quote limit</span>
+        <input type="number" name="quote_limit" min="1" value="{{ quota.limit }}"></label>
+      <label style="width:200px"><span class="field-label">Why</span>
+        <input type="text" name="membership_note" value="{{ customer.membership_note or '' }}" placeholder="Loyal account"></label>
+      <button class="btn btn-sm" type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+<div class="grid grid-sidebar">
+  <div class="stack">
+    <div class="card">
+      <div class="row-between wrap" style="gap:1.5rem;align-items:flex-start">
+        <div style="max-width:52ch">
+          <div class="stat-label">Catalog tags</div>
+          <p class="tiny muted" style="margin-top:.5rem">Give this account a tag and every catalog item
+            carrying that tag appears in their portal straight away. An account can hold as many tags as
+            you like — a tag is a whole range, an assignment is one item.</p>
+          <div class="tag-row" style="margin-top:.75rem">
+            {% for t in (customer.catalog_tags or '').split(',') if t.strip() %}
+              <span class="tag tag-green">{{ t.strip() }}</span>
+            {% else %}<span class="tiny dim">No tags — this account is quote-only.</span>{% endfor %}
+          </div>
+        </div>
+        <form method="post" style="min-width:280px">
+          {{ csrf_input() }}<input type="hidden" name="action" value="tags">
+          <label class="field" style="margin-bottom:.6rem">
+            <span class="field-label">Tags on this account</span>
+            <input type="text" name="catalog_tags" value="{{ customer.catalog_tags or '' }}"
+                   placeholder="bags, packaging">
+          </label>
+          {% if all_tags %}
+            <div class="tag-row" style="margin-bottom:.6rem">
+              {% for t in all_tags %}<span class="tag tag-muted">{{ t.tag }} · {{ t.items }}</span>{% endfor %}
+            </div>
+          {% endif %}
+          <button class="btn btn-primary btn-sm btn-block" type="submit">Save tags</button>
+        </form>
+      </div>
+      {% if visible_items %}
+        <div class="divider-label">What they can order right now ({{ visible_items|length }})</div>
+        <div class="table-wrap"><table class="data" style="border:1px solid var(--line);border-radius:var(--radius)">
+          <thead><tr><th>SKU</th><th>Item</th><th>Reached via</th><th class="right">Their price</th><th class="right">MOQ</th></tr></thead>
+          <tbody>{% for i in visible_items %}
+            <tr>
+              <td class="mono tiny">{{ i.sku }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ i.name }}</a></td>
+              <td class="tag-row">
+                {% if i.via_assignment %}<span class="tag tag-green">direct</span>{% endif %}
+                {% for t in i.matched_tags %}<span class="tag">{{ t }}</span>{% endfor %}</td>
+              <td class="right mono tnum">{{ i.price_cents|money }}
+                {% if i.negotiated %}<div class="tiny dim">list {{ i.list_price_cents|money }}</div>{% endif %}</td>
+              <td class="right tnum">{{ '{:,}'.format(i.moq) }}</td>
+            </tr>
+          {% endfor %}</tbody></table></div>
+      {% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Direct assignments</h3><span class="tiny dim">One item, one account, your price</span></div>
+      {% if assigned %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>SKU</th><th>Item</th><th class="right">Their price</th><th class="right">MOQ</th><th>Assigned</th><th></th></tr></thead>
+          <tbody>{% for i in assigned %}
+            <tr>
+              <td class="mono tiny">{{ i.sku }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ i.name }}</a>
+                {% if i.note %}<div class="tiny dim">{{ i.note }}</div>{% endif %}</td>
+              <td class="right mono">{{ (i.custom_price_cents if i.custom_price_cents is not none else i.unit_price_cents)|money }}
+                {% if i.custom_price_cents is not none %}<div class="tiny dim">list {{ i.unit_price_cents|money }}</div>{% endif %}</td>
+              <td class="right mono">{{ '{:,}'.format(i.custom_moq or i.moq) }}</td>
+              <td class="tiny dim">{{ i.assigned_at|relative }}</td>
+              <td class="right">
+                <form method="post" action="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ csrf_input() }}
+                  <input type="hidden" name="action" value="unassign">
+                  <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                  <button class="btn btn-ghost btn-sm" type="submit">Remove</button></form></td>
+            </tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">Nothing assigned yet.</div>{% endif %}
+      {% if unassigned %}
+        <div class="card-body" style="border-top:1px solid var(--line);background:var(--surface-2)">
+          <form method="post" action="{{ url_for('admin.catalog') }}" id="assign-form">{{ csrf_input() }}
+          </form>
+          <div class="row wrap" style="gap:.5rem;align-items:flex-end">
+            <label style="flex:2;min-width:180px"><span class="field-label">Assign an item</span>
+              <select id="assign-item" style="width:100%">
+                {% for i in unassigned %}<option value="{{ i.id }}">{{ i.sku }} — {{ i.name }} ({{ i.unit_price_cents|money }})</option>{% endfor %}
+              </select></label>
+            <label style="flex:1;min-width:110px"><span class="field-label">Their price</span>
+              <input type="text" id="assign-price" placeholder="list price"></label>
+            <label style="flex:1;min-width:100px"><span class="field-label">Their MOQ</span>
+              <input type="number" id="assign-moq" placeholder="default"></label>
+            <button class="btn btn-primary" type="button" onclick="doAssign()">Assign</button>
+          </div>
+          <form method="post" id="real-assign" style="display:none">{{ csrf_input() }}
+            <input type="hidden" name="action" value="assign">
+            <input type="hidden" name="customer_id" value="{{ customer.id }}">
+            <input type="hidden" name="custom_price" id="ra-price">
+            <input type="hidden" name="custom_moq" id="ra-moq">
+          </form>
+          <script>
+            function doAssign() {
+              var id = document.getElementById('assign-item').value;
+              var f = document.getElementById('real-assign');
+              document.getElementById('ra-price').value = document.getElementById('assign-price').value;
+              document.getElementById('ra-moq').value = document.getElementById('assign-moq').value;
+              f.action = "{{ url_for('admin.catalog') }}/" + id;
+              f.submit();
+            }
+          </script>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if applications %}
+      <div class="card card-flush">
+        <div class="card-head"><h3>Applications</h3></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Submitted</th><th>Status</th><th>Interview</th><th>Decision</th></tr></thead>
+          <tbody>{% for a in applications %}
+            {% set label, tone = application_label.get(a.status, (a.status, 'slate')) %}
+            <tr><td><a class="cell-link mono" href="{{ url_for('admin.application_detail', app_id=a.id) }}">{{ a.ref }}</a></td>
+              <td class="tiny dim">{{ a.created_at|dt }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+              <td class="tiny">{{ a.interview_at|dt if a.interview_at else '—' }}</td>
+              <td class="tiny muted">{{ a.decision_reason or '—' }}</td></tr>
+          {% endfor %}</tbody></table></div>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Quotes</h3></div>
+      {% if quotes %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Project</th><th>Submitted</th><th>Status</th></tr></thead>
+          <tbody>{% for q in quotes %}
+            {% set label, tone = status_label(q.status, 'quote') %}
+            <tr><td class="mono tiny">{{ q.ref }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.title[:48] }}</a></td>
+              <td class="tiny dim">{{ q.created_at|dt }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td></tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">No quotes.</div>{% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Orders</h3></div>
+      {% if orders %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Placed</th><th>Status</th><th>Payment</th><th class="right">Total</th></tr></thead>
+          <tbody>{% for o in orders %}
+            {% set label, tone = status_label(o.status, 'order') %}
+            <tr><td><a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ o.ref }}</a></td>
+              <td class="tiny dim">{{ o.created_at|dt }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+              <td class="tiny muted">{{ o.payment_method or '—' }}</td>
+              <td class="right mono">{{ o.total_cents|money }}</td></tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">No orders.</div>{% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Activity</h3></div>
+      <div class="card-body">
+        <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end;margin-bottom:1.5rem">{{ csrf_input() }}
+          <input type="hidden" name="action" value="note">
+          <label style="width:130px"><span class="field-label">Type</span>
+            <select name="kind">{% for k in ['NOTE','CALL','EMAIL','MEETING'] %}<option value="{{ k }}">{{ k|title }}</option>{% endfor %}</select></label>
+          <label class="grow" style="min-width:220px"><span class="field-label">Log something</span>
+            <input type="text" name="body" placeholder="Called about the tooling revision…" required></label>
+          <button class="btn btn-primary" type="submit">Log</button>
+        </form>
+        <div class="timeline">
+          {% for a in activities %}
+            <div class="tl-item {{ 'tl-amber' if a.kind in ('CALL','MEETING') }}">
+              <div class="tl-head">{{ a.body }}</div>
+              <div class="tl-meta">{{ a.kind|title }} · {{ a.author or 'system' }} · {{ a.created_at|dt }}</div>
+            </div>
+          {% else %}<p class="dim tiny">Nothing logged yet.</p>{% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="stat-label">Portal access</div>
+      {% if portal_user %}
+        <div style="margin-top:.6rem;font-size:.875rem">{{ portal_user.email }}</div>
+        <div class="tiny dim">{{ 'Last signed in ' + portal_user.last_login_at|relative if portal_user.last_login_at else 'Never signed in' }}
+          {{ '· temporary password' if portal_user.must_change_password }}</div>
+        <form method="post" style="margin-top:.75rem">{{ csrf_input() }}
+          <input type="hidden" name="action" value="reset_password">
+          <button class="btn btn-sm btn-block" type="submit">Reset password</button></form>
+      {% else %}
+        <p class="tiny muted" style="margin-top:.5rem">No portal login yet.</p>
+        <form method="post" style="margin-top:.6rem">{{ csrf_input() }}
+          <input type="hidden" name="action" value="portal">
+          <button class="btn btn-primary btn-sm btn-block" type="submit">Create portal login</button></form>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <form method="post">{{ csrf_input() }}
+        <input type="hidden" name="action" value="update">
+        <div class="stat-label" style="margin-bottom:.75rem">Details</div>
+        <label class="field"><span class="field-label">Company</span><input type="text" name="company_name" value="{{ customer.company_name }}"></label>
+        <label class="field"><span class="field-label">Contact</span><input type="text" name="contact_name" value="{{ customer.contact_name or '' }}"></label>
+        <label class="field"><span class="field-label">Email</span><input type="email" name="email" value="{{ customer.email }}"></label>
+        <label class="field"><span class="field-label">Phone</span><input type="tel" name="phone" value="{{ customer.phone or '' }}"></label>
+        <label class="field"><span class="field-label">Website</span><input type="text" name="website" value="{{ customer.website or '' }}"></label>
+        <div class="grid grid-2">
+          <label class="field"><span class="field-label">City</span><input type="text" name="city" value="{{ customer.city or '' }}"></label>
+          <label class="field"><span class="field-label">Country</span><input type="text" name="country" value="{{ customer.country or '' }}"></label>
+        </div>
+        <label class="field"><span class="field-label">Address</span><textarea name="address" rows="2">{{ customer.address or '' }}</textarea></label>
+        <label class="field"><span class="field-label">Owner</span><input type="text" name="owner" value="{{ customer.owner or '' }}"></label>
+        <label class="field"><span class="field-label">Tags</span><input type="text" name="tags" value="{{ customer.tags or '' }}"></label>
+        <label class="field"><span class="field-label">Notes</span><textarea name="notes" rows="3">{{ customer.notes or '' }}</textarea></label>
+        <button class="btn btn-block btn-sm" type="submit">Save</button>
+      </form>
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Calendar</h3><a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.calendar_view') }}">Open →</a></div>
+      {% if events %}
+        <div style="padding:.3rem 0">{% for e in events %}
+          <div style="padding:.5rem 1.25rem;border-bottom:1px solid var(--line-soft)">
+            <div class="tiny dim">{{ e.starts_at|dt }}</div>
+            <div style="font-size:.84rem">{{ e.title }}</div>
+          </div>
+        {% endfor %}</div>
+      {% else %}<div class="empty" style="padding:1.5rem 1rem">Nothing scheduled.</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

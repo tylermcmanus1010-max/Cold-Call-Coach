@@ -1,0 +1,9 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A">{{ order.ref }} cleared review.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  The manufacturer signed off on your specs and your order has been released to production.
+  {% if order.review_notes %}<br><br><em style="color:#8A958D">Note from the floor: {{ order.review_notes }}</em>{% endif %}
+</p>
+<a href="{{ site_url }}/portal/orders/{{ order.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">Track my order</a>
+{% endblock %}

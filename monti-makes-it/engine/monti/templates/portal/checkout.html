@@ -1,0 +1,200 @@
+{% extends "portal/_base.html" %}
+{% block title %}Checkout · {{ order.ref }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Order {{ order.ref }}</div>{% endblock %}
+{% block heading %}Checkout{% endblock %}
+{% block content %}
+{% set charged_freight = 0 if order.freight_waived else order.shipping_cents %}
+{% set net = order.subtotal_cents + charged_freight + order.tax_cents + order.fee_cents %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>What you're buying</h3></div>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Line total</th></tr></thead>
+        <tbody>{% for i in items %}
+          <tr><td>{{ i.name }}{% if i.sku %}<div class="tiny mono dim">{{ i.sku }}</div>{% endif %}</td>
+            <td class="right mono tnum">{{ i.unit_price_cents|money }}</td>
+            <td class="right mono tnum">{{ '{:,}'.format(i.quantity) }}</td>
+            <td class="right mono tnum">{{ i.line_total_cents|money }}</td></tr>
+        {% endfor %}</tbody>
+        <tfoot>
+          <tr class="sum-row">
+            <td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Goods subtotal</span></div></td>
+            <td class="right mono sum-amount">{{ order.subtotal_cents|money }}</td></tr>
+
+          {% if order.freight_waived and estimate %}
+            <tr class="sum-row">
+              <td colspan="3" class="right"><div class="sum-label">
+                <span class="sum-name">Freight &amp; customs to {{ estimate.destination }}</span>
+                <span class="free-tag">Client {{ g.customer.company_name }} marked as free in system</span>
+              </div></td>
+              <td class="right"><div class="sum-stack">
+                <span class="struck mono sum-was">{{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</span>
+                <span class="mono sum-now">$0.00</span>
+              </div></td></tr>
+          {% elif charged_freight %}
+            <tr class="sum-row">
+              <td colspan="3" class="right"><div class="sum-label">
+                <span class="sum-name">Freight &amp; customs{% if estimate %} to {{ estimate.destination }}{% endif %}</span>
+                {% if estimate %}<span class="sum-note">{{ estimate.mode|lower }} freight, {{ estimate.transit_days }} days transit</span>{% endif %}
+              </div></td>
+              <td class="right mono sum-amount">{{ charged_freight|money }}</td></tr>
+          {% endif %}
+
+          {% if order.tax_cents %}
+            <tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Tax</span></div></td>
+              <td class="right mono sum-amount">{{ order.tax_cents|money }}</td></tr>
+          {% endif %}
+
+          <tr class="sum-row">
+            <td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Convenience fee</span>
+              <span class="sum-note">{{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% of the order</span>
+            </div></td>
+            <td class="right mono sum-amount">{{ order.fee_cents|money }}</td></tr>
+
+          <tr class="sum-row">
+            <td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Payment processing <span class="dim" id="proc-method">— card</span></span>
+              <span class="sum-note" id="proc-note">{{ '%g'|format(cfg.STRIPE_CARD_PERCENT) }}% + {{ cfg.STRIPE_CARD_FIXED_CENTS }}&cent; charged by Stripe, passed on at cost</span>
+            </div></td>
+            <td class="right mono sum-amount" id="proc-cell">{{ options[0].fee|money if options }}</td></tr>
+
+          <tr class="sum-total">
+            <td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Total due</span>
+              <span class="sum-note">Everything included. Nothing added later.</span>
+            </div></td>
+            <td class="right mono sum-total-amount" id="total-cell">
+              {{ options[0].total|money if options }}</td></tr>
+        </tfoot></table></div>
+
+      {% if estimate and freight_lines %}
+        <details class="more" style="margin:0;border-top:1px solid var(--line)">
+          <summary style="padding:.85rem 1.4rem;border:0">
+            {{ 'How that freight and customs figure is worked out' if order.freight_waived
+               else 'How freight and customs is worked out' }}</summary>
+          <div class="more-body" style="padding:0 1.4rem 1.4rem">
+            <table class="data" style="border:1px solid var(--line);border-radius:var(--radius)">
+              <tbody>{% for label, cents in freight_lines %}
+                <tr><td>{{ label }}</td><td class="right mono tnum">{{ cents|money }}</td></tr>
+              {% endfor %}
+                <tr style="background:var(--surface-2)">
+                  <td style="font-weight:600">{{ estimate.mode|lower }} freight, {{ estimate.transit_days }} days transit</td>
+                  <td class="right mono tnum" style="font-weight:700">
+                    {{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</td></tr>
+              </tbody></table>
+            <p class="tiny dim" style="margin-top:.85rem">
+              An estimate, priced on {{ '{:,.1f}'.format(estimate.chargeable_kg) }} kg chargeable weight
+              at the current {{ estimate.mode|lower }} rate. Duty is the published rate for this kind of
+              good; your customs broker's entry is what finally governs.
+            </p>
+          </div>
+        </details>
+      {% endif %}
+    </div>
+
+    <form method="post" action="{{ url_for('portal.pay', order_id=order.id) }}" class="card" id="pay-form">
+      {{ csrf_input() }}
+      <h3>How would you like to pay?</h3>
+      {% if order.payment_status == 'FAILED' %}
+        <div class="notice notice-error" style="margin-top:1rem">Your last attempt didn't go through. Nothing was charged.</div>
+      {% endif %}
+      <div class="pay-list" style="margin-top:1.25rem">
+        {% for o in options %}
+          <label class="pay-option">
+            <input type="radio" name="method" value="{{ o.key }}" {{ 'checked' if loop.first }}
+                   data-fee="{{ o.fee }}" data-total="{{ o.total }}"
+                   data-fee-text="{{ o.fee|money }}" data-total-text="{{ o.total|money }}"
+                   data-label="{{ o.label }}"
+                   data-rate="{{ o.note }}, passed on at cost">
+            <span class="pay-body">
+              <span class="pay-title">{{ o.label }}
+                <span class="badge badge-slate badge-plain">{{ o.total|money }}</span></span>
+              <span class="pay-note">
+                {% if o.key == 'card' %}Visa, Mastercard, Amex. Funds confirm immediately, so your
+                  {{ cfg.ORDER_REVIEW_HOURS }}-hour manufacturer review starts the moment you pay.
+                {% else %}Settles in 1–3 business days. Nothing is produced until the money actually
+                  lands, and we'll email you the moment it does.{% endif %}
+                <br><span class="dim">Processing {{ o.fee|money }} — {{ o.note }}.</span>
+              </span>
+            </span>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div class="fee-note">
+        <span class="fee-badge">{{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}%</span>
+        <span>Two lines above, and that's everything: our
+          {{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% {{ cfg.FEE_LABEL|lower }}, and what Stripe
+          charges to move the money, passed on at cost. No listing fee, no account fee, no minimum,
+          nothing added later.</span>
+      </div>
+
+      <button class="btn btn-primary btn-xl btn-block" style="margin-top:1.25rem" type="submit" id="paybtn">
+        Pay {{ options[0].total|money if options }}</button>
+      <p class="tiny dim center" style="margin-top:.9rem">
+        You'll be taken to {{ 'Stripe' if cfg.PAYMENT_PROVIDER == 'stripe' else 'a simulated bank' }} to
+        enter your details. We never see your card or account number.
+      </p>
+    </form>
+  </div>
+
+  <div class="stack sticky-side">
+    {% if order.freight_waived %}
+      <div class="card owner-card">
+        <span class="eyebrow-label">Owner offer</span>
+        <h3 style="margin-top:.7rem">Freight &amp; customs on us</h3>
+        <p class="tiny" style="margin-top:.6rem;color:var(--ink-2)">
+          Client <strong>{{ g.customer.company_name }}</strong> is marked as free in the system.
+          The {{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }} it would cost
+          to get this to {{ estimate.destination if estimate else 'you' }} — sea freight, handling, duty
+          and entry fees — is absorbed by us on this order.
+        </p>
+        {% if order.waived_by %}<p class="tiny dim" style="margin-top:.6rem">— {{ order.waived_by }}</p>{% endif %}
+      </div>
+    {% endif %}
+    <div class="card card-accent">
+      <div class="stat-label">What happens after you pay</div>
+      <ol class="stack-sm" style="margin:.75rem 0 0;padding-left:1.1rem;font-size:.85rem;color:var(--ink-2)">
+        <li>Funds confirmed — instant on a card, on settlement for ACH.</li>
+        <li>A {{ cfg.ORDER_REVIEW_HOURS }}-hour manufacturer review. Last window to change anything.</li>
+        <li>Production, then freight, with a tracking code on your order.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="stat-label">Order</div>
+      <dl class="kv" style="margin-top:.75rem;grid-template-columns:100px minmax(0,1fr);font-size:.85rem">
+        <dt>Reference</dt><dd class="mono">{{ order.ref }}</dd>
+        <dt>Placed</dt><dd>{{ order.created_at|dt }}</dd>
+        {% if order.ship_to %}<dt>Ship to</dt><dd style="white-space:pre-wrap">{{ order.ship_to }}</dd>{% endif %}
+      </dl>
+      <a class="btn btn-ghost btn-sm btn-block" style="margin-top:1rem"
+         href="{{ url_for('portal.order_detail', order_id=order.id) }}">Back to the order</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById("pay-form");
+  if (!form) return;
+  function paint() {
+    var el = form.querySelector('input[name="method"]:checked');
+    if (!el) return;
+    document.getElementById("proc-cell").textContent = el.dataset.feeText;
+    document.getElementById("total-cell").textContent = el.dataset.totalText;
+    document.getElementById("paybtn").textContent = "Pay " + el.dataset.totalText;
+    document.getElementById("proc-method").textContent = "\u2014 " + el.dataset.label.toLowerCase();
+    document.getElementById("proc-note").textContent = el.dataset.rate;
+  }
+  form.querySelectorAll('input[name="method"]').forEach(function (el) {
+    el.addEventListener("change", paint);
+  });
+  paint();
+})();
+</script>
+{% endblock %}

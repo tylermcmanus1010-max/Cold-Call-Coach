@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}How it works · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(3rem,7vw,5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">How it works</span>
+    <h1 style="margin-top:1rem">Sketch to pallet, start to finish</h1>
+    <p class="section-lede">No jargon, no hidden steps. Here's the whole thing.</p>
+
+    <ol class="step-list" style="margin-top:2.5rem">
+      <li><h3>You tell us what you want made</h3>
+        <p>A sentence, a photo, a drawing — whatever you have. Roughly how many, and where it ships.
+           That's the whole form.</p></li>
+      <li><h3>We price it inside {{ cfg.QUOTE_SLA_HOURS }} hours</h3>
+        <p>Unit cost at your quantity, minimum order, tooling if it needs any, lead time, freight and
+           duties. Landed at your door, so the number you see is the number you pay.</p></li>
+      <li><h3>You apply for membership</h3>
+        <p>Anyone can get a price; members can buy. We read every application and meet you over video
+           before deciding — not everyone is accepted.</p></li>
+      <li><h3>You approve the estimate</h3>
+        <p>It sits in your portal with a validity window. Accept it and it becomes an order. Decline
+           and it closes — we won't chase you.</p></li>
+      <li><h3>You pay by bank transfer or card</h3>
+        <p>Card for speed, ACH for size, wire for the big ones. Two lines are added at checkout and
+          nothing else: our {{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% {{ cfg.FEE_LABEL|lower }},
+          and what Stripe charges to move the money, passed on at cost. Bank transfer costs a fraction
+          of what a card does, and you see both totals before you choose. Nothing moves until funds
+          actually clear.</p></li>
+      <li><h3>{{ cfg.ORDER_REVIEW_HOURS }} hours of manufacturer review</h3>
+        <p>Every paid order is checked against its specs before production starts. It's a hard stop in
+           our system, not a promise — your last window to change something or stop entirely.</p></li>
+      <li><h3>We build it and ship it</h3>
+        <p>You watch it move from your portal: approved, in production, shipped, with carrier and tracking.</p></li>
+      <li><h3>Then you reorder in two clicks</h3>
+        <p>Anything we've made for you lands in your private catalogue at your agreed price. No re-quoting,
+           ever. This is the part we're actually optimising for.</p></li>
+    </ol>
+
+    <div class="gate-band" style="margin-top:3rem">
+      <h2 style="font-size:1.6rem">Start with a price.</h2>
+      <p class="muted" style="margin-top:.8rem">It costs nothing and takes two minutes.</p>
+      <div class="row wrap" style="margin-top:1.75rem;gap:1rem">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('public.quote') }}">Request a Quote</a>
+        <a class="btn btn-outline btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

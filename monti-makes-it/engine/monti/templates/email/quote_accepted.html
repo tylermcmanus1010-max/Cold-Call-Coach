@@ -1,0 +1,15 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">We're pricing it now.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Your request <span style="font-family:monospace;color:#0F4D33">{{ quote.ref }}</span> —
+  <strong style="color:#14211A">{{ quote.title }}</strong> — has been accepted into the queue and is
+  in front of the floor.
+</p>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:16px;margin-bottom:20px">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.08em">Your price is due</div>
+  <div style="color:#0F4D33;font-size:20px;margin-top:4px">{{ pretty_dt(quote.due_at) }} UTC</div>
+  <div style="color:#8A958D;font-size:13px;margin-top:6px">Unit cost, tooling if it needs any, lead time, freight and duties — landed at your door.</div>
+</div>
+<a href="{{ site_url }}/portal/" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Track it in my portal</a>
+{% endblock %}

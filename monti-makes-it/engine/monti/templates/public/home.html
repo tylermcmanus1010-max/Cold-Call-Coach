@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ company }} · Manufacturer, direct{% endblock %}
+{% block body %}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow-label">Manufacturer · direct from the floor</span>
+    <h1 class="wordmark">
+      <span class="lede-word">Monti</span>
+      <span class="lede-word">Makes <span class="accent">It</span></span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-line">
+      We are the manufacturer. There is no middleman between you and the line that makes your
+      product — so you get the price it costs to make it properly, because we'd rather make
+      everything you sell for the next ten years than squeeze you once.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-xl" href="{{ url_for('public.quote') }}">Request a Quote</a>
+      <a class="btn btn-outline btn-xl" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+    </div>
+    <p class="hero-note">
+      A quote is free and takes two minutes. Membership is how you buy — and not everyone is accepted.
+    </p>
+  </div>
+</section>
+
+<section class="quiet-band">
+  <div class="container">
+    <div class="chain">
+      <div class="chain-cell was">
+        <div class="who">The usual chain</div>
+        <p>Agent, trading company, importer, distributor. Each one takes a margin, and each margin
+          is applied to the one before it.</p>
+      </div>
+      <div class="chain-cell ours">
+        <div class="who">Buying from us</div>
+        <p>You and the line that makes your product. One margin, and you can see what it is
+          applied to.</p>
+      </div>
+    </div>
+    <p class="ladder-note">
+      We do not publish a savings percentage, because a percentage without a baseline is not a
+      number — it is a claim. What we do instead: once you are a member, every item you order
+      carries its own savings ledger, measured against a baseline you supply and we record — your
+      previous supplier's quote, or your documented landed cost. Where there is no baseline we can
+      source, that item shows no savings figure at all.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>Why we're this cheap</h2>
+    <div class="grid grid-3" style="margin-top:2.25rem;gap:2.5rem">
+      <div class="pillar">
+        <div class="pillar-rule"></div>
+        <h3>One margin, not four</h3>
+        <p>Agent, trading company, importer, distributor — each used to take a slice before your
+          product reached you. Here there's one.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-rule"></div>
+        <h3>Priced for the tenth order</h3>
+        <p>We quote low because we're betting on the relationship, not on this run.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-rule"></div>
+        <h3>Landed, not "ex-works"</h3>
+        <p>Freight, duties and customs are in the number. The price you approve is the price you pay.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-rule"></div>
+        <h3>Made in China</h3>
+        <p>That is where the line is, and we would rather you read it here than find it on a customs
+          form. HS code, country of origin and duty rate sit on every estimate we send.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section quiet-band">
+  <div class="container">
+    <div class="measure">
+      <span class="eyebrow-label">Membership</span>
+      <h2 style="margin-top:.9rem">We're careful about who we make things for</h2>
+      <p class="section-lede">
+        Not everyone who applies is accepted. Every application is read by a person and includes a
+        video call before any decision — we don't put the floor behind everyone who asks.
+      </p>
+      <div class="row wrap" style="margin-top:2rem;gap:1rem">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+        <a class="btn btn-ghost btn-lg" href="{{ url_for('public.membership_page') }}">What members get</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow center">
+    <h2>Tell us what you want made.</h2>
+    <div class="row" style="justify-content:center;margin-top:1.75rem;gap:1rem;flex-wrap:wrap">
+      <a class="btn btn-primary btn-xl" href="{{ url_for('public.quote') }}">Request a Quote</a>
+      <a class="btn btn-outline btn-xl" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

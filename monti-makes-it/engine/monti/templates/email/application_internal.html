@@ -1,0 +1,22 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:19px;margin:0 0 6px;color:#14211A;font-weight:600;letter-spacing:-.02em">New membership application — {{ application.ref }}</h1>
+<p style="color:#8A958D;margin:0 0 18px;font-size:13px">{{ application.company_name }} · {{ pretty_dt(application.created_at) }}</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;color:#55635B">
+  <tr><td style="padding:5px 0;color:#8A958D;width:150px">Contact</td><td style="color:#14211A">{{ application.contact_name }} · {{ application.email }}{{ ' · ' + application.phone if application.phone }}</td></tr>
+  {% if application.website %}<tr><td style="padding:5px 0;color:#8A958D">Website</td><td>{{ application.website }}</td></tr>{% endif %}
+  {% if application.business_type %}<tr><td style="padding:5px 0;color:#8A958D">Type</td><td>{{ application.business_type }}</td></tr>{% endif %}
+  {% if application.years_trading %}<tr><td style="padding:5px 0;color:#8A958D">Trading</td><td>{{ application.years_trading }}</td></tr>{% endif %}
+  {% if application.annual_volume %}<tr><td style="padding:5px 0;color:#8A958D">Annual spend</td><td style="color:#0F4D33">{{ application.annual_volume }}</td></tr>{% endif %}
+  {% if application.categories %}<tr><td style="padding:5px 0;color:#8A958D">Wants made</td><td>{{ application.categories }}</td></tr>{% endif %}
+  {% if application.current_manufacturer %}<tr><td style="padding:5px 0;color:#8A958D">Makes with</td><td>{{ application.current_manufacturer }}</td></tr>{% endif %}
+  {% if application.availability %}<tr><td style="padding:5px 0;color:#8A958D">Free for a call</td><td>{{ application.availability }}</td></tr>{% endif %}
+</table>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:14px;margin:18px 0">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.1em">What they sell</div>
+  <div style="color:#55635B;font-size:14px;margin-top:6px;white-space:pre-wrap">{{ application.what_they_sell }}</div>
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-top:14px">Why us</div>
+  <div style="color:#55635B;font-size:14px;margin-top:6px;white-space:pre-wrap">{{ application.why }}</div>
+</div>
+<a href="{{ site_url }}/admin/applications/{{ application.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Review the application</a>
+{% endblock %}

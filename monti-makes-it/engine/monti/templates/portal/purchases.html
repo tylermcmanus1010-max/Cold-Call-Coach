@@ -1,0 +1,87 @@
+{% extends "portal/_base.html" %}
+{% block title %}Purchased items · {{ company }}{% endblock %}
+{% block heading %}Purchased items{% endblock %}
+{% block head_actions %}<a class="btn" href="{{ url_for('portal.orders') }}">Order list →</a>{% endblock %}
+{% block content %}
+
+<div class="grid grid-4">
+  <div class="stat"><div class="stat-label">Items bought</div>
+    <div class="stat-value">{{ '{:,}'.format(totals.units) }}</div>
+    <div class="stat-sub">across {{ totals.orders }} order{{ 's' if totals.orders != 1 }}</div></div>
+  <div class="stat stat-accent"><div class="stat-label">Total spend</div>
+    <div class="stat-value">{{ totals.spend|money }}</div>
+    <div class="stat-sub">line items only</div></div>
+  <div class="stat"><div class="stat-label">In flight</div>
+    <div class="stat-value">{{ totals.in_flight }}</div>
+    <div class="stat-sub">not yet delivered</div></div>
+  <div class="stat"><div class="stat-label">Reorderable</div>
+    <div class="stat-value">{{ reorderable|length }}</div>
+    <div class="stat-sub">in your catalog now</div></div>
+</div>
+
+{% if rows %}
+  {% set ns = namespace(current=None) %}
+  <div class="stack" style="margin-top:1.5rem">
+  {% for r in rows %}
+    {% if ns.current != r.order_id %}
+      {% if not loop.first %}</tbody></table></div></div></div>{% endif %}
+      {% set ns.current = r.order_id %}
+      {% set label, tone = status_label(r.order_status, 'order') %}
+      <div class="card card-flush">
+        <div class="card-head">
+          <div class="row wrap" style="gap:.75rem">
+            <a class="cell-link mono" href="{{ url_for('portal.order_detail', order_id=r.order_id) }}">{{ r.order_ref }}</a>
+            <span class="badge badge-{{ tone }}">{{ label }}</span>
+            <span class="tiny dim">ordered {{ r.ordered_at|dt }}</span>
+          </div>
+          {% if r.tracking_number %}
+            <span class="tiny mono" style="color:var(--green)">{{ r.carrier }} {{ r.tracking_number }}</span>
+          {% endif %}
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          {% set order = {'created_at': r.ordered_at, 'funds_confirmed_at': r.funds_confirmed_at,
+                          'reviewed_at': r.reviewed_at,
+                          'production_started_at': r.production_started_at, 'shipped_at': r.shipped_at,
+                          'delivered_at': r.delivered_at,
+                          'carrier': r.carrier, 'tracking_number': r.tracking_number,
+                          'status': r.order_status, 'payment_method': None,
+                          'updated_at': r.updated_at} %}
+          {% include "portal/_timeline.html" %}
+        </div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th>
+            <th class="right">Line total</th><th></th></tr></thead>
+          <tbody>
+    {% endif %}
+        <tr>
+          <td><div style="font-weight:500">{{ r.name }}</div>
+            {% if r.sku %}<div class="tiny mono dim">{{ r.sku }}</div>{% endif %}</td>
+          <td class="right mono tnum">{{ r.unit_price_cents|money }}</td>
+          <td class="right mono tnum">{{ '{:,}'.format(r.quantity) }}</td>
+          <td class="right mono tnum" style="font-weight:500">{{ r.line_total_cents|money }}</td>
+          <td class="right">
+            {% if reorderable.get(r.id) %}
+              <form method="post" action="{{ url_for('portal.cart_add', item_id=reorderable.get(r.id)) }}">
+                {{ csrf_input() }}
+                <input type="hidden" name="quantity" value="{{ r.quantity }}">
+                <input type="hidden" name="next" value="{{ url_for('portal.cart') }}">
+                <button class="btn btn-sm" type="submit">Reorder</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+    {% if loop.last %}</tbody></table></div></div>{% endif %}
+  {% endfor %}
+  </div>
+{% else %}
+  <div class="card empty" style="margin-top:1.5rem">
+    <div class="empty-icon">▣</div>
+    <h3>Nothing purchased yet</h3>
+    <p class="muted" style="margin:.8rem auto 0;max-width:50ch;font-size:.95rem">
+      Once you accept an estimate and pay, every item lands here with its own timeline —
+      ordered, paid, reviewed, in production, shipped, delivered — and a tracking code as soon
+      as it leaves the factory.</p>
+    <div><a class="btn btn-primary" style="margin-top:1.5rem" href="{{ url_for('public.quote') }}">Request a quote</a></div>
+  </div>
+{% endif %}
+{% endblock %}

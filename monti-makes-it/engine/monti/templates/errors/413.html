@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}413 · {{ company }}{% endblock %}
+{% block body %}
+<div class="container-narrow" style="padding:6rem 0;text-align:center">
+  <div class="mono" style="color:var(--amber);font-size:.85rem;letter-spacing:.1em">ERROR 413</div>
+  <h1 style="margin-top:.75rem">File too large</h1>
+  <p class="muted" style="margin-top:1rem">That upload exceeded the size limit. Compress it or send a link instead.</p>
+  <div class="row" style="justify-content:center;margin-top:2rem">
+    <a class="btn" href="{{ url_for('public.home') }}">Home</a>
+    {% if g.user %}<a class="btn btn-primary" href="{{ url_for('admin.dashboard') if g.user.role == 'ADMIN' else url_for('portal.dashboard') }}">Back to my dashboard</a>{% endif %}
+  </div>
+</div>
+{% endblock %}

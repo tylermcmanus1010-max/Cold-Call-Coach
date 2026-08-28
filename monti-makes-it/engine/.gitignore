@@ -1,0 +1,12 @@
+.env
+instance/
+*.db
+*.db-wal
+*.db-shm
+__pycache__/
+*.pyc
+.venv/
+venv/
+mmt/static/uploads/*
+!mmt/static/uploads/.gitkeep
+.DS_Store

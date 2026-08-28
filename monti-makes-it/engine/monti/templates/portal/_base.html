@@ -1,0 +1,28 @@
+{% extends "_shell.html" %}
+{% block shell_name %}Member portal{% endblock %}
+{% block sidebar %}
+  <div class="side-group">
+    <div class="side-title">{{ g.customer.company_name if g.customer }}</div>
+    <a class="side-link {{ 'active' if request.endpoint == 'portal.dashboard' }}" href="{{ url_for('portal.dashboard') }}"><span class="side-icon">◈</span> Overview</a>
+    <a class="side-link {{ 'active' if 'quote' in (request.endpoint or '') }}" href="{{ url_for('portal.quotes') }}"><span class="side-icon">◷</span> Quotes</a>
+    <a class="side-link {{ 'active' if 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.catalog') }}"><span class="side-icon">▤</span> My catalog</a>
+    <a class="side-link {{ 'active' if request.endpoint == 'portal.purchases' }}" href="{{ url_for('portal.purchases') }}"><span class="side-icon">▣</span> Purchased items</a>
+    <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('portal.orders') }}"><span class="side-icon">◱</span> Orders</a>
+    <a class="side-link {{ 'active' if request.endpoint == 'portal.cart' }}" href="{{ url_for('portal.cart') }}"><span class="side-icon">▸</span> Current order
+      {% if cart_count %}<span class="side-count">{{ cart_count }}</span>{% endif %}</a>
+  </div>
+  <div class="side-group">
+    <div class="side-title">Need something new</div>
+    <a class="side-link" href="{{ url_for('public.quote') }}"><span class="side-icon">+</span> New quote request</a>
+    <a class="side-link" href="mailto:{{ cfg.SUPPORT_EMAIL }}"><span class="side-icon">✉</span> Contact us</a>
+  </div>
+  {% if quota %}
+    <div style="padding:0 .65rem">
+      <div class="side-title" style="padding-left:0">This cycle</div>
+      <div class="quota-dots" style="margin-bottom:.4rem">
+        {% for i in range(quota.limit) %}<span class="quota-dot {{ 'spent' if i < quota.used }}"></span>{% endfor %}
+      </div>
+      <div class="tiny dim">{{ quota.remaining }} of {{ quota.limit }} quote requests left</div>
+    </div>
+  {% endif %}
+{% endblock %}

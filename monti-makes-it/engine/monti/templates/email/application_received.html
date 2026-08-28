@@ -1,0 +1,22 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">Thank you — we have your application.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Hi {{ application.contact_name }}, your application for <strong style="color:#14211A">{{ application.company_name }}</strong>
+  is in front of our team as <span style="font-family:monospace;color:#0F4D33">{{ application.ref }}</span>.
+</p>
+<p style="color:#55635B;margin:0 0 18px">
+  A person reads every application — usually within two business days. If it looks like a fit, we'll email
+  you to book a short video call so we can understand what you're building. We're specific about who we
+  partner with, so that conversation happens before any decision is made.
+</p>
+<p style="color:#55635B;margin:0 0 18px">
+  You'll hear from us either way.
+</p>
+<div style="background:#F9F8F4;border-left:3px solid #0F4D33;padding:14px 16px;margin-bottom:20px">
+  <div style="color:#14211A;font-weight:500;margin-bottom:4px">You don't have to wait to get a price</div>
+  <div style="color:#55635B;font-size:14px">Quote requests are open to everyone. Send us something now and
+    it'll be waiting in your portal the day you're accepted.</div>
+</div>
+<a href="{{ site_url }}/quote" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Request a quote</a>
+{% endblock %}

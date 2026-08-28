@@ -1,0 +1,14 @@
+<div style="background:#F5F4EF;padding:36px 0;font-family:'Inter',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif">
+  <div style="max-width:580px;margin:0 auto;background:#FFFFFF;border:1px solid #DEDDD3;border-radius:10px;overflow:hidden">
+    <div style="padding:22px 30px;border-bottom:1px solid #DEDDD3">
+      <span style="display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;border-radius:50%;background:#0F4D33;color:#F5F4EF;font-weight:700;font-size:13px;vertical-align:middle">M</span>
+      <span style="color:#14211A;font-weight:600;font-size:16px;letter-spacing:-.01em;margin-left:9px;vertical-align:middle">{{ company }}</span>
+    </div>
+    <div style="padding:30px;color:#14211A;font-size:15px;line-height:1.65">
+      {% block content %}{% endblock %}
+    </div>
+    <div style="padding:18px 30px;border-top:1px solid #DEDDD3;color:#8A958D;font-size:12px">
+      {{ company }} · we are the manufacturer · <a href="{{ site_url }}" style="color:#55635B">{{ site_url }}</a>
+    </div>
+  </div>
+</div>

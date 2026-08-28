@@ -1,0 +1,11 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">Your tracking code.</h1>
+<p style="color:#55635B;margin:0 0 18px">Order <span style="font-family:monospace;color:#0F4D33">{{ order.ref }}</span> is on its way.</p>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:18px;margin-bottom:20px">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ order.carrier or 'Carrier' }}</div>
+  <div style="color:#0F4D33;font-size:20px;font-family:monospace;margin-top:6px">{{ order.tracking_number }}</div>
+  {% if order.shipped_at %}<div style="color:#8A958D;font-size:13px;margin-top:8px">Shipped {{ pretty_dt(order.shipped_at) }}</div>{% endif %}
+</div>
+<a href="{{ site_url }}/portal/orders/{{ order.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">See the full timeline</a>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "portal/_base.html" %}
+{% block title %}{{ quote.ref }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ quote.ref }}</div>{% endblock %}
+{% block heading %}{{ quote.title }}{% endblock %}
+{% block head_actions %}
+  {% set label, tone = status_label(quote.status, 'quote') %}
+  <span class="badge badge-{{ tone }}">{{ label }}</span>
+{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+    {% if quote.status in ('NEW','IN_REVIEW') %}
+      {% set cd = countdown(quote.due_at) %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <div class="stat-label">Estimate due</div>
+            <div class="stat-value" style="font-size:1.3rem;color:{{ 'var(--red)' if cd.overdue else 'var(--amber)' }}">{{ cd.text }}</div>
+            <div class="tiny dim">{{ quote.due_at|dt }} UTC</div>
+          </div>
+          <div style="min-width:180px">
+            <div class="meter"><span style="width:{{ 100 if cd.overdue else (100 - (cd.hours / cfg.QUOTE_SLA_HOURS * 100))|round|int }}%"></span></div>
+            <div class="tiny dim" style="margin-top:.4rem">Our team is pricing this now.</div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if estimate %}
+      <div class="card card-flush">
+        <div class="card-head">
+          <h3>Your estimate</h3>
+          <span class="tiny dim">Issued {{ estimate.created_at|dt }}{% if estimate.valid_until %} · valid until {{ estimate.valid_until|date }}{% endif %}</span>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap"><table class="data" style="border:1px solid var(--line);border-radius:var(--radius)">
+            <tbody>
+              <tr><td>Unit price</td><td class="right mono">{{ estimate.unit_price_cents|money }}</td></tr>
+              <tr><td>Quantity</td><td class="right mono">{{ '{:,}'.format(estimate.quantity) }}</td></tr>
+              <tr><td>Line subtotal</td><td class="right mono">{{ (estimate.unit_price_cents * estimate.quantity)|money }}</td></tr>
+              {% if estimate.tooling_cents %}<tr><td>Tooling (one-time)</td><td class="right mono">{{ estimate.tooling_cents|money }}</td></tr>{% endif %}
+              {% if estimate.sample_cents %}<tr><td>Sampling</td><td class="right mono">{{ estimate.sample_cents|money }}</td></tr>{% endif %}
+              {% if estimate.shipping_cents %}<tr><td>Freight ({{ estimate.ship_method or 'sea' }})</td><td class="right mono">{{ estimate.shipping_cents|money }}</td></tr>{% endif %}
+              {% if estimate.duties_cents %}<tr><td>Duties &amp; customs</td><td class="right mono">{{ estimate.duties_cents|money }}</td></tr>{% endif %}
+              <tr style="background:var(--surface-2)">
+                <td style="font-weight:640">Landed total {{ '· ' + estimate.incoterm if estimate.incoterm }}</td>
+                <td class="right mono" style="font-weight:700;color:var(--amber);font-size:1.02rem">{{ estimate.total_cents|money }}</td></tr>
+            </tbody>
+          </table></div>
+
+          <div class="grid grid-3" style="margin-top:1.25rem">
+            <div><div class="stat-label">MOQ</div><div style="font-weight:600">{{ '{:,}'.format(estimate.moq) }}</div></div>
+            <div><div class="stat-label">Lead time</div><div style="font-weight:600">{{ estimate.lead_time_days }} days</div></div>
+            <div><div class="stat-label">Freight</div><div style="font-weight:600">{{ estimate.ship_method or '—' }}</div></div>
+          </div>
+
+          {% if estimate.notes %}
+            <div class="divider-label">Notes from the floor</div>
+            <p class="muted" style="font-size:.9rem;white-space:pre-wrap">{{ estimate.notes }}</p>
+          {% endif %}
+
+          {% if quote.status == 'ESTIMATE_SENT' and not is_member %}
+            <div class="card card-quiet" style="margin-top:1.75rem">
+              <strong>Ready when you are — ordering needs membership</strong>
+              <p class="tiny muted" style="margin-top:.4rem">
+                This price is yours and it holds. To place the order you'll need to be an accepted
+                member: we read every application and meet you over video first.
+              </p>
+              <a class="btn btn-primary btn-sm" style="margin-top:.9rem" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+            </div>
+          {% elif quote.status == 'ESTIMATE_SENT' %}
+            <div class="row wrap" style="margin-top:1.75rem;gap:.6rem">
+              <form method="post" action="{{ url_for('portal.accept_quote', quote_id=quote.id) }}">{{ csrf_input() }}
+                <button class="btn btn-primary btn-lg" type="submit">Accept &amp; create order →</button></form>
+              <details>
+                <summary class="btn" style="list-style:none">Decline</summary>
+                <form method="post" action="{{ url_for('portal.decline_quote', quote_id=quote.id) }}" style="margin-top:.75rem;min-width:280px">{{ csrf_input() }}
+                  <input type="text" name="reason" placeholder="Reason (optional)">
+                  <button class="btn btn-danger btn-sm" style="margin-top:.5rem" type="submit">Confirm decline</button>
+                </form>
+              </details>
+            </div>
+          {% elif quote.status == 'ACCEPTED' and order %}
+            <div class="card" style="margin-top:1.5rem;background:var(--surface-2)">
+              <div class="row-between wrap">
+                <div><strong>Accepted</strong><div class="tiny muted">Order {{ order.ref }} created {{ order.created_at|relative }}</div></div>
+                <a class="btn btn-primary btn-sm" href="{{ url_for('portal.order_detail', order_id=order.id) }}">Go to order →</a>
+              </div>
+            </div>
+          {% elif quote.status == 'DECLINED' %}
+            <p class="muted" style="margin-top:1.5rem;font-size:.88rem">You declined this estimate on {{ quote.decided_at|dt }}.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <h3>Estimate in progress</h3>
+        <p class="muted" style="margin-top:.6rem;font-size:.9rem">
+          Nothing to approve yet. Once our team prices this project the full landed breakdown appears here,
+          and you'll get an email.
+        </p>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>What you submitted</h3></div>
+      <div class="card-body">
+        <p style="white-space:pre-wrap;font-size:.92rem">{{ quote.description }}</p>
+        <dl class="kv" style="margin-top:1.35rem">
+          {% if quote.category %}<dt>Category</dt><dd>{{ quote.category }}</dd>{% endif %}
+          {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
+          {% if quote.target_unit_price_cents %}<dt>Target unit price</dt><dd>{{ quote.target_unit_price_cents|money }}</dd>{% endif %}
+          {% if quote.materials %}<dt>Materials</dt><dd>{{ quote.materials }}</dd>{% endif %}
+          {% if quote.dimensions %}<dt>Dimensions</dt><dd>{{ quote.dimensions }}</dd>{% endif %}
+          {% if quote.color_finish %}<dt>Color / finish</dt><dd>{{ quote.color_finish }}</dd>{% endif %}
+          {% if quote.packaging %}<dt>Packaging</dt><dd>{{ quote.packaging }}</dd>{% endif %}
+          {% if quote.certifications %}<dt>Certifications</dt><dd>{{ quote.certifications }}</dd>{% endif %}
+          {% if quote.destination_country %}<dt>Destination</dt><dd>{{ quote.destination_city }}{{ ', ' if quote.destination_city }}{{ quote.destination_country }} · {{ quote.incoterm }}</dd>{% endif %}
+          {% if quote.needed_by %}<dt>Needed by</dt><dd>{{ quote.needed_by|date }}</dd>{% endif %}
+          <dt>Submitted</dt><dd>{{ quote.created_at|dt }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Files</h3></div>
+      {% if files %}
+        <div style="padding:.4rem 0">
+        {% for f in files %}
+          <a href="{{ url_for('portal.download_file', file_id=f.id) }}" style="display:block;padding:.6rem 1.25rem;border-bottom:1px solid var(--line-soft)">
+            <div style="font-size:.85rem;font-weight:540;overflow:hidden;text-overflow:ellipsis">{{ f.filename }}</div>
+            <div class="tiny dim">{{ (f.size_bytes / 1024)|round|int }} KB · {{ f.uploaded_at|relative }}</div>
+          </a>
+        {% endfor %}
+        </div>
+      {% else %}<div class="empty" style="padding:1.75rem 1rem">No files attached.</div>{% endif %}
+    </div>
+    <div class="card">
+      <div class="stat-label">Need to change something?</div>
+      <p class="tiny muted" style="margin-top:.55rem">Email us at
+        <a href="mailto:{{ cfg.SUPPORT_EMAIL }}?subject={{ quote.ref }}" style="color:var(--amber)">{{ cfg.SUPPORT_EMAIL }}</a>
+        with {{ quote.ref }} in the subject and we'll re-price it.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

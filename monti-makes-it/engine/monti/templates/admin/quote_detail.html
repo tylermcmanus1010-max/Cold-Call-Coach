@@ -1,0 +1,194 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ quote.ref }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ quote.ref }} · <a href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="color:var(--amber)">{{ customer.company_name }}</a></div>{% endblock %}
+{% block heading %}{{ quote.title }}{% endblock %}
+{% block head_actions %}
+  {% set label, tone = status_label(quote.status, 'quote') %}
+  <span class="badge badge-{{ tone }}">{{ label }}</span>
+  {% if quote.status == 'NEW' %}
+    <form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="claim">
+      <button class="btn btn-sm" type="submit">Start pricing</button></form>
+  {% endif %}
+{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+    {% if quote.status in ('NEW','IN_REVIEW') %}
+      {% set cd = countdown(quote.due_at) %}
+      <div class="card {{ 'card-accent' if not cd.overdue }}" style="{{ 'border-color:rgba(248,113,113,.45)' if cd.overdue }}">
+        <div class="row-between wrap">
+          <div><div class="stat-label">{{ cfg.QUOTE_SLA_HOURS }}h SLA</div>
+            <div class="stat-value" style="font-size:1.3rem;color:{{ 'var(--red)' if cd.overdue else 'var(--amber)' }}">{{ cd.text }}</div></div>
+          <div class="right"><div class="tiny dim">Submitted {{ quote.created_at|dt }}</div>
+            <div class="tiny dim">Due {{ quote.due_at|dt }} UTC</div></div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Build the estimate</h3>
+        {% if estimate %}<span class="tiny dim">Last: {{ estimate.total_cents|money }} on {{ estimate.created_at|dt }}</span>{% endif %}</div>
+      <div class="card-body">
+        <form method="post" id="estimate-form">{{ csrf_input() }}
+          <input type="hidden" name="action" value="estimate">
+          <div class="grid grid-3">
+            <label class="field"><span class="field-label">Unit price *</span>
+              <input type="text" name="unit_price" id="f-unit" required value="{{ (estimate.unit_price_cents / 100) if estimate else '' }}" placeholder="2.14"></label>
+            <label class="field"><span class="field-label">Quantity</span>
+              <input type="number" name="quantity" id="f-qty" value="{{ estimate.quantity if estimate else (quote.quantity or 1) }}"></label>
+            <label class="field"><span class="field-label">MOQ</span>
+              <input type="number" name="moq" value="{{ estimate.moq if estimate else (quote.quantity or 1) }}"></label>
+            <label class="field"><span class="field-label">Tooling (one-time)</span>
+              <input type="text" name="tooling" id="f-tooling" value="{{ (estimate.tooling_cents / 100) if estimate and estimate.tooling_cents else '' }}" placeholder="0"></label>
+            <label class="field"><span class="field-label">Sampling</span>
+              <input type="text" name="sample" id="f-sample" value="{{ (estimate.sample_cents / 100) if estimate and estimate.sample_cents else '' }}" placeholder="0"></label>
+            <label class="field"><span class="field-label">Lead time (days)</span>
+              <input type="number" name="lead_time_days" value="{{ estimate.lead_time_days if estimate else 30 }}"></label>
+            <label class="field"><span class="field-label">Freight</span>
+              <input type="text" name="shipping" id="f-ship" value="{{ (estimate.shipping_cents / 100) if estimate and estimate.shipping_cents else '' }}" placeholder="0"></label>
+            <label class="field"><span class="field-label">Duties &amp; customs</span>
+              <input type="text" name="duties" id="f-duties" value="{{ (estimate.duties_cents / 100) if estimate and estimate.duties_cents else '' }}" placeholder="0"></label>
+            <label class="field"><span class="field-label">Ship method</span>
+              <select name="ship_method">
+                {% for m in ['SEA','AIR','EXPRESS'] %}<option {{ 'selected' if estimate and estimate.ship_method == m }}>{{ m }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">Incoterm</span>
+              <select name="incoterm">
+                {% for i in ['DDP','DAP','FOB','EXW','CIF'] %}<option {{ 'selected' if (estimate.incoterm if estimate else quote.incoterm) == i }}>{{ i }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">Valid until</span>
+              <input type="date" name="valid_until" value="{{ estimate.valid_until if estimate else '' }}"></label>
+          </div>
+          <label class="field"><span class="field-label">Notes to the client</span>
+            <textarea name="notes" rows="3" placeholder="Anything they should know — substitutions, volume breaks, sampling plan.">{{ estimate.notes if estimate else '' }}</textarea></label>
+
+          <div class="card" style="background:var(--surface-2);margin-bottom:1.25rem">
+            <div class="row-between"><span class="stat-label">Landed total</span>
+              <span id="calc-total" class="mono" style="font-size:1.25rem;font-weight:700;color:var(--amber)">$0.00</span></div>
+            <div class="tiny dim" id="calc-breakdown" style="margin-top:.35rem">unit × qty + tooling + sampling + freight + duties</div>
+          </div>
+
+          <div class="row wrap">
+            <button class="btn btn-primary btn-lg" type="submit" name="send" value="1">Send estimate to client →</button>
+            <button class="btn" type="submit" name="send" value="0">Save draft</button>
+          </div>
+        </form>
+        {% if quote.status == 'ESTIMATE_SENT' %}
+          <p class="tiny dim" style="margin-top:1rem">Sent {{ quote.responded_at|dt }}. Re-sending issues a revised estimate and replaces what the client sees.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>What they submitted</h3></div>
+      <div class="card-body">
+        <p style="white-space:pre-wrap;font-size:.92rem">{{ quote.description }}</p>
+        <dl class="kv" style="margin-top:1.25rem">
+          {% if quote.category %}<dt>Category</dt><dd>{{ quote.category }}</dd>{% endif %}
+          {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
+          {% if quote.target_unit_price_cents %}<dt>Target unit price</dt><dd style="color:var(--amber)">{{ quote.target_unit_price_cents|money }}</dd>{% endif %}
+          {% if quote.materials %}<dt>Materials</dt><dd>{{ quote.materials }}</dd>{% endif %}
+          {% if quote.dimensions %}<dt>Dimensions</dt><dd>{{ quote.dimensions }}</dd>{% endif %}
+          {% if quote.color_finish %}<dt>Color / finish</dt><dd>{{ quote.color_finish }}</dd>{% endif %}
+          {% if quote.packaging %}<dt>Packaging</dt><dd>{{ quote.packaging }}</dd>{% endif %}
+          {% if quote.certifications %}<dt>Certifications</dt><dd>{{ quote.certifications }}</dd>{% endif %}
+          {% if quote.destination_country %}<dt>Destination</dt><dd>{{ quote.destination_city }}{{ ', ' if quote.destination_city }}{{ quote.destination_country }} · {{ quote.incoterm }}</dd>{% endif %}
+          {% if quote.needed_by %}<dt>Needed by</dt><dd>{{ quote.needed_by|date }}</dd>{% endif %}
+        </dl>
+      </div>
+    </div>
+
+    {% if history|length > 1 %}
+      <div class="card card-flush">
+        <div class="card-head"><h3>Estimate history</h3></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Issued</th><th>By</th><th class="right">Unit</th><th class="right">Total</th><th>Lead</th></tr></thead>
+          <tbody>{% for e in history %}
+            <tr><td class="tiny">{{ e.created_at|dt }}</td><td class="tiny muted">{{ e.created_by }}</td>
+              <td class="right mono">{{ e.unit_price_cents|money }}</td>
+              <td class="right mono">{{ e.total_cents|money }}</td><td class="tiny">{{ e.lead_time_days }}d</td></tr>
+          {% endfor %}</tbody></table></div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="row" style="margin-bottom:.9rem">
+        <div class="avatar avatar-amber">{{ customer.company_name|initials }}</div>
+        <div style="min-width:0">
+          <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:600">{{ customer.company_name }}</a>
+          <div class="tiny dim">{{ customer.ref }}</div>
+        </div>
+      </div>
+      <dl class="kv" style="grid-template-columns:88px minmax(0,1fr)">
+        <dt>Contact</dt><dd>{{ customer.contact_name or '—' }}</dd>
+        <dt>Email</dt><dd><a href="mailto:{{ customer.email }}" style="color:var(--amber)">{{ customer.email }}</a></dd>
+        {% if customer.phone %}<dt>Phone</dt><dd>{{ customer.phone }}</dd>{% endif %}
+        <dt>Stage</dt><dd>{% set l, t = status_label(customer.stage, 'customer') %}<span class="badge badge-{{ t }}">{{ l }}</span></dd>
+        <dt>Lifetime</dt><dd class="mono">{{ customer.lifetime_value_cents|money }}</dd>
+      </dl>
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Files ({{ files|length }})</h3></div>
+      {% if files %}
+        <div style="padding:.3rem 0">
+        {% for f in files %}
+          <a href="{{ url_for('static', filename='uploads/' + f.stored_name) }}" target="_blank" style="display:block;padding:.55rem 1.25rem;border-bottom:1px solid var(--line-soft)">
+            <div style="font-size:.84rem;overflow:hidden;text-overflow:ellipsis">{{ f.filename }}</div>
+            <div class="tiny dim">{{ (f.size_bytes / 1024)|round|int }} KB</div></a>
+        {% endfor %}
+        </div>
+      {% else %}<div class="empty" style="padding:1.5rem 1rem">No files.</div>{% endif %}
+    </div>
+
+    <div class="card">
+      <form method="post">{{ csrf_input() }}
+        <input type="hidden" name="action" value="notes">
+        <span class="field-label">Internal notes</span>
+        <textarea name="internal_notes" rows="4" placeholder="Factory feedback, margin, risks — never shown to the client.">{{ quote.internal_notes or '' }}</textarea>
+        <button class="btn btn-sm btn-block" style="margin-top:.6rem" type="submit">Save notes</button>
+      </form>
+    </div>
+
+    {% if estimate %}
+    <div class="card">
+      <div class="stat-label">Turn into a catalog item</div>
+      <p class="tiny muted" style="margin-top:.4rem">Creates a private catalog item at the quoted price and assigns it to {{ customer.company_name }} so they can reorder.</p>
+      <form method="post" action="{{ url_for('admin.quote_to_catalog', quote_id=quote.id) }}" style="margin-top:.75rem">{{ csrf_input() }}
+        <input type="text" name="sku" placeholder="SKU (optional)">
+        <button class="btn btn-sm btn-block" style="margin-top:.5rem" type="submit">Add to catalog</button>
+      </form>
+    </div>
+    {% endif %}
+
+    {% if order %}
+      <div class="card card-accent">
+        <div class="stat-label">Converted</div>
+        <a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=order.id) }}">{{ order.ref }}</a>
+        <div class="tiny dim">{{ order.total_cents|money }} · {{ order.status|lower|replace('_',' ') }}</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function () {
+  var ids = ['f-unit','f-qty','f-tooling','f-sample','f-ship','f-duties'];
+  function n(id) { var el = document.getElementById(id); if (!el) return 0;
+    var v = parseFloat(String(el.value).replace(/[$,]/g,'')); return isNaN(v) ? 0 : v; }
+  function fmt(v) { return '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function calc() {
+    var unit = n('f-unit'), qty = n('f-qty') || 0;
+    var total = unit * qty + n('f-tooling') + n('f-sample') + n('f-ship') + n('f-duties');
+    document.getElementById('calc-total').textContent = fmt(total);
+    document.getElementById('calc-breakdown').textContent =
+      fmt(unit) + ' × ' + qty.toLocaleString('en-US') + ' = ' + fmt(unit*qty) +
+      '  +  extras ' + fmt(n('f-tooling') + n('f-sample') + n('f-ship') + n('f-duties'));
+  }
+  ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+{% endblock %}

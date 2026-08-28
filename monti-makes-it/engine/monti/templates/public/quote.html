@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Request a quote · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Step 1 of 1</span>
+    <h1 style="margin-top:1rem;font-size:clamp(2.1rem,4.4vw,3rem)">Request a quote</h1>
+    <p class="section-lede">
+      Four things and you're done. We'll email you a real landed price within
+      {{ cfg.QUOTE_SLA_HOURS }} hours — what it costs to make, and what it costs to get to you.
+    </p>
+
+    {% if quota and customer %}
+      <div class="card card-accent" style="margin-top:2rem">
+        <div class="row-between wrap">
+          <div>
+            <strong>{{ quota.remaining }} of {{ quota.limit }} quote requests left</strong>
+            <div class="tiny muted">In your current {{ quota.days }}-day cycle.</div>
+          </div>
+          <div class="quota-dots">
+            {% for i in range(quota.limit) %}<span class="quota-dot {{ 'spent' if i < quota.used }}"></span>{% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" style="margin-top:2.5rem" novalidate>{{ csrf_input() }}
+      <label class="field">
+        <span class="field-label">What do you want made?</span>
+        <span class="field-hint-top">A plain sentence is fine. "A waxed canvas tote with leather handles."</span>
+        <input type="text" name="title" required autofocus value="{{ form.title or '' }}">
+      </label>
+
+      <label class="field">
+        <span class="field-label">Tell us more about it</span>
+        <span class="field-hint-top">Materials, size, finish, packaging — whatever you know. If you're copying
+          or improving something that exists, say so and link it. Don't worry about getting it perfect.</span>
+        <textarea name="description" required rows="6">{{ form.description or '' }}</textarea>
+      </label>
+
+      <div class="grid grid-2">
+        <label class="field">
+          <span class="field-label">How many?</span>
+          <input type="number" name="quantity" min="1" placeholder="500" value="{{ form.quantity or '' }}">
+          <span class="field-hint">A rough number is fine. It changes the price a lot, so guess honestly.</span>
+        </label>
+        <label class="field">
+          <span class="field-label">Where does it ship to?</span>
+          <input type="text" name="destination_country" placeholder="United States"
+                 value="{{ form.destination_country or '' }}">
+          <span class="field-hint">Country is enough for now.</span>
+        </label>
+      </div>
+
+      <label class="field">
+        <span class="field-label">Anything to show us?</span>
+        <input type="file" name="files" multiple>
+        <span class="field-hint">Photos, sketches, drawings, CAD, a spec sheet. A phone photo of a competitor's
+          product is genuinely useful. Optional.</span>
+      </label>
+
+      <div class="divider-label">Who should we send it to</div>
+      <div class="grid grid-2">
+        <label class="field"><span class="field-label">Your name</span>
+          <input type="text" name="contact_name" required value="{{ form.contact_name or (customer.contact_name if customer else '') }}"></label>
+        <label class="field"><span class="field-label">Email</span>
+          <input type="email" name="email" required value="{{ form.email or (customer.email if customer else '') }}"></label>
+        <label class="field"><span class="field-label">Company <span class="dim">(optional)</span></span>
+          <input type="text" name="company_name" value="{{ form.company_name or (customer.company_name if customer else '') }}"></label>
+        <label class="field"><span class="field-label">Phone <span class="dim">(optional)</span></span>
+          <input type="tel" name="phone" value="{{ form.phone or '' }}"></label>
+      </div>
+
+      <details class="more" style="margin-bottom:2rem">
+        <summary>Add specifics — only if you already know them</summary>
+        <div class="more-body">
+          <div class="grid grid-2">
+            <label class="field"><span class="field-label">Category</span>
+              <select name="category"><option value="">Not sure</option>
+                {% for c in categories %}<option {{ 'selected' if form.category == c }}>{{ c }}</option>{% endfor %}
+              </select></label>
+            <label class="field"><span class="field-label">Materials</span>
+              <input type="text" name="materials" placeholder="6061 aluminum, 300gsm board…" value="{{ form.materials or '' }}"></label>
+            <label class="field"><span class="field-label">Dimensions</span>
+              <input type="text" name="dimensions" placeholder="90 × 90 × 22 mm" value="{{ form.dimensions or '' }}"></label>
+            <label class="field"><span class="field-label">Colour or finish</span>
+              <input type="text" name="color_finish" placeholder="Matte black, Pantone 432C" value="{{ form.color_finish or '' }}"></label>
+            <label class="field"><span class="field-label">Packaging</span>
+              <input type="text" name="packaging" placeholder="Retail box, poly bag, bulk" value="{{ form.packaging or '' }}"></label>
+            <label class="field"><span class="field-label">Certifications</span>
+              <input type="text" name="certifications" placeholder="FDA contact, CE, Prop 65" value="{{ form.certifications or '' }}"></label>
+            <label class="field"><span class="field-label">Target price per unit</span>
+              <input type="text" name="target_unit_price" placeholder="$2.10" value="{{ form.target_unit_price or '' }}">
+              <span class="field-hint">Tells us instantly whether it's doable.</span></label>
+            <label class="field"><span class="field-label">Needed by</span>
+              <input type="date" name="needed_by" value="{{ form.needed_by or '' }}"></label>
+            <label class="field"><span class="field-label">Ship-to city</span>
+              <input type="text" name="destination_city" value="{{ form.destination_city or '' }}"></label>
+            <label class="field"><span class="field-label">Incoterm</span>
+              <select name="incoterm">
+                {% for i in ['DDP','DAP','FOB','EXW','CIF'] %}<option {{ 'selected' if form.incoterm == i }}>{{ i }}</option>{% endfor %}
+              </select>
+              <span class="field-hint">Leave this on DDP unless you know you want otherwise.</span></label>
+          </div>
+        </div>
+      </details>
+
+      <button class="btn btn-primary btn-xl btn-block" type="submit">Send it to the floor</button>
+      <p class="tiny dim center" style="margin-top:1rem">
+        Your specs and files stay private to your account. We don't shop your project around.
+      </p>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">Let's talk.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  We've read your application for <strong style="color:#14211A">{{ application.company_name }}</strong> and
+  we'd like to meet you. Here's the call:
+</p>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:18px;margin-bottom:20px">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.1em">When</div>
+  <div style="color:#0F4D33;font-size:19px;margin-top:4px">{{ pretty_dt(application.interview_at) }} UTC</div>
+  {% if application.interview_link %}
+    <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-top:14px">Where</div>
+    <div style="margin-top:4px"><a href="{{ application.interview_link }}" style="color:#0F4D33">{{ application.interview_link }}</a></div>
+  {% endif %}
+</div>
+<p style="color:#55635B;margin:0 0 18px">
+  Nothing to prepare. We want to hear what you're building, what you need made, and where you're taking it.
+  Bring your questions about us too — this decision goes both ways.
+</p>
+<p style="color:#55635B;margin:0">
+  If that time doesn't work, just reply to this email and we'll move it.
+</p>
+{% endblock %}

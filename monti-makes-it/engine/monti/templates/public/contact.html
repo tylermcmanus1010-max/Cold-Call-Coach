@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Contact · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(3rem,7vw,5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Contact</span>
+    <h1 style="margin-top:1rem">Talk to a person</h1>
+    <p class="section-lede">
+      The fastest way to reach us is one of the two doors — both land in front of a human on our team
+      the moment you send them.
+    </p>
+    <div class="grid grid-2" style="margin-top:2.5rem">
+      <div class="door">
+        <h3>Want a price</h3>
+        <p>Goes straight to the team that quotes it. Answer within {{ cfg.QUOTE_SLA_HOURS }} hours.</p>
+        <a class="btn btn-primary" href="{{ url_for('public.quote') }}">Request a Quote</a>
+      </div>
+      <div class="door">
+        <h3>Want to become a member</h3>
+        <p>Read by a person, usually within two business days.</p>
+        <a class="btn btn-outline" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.25rem">
+      <div class="stat-label">Everything else</div>
+      <p style="margin-top:.6rem"><a href="mailto:{{ cfg.SUPPORT_EMAIL }}" style="color:var(--green);font-weight:500">{{ cfg.SUPPORT_EMAIL }}</a></p>
+      <p class="tiny dim">Already a member? Message us from inside your portal for a faster answer.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ application.ref }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Application {{ application.ref }}</div>{% endblock %}
+{% block heading %}{{ application.company_name }}{% endblock %}
+{% block head_actions %}
+  {% set label, tone = application_label.get(application.status, (application.status, 'slate')) %}
+  <span class="badge badge-{{ tone }}">{{ label }}</span>
+  {% if application.status == 'SUBMITTED' %}
+    <form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="screening">
+      <button class="btn btn-sm" type="submit">Start review</button></form>
+  {% endif %}
+{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+
+    {% if application.status in ('SUBMITTED','SCREENING') %}
+      <div class="card card-accent">
+        <h3>Book the interview</h3>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+          Every applicant meets us before a decision. Booking it emails them the time and link, and puts
+          it on your calendar.
+          {% if application.availability %}<br><strong>They said they're free:</strong> {{ application.availability }}{% endif %}
+        </p>
+        <form method="post" class="row wrap" style="gap:.6rem;align-items:flex-end;margin-top:1rem">
+          {{ csrf_input() }}<input type="hidden" name="action" value="interview">
+          <label style="min-width:210px"><span class="field-label">When</span>
+            <input type="datetime-local" name="interview_at" required></label>
+          <label class="grow" style="min-width:220px"><span class="field-label">Video link</span>
+            <input type="text" name="interview_link" value="{{ default_link }}" placeholder="https://zoom.us/j/…"></label>
+          <button class="btn btn-primary" type="submit">Book &amp; email them</button>
+        </form>
+      </div>
+    {% elif application.status == 'INTERVIEW_SCHEDULED' %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <h3>Interview booked</h3>
+            <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+              {{ application.interview_at|dt }} UTC
+              {% if application.interview_link %}· <a href="{{ application.interview_link }}" style="color:var(--green)">{{ application.interview_link }}</a>{% endif %}
+            </p>
+          </div>
+          {% set cd = countdown(application.interview_at) %}
+          <div class="right"><div class="stat-value" style="font-size:1.2rem">{{ cd.short }}</div>
+            <div class="tiny dim">{{ 'ago' if cd.overdue else 'from now' }}</div></div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if application.status in ('SUBMITTED','SCREENING','INTERVIEW_SCHEDULED') %}
+      <div class="grid grid-2">
+        <form method="post" class="card">
+          {{ csrf_input() }}<input type="hidden" name="action" value="approve">
+          <h3>Accept them</h3>
+          <p class="tiny muted" style="margin:.4rem 0 .9rem">Creates their portal login, sets them to member,
+            and emails the welcome with credentials.</p>
+          <label class="field"><span class="field-label">Quote requests per cycle</span>
+            <input type="number" name="quote_limit" value="{{ default_limit }}" min="1"></label>
+          <label class="field"><span class="field-label">Note (internal)</span>
+            <input type="text" name="decision_reason" placeholder="Why they're a fit"></label>
+          <button class="btn btn-primary btn-block" type="submit">Accept as a member</button>
+        </form>
+        <form method="post" class="card">
+          {{ csrf_input() }}
+          <h3>Not this time</h3>
+          <p class="tiny muted" style="margin:.4rem 0 .9rem">The reason is sent to the applicant, so write it
+            for them to read.</p>
+          <label class="field"><span class="field-label">Reason</span>
+            <textarea name="decision_reason" rows="3" required placeholder="Honest and kind — they can reapply."></textarea></label>
+          <div class="row" style="gap:.5rem">
+            <button class="btn btn-block" type="submit" name="action" value="waitlist">Waitlist</button>
+            <button class="btn btn-danger btn-block" type="submit" name="action" value="decline">Decline</button>
+          </div>
+        </form>
+      </div>
+    {% else %}
+      <div class="card">
+        <h3>Decided {{ application.decided_at|dt }}</h3>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+          By {{ application.reviewer or '—' }}. {{ application.decision_reason or '' }}
+        </p>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>The application</h3><span class="tiny dim">Submitted {{ application.created_at|dt }}</span></div>
+      <div class="card-body">
+        <div class="stat-label">What they sell</div>
+        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.what_they_sell }}</p>
+        <div class="stat-label">Why they want to work with us</div>
+        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.why }}</p>
+        {% if application.goals %}
+          <div class="stat-label">Where they want to be in three years</div>
+          <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.goals }}</p>
+        {% endif %}
+        <dl class="kv">
+          <dt>Contact</dt><dd>{{ application.contact_name }} · <a href="mailto:{{ application.email }}" style="color:var(--green)">{{ application.email }}</a></dd>
+          {% if application.phone %}<dt>Phone</dt><dd>{{ application.phone }}</dd>{% endif %}
+          {% if application.website %}<dt>Website</dt><dd><a href="{{ application.website if '//' in application.website else 'https://' + application.website }}" target="_blank" rel="noopener" style="color:var(--green)">{{ application.website }}</a></dd>{% endif %}
+          {% if application.country %}<dt>Country</dt><dd>{{ application.country }}</dd>{% endif %}
+          {% if application.business_type %}<dt>Type</dt><dd>{{ application.business_type }}</dd>{% endif %}
+          {% if application.years_trading %}<dt>Trading</dt><dd>{{ application.years_trading }}</dd>{% endif %}
+          {% if application.annual_volume %}<dt>Annual spend</dt><dd>{{ application.annual_volume }}</dd>{% endif %}
+          {% if application.categories %}<dt>Wants made</dt><dd>{{ application.categories }}</dd>{% endif %}
+          {% if application.current_manufacturer %}<dt>Makes with</dt><dd>{{ application.current_manufacturer }}</dd>{% endif %}
+          {% if application.availability %}<dt>Available</dt><dd>{{ application.availability }}</dd>{% endif %}
+          {% if application.referral %}<dt>Heard via</dt><dd>{{ application.referral }}</dd>{% endif %}
+        </dl>
+      </div>
+    </div>
+
+    {% if quotes %}
+      <div class="card card-flush">
+        <div class="card-head"><h3>Quotes they've already sent</h3></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Project</th><th>Submitted</th><th>Status</th></tr></thead>
+          <tbody>{% for q in quotes %}
+            {% set label, tone = status_label(q.status, 'quote') %}
+            <tr><td class="mono tiny">{{ q.ref }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.title[:44] }}</a></td>
+              <td class="tiny dim">{{ q.created_at|dt }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td></tr>
+          {% endfor %}</tbody></table></div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="stack sticky-side">
+    {% if customer %}
+      <div class="card">
+        <div class="row" style="margin-bottom:.85rem">
+          <div class="avatar avatar-accent">{{ customer.company_name|initials }}</div>
+          <div style="min-width:0">
+            <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:500">{{ customer.company_name }}</a>
+            <div class="tiny dim">{{ customer.ref }}</div>
+          </div>
+        </div>
+        {% set mlabel, mtone = membership_label.get(customer.membership_status, (customer.membership_status, 'slate')) %}
+        <dl class="kv" style="grid-template-columns:100px minmax(0,1fr)">
+          <dt>Membership</dt><dd><span class="badge badge-{{ mtone }}">{{ mlabel }}</span></dd>
+          <dt>Lifetime</dt><dd class="mono">{{ customer.lifetime_value_cents|money }}</dd>
+          <dt>Quotes</dt><dd>{{ quotes|length }}</dd>
+        </dl>
+      </div>
+    {% endif %}
+    <div class="card">
+      <form method="post">
+        {{ csrf_input() }}<input type="hidden" name="action" value="notes">
+        <span class="field-label">Review notes</span>
+        <textarea name="review_notes" rows="6" placeholder="What you thought on the call. Never shown to the applicant.">{{ application.review_notes or '' }}</textarea>
+        <button class="btn btn-sm btn-block" style="margin-top:.6rem" type="submit">Save notes</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

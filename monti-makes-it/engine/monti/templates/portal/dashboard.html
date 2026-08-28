@@ -1,0 +1,109 @@
+{% extends "portal/_base.html" %}
+{% block title %}Portal · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ g.customer.ref }}</div>{% endblock %}
+{% block heading %}{{ g.customer.company_name }}{% endblock %}
+{% block head_actions %}<a class="btn btn-primary" href="{{ url_for('public.quote') }}">New quote request</a>{% endblock %}
+{% block content %}
+
+{% if not is_member %}
+  <div class="card card-accent" style="margin-bottom:1.5rem">
+    <div class="row-between wrap">
+      <div style="max-width:56ch">
+        <strong>You can get prices — ordering needs membership.</strong>
+        <div class="tiny muted" style="margin-top:.3rem">
+          We review every application and meet you over video before accepting. Not everyone
+          who applies is accepted, but the door is open.
+        </div>
+      </div>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+    </div>
+  </div>
+{% endif %}
+
+{% if g.user.must_change_password %}
+  <div class="card card-accent" style="margin-bottom:1.5rem">
+    <div class="row-between wrap">
+      <div><strong>You're still on the temporary password.</strong>
+        <div class="tiny muted">Set your own before you place an order.</div></div>
+      <a class="btn btn-sm" href="{{ url_for('auth.change_password') }}">Change password</a>
+    </div>
+  </div>
+{% endif %}
+
+<div class="grid grid-4">
+  <div class="stat"><div class="stat-label">Open quotes</div><div class="stat-value">{{ stats.open_quotes }}</div><div class="stat-sub">in the pipeline</div></div>
+  <div class="stat {{ 'stat-accent' if stats.awaiting_you }}"><div class="stat-label">Awaiting your decision</div><div class="stat-value">{{ stats.awaiting_you }}</div><div class="stat-sub">estimates ready</div></div>
+  <div class="stat"><div class="stat-label">Active orders</div><div class="stat-value">{{ stats.open_orders }}</div><div class="stat-sub">in flight</div></div>
+  <div class="stat"><div class="stat-label">Quote requests left</div>
+    <div class="stat-value">{{ quota.remaining if quota else '—' }}</div>
+    <div class="stat-sub">of {{ quota.limit if quota else '' }} this {{ quota.days if quota else 30 }}-day cycle</div></div>
+</div>
+
+<div class="grid grid-sidebar" style="margin-top:1.5rem">
+  <div class="card card-flush">
+    <div class="card-head"><h3>Recent quotes</h3><a class="tiny" style="color:var(--amber)" href="{{ url_for('portal.quotes') }}">View all →</a></div>
+    {% if quotes %}
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Ref</th><th>Project</th><th>Qty</th><th>Status</th><th>Clock</th><th class="right">Estimate</th></tr></thead>
+        <tbody>
+        {% for q in quotes %}
+          {% set label, tone = status_label(q.status, 'quote') %}
+          {% set est = estimates.get(q.id) %}
+          <tr>
+            <td class="mono">{{ q.ref }}</td>
+            <td><a class="cell-link" href="{{ url_for('portal.quote_detail', quote_id=q.id) }}">{{ q.title }}</a></td>
+            <td class="muted">{{ '{:,}'.format(q.quantity) if q.quantity else '—' }}</td>
+            <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+            <td class="tiny">
+              {% if q.status in ('NEW','IN_REVIEW') %}
+                {% set cd = countdown(q.due_at) %}
+                <span style="color:{{ 'var(--red)' if cd.overdue else ('var(--amber)' if cd.urgent else 'var(--text-2)') }}">{{ cd.text }}</span>
+              {% else %}<span class="dim">—</span>{% endif %}
+            </td>
+            <td class="right">{{ est.total_cents|money if est else '—' }}</td>
+          </tr>
+        {% endfor %}
+        </tbody></table></div>
+    {% else %}
+      <div class="empty"><div class="empty-icon">◷</div>No quotes yet.<br>
+        <a class="btn btn-primary btn-sm" style="margin-top:1rem" href="{{ url_for('public.quote') }}">Submit your first project</a></div>
+    {% endif %}
+  </div>
+
+  <div class="stack">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Active orders</h3></div>
+      {% if orders %}
+        <div style="padding:.35rem 0">
+        {% for o in orders %}
+          {% set label, tone = status_label(o.status, 'order') %}
+          <a href="{{ url_for('portal.order_detail', order_id=o.id) }}" style="display:block;padding:.7rem 1.25rem;border-bottom:1px solid var(--line-soft)">
+            <div class="row-between"><span class="mono tiny">{{ o.ref }}</span><span class="badge badge-{{ tone }}">{{ label }}</span></div>
+            <div class="row-between" style="margin-top:.3rem">
+              <span style="font-size:.86rem;font-weight:560">{{ o.total_cents|money }}</span>
+              <span class="tiny dim">{{ o.created_at|relative }}</span>
+            </div>
+          </a>
+        {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty" style="padding:2rem 1rem">No active orders.</div>
+      {% endif %}
+    </div>
+
+    <div class="card card-accent">
+      <div class="stat-label">How this works</div>
+      <p class="tiny muted" style="margin-top:.6rem">
+        Send us a project → we price it inside {{ cfg.QUOTE_SLA_HOURS }}h → you accept →
+        pay by bank transfer or card → {{ cfg.ORDER_REVIEW_HOURS }}h manufacturer review →
+        production → freight.
+      </p>
+      <p class="tiny muted" style="margin-top:.6rem">
+        You get {{ quota.limit if quota else cfg.QUOTE_LIMIT }} new quote requests every
+        {{ quota.days if quota else cfg.QUOTE_CYCLE_DAYS }} days. Need more? Ask us — we raise it
+        for accounts we work with often.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

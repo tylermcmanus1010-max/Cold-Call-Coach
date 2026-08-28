@@ -1,0 +1,43 @@
+{% extends "admin/_base.html" %}
+{% block title %}Private catalog · {{ company }}{% endblock %}
+{% block heading %}Private catalog{% endblock %}
+{% block head_actions %}<a class="btn btn-primary" href="{{ url_for('admin.catalog_new') }}">New item</a>{% endblock %}
+{% block content %}
+<p class="muted" style="margin-bottom:1rem;max-width:660px;font-size:.92rem">
+  Nothing here is public. An item reaches a client's portal one of two ways: it carries a
+  <strong>tag</strong> that client also carries, or you assign it to them directly — optionally at a
+  price and MOQ negotiated for that account alone.
+</p>
+{% if all_tags %}
+  <div class="row wrap" style="gap:.4rem;margin-bottom:1.5rem;align-items:center">
+    <span class="stat-label">Tags in use</span>
+    {% for t in all_tags %}
+      <span class="tag" title="{{ t.items }} item{{ 's' if t.items != 1 }}, {{ t.members }} member{{ 's' if t.members != 1 }}">
+        {{ t.tag }} · {{ t.items }}/{{ t.members }}</span>
+    {% endfor %}
+    <span class="tiny dim">items / members</span>
+  </div>
+{% endif %}
+<div class="card card-flush">
+  {% if items %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>SKU</th><th>Item</th><th>Tags</th><th class="right">List price</th><th class="right">MOQ</th><th class="right">Lead</th><th class="right">Reaches</th><th>Status</th></tr></thead>
+    <tbody>{% for i in items %}
+      <tr>
+        <td class="mono tiny">{{ i.sku }}</td>
+        <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ i.name }}</a></td>
+        <td class="tag-row">{% for t in (i.tags or '').split(',') if t.strip() %}<span class="tag">{{ t.strip() }}</span>{% else %}<span class="tiny dim">untagged</span>{% endfor %}</td>
+        <td class="right mono">{{ i.unit_price_cents|money }}</td>
+        <td class="right mono">{{ '{:,}'.format(i.moq) }}</td>
+        <td class="right tiny">{{ i.lead_time_days }}d</td>
+        <td class="right tnum">{{ reach.get(i.id, 0) }} member{{ 's' if reach.get(i.id, 0) != 1 }}
+          {% if i.assignees %}<div class="tiny dim">{{ i.assignees }} direct</div>{% endif %}</td>
+        <td>{% if i.is_active %}<span class="badge badge-green">Active</span>{% else %}<span class="badge badge-slate">Archived</span>{% endif %}</td>
+      </tr>
+    {% endfor %}</tbody></table></div>
+  {% else %}
+    <div class="empty"><div class="empty-icon">▤</div>No catalog items yet.<br>
+      <span class="tiny">Add one directly, or turn a priced quote into an item from the quote page.</span></div>
+  {% endif %}
+</div>
+{% endblock %}

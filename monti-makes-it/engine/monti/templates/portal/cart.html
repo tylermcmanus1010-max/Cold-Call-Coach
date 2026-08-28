@@ -1,0 +1,51 @@
+{% extends "portal/_base.html" %}
+{% block title %}Current order · {{ company }}{% endblock %}
+{% block heading %}Current order{% endblock %}
+{% block content %}
+{% if lines %}
+<div class="grid grid-sidebar">
+  <div class="card card-flush">
+    <div class="card-head"><h3>Items</h3></div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Line total</th><th></th></tr></thead>
+      <tbody>
+      {% for l in lines %}
+        <tr>
+          <td><div style="font-weight:560">{{ l.name }}</div><div class="tiny mono dim">{{ l.sku }} · {{ l.lead_time_days }}d lead</div></td>
+          <td class="right mono">{{ l.unit_price_cents|money }}</td>
+          <td class="right mono">{{ '{:,}'.format(l.quantity) }}</td>
+          <td class="right mono" style="font-weight:600">{{ l.line_total_cents|money }}</td>
+          <td class="right">
+            <form method="post" action="{{ url_for('portal.cart_remove', cart_id=l.cart_id) }}">{{ csrf_input() }}
+              <button class="btn btn-ghost btn-sm" type="submit">Remove</button></form></td>
+        </tr>
+      {% endfor %}
+      </tbody></table></div>
+  </div>
+
+  <div class="card sticky-side">
+    <div class="stat-label">Order total</div>
+    <div class="stat-value" style="color:var(--amber)">{{ subtotal|money }}</div>
+    <p class="tiny dim" style="margin-top:.35rem">Freight and duties are added by our team before payment where they aren't already priced in.</p>
+    <form method="post" action="{{ url_for('portal.cart_checkout') }}" style="margin-top:1.25rem">{{ csrf_input() }}
+      <label class="field"><span class="field-label">Ship to</span>
+        <textarea name="ship_to" rows="3" placeholder="Full delivery address">{{ g.customer.address or '' }}</textarea></label>
+      <label class="field"><span class="field-label">Notes for the floor</span>
+        <textarea name="notes" rows="2" placeholder="Anything we should know about this run"></textarea></label>
+      {% if is_member %}
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Create order →</button>
+      {% else %}
+        <a class="btn btn-primary btn-block btn-lg" href="{{ url_for('public.apply') }}">Apply for Membership to order</a>
+        <p class="tiny dim" style="margin-top:.6rem">Your items stay here while your application is reviewed.</p>
+      {% endif %}
+    </form>
+    <p class="tiny dim" style="margin-top:.9rem">Next step is payment. Nothing is charged until you complete checkout.</p>
+  </div>
+</div>
+{% else %}
+  <div class="card empty">
+    <div class="empty-icon">▸</div>Nothing in your order yet.
+    <div><a class="btn btn-primary btn-sm" style="margin-top:1.25rem" href="{{ url_for('portal.catalog') }}">Browse my catalog</a></div>
+  </div>
+{% endif %}
+{% endblock %}

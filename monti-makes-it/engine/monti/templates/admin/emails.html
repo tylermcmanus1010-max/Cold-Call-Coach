@@ -1,0 +1,26 @@
+{% extends "admin/_base.html" %}
+{% block title %}Email log · {{ company }}{% endblock %}
+{% block heading %}Email log{% endblock %}
+{% block content %}
+<p class="muted" style="margin-bottom:1.25rem;font-size:.9rem">
+  Every message the system sends, including the ones to your centralized orders inbox
+  (<span class="mono">{{ cfg.ORDERS_EMAIL }}</span>). Provider: <span class="mono">{{ cfg.MAIL_PROVIDER }}</span>.
+</p>
+<div class="card card-flush">
+  {% if emails %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Sent</th><th>To</th><th>Subject</th><th>Template</th><th>Status</th></tr></thead>
+    <tbody>{% for e in emails %}
+      <tr>
+        <td class="tiny dim nowrap">{{ e.created_at|dt }}</td>
+        <td class="tiny mono">{{ e.to_addr }}</td>
+        <td>{{ e.subject }}</td>
+        <td class="tiny muted">{{ e.template or '—' }}</td>
+        <td>{% if e.status == 'FAILED' %}<span class="badge badge-red">Failed</span>
+          {% elif e.status == 'LOGGED' %}<span class="badge badge-slate">Logged</span>
+          {% else %}<span class="badge badge-green">Sent</span>{% endif %}</td>
+      </tr>
+    {% endfor %}</tbody></table></div>
+  {% else %}<div class="empty"><div class="empty-icon">✉</div>No emails yet.</div>{% endif %}
+</div>
+{% endblock %}

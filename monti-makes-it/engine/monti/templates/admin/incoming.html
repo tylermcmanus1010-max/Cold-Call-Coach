@@ -1,0 +1,98 @@
+{% extends "admin/_base.html" %}
+{% block title %}Incoming quotes · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Triage</div>{% endblock %}
+{% block heading %}Incoming quotes{% endblock %}
+{% block head_actions %}
+  <a class="btn" href="{{ url_for('admin.quotes', status='pricing') }}">Pricing queue →</a>
+{% endblock %}
+{% block content %}
+<p class="muted" style="margin-bottom:1.5rem;max-width:64ch;font-size:.95rem">
+  Everything that has just landed, oldest first. Accept it and it moves into the pricing queue with
+  the {{ cfg.QUOTE_SLA_HOURS }}-hour clock still running. Decline it and the client is told why —
+  nothing sits here silently.
+</p>
+
+{% if quotes %}
+  <div class="stack">
+  {% for q in quotes %}
+    {% set cd = countdown(q.due_at) %}
+    <div class="card card-flush {{ 'card-accent' if cd.urgent or cd.overdue }}">
+      <div class="card-head">
+        <div class="row wrap" style="gap:.75rem">
+          <span class="mono tiny">{{ q.ref }}</span>
+          <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}"
+             style="font-weight:500">{{ q.company_name }}</a>
+          {% set mlabel, mtone = membership_label.get(q.membership_status, (q.membership_status, 'slate')) %}
+          <span class="badge badge-{{ mtone }}">{{ mlabel }}</span>
+          {% if q.customer_quotes > 1 %}<span class="chip tiny">{{ q.customer_quotes }} requests to date</span>{% endif %}
+        </div>
+        <div class="right">
+          <div class="mono" style="font-weight:600;font-size:.9rem;color:{{ 'var(--stop)' if cd.overdue else ('var(--wait)' if cd.urgent else 'var(--ink-2)') }}">
+            {{ cd.short }}{{ ' over' if cd.overdue }}</div>
+          <div class="tiny dim">arrived {{ q.created_at|relative }}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="grid grid-sidebar" style="gap:1.5rem">
+          <div>
+            <h3>{{ q.title }}</h3>
+            <p class="muted" style="margin-top:.6rem;font-size:.92rem;white-space:pre-wrap">{{ q.description }}</p>
+            <dl class="kv" style="margin-top:1.25rem;grid-template-columns:130px minmax(0,1fr);font-size:.85rem">
+              {% if q.quantity %}<dt>Quantity</dt><dd class="tnum">{{ '{:,}'.format(q.quantity) }} {{ q.quantity_unit }}</dd>{% endif %}
+              {% if q.target_unit_price_cents %}<dt>Target unit price</dt>
+                <dd class="mono" style="color:var(--green)">{{ q.target_unit_price_cents|money }}</dd>{% endif %}
+              {% if q.materials %}<dt>Materials</dt><dd>{{ q.materials }}</dd>{% endif %}
+              {% if q.destination_country %}<dt>Destination</dt>
+                <dd>{{ q.destination_city }}{{ ', ' if q.destination_city }}{{ q.destination_country }} · {{ q.incoterm }}</dd>{% endif %}
+              {% if q.needed_by %}<dt>Needed by</dt><dd>{{ q.needed_by|date }}</dd>{% endif %}
+              <dt>Files</dt><dd>
+                {% set fs = files.get(q.id) %}
+                {% if fs %}{% for f in fs %}<a href="{{ url_for('static', filename='uploads/' + f.stored_name) }}"
+                    target="_blank" rel="noopener" style="color:var(--green)">{{ f.filename }}</a>{{ ', ' if not loop.last }}{% endfor %}
+                {% else %}<span class="dim">none attached</span>{% endif %}</dd>
+            </dl>
+          </div>
+          <div class="stack">
+            <form method="post" action="{{ url_for('admin.triage', quote_id=q.id, action='accept') }}">
+              {{ csrf_input() }}
+              <button class="btn btn-primary btn-block" type="submit">Accept &amp; price it</button>
+            </form>
+            <form method="post" action="{{ url_for('admin.triage', quote_id=q.id, action='reject') }}"
+                  class="card" style="background:var(--surface-2)">
+              {{ csrf_input() }}
+              <span class="field-label">Decline this request</span>
+              <textarea name="reason" rows="3" required
+                placeholder="Written for the client to read — e.g. below our practical minimum for this process."></textarea>
+              <button class="btn btn-danger btn-block" style="margin-top:.6rem" type="submit">Decline &amp; tell them</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+{% else %}
+  <div class="card empty"><div class="empty-icon">◷</div>
+    Nothing waiting. Every request that has come in has been accepted or declined.</div>
+{% endif %}
+
+{% if recent %}
+  <div class="card card-flush" style="margin-top:2rem">
+    <div class="card-head"><h3>Recently triaged</h3></div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Ref</th><th>Customer</th><th>Project</th><th>Decision</th><th>By</th><th>When</th></tr></thead>
+      <tbody>{% for q in recent %}
+        {% set label, tone = status_label(q.status, 'quote') %}
+        <tr>
+          <td><a class="cell-link mono" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.ref }}</a></td>
+          <td>{{ q.company_name }}</td>
+          <td class="muted">{{ q.title[:44] }}</td>
+          <td><span class="badge badge-{{ tone }}">{{ label }}</span>
+            {% if q.decline_reason %}<div class="tiny dim">{{ q.decline_reason[:60] }}</div>{% endif %}</td>
+          <td class="tiny muted">{{ q.triaged_by or '—' }}</td>
+          <td class="tiny dim">{{ q.triaged_at|relative }}</td>
+        </tr>
+      {% endfor %}</tbody></table></div>
+  </div>
+{% endif %}
+{% endblock %}

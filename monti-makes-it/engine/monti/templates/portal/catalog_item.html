@@ -1,0 +1,36 @@
+{% extends "portal/_base.html" %}
+{% block title %}{{ item.name }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ item.sku }}</div>{% endblock %}
+{% block heading %}{{ item.name }}{% endblock %}
+{% block content %}
+{% set price = item.price_cents %}
+<div class="grid grid-sidebar">
+  <div class="card">
+    {% if item.description %}<p style="font-size:.95rem">{{ item.description }}</p>{% endif %}
+    <dl class="kv" style="margin-top:1.5rem">
+      {% if item.category %}<dt>Category</dt><dd>{{ item.category }}</dd>{% endif %}
+      {% if item.materials %}<dt>Materials</dt><dd>{{ item.materials }}</dd>{% endif %}
+      {% if item.specs %}<dt>Specifications</dt><dd style="white-space:pre-wrap">{{ item.specs }}</dd>{% endif %}
+      {% if item.matched_tags %}<dt>Available to you via</dt>
+        <dd class="tag-row">{% for t in item.matched_tags %}<span class="tag">{{ t }}</span>{% endfor %}</dd>{% endif %}
+      <dt>Lead time</dt><dd>{{ item.lead_time_days }} days from order release</dd>
+      <dt>Minimum order</dt><dd>{{ '{:,}'.format(item.moq) }} units</dd>
+    </dl>
+    {% if item.note %}
+      <div class="divider-label">Note on your account</div>
+      <p class="muted" style="font-size:.9rem">{{ item.note }}</p>
+    {% endif %}
+  </div>
+  <div class="card sticky-side">
+    <div class="stat-label">Your price</div>
+    <div class="stat-value" style="color:var(--amber)">{{ price|money }}</div>
+    <div class="tiny dim">per unit{% if item.negotiated %} · negotiated for {{ g.customer.company_name }}{% endif %}</div>
+    <form method="post" action="{{ url_for('portal.cart_add', item_id=item.id) }}" style="margin-top:1.5rem">{{ csrf_input() }}
+      <label class="field"><span class="field-label">Quantity</span>
+        <input type="number" name="quantity" min="{{ item.moq }}" value="{{ item.moq }}"></label>
+      <button class="btn btn-primary btn-block" type="submit">Add to order</button>
+    </form>
+    <p class="tiny dim" style="margin-top:1rem">Checkout by ACH or card. Every paid order gets a {{ cfg.ORDER_REVIEW_HOURS }}h manufacturer review before it ships.</p>
+  </div>
+</div>
+{% endblock %}

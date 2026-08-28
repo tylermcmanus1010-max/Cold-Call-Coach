@@ -1,0 +1,151 @@
+{% extends "portal/_base.html" %}
+{% block title %}{{ order.ref }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Order {{ order.ref }}</div>{% endblock %}
+{% block heading %}{{ order.total_cents|money }}{% endblock %}
+{% block head_actions %}
+  {% set label, tone = status_label(order.status, 'order') %}
+  <span class="badge badge-{{ tone }}">{{ label }}</span>
+{% endblock %}
+{% block content %}
+<div class="card" style="margin-bottom:1.5rem">
+  {% include "portal/_timeline.html" %}
+</div>
+
+<div class="grid grid-sidebar">
+  <div class="stack">
+    {% if order.status in ('PENDING_PAYMENT',) %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <h3>Ready for payment</h3>
+            <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+              Pay by {{ 'bank debit (ACH) or card' if 'us_bank_account' in methods else 'card' }}.
+              {% if order.payment_status == 'FAILED' %}<span style="color:var(--red)">Your last attempt didn't go through.</span>{% endif %}
+            </p>
+          </div>
+          <form method="post" action="{{ url_for('portal.pay', order_id=order.id) }}">{{ csrf_input() }}
+            <button class="btn btn-primary btn-lg" type="submit">Pay {{ order.total_cents|money }} →</button>
+          </form>
+        </div>
+        <p class="tiny dim" style="margin-top:1rem">
+          After funds are confirmed, this order enters a mandatory {{ cfg.ORDER_REVIEW_HOURS }}-hour manufacturer review
+          before anything is produced or shipped.
+        </p>
+      </div>
+    {% elif order.status == 'PAYMENT_PROCESSING' %}
+      <div class="card card-accent">
+        <h3>Payment in flight</h3>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+          Your {{ order.payment_method or 'bank' }} payment has been initiated. ACH debits typically settle in 1–3 business days.
+          The {{ cfg.ORDER_REVIEW_HOURS }}h review window starts the moment funds are confirmed — not before.
+        </p>
+      </div>
+    {% elif order.status == 'IN_REVIEW' %}
+      {% set cd = state.countdown %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <h3>Manufacturer review</h3>
+            <p class="muted" style="margin-top:.5rem;font-size:.9rem;max-width:440px">
+              Funds confirmed {{ order.funds_confirmed_at|dt }}. The floor is reviewing your specs before production.
+              Need to change something? Email <a href="mailto:{{ cfg.SUPPORT_EMAIL }}?subject={{ order.ref }}" style="color:var(--amber)">{{ cfg.SUPPORT_EMAIL }}</a> now.
+            </p>
+          </div>
+          <div class="right">
+            <div class="stat-value" style="color:var(--violet);font-size:1.3rem">{{ cd.short if cd else '—' }}</div>
+            <div class="tiny dim">{{ 'window elapsed' if cd and cd.overdue else 'until review closes' }}</div>
+          </div>
+        </div>
+      </div>
+    {% elif order.status == 'ON_HOLD' %}
+      <div class="card" style="border-color:rgba(248,113,113,.4)">
+        <h3 style="color:#FCA5A5">On hold</h3>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem">{{ order.review_notes or 'We paused this order during review. Our team is in touch.' }}</p>
+      </div>
+    {% elif order.status == 'SHIPPED' %}
+      <div class="card card-accent">
+        <h3>Shipped</h3>
+        <dl class="kv" style="margin-top:.9rem">
+          <dt>Shipped</dt><dd>{{ order.shipped_at|dt }}</dd>
+          {% if order.carrier %}<dt>Carrier</dt><dd>{{ order.carrier }}</dd>{% endif %}
+          {% if order.tracking_number %}<dt>Tracking</dt><dd class="mono">{{ order.tracking_number }}</dd>{% endif %}
+        </dl>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Line items</h3></div>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Total</th></tr></thead>
+        <tbody>
+        {% for i in items %}
+          <tr><td>{{ i.name }}{% if i.sku %}<div class="tiny mono dim">{{ i.sku }}</div>{% endif %}</td>
+            <td class="right mono">{{ i.unit_price_cents|money }}</td>
+            <td class="right mono">{{ '{:,}'.format(i.quantity) }}</td>
+            <td class="right mono">{{ i.line_total_cents|money }}</td></tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3" class="right muted">Subtotal</td><td class="right mono">{{ order.subtotal_cents|money }}</td></tr>
+          {% if order.freight_waived and estimate %}
+            <tr class="waived-row">
+              <td colspan="3" class="right"><span class="muted">Freight &amp; customs</span>
+                <span class="free-tag">Client {{ g.customer.company_name }} marked as free in system</span></td>
+              <td class="right"><span class="struck mono tnum">{{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</span>
+                <div class="mono tnum" style="color:var(--green);font-weight:600">$0.00</div></td>
+            </tr>
+          {% elif order.shipping_cents %}
+            <tr><td colspan="3" class="right muted">Freight &amp; customs</td>
+              <td class="right mono tnum">{{ order.shipping_cents|money }}</td></tr>
+          {% endif %}
+          {% if order.tax_cents %}<tr><td colspan="3" class="right muted">Tax</td><td class="right mono">{{ order.tax_cents|money }}</td></tr>{% endif %}
+          <tr><td colspan="3" class="right"><div class="sum-label">
+            <span class="sum-name">{{ cfg.FEE_LABEL }}</span>
+            <span class="sum-note">{{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% of the order</span>
+          </div></td>
+            <td class="right mono sum-amount">{{ order.fee_cents|money }}</td></tr>
+          {% if order.processing_fee_cents %}
+            <tr><td colspan="3" class="right"><div class="sum-label">
+              <span class="sum-name">Payment processing <span class="dim">— {{ order.payment_method|lower }}</span></span>
+              <span class="sum-note">
+                {% if order.payment_method == 'ACH' %}{{ '%g'|format(cfg.STRIPE_ACH_PERCENT) }}% capped at ${{ '%.2f'|format(cfg.STRIPE_ACH_CAP_CENTS / 100) }}
+                {% else %}{{ '%g'|format(cfg.STRIPE_CARD_PERCENT) }}% + {{ cfg.STRIPE_CARD_FIXED_CENTS }}&cent;
+                {% endif %} charged by Stripe, passed on at cost</span></div></td>
+              <td class="right mono sum-amount">{{ order.processing_fee_cents|money }}</td></tr>
+          {% endif %}
+          <tr class="sum-total"><td colspan="3" class="right"><div class="sum-label">
+            <span class="sum-name">Total</span></div></td>
+            <td class="right mono sum-total-amount">{{ order.total_cents|money }}</td></tr>
+        </tfoot>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="stat-label">Order detail</div>
+      <dl class="kv" style="margin-top:.85rem;grid-template-columns:110px minmax(0,1fr)">
+        <dt>Reference</dt><dd class="mono">{{ order.ref }}</dd>
+        <dt>Placed</dt><dd>{{ order.created_at|dt }}</dd>
+        <dt>Payment</dt><dd>{{ order.payment_method or '—' }} · {{ order.payment_status|lower }}</dd>
+        {% if order.funds_confirmed_at %}<dt>Funds confirmed</dt><dd>{{ order.funds_confirmed_at|dt }}</dd>{% endif %}
+        {% if order.ship_to %}<dt>Ship to</dt><dd style="white-space:pre-wrap">{{ order.ship_to }}</dd>{% endif %}
+      </dl>
+    </div>
+    <div class="card card-flush">
+      <div class="card-head"><h3>History</h3></div>
+      <div class="card-body">
+        <div class="timeline">
+          {% for e in events %}
+            <div class="tl-item {{ 'tl-green' if e.event in ('FUNDS_CONFIRMED','SHIPPED','REVIEW_APPROVED') else ('tl-amber' if e.event == 'ORDER_CREATED') }}">
+              <div class="tl-head">{{ e.event.replace('_',' ').title() }}</div>
+              <div class="tl-meta">{{ e.created_at|dt }}</div>
+              {% if e.detail %}<div class="tl-body">{{ e.detail }}</div>{% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

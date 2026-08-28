@@ -1,0 +1,28 @@
+{% extends "admin/_base.html" %}
+{% block title %}New catalog item · {{ company }}{% endblock %}
+{% block heading %}New catalog item{% endblock %}
+{% block content %}
+<div class="container-narrow" style="margin:0">
+  <div class="card card-lg">
+    <form method="post">{{ csrf_input() }}
+      <div class="grid grid-2">
+        <label class="field"><span class="field-label">SKU *</span><input type="text" name="sku" required placeholder="MMI-1042"></label>
+        <label class="field"><span class="field-label">Name *</span><input type="text" name="name" required></label>
+        <label class="field"><span class="field-label">Category</span><input type="text" name="category"></label>
+        <label class="field"><span class="field-label">Materials</span><input type="text" name="materials"></label>
+        <label class="field"><span class="field-label">Unit price</span><input type="text" name="unit_price" placeholder="2.14"></label>
+        <label class="field"><span class="field-label">MOQ</span><input type="number" name="moq" value="1"></label>
+        <label class="field"><span class="field-label">Lead time (days)</span><input type="number" name="lead_time_days" value="30"></label>
+        <label class="field"><span class="field-label">Image URL</span><input type="text" name="image_url"></label>
+      </div>
+      <label class="field"><span class="field-label">Tags</span>
+        <input type="text" name="tags" placeholder="bags, leather, seasonal">
+        <span class="field-hint">Comma separated. Any member carrying one of these tags gets this item
+          in their portal automatically.</span></label>
+      <label class="field"><span class="field-label">Description</span><textarea name="description" rows="3"></textarea></label>
+      <label class="field"><span class="field-label">Specifications</span><textarea name="specs" rows="3"></textarea></label>
+      <button class="btn btn-primary btn-lg" type="submit">Create item</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

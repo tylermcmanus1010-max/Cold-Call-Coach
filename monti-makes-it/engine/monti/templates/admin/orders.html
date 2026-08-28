@@ -1,0 +1,42 @@
+{% extends "admin/_base.html" %}
+{% block title %}Order log · {{ company }}{% endblock %}
+{% block heading %}Order log{% endblock %}
+{% block content %}
+<div class="tabs">
+  <a class="tab {{ 'active' if not status }}" href="{{ url_for('admin.orders') }}">All</a>
+  <a class="tab {{ 'active' if status == 'review' }}" href="{{ url_for('admin.orders', status='review') }}">In review</a>
+  <a class="tab {{ 'active' if status == 'open' }}" href="{{ url_for('admin.orders', status='open') }}">Open</a>
+  {% for key, label in [('PENDING_PAYMENT','Awaiting payment'),('IN_PRODUCTION','In production'),('SHIPPED','Shipped'),('ON_HOLD','On hold')] %}
+    <a class="tab {{ 'active' if status == key }}" href="{{ url_for('admin.orders', status=key) }}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid grid-2" style="margin-bottom:1.5rem">
+  <div class="stat"><div class="stat-label">Confirmed in view</div><div class="stat-value">{{ totals.paid|money }}</div></div>
+  <div class="stat"><div class="stat-label">Unpaid in view</div><div class="stat-value">{{ totals.unpaid|money }}</div></div>
+</div>
+
+<div class="card card-flush">
+  {% if orders %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Ref</th><th>Customer</th><th>Status</th><th>Payment</th><th>Review window</th><th>Placed</th><th class="right">Total</th></tr></thead>
+    <tbody>{% for o in orders %}
+      {% set label, tone = status_label(o.status, 'order') %}
+      <tr>
+        <td><a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ o.ref }}</a></td>
+        <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=o.customer_id) }}">{{ o.company_name }}</a></td>
+        <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+        <td class="tiny muted">{{ o.payment_method or '—' }}{% if o.payment_status != 'UNPAID' %} · {{ o.payment_status|lower }}{% endif %}</td>
+        <td class="tiny">
+          {% if o.reviewed_at %}<span style="color:var(--green)">cleared {{ o.reviewed_at|relative }}</span>
+          {% elif o.review_release_at %}{% set cd = countdown(o.review_release_at) %}
+            <span style="color:{{ 'var(--amber)' if cd.overdue else 'var(--violet)' }};font-weight:600">{{ cd.short }}{{ ' elapsed' if cd.overdue }}</span>
+          {% else %}<span class="dim">—</span>{% endif %}
+        </td>
+        <td class="tiny dim">{{ o.created_at|dt }}</td>
+        <td class="right mono" style="font-weight:600">{{ o.total_cents|money }}</td>
+      </tr>
+    {% endfor %}</tbody></table></div>
+  {% else %}<div class="empty"><div class="empty-icon">▣</div>No orders in this view.</div>{% endif %}
+</div>
+{% endblock %}

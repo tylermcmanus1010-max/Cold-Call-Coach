@@ -1,0 +1,32 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">It's with the floor.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Hi {{ customer.contact_name or customer.company_name }} — <strong style="color:#14211A">{{ quote.title }}</strong>
+  is in our queue as <span style="font-family:monospace;color:#0F4D33">{{ quote.ref }}</span>.
+</p>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:18px;margin-bottom:20px">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.1em">Your price is due</div>
+  <div style="color:#0F4D33;font-size:20px;margin-top:4px">{{ pretty_dt(quote.due_at) }} UTC</div>
+  <div style="color:#8A958D;font-size:13px;margin-top:6px">Within {{ sla }} hours — unit cost, tooling if it needs any, lead time, freight and duties. Landed at your door.</div>
+</div>
+{% if files %}
+  <p style="color:#55635B;margin:0 0 18px">We received {{ files|length }} file{{ 's' if files|length != 1 }}: {{ files|map(attribute='filename')|join(', ') }}</p>
+{% endif %}
+{% if is_member %}
+  <p style="color:#55635B;margin:0 0 20px">
+    It'll appear in your portal as soon as it's priced, and you can order straight from there.
+  </p>
+  <a href="{{ site_url }}/portal/" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Open my portal</a>
+{% else %}
+  <div style="background:#F9F8F4;border-left:3px solid #0F4D33;padding:14px 16px;margin-bottom:20px">
+    <div style="color:#14211A;font-weight:500;margin-bottom:4px">One thing worth knowing</div>
+    <div style="color:#55635B;font-size:14px">
+      Anyone can ask us what something costs, and we'll answer honestly. Placing the order needs
+      membership — we read every application and meet you over video first, because we don't put
+      the floor behind everyone who asks. It takes about three minutes and won't hold up your quote.
+    </div>
+  </div>
+  <a href="{{ site_url }}/apply" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:500;padding:11px 22px;border-radius:4px;text-decoration:none">Apply for membership</a>
+{% endif %}
+{% endblock %}

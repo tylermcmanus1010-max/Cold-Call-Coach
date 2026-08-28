@@ -1,0 +1,36 @@
+{% extends "portal/_base.html" %}
+{% block title %}Checkout · {{ order.ref }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ order.ref }}</div>{% endblock %}
+{% block heading %}{{ 'Payment confirmed' if order.payment_status == 'PAID' else ('Payment in flight' if order.payment_status == 'PROCESSING' else 'Checkout') }}{% endblock %}
+{% block content %}
+<div class="container-narrow" style="margin:0">
+  {% if order.payment_status == 'PAID' %}
+    <div class="card card-lg card-accent">
+      <span class="eyebrow-tag">◆ Funds confirmed {{ order.funds_confirmed_at|dt }}</span>
+      <h2 style="margin-top:.75rem">{{ order.total_cents|money }} received. Your order is locked in.</h2>
+      <p class="muted" style="margin-top:1rem">
+        Your order is now in a mandatory <strong style="color:var(--text)">{{ cfg.ORDER_REVIEW_HOURS }}-hour manufacturer review</strong>.
+        The floor checks every paid order against the specs before anything is produced or shipped.
+        {% if order.review_release_at %}The window closes {{ order.review_release_at|dt }} UTC.{% endif %}
+      </p>
+      <p class="muted" style="margin-top:.75rem">A receipt is on its way to your inbox.</p>
+      <a class="btn btn-primary" style="margin-top:1.5rem" href="{{ url_for('portal.order_detail', order_id=order.id) }}">View order →</a>
+    </div>
+  {% elif order.payment_status == 'PROCESSING' %}
+    <div class="card card-lg card-accent">
+      <h2>Your bank debit is on its way</h2>
+      <p class="muted" style="margin-top:1rem">
+        ACH transfers usually settle in 1–3 business days. The moment funds clear, your {{ cfg.ORDER_REVIEW_HOURS }}h review window
+        opens and you'll get a confirmation email. Nothing is produced before then.
+      </p>
+      <a class="btn btn-primary" style="margin-top:1.5rem" href="{{ url_for('portal.order_detail', order_id=order.id) }}">View order →</a>
+    </div>
+  {% else %}
+    <div class="card card-lg">
+      <h2>Checkout didn't complete</h2>
+      <p class="muted" style="margin-top:1rem">Nothing was charged. You can try again from the order page.</p>
+      <a class="btn btn-primary" style="margin-top:1.5rem" href="{{ url_for('portal.order_detail', order_id=order.id) }}">Back to order</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

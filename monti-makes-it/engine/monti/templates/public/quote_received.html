@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Quote received · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(3rem,7vw,5.5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Received</span>
+    <h1 style="margin-top:1rem">It's with the floor.</h1>
+    <p class="section-lede">
+      <strong style="color:var(--ink)">{{ quote.title }}</strong> is in the queue as
+      <span class="mono" style="color:var(--green)">{{ quote.ref }}</span>. You'll have a landed
+      price in your inbox by <strong style="color:var(--ink)">{{ quote.due_at|dt }} UTC</strong> —
+      inside {{ sla }} hours.{% if file_count %} We got your {{ file_count }} file{{ 's' if file_count != 1 }}.{% endif %}
+    </p>
+
+    {% if is_member %}
+      <div class="card card-lg card-accent" style="margin-top:2.5rem">
+        <h3>It'll be waiting in your portal</h3>
+        <p class="muted" style="margin-top:.6rem">
+          As a member you can accept the estimate and order straight from there.
+          {% if quota %} You have {{ quota.remaining }} of {{ quota.limit }} quote requests left this cycle.{% endif %}
+        </p>
+        <a class="btn btn-primary" style="margin-top:1.25rem" href="{{ url_for('portal.dashboard') }}">Open my portal</a>
+      </div>
+    {% else %}
+      <div class="card card-lg" style="margin-top:2.5rem">
+        <span class="eyebrow-label">One thing to know</span>
+        <h3 style="margin-top:.8rem">You'll get the price either way — ordering needs membership</h3>
+        <p class="muted" style="margin-top:.7rem">
+          Anyone can ask us what something costs, and we'll answer honestly. To actually place the order
+          you'll need to be an accepted member: we review every application and meet you over video first,
+          because we don't put the floor behind everyone who asks.
+        </p>
+        <p class="muted" style="margin-top:.7rem">
+          Applying takes about three minutes, and it doesn't hold up your quote.
+        </p>
+        <a class="btn btn-primary" style="margin-top:1.25rem" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+      </div>
+    {% endif %}
+
+    <div class="card" style="margin-top:1.25rem">
+      <div class="stat-label">What you sent</div>
+      <dl class="kv" style="margin-top:1rem">
+        <dt>Reference</dt><dd class="mono">{{ quote.ref }}</dd>
+        <dt>Project</dt><dd>{{ quote.title }}</dd>
+        {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
+        {% if quote.destination_country %}<dt>Ships to</dt><dd>{{ quote.destination_country }}</dd>{% endif %}
+        <dt>Price due</dt><dd>{{ quote.due_at|dt }} UTC</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+{% endblock %}

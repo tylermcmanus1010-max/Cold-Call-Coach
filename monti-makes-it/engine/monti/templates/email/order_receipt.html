@@ -1,0 +1,39 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A">Payment confirmed — {{ money(order.total_cents) }}</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Thanks {{ customer.contact_name or customer.company_name }}. Your order
+  <span style="font-family:monospace;color:#0F4D33">{{ order.ref }}</span> is locked in.
+</p>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:8px;padding:16px;margin-bottom:20px">
+  <div style="color:#8A958D;font-size:12px;text-transform:uppercase;letter-spacing:.08em">What happens now</div>
+  <div style="color:#14211A;font-size:15px;margin-top:6px">{{ review_hours }}-hour manufacturer review</div>
+  <div style="color:#55635B;font-size:13px;margin-top:6px">
+    Every paid order is reviewed against its specs before production or shipping.
+    {% if order.review_release_at %}This window closes {{ pretty_dt(order.review_release_at) }} UTC.{% endif %}
+    If you need to change anything, reply now.
+  </div>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:14px;background:#F9F8F4;border:1px solid #DEDDD3;border-radius:8px">
+  {% for i in items %}
+  <tr><td style="padding:9px 14px;color:#14211A">{{ i.name }} × {{ '{:,}'.format(i.quantity) }}</td>
+    <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(i.line_total_cents) }}</td></tr>
+  {% endfor %}
+  {% if order.freight_waived and order.freight_estimate_cents %}
+    <tr><td style="padding:9px 14px;color:#55635B">Freight &amp; customs — absorbed by {{ company }}</td>
+      <td style="padding:9px 14px;text-align:right;font-family:monospace">
+        <span style="color:#8A958D;text-decoration:line-through">{{ money(order.freight_estimate_cents + order.customs_estimate_cents) }}</span>
+        <span style="color:#0F4D33"> $0.00</span></td></tr>
+  {% elif order.shipping_cents %}
+    <tr><td style="padding:9px 14px;color:#55635B">Freight &amp; customs</td>
+      <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(order.shipping_cents) }}</td></tr>
+  {% endif %}
+  {% if order.fee_cents %}<tr><td style="padding:9px 14px;color:#55635B">{{ fee_label }} ({{ fee_percent }}%)</td>
+    <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(order.fee_cents) }}</td></tr>{% endif %}
+  {% if order.processing_fee_cents %}<tr><td style="padding:9px 14px;color:#55635B">Payment processing, at cost</td>
+    <td style="padding:9px 14px;text-align:right;color:#55635B;font-family:monospace">{{ money(order.processing_fee_cents) }}</td></tr>{% endif %}
+  <tr style="background:#F1F0EA"><td style="padding:11px 14px;color:#14211A;font-weight:650">Paid by {{ order.payment_method }}</td>
+    <td style="padding:11px 14px;text-align:right;color:#0F4D33;font-weight:700;font-family:monospace">{{ money(order.total_cents) }}</td></tr>
+</table>
+<a href="{{ site_url }}/portal/orders/{{ order.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none;margin-top:20px">Track my order</a>
+{% endblock %}

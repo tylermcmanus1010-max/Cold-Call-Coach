@@ -3,3 +3,7 @@ leads/leads.json
 node_modules/
 .DS_Store
 send/
+
+# Monti engine local state
+monti-makes-it/engine/.venv/
+monti-makes-it/engine/instance/

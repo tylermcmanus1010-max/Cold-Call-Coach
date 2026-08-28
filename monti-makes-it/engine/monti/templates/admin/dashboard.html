@@ -1,0 +1,146 @@
+{% extends "admin/_base.html" %}
+{% block title %}Admin portal · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">Admin portal</div>{% endblock %}
+{% block heading %}Today{% endblock %}
+{% block head_actions %}
+  <a class="btn" href="{{ url_for('admin.crm_new') }}">Add customer</a>
+  <a class="btn btn-primary" href="{{ url_for('admin.quotes') }}">Quote queue{% if stats.open_quotes %} · {{ stats.open_quotes }}{% endif %}</a>
+{% endblock %}
+{% block content %}
+
+<div class="grid grid-4">
+  <div class="stat {{ 'stat-accent' if stats.overdue }}">
+    <div class="stat-label">Quotes on the clock</div>
+    <div class="stat-value">{{ stats.open_quotes }}</div>
+    <div class="stat-sub">{% if stats.overdue %}<span style="color:var(--red)">{{ stats.overdue }} past the {{ cfg.QUOTE_SLA_HOURS }}h SLA</span>{% else %}all inside SLA{% endif %}</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Orders in review</div>
+    <div class="stat-value">{{ stats.in_review }}</div>
+    <div class="stat-sub">{{ cfg.ORDER_REVIEW_HOURS }}h manufacturer gate</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Revenue confirmed MTD</div>
+    <div class="stat-value">{{ stats.revenue_mtd|money }}</div>
+    <div class="stat-sub">{{ stats.awaiting_payment|money }} awaiting payment</div>
+  </div>
+  <div class="stat {{ 'stat-accent' if stats.applications }}">
+    <div class="stat-label">Applications waiting</div>
+    <div class="stat-value">{{ stats.applications }}</div>
+    <div class="stat-sub">{{ stats.members }} members of {{ stats.customers }} accounts</div>
+  </div>
+</div>
+
+<div class="grid grid-sidebar" style="margin-top:1.5rem">
+  <div class="stack">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Quote queue — {{ cfg.QUOTE_SLA_HOURS }}h clock</h3>
+        <a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.quotes') }}">All quotes →</a></div>
+      {% if open_quotes %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Due in</th><th>Ref</th><th>Customer</th><th>Project</th><th>Qty</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for q in open_quotes[:8] %}
+            {% set cd = countdown(q.due_at) %}
+            {% set label, tone = status_label(q.status, 'quote') %}
+            <tr>
+              <td class="nowrap" style="font-weight:640;color:{{ 'var(--red)' if cd.overdue else ('var(--amber)' if cd.urgent else 'var(--text-2)') }}">{{ cd.short }}{{ ' over' if cd.overdue }}</td>
+              <td class="mono tiny">{{ q.ref }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}">{{ q.company_name }}</a></td>
+              <td><a class="cell-link" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.title[:44] }}</a>
+                {% if q.priority == 'RUSH' %}<span class="badge badge-red" style="margin-left:.35rem">Rush</span>{% endif %}</td>
+              <td class="muted tiny">{{ '{:,}'.format(q.quantity) if q.quantity else '—' }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody></table></div>
+      {% else %}<div class="empty">Queue is clear. Every quote is answered.</div>{% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Membership applications</h3>
+        <a class="tiny" style="color:var(--green)" href="{{ url_for('admin.applications') }}">All applications &rarr;</a></div>
+      {% if applications %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Company</th><th>What they sell</th><th>Status</th><th>Applied</th><th></th></tr></thead>
+          <tbody>
+          {% for a in applications[:6] %}
+            {% set label, tone = application_label.get(a.status, (a.status, 'slate')) %}
+            <tr>
+              <td class="mono tiny">{{ a.ref }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}">{{ a.company_name }}</a></td>
+              <td class="tiny muted">{{ (a.what_they_sell or '')[:44] }}{{ '…' if (a.what_they_sell or '')|length > 44 }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+              <td class="tiny dim">{{ a.created_at|relative }}</td>
+              <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.application_detail', app_id=a.id) }}">Review</a></td>
+            </tr>
+          {% endfor %}
+          </tbody></table></div>
+      {% else %}<div class="empty">No applications waiting.</div>{% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Awaiting manufacturer review</h3>
+        <a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.orders', status='review') }}">Review board →</a></div>
+      {% if review_orders %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Window</th><th>Order</th><th>Customer</th><th class="right">Value</th><th>Paid</th><th></th></tr></thead>
+          <tbody>
+          {% for o in review_orders %}
+            {% set cd = countdown(o.review_release_at) %}
+            <tr>
+              <td class="nowrap" style="font-weight:640;color:{{ 'var(--text-2)' if cd.overdue else 'var(--violet)' }}">{{ cd.short }}{{ ' elapsed' if cd.overdue }}</td>
+              <td class="mono tiny">{{ o.ref }}</td>
+              <td>{{ o.company_name }}</td>
+              <td class="right mono">{{ o.total_cents|money }}</td>
+              <td class="tiny muted">{{ o.payment_method }} · {{ o.funds_confirmed_at|relative }}</td>
+              <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.order_detail', order_id=o.id) }}">Review</a></td>
+            </tr>
+          {% endfor %}
+          </tbody></table></div>
+      {% else %}<div class="empty">Nothing waiting on review.</div>{% endif %}
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Recent orders</h3><a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.orders') }}">Order log →</a></div>
+      {% if recent_orders %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Status</th><th>Payment</th><th class="right">Total</th><th>Placed</th></tr></thead>
+          <tbody>
+          {% for o in recent_orders %}
+            {% set label, tone = status_label(o.status, 'order') %}
+            <tr>
+              <td><a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ o.ref }}</a></td>
+              <td>{{ o.company_name }}</td>
+              <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+              <td class="tiny muted">{{ o.payment_method or '—' }}</td>
+              <td class="right mono">{{ o.total_cents|money }}</td>
+              <td class="tiny dim">{{ o.created_at|relative }}</td>
+            </tr>
+          {% endfor %}
+          </tbody></table></div>
+      {% else %}<div class="empty">No orders yet.</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Coming up</h3><a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.calendar_view') }}">Calendar →</a></div>
+      {% if upcoming %}
+        <div style="padding:.3rem 0">
+        {% for e in upcoming %}
+          <div style="padding:.6rem 1.25rem;border-bottom:1px solid var(--line-soft)">
+            <div class="row-between">
+              <span class="badge badge-plain badge-slate">{{ e.kind|title }}</span>
+              <span class="tiny dim">{{ e.starts_at|dt }}</span>
+            </div>
+            <div style="font-size:.86rem;font-weight:540;margin-top:.25rem">{{ e.title }}</div>
+            {% if e.company_name %}<div class="tiny dim">{{ e.company_name }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        </div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">Nothing scheduled.</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

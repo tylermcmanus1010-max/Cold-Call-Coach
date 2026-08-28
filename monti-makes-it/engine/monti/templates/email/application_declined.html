@@ -1,0 +1,19 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A;font-weight:600;letter-spacing:-.02em">
+  {{ "We'd like to keep you on the list." if waitlist else "Not this time." }}
+</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  Thank you for applying with {{ application.company_name }}. We read it properly, and
+  {{ "we're placing you on our waitlist rather than closing the door." if waitlist
+     else "we're not able to take you on as a member right now." }}
+</p>
+<div style="background:#F9F8F4;border-left:3px solid #0F4D33;padding:14px 16px;margin-bottom:20px;color:#55635B;font-size:14px;white-space:pre-wrap">{{ reason }}</div>
+<p style="color:#55635B;margin:0 0 18px">
+  {{ "We'll come back to you as capacity opens up." if waitlist
+     else "This isn't permanent — plenty of members were declined the first time. If things change on your side, apply again and tell us what's different." }}
+</p>
+<p style="color:#55635B;margin:0">
+  You're still welcome to ask us for prices any time.
+</p>
+{% endblock %}

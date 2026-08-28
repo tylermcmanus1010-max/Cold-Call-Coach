@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Sign in · {{ company }}{% endblock %}
+{% block chrome %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block body %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <a href="{{ url_for('public.home') }}" class="brand" style="margin-bottom:1.5rem">
+      <span class="brand-mark">MMI</span> {{ company }}
+    </a>
+    <h2 style="margin-bottom:.4rem">Sign in</h2>
+    <p class="muted" style="font-size:.9rem">Client portals and the admin bay use the same door.</p>
+    <form method="post" style="margin-top:1.5rem">{{ csrf_input() }}
+      <input type="hidden" name="next" value="{{ next }}">
+      <label class="field">
+        <span class="field-label">Email or username</span>
+        <input type="text" name="email" required autofocus autocomplete="username">
+      </label>
+      <label class="field">
+        <span class="field-label">Password</span>
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Sign in</button>
+    </form>
+    <p class="tiny dim" style="margin-top:1.5rem">
+      No portal yet? <a href="{{ url_for('public.quote') }}" style="color:var(--amber)">Submit a quote</a> —
+      your login is created the moment your first project lands.
+    </p>
+  </div>
+</div>
+{% endblock %}

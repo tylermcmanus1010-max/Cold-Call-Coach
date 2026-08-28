@@ -1,0 +1,22 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:21px;margin:0 0 14px;color:#14211A">Your estimate is ready.</h1>
+<p style="color:#55635B;margin:0 0 18px">
+  {{ quote.title }} — <span style="font-family:monospace;color:#0F4D33">{{ quote.ref }}</span>
+</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;background:#F9F8F4;border:1px solid #DEDDD3;border-radius:8px">
+  <tr><td style="padding:10px 14px;color:#55635B">Unit price</td><td style="padding:10px 14px;text-align:right;color:#14211A;font-family:monospace">{{ money(estimate.unit_price_cents) }}</td></tr>
+  <tr><td style="padding:10px 14px;color:#55635B">Quantity</td><td style="padding:10px 14px;text-align:right;color:#14211A;font-family:monospace">{{ '{:,}'.format(estimate.quantity) }}</td></tr>
+  {% if estimate.tooling_cents %}<tr><td style="padding:10px 14px;color:#55635B">Tooling (one-time)</td><td style="padding:10px 14px;text-align:right;font-family:monospace;color:#14211A">{{ money(estimate.tooling_cents) }}</td></tr>{% endif %}
+  {% if estimate.sample_cents %}<tr><td style="padding:10px 14px;color:#55635B">Sampling</td><td style="padding:10px 14px;text-align:right;font-family:monospace;color:#14211A">{{ money(estimate.sample_cents) }}</td></tr>{% endif %}
+  {% if estimate.shipping_cents %}<tr><td style="padding:10px 14px;color:#55635B">Freight ({{ estimate.ship_method or 'sea' }})</td><td style="padding:10px 14px;text-align:right;font-family:monospace;color:#14211A">{{ money(estimate.shipping_cents) }}</td></tr>{% endif %}
+  {% if estimate.duties_cents %}<tr><td style="padding:10px 14px;color:#55635B">Duties &amp; customs</td><td style="padding:10px 14px;text-align:right;font-family:monospace;color:#14211A">{{ money(estimate.duties_cents) }}</td></tr>{% endif %}
+  <tr style="background:#F1F0EA"><td style="padding:12px 14px;color:#14211A;font-weight:650">Landed total{{ ' · ' + estimate.incoterm if estimate.incoterm }}</td>
+    <td style="padding:12px 14px;text-align:right;color:#0F4D33;font-weight:700;font-family:monospace;font-size:16px">{{ money(estimate.total_cents) }}</td></tr>
+</table>
+<p style="color:#55635B;font-size:14px;margin:16px 0">
+  MOQ {{ '{:,}'.format(estimate.moq) }} · lead time {{ estimate.lead_time_days }} days{% if estimate.valid_until %} · valid until {{ estimate.valid_until }}{% endif %}
+</p>
+{% if estimate.notes %}<div style="background:#F9F8F4;border-left:3px solid #0F4D33;padding:12px 14px;color:#55635B;font-size:14px;margin-bottom:18px;white-space:pre-wrap">{{ estimate.notes }}</div>{% endif %}
+<a href="{{ site_url }}/portal/quotes/{{ quote.id }}" style="display:inline-block;background:#0F4D33;color:#F5F4EF;font-weight:640;padding:11px 20px;border-radius:7px;text-decoration:none">Review &amp; accept in my portal</a>
+{% endblock %}

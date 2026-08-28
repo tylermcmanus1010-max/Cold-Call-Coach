@@ -1,0 +1,42 @@
+{# Order timeline. Pass `order`. Reads the real timestamps, so a stage with no
+   date has genuinely not happened. #}
+{% set stages = [
+  ('Ordered',    order.created_at,           'Your order was created'),
+  ('Paid',       order.funds_confirmed_at,   'Funds confirmed' ~ (' by ' ~ order.payment_method if order.payment_method else '')),
+  ('Reviewed',   order.reviewed_at,          cfg.ORDER_REVIEW_HOURS ~ 'h manufacturer review cleared'),
+  ('In production', order.production_started_at, 'On the floor'),
+  ('Shipped',    order.shipped_at,           (order.carrier ~ ' · ' ~ order.tracking_number) if order.tracking_number else 'Left the factory'),
+  ('Delivered',  order.delivered_at, 'Signed for'),
+] %}
+<ol class="track">
+  {% for name, when, detail in stages %}
+    {% set done = when is not none %}
+    {% set current = done and (loop.nextitem is not defined or stages[loop.index][1] is none) %}
+    <li class="track-step {{ 'done' if done }} {{ 'current' if current }}">
+      <span class="track-dot" aria-hidden="true"></span>
+      <div class="track-body">
+        <div class="track-name">{{ name }}</div>
+        {% if done %}
+          <div class="track-when">{{ when|dt }}</div>
+          <div class="track-detail">{{ detail }}</div>
+        {% else %}
+          <div class="track-when dim">—</div>
+        {% endif %}
+      </div>
+    </li>
+  {% endfor %}
+</ol>
+{% if order.tracking_number %}
+  <div class="tracking-card">
+    <div>
+      <div class="stat-label">Tracking</div>
+      <div class="mono" style="font-size:1.02rem;margin-top:.3rem">{{ order.tracking_number }}</div>
+      <div class="tiny dim">{{ order.carrier or 'Carrier' }}{% if order.shipped_at %} · shipped {{ order.shipped_at|dt }}{% endif %}</div>
+    </div>
+    <button class="btn btn-sm" type="button"
+            onclick="navigator.clipboard&&navigator.clipboard.writeText('{{ order.tracking_number }}').then(()=>{this.textContent='Copied'})">
+      Copy code</button>
+  </div>
+{% elif order.status in ('IN_PRODUCTION','APPROVED') %}
+  <p class="tiny dim" style="margin-top:1rem">A tracking code appears here the moment your order leaves the factory.</p>
+{% endif %}

@@ -1,0 +1,137 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ item.sku }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ item.sku }}</div>{% endblock %}
+{% block heading %}{{ item.name }}{% endblock %}
+{% block head_actions %}
+  {% if item.is_active %}<span class="badge badge-green">Active</span>{% else %}<span class="badge badge-slate">Archived</span>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+    <div class="card card-flush">
+      <div class="card-head"><h3>Who can see this ({{ reach|length }})</h3>
+        <span class="tiny dim">by tag or by direct assignment</span></div>
+      {% if reach %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Member</th><th>How</th><th class="right">Their price</th><th></th></tr></thead>
+          <tbody>{% for r in reach %}
+            <tr>
+              <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=r.row.id) }}">{{ r.row.company_name }}</a>
+                <div class="tiny mono dim">{{ r.row.ref }}</div></td>
+              <td class="tag-row">
+                {% if r.via_assignment %}<span class="tag tag-green">direct</span>{% endif %}
+                {% for t in r.matched_tags %}<span class="tag">{{ t }}</span>{% endfor %}</td>
+              <td class="right mono tnum">{{ (r.row.custom_price_cents if r.row.custom_price_cents is not none else item.unit_price_cents)|money }}</td>
+              <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.open_client', customer_id=r.row.id) }}">Open portal</a></td>
+            </tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}
+        <div class="empty" style="padding:2rem 1rem">No member can see this item yet — it has no matching
+          tag and no direct assignment.</div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <form method="post">
+        {{ csrf_input() }}<input type="hidden" name="action" value="update">
+        <div class="stat-label" style="margin-bottom:.5rem">Tags</div>
+        <p class="tiny muted" style="margin-bottom:.75rem">Any member carrying one of these gets this item
+          in their portal automatically. Comma separated.</p>
+        <input type="text" name="tags" value="{{ item.tags or '' }}" placeholder="bags, leather, seasonal">
+        {% if all_tags %}
+          <div class="tag-row" style="margin-top:.75rem">
+            {% for t in all_tags %}<span class="tag tag-muted">{{ t.tag }}</span>{% endfor %}
+          </div>
+          <div class="tiny dim" style="margin-top:.4rem">Tags already in use elsewhere.</div>
+        {% endif %}
+        <input type="hidden" name="name" value="{{ item.name }}">
+        <input type="hidden" name="category" value="{{ item.category or '' }}">
+        <input type="hidden" name="description" value="{{ item.description or '' }}">
+        <input type="hidden" name="specs" value="{{ item.specs or '' }}">
+        <input type="hidden" name="materials" value="{{ item.materials or '' }}">
+        <input type="hidden" name="unit_price" value="{{ item.unit_price_cents / 100 }}">
+        <input type="hidden" name="moq" value="{{ item.moq }}">
+        <input type="hidden" name="lead_time_days" value="{{ item.lead_time_days }}">
+        <input type="hidden" name="image_url" value="{{ item.image_url or '' }}">
+        {% if item.is_active %}<input type="hidden" name="is_active" value="1">{% endif %}
+        <button class="btn btn-primary btn-sm btn-block" style="margin-top:.9rem" type="submit">Save tags</button>
+      </form>
+    </div>
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Direct assignments ({{ assignments|length }})</h3>
+        <span class="tiny dim">Each sees only their own price</span></div>
+      {% if assignments %}
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Client</th><th class="right">Their price</th><th class="right">Their MOQ</th><th>Note</th><th>Assigned</th><th></th></tr></thead>
+          <tbody>{% for a in assignments %}
+            <tr>
+              <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=a.customer_id) }}">{{ a.company_name }}</a>
+                <div class="tiny mono dim">{{ a.ref }}</div></td>
+              <td class="right mono">{{ (a.custom_price_cents if a.custom_price_cents is not none else item.unit_price_cents)|money }}
+                {% if a.custom_price_cents is not none %}<div class="tiny dim">list {{ item.unit_price_cents|money }}</div>{% endif %}</td>
+              <td class="right mono">{{ '{:,}'.format(a.custom_moq or item.moq) }}</td>
+              <td class="tiny muted">{{ a.note or '—' }}</td>
+              <td class="tiny dim">{{ a.assigned_at|relative }}</td>
+              <td class="right"><form method="post">{{ csrf_input() }}
+                <input type="hidden" name="action" value="unassign">
+                <input type="hidden" name="customer_id" value="{{ a.customer_id }}">
+                <button class="btn btn-ghost btn-sm" type="submit">Remove</button></form></td>
+            </tr>
+          {% endfor %}</tbody></table></div>
+      {% else %}<div class="empty" style="padding:2rem 1rem">Not assigned to anyone — invisible to every client.</div>{% endif %}
+
+      {% if available %}
+        <div class="card-body" style="border-top:1px solid var(--line);background:var(--surface-2)">
+          <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">{{ csrf_input() }}
+            <input type="hidden" name="action" value="assign">
+            <label style="flex:2;min-width:180px"><span class="field-label">Assign to client</span>
+              <select name="customer_id" style="width:100%">
+                {% for c in available %}<option value="{{ c.id }}">{{ c.company_name }}</option>{% endfor %}</select></label>
+            <label style="flex:1;min-width:110px"><span class="field-label">Their price</span>
+              <input type="text" name="custom_price" placeholder="{{ (item.unit_price_cents / 100) }}"></label>
+            <label style="flex:1;min-width:100px"><span class="field-label">Their MOQ</span>
+              <input type="number" name="custom_moq" placeholder="{{ item.moq }}"></label>
+            <label style="flex:2;min-width:150px"><span class="field-label">Note</span>
+              <input type="text" name="note" placeholder="Optional"></label>
+            <button class="btn btn-primary" type="submit">Assign</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <form method="post">{{ csrf_input() }}
+        <input type="hidden" name="action" value="update">
+        <div class="stat-label" style="margin-bottom:1rem">Item detail</div>
+        <div class="grid grid-2">
+          <label class="field"><span class="field-label">Name</span><input type="text" name="name" value="{{ item.name }}"></label>
+          <label class="field"><span class="field-label">Category</span><input type="text" name="category" value="{{ item.category or '' }}"></label>
+          <label class="field"><span class="field-label">List unit price</span><input type="text" name="unit_price" value="{{ item.unit_price_cents / 100 }}"></label>
+          <label class="field"><span class="field-label">MOQ</span><input type="number" name="moq" value="{{ item.moq }}"></label>
+          <label class="field"><span class="field-label">Lead time (days)</span><input type="number" name="lead_time_days" value="{{ item.lead_time_days }}"></label>
+          <label class="field"><span class="field-label">Materials</span><input type="text" name="materials" value="{{ item.materials or '' }}"></label>
+        </div>
+        <label class="field"><span class="field-label">Description</span><textarea name="description" rows="3">{{ item.description or '' }}</textarea></label>
+        <label class="field"><span class="field-label">Specifications</span><textarea name="specs" rows="3">{{ item.specs or '' }}</textarea></label>
+        <label class="field"><span class="field-label">Image URL</span><input type="text" name="image_url" value="{{ item.image_url or '' }}"></label>
+        <label class="checkline" style="margin-bottom:1rem"><input type="checkbox" name="is_active" value="1" {{ 'checked' if item.is_active }}>
+          <span>Active — archived items disappear from client portals</span></label>
+        <button class="btn btn-primary" type="submit">Save item</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="stat-label">List price</div>
+      <div class="stat-value" style="color:var(--amber)">{{ item.unit_price_cents|money }}</div>
+      <div class="tiny dim">MOQ {{ '{:,}'.format(item.moq) }} · {{ item.lead_time_days }} day lead</div>
+      {% if item.origin_quote_id %}
+        <div class="divider-label">Origin</div>
+        <a class="tiny" style="color:var(--amber)" href="{{ url_for('admin.quote_detail', quote_id=item.origin_quote_id) }}">Created from a quote →</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

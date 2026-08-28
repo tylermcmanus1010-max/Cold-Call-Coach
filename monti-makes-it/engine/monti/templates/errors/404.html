@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}404 · {{ company }}{% endblock %}
+{% block body %}
+<div class="container-narrow" style="padding:6rem 0;text-align:center">
+  <div class="mono" style="color:var(--amber);font-size:.85rem;letter-spacing:.1em">ERROR 404</div>
+  <h1 style="margin-top:.75rem">Nothing here</h1>
+  <p class="muted" style="margin-top:1rem">That page, quote, or order doesn't exist — or it isn't yours to view.</p>
+  <div class="row" style="justify-content:center;margin-top:2rem">
+    <a class="btn" href="{{ url_for('public.home') }}">Home</a>
+    {% if g.user %}<a class="btn btn-primary" href="{{ url_for('admin.dashboard') if g.user.role == 'ADMIN' else url_for('portal.dashboard') }}">Back to my dashboard</a>{% endif %}
+  </div>
+</div>
+{% endblock %}

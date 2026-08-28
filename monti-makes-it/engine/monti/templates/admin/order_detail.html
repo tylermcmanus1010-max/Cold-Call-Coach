@@ -1,0 +1,276 @@
+{% extends "admin/_base.html" %}
+{% block title %}{{ order.ref }} · {{ company }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ order.ref }} · <a href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="color:var(--amber)">{{ customer.company_name }}</a></div>{% endblock %}
+{% block heading %}{{ order.total_cents|money }}{% endblock %}
+{% block head_actions %}
+  {% set label, tone = status_label(order.status, 'order') %}
+  <span class="badge badge-{{ tone }}">{{ label }}</span>
+{% endblock %}
+{% block content %}
+<div class="grid grid-sidebar">
+  <div class="stack">
+
+    {% if order.status == 'IN_REVIEW' %}
+      {% set cd = state.countdown %}
+      <div class="card card-lg" style="border-color:rgba(167,139,250,.4)">
+        <div class="row-between wrap" style="margin-bottom:1.25rem">
+          <div>
+            <div class="stat-label">Manufacturer review gate</div>
+            <h2 style="margin-top:.35rem">{{ cd.short }} {{ 'elapsed' if cd.overdue else 'remaining' }}</h2>
+            <div class="tiny dim">Funds confirmed {{ order.funds_confirmed_at|dt }} · window closes {{ order.review_release_at|dt }} UTC</div>
+          </div>
+          <div style="min-width:200px">
+            <div class="meter {{ 'meter-green' if cd.overdue }}">
+              <span style="width:{{ 100 if cd.overdue else (100 - (cd.hours / cfg.ORDER_REVIEW_HOURS * 100))|round|int }}%"></span></div>
+            <div class="tiny dim" style="margin-top:.4rem">
+              {{ 'The window has elapsed — clear it to release the order.' if cd.overdue else 'The client can still request changes.' }}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="gap:1rem">
+          <form method="post" class="card" style="background:var(--surface-2)">{{ csrf_input() }}
+            <input type="hidden" name="action" value="approve">
+            <strong style="font-size:.9rem">Clear the review</strong>
+            <p class="tiny muted" style="margin:.4rem 0 .75rem">Specs check out. Releases the order and emails the client.</p>
+            <textarea name="notes" rows="2" placeholder="Review notes (optional)"></textarea>
+            <label class="checkline" style="margin:.6rem 0"><input type="checkbox" name="start_production" value="1" checked>
+              <span class="tiny">Start production immediately</span></label>
+            <button class="btn btn-primary btn-block" type="submit">Approve &amp; release</button>
+          </form>
+          <form method="post" class="card" style="background:var(--surface-2)">{{ csrf_input() }}
+            <input type="hidden" name="action" value="hold">
+            <strong style="font-size:.9rem">Hold it</strong>
+            <p class="tiny muted" style="margin:.4rem 0 .75rem">Something's wrong. Pauses the order and emails the client with your reason.</p>
+            <textarea name="reason" rows="2" placeholder="Why it's on hold" required></textarea>
+            <button class="btn btn-danger btn-block" style="margin-top:.6rem" type="submit">Place on hold</button>
+          </form>
+        </div>
+      </div>
+
+    {% elif order.status in ('PENDING_PAYMENT','PAYMENT_PROCESSING') %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <h3>{{ 'Awaiting payment' if order.status == 'PENDING_PAYMENT' else 'Payment in flight' }}</h3>
+            <p class="muted" style="margin-top:.5rem;font-size:.9rem;max-width:420px">
+              {% if order.status == 'PAYMENT_PROCESSING' %}
+                An ACH debit has been initiated but has not settled. The review window and the orders email
+                fire on settlement — not now.
+              {% else %}
+                The client hasn't paid yet. If they're paying by wire or check, confirm the funds here manually.
+              {% endif %}
+            </p>
+          </div>
+          <form method="post" class="stack-sm" style="min-width:220px">{{ csrf_input() }}
+            <input type="hidden" name="action" value="mark_paid">
+            <select name="method">{% for m in ['WIRE','ACH','CARD','CHECK'] %}<option>{{ m }}</option>{% endfor %}</select>
+            <input type="text" name="payment_ref" placeholder="Bank reference">
+            <button class="btn btn-primary btn-block" type="submit">Confirm funds received</button>
+          </form>
+        </div>
+      </div>
+
+    {% elif order.status in ('APPROVED','IN_PRODUCTION') %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div>
+            <h3>Cleared for shipping</h3>
+            <p class="muted" style="margin-top:.5rem;font-size:.9rem">
+              Review cleared {{ order.reviewed_at|dt }} by {{ order.reviewed_by }}.
+              {% if order.review_notes %}<br><em>{{ order.review_notes }}</em>{% endif %}
+            </p>
+          </div>
+          <form method="post" class="stack-sm" style="min-width:240px">{{ csrf_input() }}
+            <input type="hidden" name="action" value="ship">
+            <input type="text" name="carrier" placeholder="Carrier (Maersk, DHL…)">
+            <input type="text" name="tracking" placeholder="Tracking number">
+            <button class="btn btn-primary btn-block" type="submit">Mark shipped</button>
+          </form>
+        </div>
+      </div>
+
+    {% elif order.status == 'SHIPPED' %}
+      <div class="card card-accent">
+        <div class="row-between wrap">
+          <div><h3>Shipped {{ order.shipped_at|dt }}</h3>
+            <p class="muted tiny" style="margin-top:.4rem">{{ order.carrier or '—' }} · {{ order.tracking_number or 'no tracking yet' }}</p></div>
+          <form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="deliver">
+            <button class="btn" type="submit">Mark delivered</button></form>
+        </div>
+      </div>
+
+    {% elif order.status == 'ON_HOLD' %}
+      <div class="card" style="border-color:rgba(248,113,113,.45)">
+        <h3 style="color:#FCA5A5">On hold</h3>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem">{{ order.review_notes }}</p>
+        <form method="post" style="margin-top:1rem">{{ csrf_input() }}<input type="hidden" name="action" value="approve">
+          <input type="hidden" name="start_production" value="1">
+          <button class="btn btn-primary btn-sm" type="submit">Resolve &amp; release to production</button></form>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Line items</h3></div>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Total</th></tr></thead>
+        <tbody>{% for i in items %}
+          <tr><td>{{ i.name }}{% if i.sku %}<div class="tiny mono dim">{{ i.sku }}</div>{% endif %}</td>
+            <td class="right mono">{{ i.unit_price_cents|money }}</td>
+            <td class="right mono">{{ '{:,}'.format(i.quantity) }}</td>
+            <td class="right mono">{{ i.line_total_cents|money }}</td></tr>
+        {% endfor %}</tbody>
+        <tfoot>
+          <tr><td colspan="3" class="right muted">Subtotal</td><td class="right mono">{{ order.subtotal_cents|money }}</td></tr>
+          {% if order.freight_waived %}
+            <tr class="waived-row"><td colspan="3" class="right"><span class="muted">Freight &amp; customs</span>
+              <span class="free-tag">Client {{ customer.company_name }} marked as free in system</span>
+              {% if order.waived_by %}<div class="tiny dim" style="margin-top:.3rem">by {{ order.waived_by }}</div>{% endif %}</td>
+              <td class="right"><span class="struck mono tnum">{{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</span>
+                <div class="mono tnum" style="color:var(--green);font-weight:600">$0.00</div></td></tr>
+          {% else %}
+            <tr><td colspan="3" class="right muted">Freight &amp; customs</td>
+              <td class="right mono tnum">{{ order.shipping_cents|money }}</td></tr>
+          {% endif %}
+          <tr><td colspan="3" class="right muted">Tax</td><td class="right mono">{{ order.tax_cents|money }}</td></tr>
+          <tr><td colspan="3" class="right muted">{{ cfg.FEE_LABEL }} ({{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}%)</td>
+            <td class="right mono tnum">{{ order.fee_cents|money }}</td></tr>
+          {% if order.processing_fee_cents %}
+            <tr><td colspan="3" class="right muted">Payment processing (at cost)</td>
+              <td class="right mono tnum">{{ order.processing_fee_cents|money }}</td></tr>
+          {% endif %}
+          <tr style="background:var(--surface-2)"><td colspan="3" class="right" style="font-weight:640">Total</td>
+            <td class="right mono" style="font-weight:700;color:var(--amber)">{{ order.total_cents|money }}</td></tr>
+        </tfoot></table></div>
+      {% if order.status in ('PENDING_PAYMENT','PAYMENT_PROCESSING') %}
+        <div class="card-body" style="border-top:1px solid var(--line);background:var(--surface-2)">
+          <form method="post" class="row wrap" style="gap:.5rem;align-items:flex-end">{{ csrf_input() }}
+            <input type="hidden" name="action" value="adjust">
+            <label style="width:150px"><span class="field-label">Freight &amp; duties</span>
+              <input type="text" name="shipping" value="{{ order.shipping_cents / 100 }}"></label>
+            <label style="width:130px"><span class="field-label">Tax</span>
+              <input type="text" name="tax" value="{{ order.tax_cents / 100 }}"></label>
+            <label class="grow" style="min-width:180px"><span class="field-label">Internal note</span>
+              <input type="text" name="notes" value="{{ order.notes or '' }}"></label>
+            <button class="btn" type="submit">Update totals</button>
+            <p class="tiny dim" style="width:100%;margin:.4rem 0 0">The
+              {{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}% {{ cfg.FEE_LABEL|lower }} recalculates
+              automatically from the new figures.</p>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if order.status in ('PENDING_PAYMENT','PAYMENT_PROCESSING') %}
+      <div class="card">
+        <div class="row-between wrap" style="gap:1.5rem;align-items:flex-start">
+          <div style="max-width:52ch">
+            <div class="stat-label">Freight &amp; customs</div>
+            <p class="tiny muted" style="margin-top:.5rem">
+              Estimated at <strong>{{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</strong>
+              for this order. Absorb it and the client sees the figure struck through with your name on it —
+              which only works because the estimate is real, so don't inflate it.
+            </p>
+            {% if freight_lines %}
+              <div class="table-wrap" style="margin-top:.85rem">
+                <table class="data" style="border:1px solid var(--line);border-radius:var(--radius)">
+                  <tbody>{% for label, cents in freight_lines %}
+                    <tr><td class="tiny">{{ label }}</td><td class="right mono tnum tiny">{{ cents|money }}</td></tr>
+                  {% endfor %}</tbody></table>
+              </div>
+            {% endif %}
+          </div>
+          <form method="post" style="min-width:230px">
+            {{ csrf_input() }}
+            <input type="hidden" name="action" value="{{ 'unwaive' if order.freight_waived else 'waive' }}">
+            {% if order.freight_waived %}
+              <div class="notice" style="margin-bottom:.75rem">Absorbed{% if order.waived_by %} by {{ order.waived_by }}{% endif %}
+                {% if order.waived_at %} · {{ order.waived_at|dt }}{% endif %}</div>
+              <button class="btn btn-block" type="submit">Charge freight after all</button>
+            {% else %}
+              <input type="text" name="note" placeholder="Note (internal)" style="margin-bottom:.6rem">
+              <button class="btn btn-primary btn-block" type="submit">Absorb freight &amp; customs</button>
+              <p class="tiny dim" style="margin-top:.6rem">Takes
+                {{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }} off their total.</p>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if order.payment_status == 'PAID' and order.status not in ('CANCELLED','REFUNDED') %}
+      <div class="card">
+        <form method="post" class="row wrap" style="gap:.6rem;align-items:flex-end">
+          {{ csrf_input() }}<input type="hidden" name="action" value="tracking">
+          <div style="flex:1;min-width:220px">
+            <div class="stat-label" style="margin-bottom:.5rem">Tracking code</div>
+            <p class="tiny muted" style="margin-bottom:.6rem">Whatever you put here shows in the client's
+              portal on their order timeline, with a copy button. Safe to update after shipping.</p>
+          </div>
+          <label style="width:170px"><span class="field-label">Carrier</span>
+            <input type="text" name="carrier" value="{{ order.carrier or '' }}" placeholder="Maersk, DHL…"></label>
+          <label style="width:220px"><span class="field-label">Tracking number</span>
+            <input type="text" name="tracking" value="{{ order.tracking_number or '' }}"></label>
+          <label class="checkline" style="width:100%;margin:.2rem 0">
+            <input type="checkbox" name="notify" value="1">
+            <span class="tiny">Email the client that tracking is available</span></label>
+          <button class="btn btn-primary" type="submit">Save tracking</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <div class="card card-flush">
+      <div class="card-head"><h3>Audit trail</h3></div>
+      <div class="card-body">
+        <div class="timeline">
+          {% for e in events %}
+            <div class="tl-item {{ 'tl-green' if e.event in ('FUNDS_CONFIRMED','REVIEW_APPROVED','SHIPPED') else ('tl-amber' if e.event in ('ORDER_CREATED','ORDERS_EMAIL_SENT')) }}">
+              <div class="tl-head">{{ e.event.replace('_',' ').title() }}</div>
+              <div class="tl-meta">{{ e.created_at|dt }} · {{ e.actor or 'system' }}</div>
+              {% if e.detail %}<div class="tl-body">{{ e.detail }}</div>{% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack sticky-side">
+    <div class="card">
+      <div class="stat-label">Order</div>
+      <dl class="kv" style="margin-top:.75rem;grid-template-columns:110px minmax(0,1fr)">
+        <dt>Reference</dt><dd class="mono">{{ order.ref }}</dd>
+        <dt>Placed</dt><dd>{{ order.created_at|dt }}</dd>
+        <dt>Payment</dt><dd>{{ order.payment_method or '—' }} · {{ order.payment_status|lower }}</dd>
+        {% if order.payment_ref %}<dt>Payment ref</dt><dd class="mono tiny">{{ order.payment_ref }}</dd>{% endif %}
+        {% if order.payment_provider %}<dt>Provider</dt><dd>{{ order.payment_provider }}</dd>{% endif %}
+        {% if order.funds_confirmed_at %}<dt>Funds confirmed</dt><dd>{{ order.funds_confirmed_at|dt }}</dd>{% endif %}
+        {% if order.orders_email_sent_at %}<dt>Orders inbox</dt><dd class="tiny">notified {{ order.orders_email_sent_at|relative }}</dd>{% endif %}
+        {% if order.source_quote_id %}<dt>From quote</dt>
+          <dd><a href="{{ url_for('admin.quote_detail', quote_id=order.source_quote_id) }}" style="color:var(--amber)">view quote →</a></dd>{% endif %}
+        {% if order.ship_to %}<dt>Ship to</dt><dd style="white-space:pre-wrap">{{ order.ship_to }}</dd>{% endif %}
+        {% if order.notes %}<dt>Notes</dt><dd>{{ order.notes }}</dd>{% endif %}
+      </dl>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:.75rem">
+        <div class="avatar avatar-amber">{{ customer.company_name|initials }}</div>
+        <div style="min-width:0">
+          <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:600">{{ customer.company_name }}</a>
+          <div class="tiny dim">{{ customer.email }}</div>
+        </div>
+      </div>
+      <div class="tiny muted">Lifetime {{ customer.lifetime_value_cents|money }}</div>
+    </div>
+
+    {% if order.status not in ('CANCELLED','SHIPPED','DELIVERED','REFUNDED') %}
+      <div class="card">
+        <form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="cancel">
+          <span class="field-label">Cancel this order</span>
+          <input type="text" name="reason" placeholder="Reason">
+          <button class="btn btn-danger btn-sm btn-block" style="margin-top:.5rem" type="submit">Cancel order</button></form>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

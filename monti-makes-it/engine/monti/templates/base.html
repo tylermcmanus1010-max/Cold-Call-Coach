@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ company }}{% endblock %}</title>
+  <meta name="description" content="{{ cfg.COMPANY_TAGLINE }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%230F4D33'/><text x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-weight='bold' font-size='16' text-anchor='middle' fill='%23F5F4EF'>M</text></svg>">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}showroom{% endblock %}">
+{% block chrome %}
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="{{ url_for('public.home') }}" class="brand">
+        <span class="brand-mark">M</span>
+        <span>
+          <span class="brand-name">Monti Makes It</span>
+          <span class="brand-sub">Manufacturer · direct</span>
+        </span>
+      </a>
+      <nav class="nav-links">
+        <a href="{{ url_for('public.how_it_works') }}">How it works</a>
+        <a href="{{ url_for('public.membership_page') }}">Membership</a>
+        {% if g.user %}
+          <a href="{{ url_for('admin.dashboard') if g.user.role == 'ADMIN' else url_for('portal.dashboard') }}">
+            {{ 'Admin portal' if g.user.role == 'ADMIN' else 'My portal' }}</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Member login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+{% endblock %}
+
+{% include "_flashes.html" %}
+
+{% block body %}{% endblock %}
+
+{% block footer %}
+  <footer class="footer">
+    <div class="container row-between wrap">
+      <div class="row" style="gap:.7rem">
+        <span class="brand-mark">M</span>
+        <span class="tiny">{{ company }} · we are the manufacturer</span>
+      </div>
+      <div class="row wrap" style="gap:1.5rem">
+        <a href="{{ url_for('public.quote') }}">Request a quote</a>
+        <a href="{{ url_for('public.apply') }}">Apply for membership</a>
+        <a href="{{ url_for('public.how_it_works') }}">How it works</a>
+        <a href="{{ url_for('public.contact') }}">Contact</a>
+        <a href="{{ url_for('auth.login') }}">Member login</a>
+      </div>
+    </div>
+  </footer>
+{% endblock %}
+</body>
+</html>

@@ -5,13 +5,13 @@ Appendix B as a live register. Generated from the database by
 
 ## Boars Head — MMI-C-1001
 
-- **Status:** MEMBER, member since 2026-08-28 21:41:35
-- **Client agent:** CLI-01 (ACTIVE, scope verified 2026-08-28 21:41:35)
+- **Status:** MEMBER, member since 2026-08-28 22:07:31
+- **Client agent:** CLI-01 (ACTIVE, scope verified 2026-08-28 22:07:31)
 
 **Price matrix** — Carry-out containers — quantity x spec
 
 - 16 cells, $0.14 to $0.20 per unit
-- published 2026-08-28 21:41:35
+- published 2026-08-28 22:07:31
 - every cell carries the id of the pricing input it came from
 
 **Registered items**

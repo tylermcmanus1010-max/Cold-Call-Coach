@@ -9,7 +9,7 @@ cd monti-makes-it/engine
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 SECRET_KEY=test .venv/bin/python tests/smoke.py          # 210 end-to-end checks
-.venv/bin/python tests/class_a.py --all                  # 9 Class A checks + proofs
+.venv/bin/python tests/class_a.py --all                  # 14 Class A checks + proofs
 .venv/bin/python tests/evidence.py                       # regenerates this directory
 ```
 
@@ -19,9 +19,11 @@ SECRET_KEY=test .venv/bin/python tests/smoke.py          # 210 end-to-end checks
 
 | | |
 |---|---|
-| Class A checks | 9 written, **9 pass**, **9 proven able to fail** |
+| Class A checks | 14 written, **14 pass**, **14 proven able to fail** |
 | End-to-end checks | 210 pass |
-| Punch-list items tracked | 38 — 32 certified, 3 partial, 2 not started, 1 blocked external |
+| Punch-list items tracked | 52 — 43 certified, 5 partial, 3 not started, 1 blocked external |
+| Ledger | 465 orders backfilled, **0 reconciliation breaks**, three period views agreeing |
+| Appendix E rows | 35 mapped — 8 built, 11 partial, 15 not built, 1 unverifiable here |
 | Old-brand occurrences | 190 before, **0** after, across source, database and rendered output |
 | Fixture rows | 509 inventoried, 509 deleted, **0 orphans** |
 | Live clients | 1 — Boars Head, with a published matrix, registrations, a genome, images, a tool and a scope-verified agent |
@@ -46,6 +48,8 @@ proof run four of the nine were exactly that.
 | 7 | A dedicated agent per client | Done | `A30`, `client_agents` |
 | 8 | Tappable image viewer on every item | Built, not captured | `A16`; see §5 |
 | 9 | A standing site-improvement agent | Not built | see §5 |
+| 10 | Master ledger + client ledger | Done | `A32`–`A36`, `ledger-reconciliation.md` |
+| 11 | Appendix E as a build list | Mapped, not confirmed | `prototype-inventory.md`; see §5 |
 
 ---
 
@@ -66,6 +70,11 @@ per-check record; the defect each proof introduces is named there.
 | A16 | every item page carries a viewer or an explicit empty state | removes the viewer from the public item page |
 | A30 | a client agent's queries cannot reach another customer | drops `customer_id` from the agent's WHERE clause |
 | A31 | tooling: four facts, ownership sentence, treatment, 5% threshold | adds a fifth fact; strips the ownership sentence; moves the threshold |
+| A32 | one ledger row per money event; reconciles; pending is not revenue | deletes a money event's row; records one payment twice |
+| A33 | three period views agreeing, and months rolling into quarters into years | moves the quarter boundary by a second; drops a month bucket |
+| A34 | ledger tenancy, and client totals equal to the admin's for them | drops the client scope; adds our fee to the client payload |
+| A35 | the export is the screen | adds a column the screen lacks; drops a row |
+| A36 | search completeness across all four modes | makes member search miss a row; truncates silently |
 
 ### What the proofs found
 
@@ -85,6 +94,14 @@ first run turned four green checks red:
 - **A31** read the 5% threshold out of the module it was checking. Moving the
   constant moved the check's boundary with it, and everything stayed
   self-consistently wrong.
+
+**A33 joined them on this run.** It checked that each period view's buckets
+summed to its own grand total and that every row landed in exactly one bucket.
+Both remain true when the quarter view buckets by a clock one second off from
+the month view's — same rows, one bucket each, same grand total, filed under the
+wrong quarter. The check now adds the months inside each quarter and the
+quarters inside each year and compares, which is what §11.5.1 means by the views
+agreeing, and it caught the skew immediately.
 
 None of these were visible from the pass column.
 
@@ -113,6 +130,23 @@ requires to be visible, silently disappearing. Now an assertion at import.
 
 Stated plainly, because a punch list that only contains finished work is not a
 punch list.
+
+**The ledger's third leg.** §11.4.2 requires reconciliation across ledger ↔
+order log ↔ **payment provider**. Two of the three are compared, continuously,
+with zero breaks. There is no payment-provider connection in this environment,
+so the third comparison does not happen — and a reconciliation that omits the
+provider cannot catch the case where our records agree with each other and both
+disagree with the money. `WI-L-10` is PARTIAL for that reason, not because the
+code is unfinished.
+
+**Appendix E could not be confirmed.** The appendix's first instruction is to
+open the prototype in session `cse_01B2fEc4ZUQ49QMhmcd672yq` and confirm every
+row against what it actually does. That session is not reachable from here. All
+35 rows are mapped to work items with a build state, and none is confirmed
+against real prototype behaviour. The appendix also makes prototype behaviour
+the floor — nothing may ship worse than it demonstrated — and I cannot certify
+that against a prototype I cannot see. `prototype-inventory.md` says so at the
+top rather than in a footnote.
 
 **Not built at all:**
 
@@ -143,6 +177,18 @@ punch list.
 
 **Partial:**
 
+- **Ledger performance at volume** (`WI-L-11`). No budget measured against a
+  100× seeded set. The period views walk every row in range in Python rather
+  than aggregating in SQL, which is fine at 500 rows and is the first thing that
+  will need changing.
+- **The Decision Room tier** — the largest Appendix E gap. E1.01 through E1.14
+  are almost entirely NOT BUILT, and they are untouched rather than half-done.
+  The quantity-slider conflict at E.7 is resolved in the data model (bounds live
+  in `price_matrix_cells`, not a constant) but the slider itself does not exist.
+- **Admin impersonation mirrored to the member's security log** (E5.08, §10.4).
+  Admin can open a member's portal and the view is marked, but the event is not
+  written to the member's security log. The `security_log` table exists and is
+  unused. This is a P1 by §1.6 and it is open.
 - **Agent lifecycle** (`WI-C-04`). `sync_with_membership` implements
   suspend-on-pause, revoke-on-decline and reinstate, but is not yet called from
   every membership transition in `membership.py`.

@@ -36,4 +36,18 @@ WI-R-09,"Product Genome, six client-facing sections",B,CERTIFIED,"six sections, 
 WI-Y-06,24h review gate enforced in code,A,CERTIFIED,A11
 WI-G-01,Viewport and capture runner,A,NOT STARTED,the §12.2 screenshot matrix is not built
 WI-V-02,"Full screenshot matrix, pointer and touch",A,NOT STARTED,no captures taken
-WI-O-11,Two clean critical-path passes,A,PARTIAL,210 smoke checks and 9 Class A checks pass; the 20-step journey is not walked end to end by a person
+WI-O-11,Two clean critical-path passes,A,PARTIAL,210 smoke checks and 14 Class A checks pass; the 22-step journey is not walked end to end by a person
+WI-L-01,"Append-only transaction model, one row per money event",A,CERTIFIED,"A32; every writer is a named money event, no create-by-hand path"
+WI-L-02,Receipt numbering and the receipt document,B,CERTIFIED,"unique sequential receipt_no; a receipt page on both surfaces, one click from any row"
+WI-L-03,Month/Quarter/Year views,A,CERTIFIED,A33; evidence/ledger-period-proofs.md
+WI-L-04,Period-over-period comparison measures,B,CERTIFIED,"gross, net, orders, AOV, refund rate and deltas per bucket"
+WI-L-05,"Date, member, order and receipt search",A,CERTIFIED,"A36; truncation is reported, never silent"
+WI-L-06,Export matching the on-screen view,A,CERTIFIED,A35
+WI-L-07,"Client ledger with its own periods, search and export",A,CERTIFIED,A34; client totals equal the admin ledger filtered to that customer
+WI-L-08,Client ledger exclusions,A,CERTIFIED,"A34; CLIENT_FIELDS allowlist, no fee or internal field in payload or export"
+WI-L-09,ACH pending never counted as revenue,A,CERTIFIED,"A32; pending rows excluded from every period total, labelled on both surfaces"
+WI-L-10,Continuous reconciliation,A,PARTIAL,ledger-to-order-log reconciles with zero breaks and cannot be closed by adjusting the ledger; the payment-provider leg is not compared — no provider connection here
+WI-L-11,Ledger performance at volume,B,NOT STARTED,no budget measured against a 100x seeded set
+WI-L-12,Ledger on a phone,B,CERTIFIED,"all three period views, both surfaces, zero overflow at 320/390/768/1280"
+WI-G-19,Ledger harness,A,CERTIFIED,A32-A36 built and each proven by a deliberate defect
+APP-E,Appendix E rows mapped to work items,A,PARTIAL,"evidence/prototype-inventory.md; all 35 rows mapped, but the source prototype session is unreachable here so none is confirmed against its real behaviour"

@@ -309,9 +309,143 @@ PUNCH_LIST = [
     ("WI-V-02", "Full screenshot matrix, pointer and touch", "A", "NOT STARTED",
      "no captures taken"),
     ("WI-O-11", "Two clean critical-path passes", "A", "PARTIAL",
-     "210 smoke checks and 9 Class A checks pass; the 20-step journey is not walked "
+     "210 smoke checks and 14 Class A checks pass; the 22-step journey is not walked "
      "end to end by a person"),
+
+    # Group L — the transaction ledger
+    ("WI-L-01", "Append-only transaction model, one row per money event", "A", "CERTIFIED",
+     "A32; every writer is a named money event, no create-by-hand path"),
+    ("WI-L-02", "Receipt numbering and the receipt document", "B", "CERTIFIED",
+     "unique sequential receipt_no; a receipt page on both surfaces, one click from any row"),
+    ("WI-L-03", "Month/Quarter/Year views", "A", "CERTIFIED",
+     "A33; evidence/ledger-period-proofs.md"),
+    ("WI-L-04", "Period-over-period comparison measures", "B", "CERTIFIED",
+     "gross, net, orders, AOV, refund rate and deltas per bucket"),
+    ("WI-L-05", "Date, member, order and receipt search", "A", "CERTIFIED",
+     "A36; truncation is reported, never silent"),
+    ("WI-L-06", "Export matching the on-screen view", "A", "CERTIFIED", "A35"),
+    ("WI-L-07", "Client ledger with its own periods, search and export", "A", "CERTIFIED",
+     "A34; client totals equal the admin ledger filtered to that customer"),
+    ("WI-L-08", "Client ledger exclusions", "A", "CERTIFIED",
+     "A34; CLIENT_FIELDS allowlist, no fee or internal field in payload or export"),
+    ("WI-L-09", "ACH pending never counted as revenue", "A", "CERTIFIED",
+     "A32; pending rows excluded from every period total, labelled on both surfaces"),
+    ("WI-L-10", "Continuous reconciliation", "A", "PARTIAL",
+     "ledger-to-order-log reconciles with zero breaks and cannot be closed by adjusting "
+     "the ledger; the payment-provider leg is not compared — no provider connection here"),
+    ("WI-L-11", "Ledger performance at volume", "B", "NOT STARTED",
+     "no budget measured against a 100x seeded set"),
+    ("WI-L-12", "Ledger on a phone", "B", "CERTIFIED",
+     "all three period views, both surfaces, zero overflow at 320/390/768/1280"),
+    ("WI-G-19", "Ledger harness", "A", "CERTIFIED",
+     "A32-A36 built and each proven by a deliberate defect"),
+    ("APP-E", "Appendix E rows mapped to work items", "A", "PARTIAL",
+     "evidence/prototype-inventory.md; all 35 rows mapped, but the source prototype "
+     "session is unreachable here so none is confirmed against its real behaviour"),
 ]
+
+
+def ledger_evidence(app):
+    """Reconciliation and period proofs, run against a seeded ledger.
+
+    Both artifacts Appendix C asks for: `ledger-reconciliation.md` records the
+    cycle, and `ledger-period-proofs.md` records the three views agreeing over
+    the same range with the boundary cases spelled out.
+    """
+    from monti import ledger
+    from monti.seed import run_seed
+
+    with app.app_context():
+        run_seed()
+        backfilled = ledger.backfill_from_orders()
+        recon = ledger.reconcile(record=False)
+        views = {g: ledger.periods(g) for g in ("month", "quarter", "year")}
+
+        lines = [
+            "# Ledger reconciliation",
+            "",
+            "Reproduce with:",
+            "",
+            "```",
+            "flask --app app seed && python tests/evidence.py",
+            "```",
+            "",
+            f"- historic orders backfilled into the ledger: **{backfilled}**",
+            f"- ledger total (settled charges and manual confirmations): "
+            f"**${recon['ledger_cents'] / 100:,.2f}**",
+            f"- order-log total (orders marked paid): **${recon['order_log_cents'] / 100:,.2f}**",
+            f"- payment-provider total: **not compared** — there is no provider "
+            f"connection in this environment, so the third leg of §11.4.2's "
+            f"reconciliation is unverified. Ledger and order log are compared; "
+            f"ledger and provider are not.",
+            f"- breaks: **{recon['break_count']}**",
+            "",
+        ]
+        if recon["breaks"]:
+            lines.append("| break | detail |")
+            lines.append("|---|---|")
+            for b in recon["breaks"]:
+                detail = ", ".join(f"{k}={v}" for k, v in b.items() if k != "name")
+                lines.append(f"| {b['name']} | {detail} |")
+        else:
+            lines.append("No break found. The reconciler compares four things: a paid order")
+            lines.append("with no settled row, a settled row with no paid order, two charge")
+            lines.append("rows for one order, and the two totals against each other.")
+        lines += [
+            "",
+            "`reconcile()` has no write path to `ledger_entries`. §11.4.2 forbids closing",
+            "a break by adjusting the ledger, and the way that is enforced is that the",
+            "reconciler has nothing to adjust with — it can only write a row describing",
+            "what it found.",
+            "",
+            "Asserted continuously by `A32`.",
+            "",
+        ]
+        (OUT / "ledger-reconciliation.md").write_text("\n".join(lines))
+
+        lines = [
+            "# Ledger period proofs (`A33`)",
+            "",
+            "The three views are groupings of one row set, so they must sum identically",
+            "over the same range — and the finer grouping must compose into the coarser.",
+            "",
+            "| view | buckets | bucket sum | grand total | agree |",
+            "|---|---|---|---|---|",
+        ]
+        for g, view in views.items():
+            bucket_sum = sum(p["totals"]["gross_cents"] for p in view["periods"])
+            grand = view["grand"]["gross_cents"]
+            lines.append(
+                f"| {g} | {len(view['periods'])} | ${bucket_sum / 100:,.2f} | "
+                f"${grand / 100:,.2f} | {'yes' if bucket_sum == grand else '**NO**'} |")
+
+        boundary = "2026-04-01 00:00:00"
+        before = ledger.periods("month", end=boundary)["grand"]["row_count"]
+        after = ledger.periods("month", start=boundary)["grand"]["row_count"]
+        everything = ledger.periods("month")["grand"]["row_count"]
+        lines += [
+            "",
+            "## Boundary handling",
+            "",
+            f"Ranges are half-open — inclusive start, exclusive end. Split at `{boundary}`:",
+            "",
+            f"- rows before: **{before}**",
+            f"- rows from that instant on: **{after}**",
+            f"- rows in the ledger: **{everything}**",
+            f"- {before} + {after} = {before + after} "
+            f"{'✓' if before + after == everything else '✗ — the boundary drops or double-counts'}",
+            "",
+            "## Roll-up",
+            "",
+            "The months inside each quarter are summed and compared to that quarter, and",
+            "the quarters inside each year to that year. This is the assertion that",
+            "catches a view bucketing by a different clock — without it, a quarter view",
+            "one second out of step still passes every other check, because its rows are",
+            "still each in exactly one bucket and still sum to the same grand total.",
+            "",
+        ]
+        (OUT / "ledger-period-proofs.md").write_text("\n".join(lines))
+    return {"backfilled": backfilled, "breaks": recon["break_count"]}
 
 
 def punch_list():
@@ -353,6 +487,20 @@ def main():
             init_db()
         count = current_clients(app)
         print(f"current-clients.md        {count} live client(s)")
+
+    for name in [m for m in list(sys.modules) if m == "monti" or m.startswith("monti.")]:
+        del sys.modules[name]
+    with tempfile.TemporaryDirectory() as tmp:
+        os.environ["DATABASE_PATH"] = str(Path(tmp) / "ledger.db")
+        from monti import create_app
+        app = create_app()
+        with app.app_context():
+            from monti.db import init_db
+            init_db()
+        led = ledger_evidence(app)
+        print(f"ledger-reconciliation.md   {led['backfilled']} backfilled, "
+              f"{led['breaks']} breaks")
+        print("ledger-period-proofs.md    three views compared")
 
     states = punch_list()
     print("punch-list.csv            " + ", ".join(f"{k}: {v}" for k, v in sorted(states.items())))

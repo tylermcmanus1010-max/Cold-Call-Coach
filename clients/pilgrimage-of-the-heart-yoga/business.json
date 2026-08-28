@@ -4,9 +4,9 @@
   "name": "Pilgrimage of the Heart Yoga",
   "category": "fitness centre",
   "owner": "",
-  "currentSite": "https://pilgrimageyoga.com/.well-known/sgcaptcha/?r=%2F&y=ipr:68.220.62.241:1787874179.096",
+  "currentSite": "https://pilgrimageyoga.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -121,10 +121,13 @@
     "score": 69,
     "gaps": 9,
     "rendered": true,
-    "currentSiteStatus": "live",
+    "currentSiteStatus": "bot check stood in front of the site, so we never saw it",
     "loadMs": 3171,
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-28: not a lead — what we audited was a SiteGround bot-check page, not their website. We never saw their actual site, so we cannot claim anything about it."
+  ]
 }

@@ -43,6 +43,10 @@ const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/6
 
 const BLOCKED = new Set([401, 403, 405, 406, 418, 429, 503]);
 
+// Bot checks that answer 200 and render a page. Judging one of these means
+// reporting a CAPTCHA's shortcomings back to a business owner.
+const CHALLENGE = /\/\.well-known\/(sgcaptcha|captcha)|\/cdn-cgi\/(challenge|l\/chk_jschl)|__cf_chl|\/_Incapsula_|\/distil_r_captcha|\/challenge-platform/i;
+
 // Someone is already being paid to look after these. Royal Flowers is a
 // BloomNation store with 159 reviews and a full price list on the page — it was
 // never a lead, and pitching it would have been embarrassing.
@@ -154,6 +158,16 @@ async function auditRendered(rawUrl, { timeout = 25000, browser, expectName } = 
     if (status >= 400) {
       await ctx.close(); if (own) await b.close();
       return fail(`returns HTTP ${status}`, true);
+    }
+
+    // A bot challenge answers 200 and looks like a page, so nothing above
+    // catches it — and then every finding describes a CAPTCHA rather than the
+    // business. Their real site may be perfectly good; we simply never saw it.
+    const challenged = page.url();
+    if (CHALLENGE.test(challenged)) {
+      await ctx.close(); if (own) await b.close();
+      return { ...fail('bot check stood in front of the site, so we never saw it', false),
+               reachable: null };
     }
 
     // Give the page a moment to actually build itself before judging it.

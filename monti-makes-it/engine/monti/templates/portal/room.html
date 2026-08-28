@@ -164,16 +164,24 @@
 
       <div class="dr-control">
         <span class="stat-label">Tooling · {{ view.tooling_total_cents|money }}</span>
+        {# §11.3.3 — the three routes carry different defaults, so the first
+           option is to leave them alone. The toggle overrides; it is not the
+           baseline. #}
         <div class="seg">
+          <button type="submit" name="tooling" value=""
+                  class="{{ 'on' if not view.treatment }}">As each route prices it</button>
           <button type="submit" name="tooling" value="amortized"
-                  class="{{ 'on' if view.treatment == 'amortized' }}">Amortise into unit</button>
+                  class="{{ 'on' if view.treatment == 'amortized' }}">Amortise</button>
           <button type="submit" name="tooling" value="upfront"
-                  class="{{ 'on' if view.treatment != 'amortized' }}">Pay upfront</button>
+                  class="{{ 'on' if view.treatment == 'upfront' }}">Pay upfront</button>
         </div>
         <p class="tiny dim">
-          {% if view.treatment == 'amortized' %}
-            Adds {{ view.tooling_unit_cents|round(4) }}¢ per unit at this quantity.
-            The tool remains your property.
+          {% if not view.treatment %}
+            Each route prices the tool the way that route works — the cheapest one
+            spreads it, the other two charge it upfront so the unit price stays clean.
+          {% elif view.treatment == 'amortized' %}
+            Spread across this run — adds ${{ '%.4f'|format(view.tooling_unit_cents / 100) }}
+            per unit at this quantity. The tool remains your property.
           {% else %}
             Invoiced once at {{ view.tooling_total_cents|money }}, before the run.
             Unit prices exclude it.

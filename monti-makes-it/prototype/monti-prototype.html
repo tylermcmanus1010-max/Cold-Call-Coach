@@ -627,6 +627,9 @@ function freightEstimate(valueCents, qty, category, destination, mode) {
 }
 function money(c){var s=c<0?"-":""; c=Math.abs(Math.round(c));
   return s+"$"+(c/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+/* Thousands separators for a unit count. The Decision Room quotes containers in
+   the hundreds of thousands, where an unseparated 500000 is unreadable. */
+function num(n){ return Math.round(n).toLocaleString("en-US"); }
 function moneyShort(c){var v=Math.abs(c)/100;
   if(v>=1e6) return "$"+(v/1e6).toFixed(v>=1e7?0:1)+"M";
   if(v>=1e3) return "$"+(v/1e3).toFixed(v>=1e4?0:1)+"k";
@@ -928,6 +931,145 @@ function ordersFor(id) {
 }
 
 /* ==========================================================================
+   The Decision Room (Appendix E.1)
+
+   The same model the engine uses, with the same rules: prices come from entered
+   cost inputs, the slider is bounded by what was actually priced, and a lever
+   with no entered saving is not offered. Boars Head's real container, not a
+   demo part.
+   ========================================================================== */
+var FREIGHT_LANES = {
+  ocean: {perUnit: 2, fixed: 54000, transit: "32 days at sea", lane: "Ocean, consolidated"},
+  split: {perUnit: 5, fixed: 65000, transit: "14 days average", lane: "Split — 30% air, 70% ocean"},
+  air:   {perUnit: 14, fixed: 90000, transit: "6 days in the air", lane: "Air, direct"}
+};
+
+/* The six named cost inputs. Each one is a figure an admin entered; nothing in
+   the arithmetic below is a literal. */
+var DR_ITEMS = [
+  {
+    ref: "MMI-D-001", auto: "Unapproved item 001", name: "Carry-out container, 750ml",
+    status: "approved", publishedAt: addDays(TODAY, -1),
+    source: "Existing production part — specification supplied by the client",
+    qtyMin: 20000, qtyMax: 500000, qtyStep: 5000, runs: 0,
+    costs: {material: 11, tooling: 84000, pkgCustom: 1, pkgStd: 0, duty: 0, lab: 65000},
+    strats: [
+      {slot:0, label:"Lowest landed cost", title:"Consolidated ocean, single batch",
+       extra:0, lead:62, mode:"ocean", prod:"One batch, standard queue",
+       inspect:"AQL 2.5 sampling", foot:"The cheapest route we can actually run",
+       lab:false, treatment:"amortized"},
+      {slot:1, label:"Fastest arrival", title:"Air freight, priority line",
+       extra:2, lead:26, mode:"air", prod:"Priority slot",
+       inspect:"AQL 2.5 sampling", foot:"Slot held 48 hours", lab:false, treatment:"upfront"},
+      {slot:2, label:"Highest certainty", title:"Ocean, full inspection, sample run",
+       extra:3, lead:74, mode:"ocean", prod:"Reserved capacity",
+       inspect:"100% functional plus third-party lab",
+       foot:"Includes the certification pack", lab:true, treatment:"upfront_with_sample"}
+    ],
+    levers: [
+      {kind:"qty", label:"Order QTYNEW instead of QTYNOW",
+       note:"Spreads the tooling across more units and fills the container better.", saving:0},
+      {kind:"pkg", label:"Plain carton instead of printed",
+       note:"Your artwork moves to an applied label. No change to protection.", saving:0}
+    ],
+    view: {qty:20000, target:16, mode:"ocean", treatment:null, levers:{}}
+  },
+  {
+    ref: "MMI-D-002", auto: "Unapproved item 002", name: "",
+    status: "pending", stage: 2,
+    source: "Existing container sent for measurement",
+    outstanding: "Board grade and weight. Appendix B lists it as an open question and we " +
+      "are not assuming one — send a sample or tell us what the current containers are " +
+      "made from, and this moves to pricing."
+  }
+];
+var DR_STAGES = ["Received", "Specification in review", "Priced — awaiting release"];
+
+function drItem(ref) {
+  return DR_ITEMS.filter(function (i) { return i.ref === ref; })[0] || null;
+}
+function drTitle(it) { return it.name || it.auto; }
+
+/* Ex-works per unit, in cents. Mirrors monti/decisionroom.py exactly — the two
+   have to agree or the demo is showing a different product from the engine. */
+function drExWorks(costs, qty, opts) {
+  var pkg = opts.standardPackaging ? costs.pkgStd : costs.pkgCustom;
+  var total = costs.material - (opts.specSaving || 0) + pkg + (opts.extra || 0);
+  if (opts.amortize !== false && qty) total += costs.tooling / qty;
+  if (opts.includeLab && qty) total += costs.lab / qty;
+  return total;
+}
+function drFreight(mode, qty) {
+  var lane = FREIGHT_LANES[mode];
+  if (!lane || !qty) return null;
+  return lane.perUnit + lane.fixed / qty;
+}
+/* Duty applies to the ex-works value, not the landed one — that is how a
+   customs entry computes it. Charging duty on freight would overstate every
+   figure on the page, consistently, in our favour. */
+function drLanded(costs, qty, mode, opts) {
+  opts = opts || {};
+  var ex = drExWorks(costs, qty, opts);
+  var fr = drFreight(mode, qty);
+  if (fr === null) return null;
+  var duty = ex * (costs.duty / 100) / 100;
+  return {ex: ex, freight: fr, duty: duty, landed: ex + fr + duty};
+}
+function drStrategyView(it, s, qty, modeOverride, treatmentOverride) {
+  /* A route that requires air stays air — the selector governs the routes that
+     are free to move, not the ones defined by their freight. */
+  var mode = s.mode === "air" ? "air" : (modeOverride || s.mode);
+  var treatment = treatmentOverride || s.treatment;
+  var f = drLanded(it.costs, qty, mode, {
+    amortize: treatment === "amortized", extra: s.extra, includeLab: s.lab
+  });
+  if (!f) return null;
+  var total = f.landed * qty + (treatment === "amortized" ? 0 : it.costs.tooling);
+  return {slot:s.slot, label:s.label, title:s.title, lead:s.lead, mode:mode,
+          treatment:treatment, prod:s.prod, inspect:s.inspect, foot:s.foot,
+          ex:f.ex, freight:f.freight, duty:f.duty, landed:f.landed, total:total};
+}
+function drNextTier(qty, it) {
+  var step = Math.max(it.qtyStep, Math.floor((it.qtyMax - it.qtyMin) / 5) || 1);
+  var next = qty + step;
+  return next <= it.qtyMax ? next : null;   /* never past what was priced */
+}
+function drBaseline(it) {
+  return it.view.treatment || it.strats[0].treatment;
+}
+function drLeverRows(it) {
+  var v = it.view, baseline = drBaseline(it);
+  var base = drLanded(it.costs, v.qty, v.mode, {amortize: baseline === "amortized"});
+  return it.levers.map(function (l) {
+    var saving = 0, rendered = l.label, to = null;
+    if (l.kind === "qty") {
+      to = drNextTier(v.qty, it);
+      if (to === null) return null;
+      var alt = drLanded(it.costs, to, v.mode, {amortize: baseline === "amortized"});
+      saving = base.landed - alt.landed;
+      rendered = l.label.replace("QTYNEW", num(to)).replace("QTYNOW", num(v.qty));
+    } else {
+      var o = {amortize: baseline === "amortized"};
+      if (l.kind === "pkg") o.standardPackaging = true; else o.specSaving = l.saving;
+      saving = base.landed - drLanded(it.costs, v.qty, v.mode, o).landed;
+    }
+    return {kind:l.kind, label:rendered, note:l.note, saving:Math.max(0, saving), to:to};
+  }).filter(Boolean);
+}
+function drEngineered(it) {
+  var v = it.view, qty = v.qty, o = {amortize: drBaseline(it) === "amortized"};
+  drLeverRows(it).forEach(function (l) {
+    if (!v.levers[l.kind]) return;
+    if (l.kind === "qty" && l.to) qty = l.to;
+    else if (l.kind === "pkg") o.standardPackaging = true;
+    else o.specSaving = l.saving;
+  });
+  var f = drLanded(it.costs, qty, v.mode, o);
+  return {qty: qty, landed: f ? f.landed : null};
+}
+function cents4(c) { return "$" + (c / 100).toFixed(4); }
+
+/* ==========================================================================
    The transaction ledger (§11.4–11.7)
 
    One row per money event, derived from the orders rather than typed. The admin
@@ -1094,6 +1236,7 @@ function deltaHtml(v) {
 var S = {
   route: "home",
   catSku: null,
+  drRef: "MMI-D-001",
   ledgerPeriod: "month",
   ledgerFilters: {},
   receipt: null,
@@ -1802,7 +1945,8 @@ function viewPortal() {
   var c = client(S.user.id);
   var qs = quotesFor(c.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
   var nav = [["overview","◈","Overview"],["quotes","◷","My quotes"],["catalog","▤","My products"],
-             ["purchases","▣","Purchased items"],["ledger","≡","My ledger"],
+             ["room","◆","Decision Room"],["purchases","▣","Purchased items"],
+             ["ledger","≡","My ledger"],
              ["account","◎","Account"]];
   var mine = itemsForClient(c), myOrders = ordersFor(c.id);
 
@@ -1928,6 +2072,8 @@ function viewPortal() {
       '</div></div>');
   } else if (S.portalTab === "purchases") {
     body = purchasesView(c, myOrders);
+  } else if (S.portalTab === "room") {
+    body = viewRoom();
   } else if (S.portalTab === "ledger") {
     body = '<p class="muted" style="max-width:62ch;margin-bottom:1.5rem">' +
       'Every purchase you have made, in one place. Switch between months, quarters ' +
@@ -2405,6 +2551,186 @@ function viewReceipt() {
   '</div>';
 }
 
+/* --- the Decision Room, rendered ---------------------------------------- */
+function drRailRow(it) {
+  var sub = it.status === "approved"
+    ? "priced " + esc(fmtFull(it.publishedAt))
+    : DR_STAGES[it.stage - 1];
+  return '<li><button class="itembtn' + (it.ref === S.drRef ? " on" : "") +
+    '" data-dr="' + esc(it.ref) + '">' +
+    '<span class="iref mono">' + esc(it.ref) + '</span>' +
+    '<span class="iname' + (it.name ? "" : " unnamed") + '">' + esc(drTitle(it)) + '</span>' +
+    '<em>' + esc(sub) + '</em></button></li>';
+}
+
+function drNameField(it) {
+  return '<div class="namefield">' +
+    '<label class="field-label" for="drnm">Your name for it</label>' +
+    '<input id="drnm" type="text" value="' + esc(it.name) + '" placeholder="' + esc(it.auto) + '">' +
+    '<span class="tiny dim">Ref <span class="mono">' + esc(it.ref) + '</span> never changes.</span>' +
+    '</div>';
+}
+
+function drPendingPane(it) {
+  return '<div class="card card-lg">' +
+    '<span class="eyebrow-label">Awaiting approval · <span class="mono">' + esc(it.ref) + '</span></span>' +
+    '<h2 style="margin-top:.6rem">' + esc(drTitle(it)) + '</h2>' +
+    '<p class="muted" style="margin-top:.7rem;max-width:62ch">No prices yet. An item gets ' +
+      'its Decision Room the moment a manufacturing engineer signs the specification and ' +
+      'the pricing desk publishes the strategies.</p>' +
+    drNameField(it) +
+    '<ol class="dr-tracker">' + DR_STAGES.map(function (s, i) {
+      var cls = i + 1 < it.stage ? "done" : (i + 1 === it.stage ? "now" : "");
+      return '<li class="' + cls + '"><span class="tk">' + (i + 1) + '</span><strong>' +
+        esc(s) + '</strong></li>';
+    }).join("") + '</ol>' +
+    '<dl class="kv" style="margin-top:1.5rem"><dt>What you sent</dt><dd>' + esc(it.source) + '</dd></dl>' +
+    /* A real outstanding question, not filler — this is the board-grade
+       escalation Appendix B says to file rather than guess. */
+    '<div class="notice notice-wait" style="margin-top:1.25rem">' +
+      '<strong>What we still need</strong>' + esc(it.outstanding) + '</div>' +
+    '<div class="lockedroom"><span class="tag tag-muted">Locked</span>' +
+      '<span class="tiny dim">Three strategies, the quantity slider and the target-price ' +
+      'tools unlock here on approval.</span></div></div>';
+}
+
+function drPricedPane(it) {
+  var v = it.view;
+  var cards = it.strats.map(function (s) {
+    var c = drStrategyView(it, s, v.qty, v.mode, v.treatment);
+    var hits = v.target && c.landed <= v.target;
+    return '<article class="card strat' + (hits ? " hits" : "") + '">' +
+      '<header><span class="tag">' + esc(c.label) + '</span><h3>' + esc(c.title) + '</h3></header>' +
+      '<div class="strat-price"><span class="stat-label">Landed per unit</span>' +
+        '<p class="strat-big">' + cents4(c.landed) + '</p>' +
+        '<p class="tiny dim mono">' + cents4(c.ex) + ' ex-works · ' + cents4(c.freight) +
+        ' freight · ' + cents4(c.duty) + ' duty</p></div>' +
+      '<dl class="strat-specs">' +
+        '<div><dt>Lead time</dt><dd>' + c.lead + ' days</dd></div>' +
+        '<div><dt>Route</dt><dd>' + esc(c.mode) + '</dd></div>' +
+        '<div><dt>Production</dt><dd>' + esc(c.prod) + '</dd></div>' +
+        '<div><dt>Inspection</dt><dd>' + esc(c.inspect) + '</dd></div>' +
+        '<div><dt>Order total</dt><dd>' + money(Math.round(c.total)) + '</dd></div></dl>' +
+      '<footer><button class="btn btn-sm" data-drbuy="' + c.slot + '">Buy this route</button>' +
+        '<span class="tiny dim">' + esc(c.foot) + '</span></footer></article>';
+  }).join("");
+
+  var levers = drLeverRows(it).map(function (l) {
+    return '<label class="lever"><input type="checkbox" data-drlever="' + esc(l.kind) + '"' +
+      (v.levers[l.kind] ? " checked" : "") + '>' +
+      '<span><strong>' + esc(l.label) + '</strong><em>' + esc(l.note) + '</em></span>' +
+      '<span class="delta mono">−' + cents4(l.saving) + '</span></label>';
+  }).join("");
+
+  var base = drLanded(it.costs, v.qty, v.mode, {amortize: drBaseline(it) === "amortized"});
+  var eng = drEngineered(it);
+  var picked = Object.keys(v.levers).filter(function (k) { return v.levers[k]; });
+  var hit = v.target && eng.landed !== null && eng.landed <= v.target;
+
+  return drNameField(it) +
+    '<div class="dr-controls">' +
+      '<div class="dr-control"><span class="stat-label">Order quantity</span>' +
+        '<output class="dr-qty" id="drQty">' + num(v.qty) + '</output>' +
+        /* Bounds are data, never a constant: at $0.14 a container a fixed
+           1,000–10,000 would be a $140 order. */
+        '<input type="range" id="drQtyRange" min="' + it.qtyMin + '" max="' + it.qtyMax +
+          '" step="' + it.qtyStep + '" value="' + v.qty + '" aria-label="Order quantity">' +
+        '<div class="rangeticks"><span>' + num(it.qtyMin) + '</span><span>' + num(it.qtyMax) +
+          '</span></div>' +
+        '<p class="tiny dim">Priced from the published quantity band.</p></div>' +
+      '<label class="field"><span class="field-label">Target unit price</span>' +
+        '<input type="text" id="drTarget" value="' + (v.target / 100).toFixed(4) + '"></label>' +
+      '<div class="dr-control"><span class="stat-label">Freight</span><div class="seg">' +
+        ["ocean", "split", "air"].map(function (m) {
+          return '<button data-drmode="' + m + '" class="' + (v.mode === m ? "on" : "") + '">' +
+            m.charAt(0).toUpperCase() + m.slice(1) + '</button>';
+        }).join("") + '</div></div>' +
+      /* The three routes carry different tooling defaults (§11.3.3), so the
+         first option is to leave them alone. Forcing one on all three by
+         default erases the difference the section exists to express. */
+      '<div class="dr-control"><span class="stat-label">Tooling · ' + money(it.costs.tooling) +
+        '</span><div class="seg">' +
+        '<button data-drtool="" class="' + (!v.treatment ? "on" : "") +
+          '">As each route prices it</button>' +
+        '<button data-drtool="amortized" class="' + (v.treatment === "amortized" ? "on" : "") +
+          '">Amortise</button>' +
+        '<button data-drtool="upfront" class="' + (v.treatment === "upfront" ? "on" : "") +
+          '">Pay upfront</button></div>' +
+        '<p class="tiny dim">' + (!v.treatment
+          ? "Each route prices the tool the way that route works — the cheapest one spreads it, the other two charge it upfront so the unit price stays clean."
+          : v.treatment === "amortized"
+            ? "Spread across this run — adds " + cents4(it.costs.tooling / v.qty) + " per unit at this quantity. The tool remains your property."
+            : "Invoiced once at " + money(it.costs.tooling) + ", before the run.") + '</p></div>' +
+    '</div>' +
+    '<div class="strategies">' + cards + '</div>' +
+    '<div class="card card-lg wwntc">' +
+      '<span class="eyebrow-label">What would need to change?</span>' +
+      '<h3 style="margin-top:.6rem">Engineering the economics toward your target</h3>' +
+      '<div class="gap-read">' +
+        '<div><span class="stat-label">Your target</span><p class="stat-value">' +
+          cents4(v.target) + '</p></div>' +
+        '<div><span class="stat-label">Best today</span><p class="stat-value">' +
+          cents4(base.landed) + '</p></div>' +
+        '<div><span class="stat-label">Gap</span><p class="stat-value" style="color:' +
+          (base.landed > v.target ? "var(--stop)" : "var(--good)") + '">' +
+          (base.landed > v.target ? "+" : "−") + cents4(Math.abs(base.landed - v.target)) +
+          '</p></div></div>' +
+      '<div class="levers">' + levers + '</div>' +
+      '<div class="outcome ' + (hit ? "hit" : "miss") + '">' +
+        '<div><span class="stat-label">Engineered price</span><p class="stat-value">' +
+          cents4(eng.landed) + '</p></div>' +
+        '<div style="flex:1;min-width:220px">' + (!picked.length
+          ? "Tick a change above and we will price it."
+          : hit
+            ? "<strong>On target.</strong> " +
+              money(Math.round((base.landed - eng.landed) * eng.qty)) +
+              " saved against the current specification at " + num(eng.qty) + " units."
+            /* Never silence on an unreachable target. */
+            : "<strong>Still short of your target.</strong> These changes reach " +
+              cents4(eng.landed) + ". Raising the quantity toward " + num(it.qtyMax) +
+              " is the largest lever left inside what we have priced; beyond that we " +
+              "would need to re-quote rather than guess.") +
+        '</div></div></div>' +
+    '<div class="card card-lg" style="margin-top:1.25rem">' +
+      '<span class="eyebrow-label">Freight at ' + num(v.qty) + ' units</span>' +
+      '<h3 style="margin-top:.6rem">Every route we have a rate for</h3>' +
+      '<div class="table-wrap" style="margin-top:1rem"><table class="data"><thead><tr>' +
+        '<th>Route</th><th>Transit</th><th class="right">Freight / unit</th>' +
+        '<th class="right">Freight total</th><th class="right">Landed / unit</th>' +
+      '</tr></thead><tbody>' + ["ocean", "split", "air"].map(function (m) {
+        var f = drLanded(it.costs, v.qty, m, {amortize: drBaseline(it) === "amortized"});
+        return '<tr><td>' + esc(FREIGHT_LANES[m].lane) +
+          (m === v.mode ? ' <span class="tag tag-green">selected</span>' : '') + '</td>' +
+          '<td class="tiny">' + esc(FREIGHT_LANES[m].transit) + '</td>' +
+          '<td class="right mono tnum">' + cents4(f.freight) + '</td>' +
+          '<td class="right mono tnum">' + money(Math.round(f.freight * v.qty)) + '</td>' +
+          '<td class="right mono tnum">' + cents4(f.landed) + '</td></tr>';
+      }).join("") + '</tbody></table></div>' +
+      '<p class="tiny dim" style="margin-top:.75rem">Every figure here is an estimate built ' +
+      'from a lane rate we entered, not a booked rate. Duty is applied to the ex-works ' +
+      'value, which is how a customs entry computes it.</p></div>';
+}
+
+function viewRoom() {
+  var pending = DR_ITEMS.filter(function (i) { return i.status === "pending"; });
+  var approved = DR_ITEMS.filter(function (i) { return i.status === "approved"; });
+  var it = drItem(S.drRef) || DR_ITEMS[0];
+  return '<div class="room-shell"><aside class="itemrail">' +
+      '<div class="railgroup"><span class="stat-label">Awaiting approval <b>' +
+        pending.length + '</b></span><ul class="itemlist">' +
+        (pending.map(drRailRow).join("") || '<li class="emptyrow">Nothing waiting.</li>') +
+      '</ul></div>' +
+      '<div class="railgroup"><span class="stat-label">Approved catalogue <b>' +
+        approved.length + '</b></span><ul class="itemlist">' +
+        (approved.map(drRailRow).join("") || '<li class="emptyrow">No approved items yet.</li>') +
+      '</ul></div>' +
+      '<p class="tiny dim">Items arrive unnamed and numbered. Name yours whenever you like — ' +
+      'no other member can see this list.</p></aside>' +
+    '<div class="roompane">' +
+      (it.status === "approved" ? drPricedPane(it) : drPendingPane(it)) +
+    '</div></div>';
+}
+
 function stat(label, value, sub, accent) {
   return '<div class="stat' + (accent ? " stat-accent" : "") + '"><div class="stat-label">' + esc(label) + '</div>' +
     '<div class="stat-value">' + esc(value) + '</div>' +
@@ -2866,6 +3192,44 @@ function wire() {
   });
 
   app.querySelectorAll("[data-iv]").forEach(wireViewer);
+
+  app.querySelectorAll("[data-dr]").forEach(function (el) {
+    el.addEventListener("click", function () { S.drRef = el.getAttribute("data-dr"); go(S.route); });
+  });
+  var drRange = app.querySelector("#drQtyRange");
+  if (drRange) {
+    var out = app.querySelector("#drQty");
+    drRange.addEventListener("input", function () { out.textContent = num(+drRange.value); });
+    drRange.addEventListener("change", function () {
+      var it = drItem(S.drRef); it.view.qty = +drRange.value; go(S.route);
+    });
+  }
+  var drTarget = app.querySelector("#drTarget");
+  if (drTarget) drTarget.addEventListener("change", function () {
+    var it = drItem(S.drRef);
+    it.view.target = Math.round((parseFloat(drTarget.value) || 0) * 100);
+    go(S.route);
+  });
+  app.querySelectorAll("[data-drmode]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      drItem(S.drRef).view.mode = el.getAttribute("data-drmode"); go(S.route);
+    });
+  });
+  app.querySelectorAll("[data-drtool]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      drItem(S.drRef).view.treatment = el.getAttribute("data-drtool") || null; go(S.route);
+    });
+  });
+  app.querySelectorAll("[data-drlever]").forEach(function (el) {
+    el.addEventListener("change", function () {
+      var it = drItem(S.drRef), k = el.getAttribute("data-drlever");
+      it.view.levers[k] = el.checked; go(S.route);
+    });
+  });
+  var drName = app.querySelector("#drnm");
+  if (drName) drName.addEventListener("change", function () {
+    drItem(S.drRef).name = drName.value.trim(); go(S.route);
+  });
 
   app.querySelectorAll("[data-lperiod]").forEach(function (el) {
     el.addEventListener("click", function () {

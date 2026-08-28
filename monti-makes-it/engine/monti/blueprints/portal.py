@@ -419,7 +419,14 @@ def _room_view(item):
     mode = request.args.get("mode") or "ocean"
     if mode not in lane_rows:
         mode = next(iter(lane_rows))
-    treatment = request.args.get("tooling") or "amortized"
+    # None means "as each route prices it". §11.3.3 gives the three strategies
+    # different tooling defaults — lowest-cost amortizes, the other two charge
+    # upfront — and forcing one treatment on all three by default erases exactly
+    # the difference the section exists to express. The toggle overrides; it
+    # does not set the baseline.
+    treatment = request.args.get("tooling") or None
+    if treatment not in (None, "amortized", "upfront"):
+        treatment = None
     chosen_kinds = set(request.args.getlist("lever"))
     target = to_cents(request.args.get("target")) or item["target_unit_cents"]
 
@@ -433,16 +440,20 @@ def _room_view(item):
                                        and card["landed_cents"] <= target)
             cards.append(card)
 
+    # The "best today" figure and the levers are quoted against the cheapest
+    # route, so they follow that strategy's treatment when none is forced.
+    baseline = treatment or (cards[0]["treatment"] if cards else "amortized")
     base = dr.landed(costs, lane_rows, qty, mode,
-                     amortize_tooling=(treatment == "amortized"))
-    lever_rows = dr.lever_savings(item, costs, lane_rows, qty, mode, treatment, bounds)
-    engineered = dr.engineered_price(item, costs, lane_rows, qty, mode, treatment,
+                     amortize_tooling=(baseline == "amortized"))
+    lever_rows = dr.lever_savings(item, costs, lane_rows, qty, mode, baseline, bounds)
+    engineered = dr.engineered_price(item, costs, lane_rows, qty, mode, baseline,
                                      chosen_kinds, bounds)
 
     tooling = costs.get("tooling_total")
     return {
         "incomplete": False,
         "qty": qty, "bounds": bounds, "mode": mode, "treatment": treatment,
+        "baseline_treatment": baseline,
         "target_cents": target, "chosen_kinds": chosen_kinds,
         "cards": cards,
         "current_landed_cents": base["landed_cents"] if base else None,

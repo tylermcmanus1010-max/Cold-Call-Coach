@@ -4,7 +4,7 @@
   "name": "Big Kahuna's",
   "category": "caterer",
   "owner": "",
-  "currentSite": "https://bigkahunaca.com/",
+  "currentSite": "https://bigkahunasib.com/",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -95,15 +95,14 @@
     "social": false
   },
   "_scout": {
-    "score": 121,
+    "score": 97,
     "gaps": 9,
-    "currentSiteStatus": "live and fine at bigkahunaca.com; bigkahunasib.com is a stale domain we mistook for theirs",
-    "loadMs": 1553,
+    "rendered": true,
+    "currentSiteStatus": "© 2023",
+    "loadMs": 1925,
     "pageKb": 31,
     "builder": null,
-    "copyrightYear": 2023,
-    "rendered": true,
-    "hardGaps": 5
+    "copyrightYear": 2023
   },
   "attempts": 1,
   "lastTried": "2026-08-27",

@@ -4,7 +4,7 @@
   "name": "Valerio's City Bakery",
   "category": "bakery",
   "owner": "",
-  "currentSite": "https://www.valeriosbakery.com/",
+  "currentSite": "https://valerios.com/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -97,17 +97,12 @@
   "_scout": {
     "score": 75,
     "gaps": 7,
-    "currentSiteStatus": "live, but slow — measured at 19.2s and 28.7s on two runs",
-    "loadMs": 19201,
+    "rendered": true,
+    "currentSiteStatus": "live",
+    "loadMs": 99358,
     "pageKb": 148,
     "builder": null,
-    "copyrightYear": null,
-    "rendered": true,
-    "hardGaps": 7,
-    "loadMsReadings": [
-      28687,
-      19201
-    ]
+    "copyrightYear": 2025
   },
   "attempts": 1,
   "lastTried": "2026-08-27",

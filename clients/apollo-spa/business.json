@@ -4,7 +4,7 @@
   "name": "Apollo Spa",
   "category": "Massage",
   "owner": "",
-  "currentSite": "http://apollo.grouppayless.com/",
+  "currentSite": "https://www.google.com/?zx=1787878215012",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -101,15 +101,14 @@
     "social": false
   },
   "_scout": {
-    "score": 131,
+    "score": 69,
     "gaps": 9,
-    "currentSiteStatus": "live",
-    "loadMs": 2994,
-    "pageKb": 265,
-    "builder": null,
-    "copyrightYear": null,
     "rendered": true,
-    "hardGaps": 6
+    "currentSiteStatus": "live",
+    "loadMs": 5697,
+    "pageKb": 261,
+    "builder": null,
+    "copyrightYear": null
   },
   "pitchOpener": "I went looking for your website and could not find one. There is a small page for you on somebody else's domain — apollo.grouppayless.com — but you do not own that address, and nobody searching for a massage in El Cajon is going to land on it. So I built you a real one, on your own name.",
   "attempts": 1,

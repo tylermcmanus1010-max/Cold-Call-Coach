@@ -95,15 +95,14 @@
     "social": false
   },
   "_scout": {
-    "score": 87,
+    "score": 63,
     "gaps": 7,
+    "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 14199,
+    "loadMs": 14076,
     "pageKb": 248,
     "builder": null,
-    "copyrightYear": 2026,
-    "rendered": true,
-    "hardGaps": 3
+    "copyrightYear": 2026
   },
   "attempts": 1,
   "lastTried": "2026-08-26",

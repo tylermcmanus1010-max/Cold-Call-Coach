@@ -1,0 +1,130 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "studio-mani",
+  "name": "Studio Mani",
+  "category": "beauty",
+  "owner": "",
+  "currentSite": "https://www.studiomanipoway.com/",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
+  "confirmed": {
+    "prices": false,
+    "email": false,
+    "hours": false,
+    "area": false
+  },
+  "headline": "",
+  "subhead": "",
+  "tagline": "At our local Salon, we understand that your nails are more than just an accessory; they're a canvas for self-expression and individual style. Nestled in the heart of Poway, California, our salon is a sanctuary dedicated to providing you with an exquisite nail care experience unlike any other. We have Expertise and Dedication, Quality Products and Exquisite Results, Tailored Services for Every Occasion, and Personalized Experience. So, Join Us for Unparalleled Nail Care ...we love to see you!",
+  "heroNote": "",
+  "phone": "+1-858-513-3655",
+  "email": "",
+  "address": {
+    "street": "12307 Poway Road",
+    "city": "Poway",
+    "state": "CA",
+    "zip": "92064"
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "group": "",
+      "name": "",
+      "desc": "",
+      "price": "",
+      "duration": ""
+    }
+  ],
+  "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
+  "booking": {
+    "url": ""
+  },
+  "teamHeading": "",
+  "teamLede": "",
+  "team": [
+    {
+      "name": "",
+      "role": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "https": true,
+    "mobile": true,
+    "speed": false,
+    "phoneTap": true,
+    "hours": true,
+    "address": true,
+    "services": false,
+    "reviews": false,
+    "cta": true,
+    "seo": false,
+    "meta": true,
+    "social": false
+  },
+  "_scout": {
+    "score": 63,
+    "gaps": 5,
+    "rendered": true,
+    "currentSiteStatus": "live",
+    "loadMs": 8035,
+    "pageKb": 194,
+    "builder": null,
+    "copyrightYear": 2025
+  }
+}

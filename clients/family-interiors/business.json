@@ -4,7 +4,7 @@
   "name": "Family Interiors",
   "category": "floorer",
   "owner": "",
-  "currentSite": "https://familyinteriors.com/.well-known/sgcaptcha/?r=%2F&y=ipr:68.220.62.241:1787874164.344",
+  "currentSite": "https://familyinteriors.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878036.450",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -99,7 +99,7 @@
     "gaps": 9,
     "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 1960,
+    "loadMs": 1717,
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null

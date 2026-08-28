@@ -4,7 +4,7 @@
   "name": "De Santis Law Center",
   "category": "lawyer",
   "owner": "",
-  "currentSite": "https://www.desantislawcenter.com/",
+  "currentSite": "https://www.desantislawcenter.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878165.368",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -83,27 +83,26 @@
   "audit": {
     "https": true,
     "mobile": true,
-    "speed": false,
-    "phoneTap": true,
+    "speed": true,
+    "phoneTap": false,
     "hours": false,
-    "address": true,
-    "services": true,
-    "reviews": true,
-    "cta": true,
-    "seo": true,
-    "meta": true,
-    "social": true
+    "address": false,
+    "services": false,
+    "reviews": false,
+    "cta": false,
+    "seo": false,
+    "meta": false,
+    "social": false
   },
   "_scout": {
-    "score": 137,
-    "gaps": 2,
-    "currentSiteStatus": "live",
-    "loadMs": 7097,
-    "pageKb": 536,
-    "builder": null,
-    "copyrightYear": null,
+    "score": 69,
+    "gaps": 9,
     "rendered": true,
-    "hardGaps": 7
+    "currentSiteStatus": "live",
+    "loadMs": 1780,
+    "pageKb": 12,
+    "builder": null,
+    "copyrightYear": null
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling"

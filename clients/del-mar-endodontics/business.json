@@ -4,7 +4,7 @@
   "name": "Del Mar Endodontics",
   "category": "dentist",
   "owner": "",
-  "currentSite": "https://www.delmarendo.com/",
+  "currentSite": "https://forsale.godaddy.com/forsale/delmarendo.com?utm_source=TDFS_BINNS&utm_medium=parkedpages&utm_campaign=x_corp_tdfs-binns_base&traffic_type=TDFS_BINNS&traffic_id=binns&",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -95,15 +95,14 @@
     "social": false
   },
   "_scout": {
-    "score": 137,
+    "score": 63,
     "gaps": 7,
-    "currentSiteStatus": "live",
-    "loadMs": 13593,
-    "pageKb": 234,
-    "builder": null,
-    "copyrightYear": null,
     "rendered": true,
-    "hardGaps": 7
+    "currentSiteStatus": "live",
+    "loadMs": 14031,
+    "pageKb": 235,
+    "builder": null,
+    "copyrightYear": 2026
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (3 provable gaps), nothing worth selling"

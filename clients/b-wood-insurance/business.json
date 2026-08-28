@@ -4,7 +4,7 @@
   "name": "B Wood Insurance",
   "category": "insurance",
   "owner": "",
-  "currentSite": "https://c3insurance.com/",
+  "currentSite": "https://c3insurance.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878201.579",
   "liveUrl": "",
   "status": "dead",
   "tier": "onepage",
@@ -85,25 +85,24 @@
     "mobile": true,
     "speed": true,
     "phoneTap": false,
-    "hours": true,
+    "hours": false,
     "address": false,
-    "services": true,
+    "services": false,
     "reviews": false,
     "cta": false,
-    "seo": true,
-    "meta": true,
-    "social": true
+    "seo": false,
+    "meta": false,
+    "social": false
   },
   "_scout": {
-    "score": 137,
-    "gaps": 4,
-    "currentSiteStatus": "live",
-    "loadMs": 3011,
-    "pageKb": 402,
-    "builder": null,
-    "copyrightYear": null,
+    "score": 69,
+    "gaps": 9,
     "rendered": true,
-    "hardGaps": 7
+    "currentSiteStatus": "live",
+    "loadMs": 2275,
+    "pageKb": 12,
+    "builder": null,
+    "copyrightYear": null
   },
   "callNotes": [
     "2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling"

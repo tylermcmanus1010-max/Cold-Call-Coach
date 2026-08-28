@@ -84,7 +84,7 @@
   "audit": {
     "https": true,
     "mobile": true,
-    "speed": false,
+    "speed": true,
     "phoneTap": false,
     "hours": false,
     "address": false,
@@ -96,11 +96,11 @@
     "social": false
   },
   "_scout": {
-    "score": 75,
-    "gaps": 10,
+    "score": 69,
+    "gaps": 9,
     "rendered": true,
     "currentSiteStatus": "live",
-    "loadMs": 6898,
+    "loadMs": 5533,
     "pageKb": 176,
     "builder": null,
     "copyrightYear": null

@@ -1,0 +1,130 @@
+{
+  "_howto": "Auto-filled by ./cc scout from osm. Verify everything, then write headline, services and reviews by hand — that is the part that sells.",
+  "slug": "lashbar",
+  "name": "Lashbar",
+  "category": "beauty",
+  "owner": "",
+  "currentSite": "https://www.lashbar.com/delsur",
+  "liveUrl": "",
+  "status": "new",
+  "tier": "onepage",
+  "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
+  "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
+  "confirmed": {
+    "prices": false,
+    "email": false,
+    "hours": false,
+    "area": false
+  },
+  "headline": "",
+  "subhead": "",
+  "tagline": "LashBar™ Del Sur is a luxury salon focusing on Eyelash Extensions and Keratin Eyelash Lifts. Come and experience a customer-focused salon that uses only the best quality lashes and adhesives. We raise the bar in a luxury customer experience.",
+  "heroNote": "",
+  "phone": "+1 858-769-9591",
+  "email": "",
+  "address": {
+    "street": "16445",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": ""
+  },
+  "serviceArea": [],
+  "license": "",
+  "priceRange": "$$",
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "8:00 AM – 5:00 PM",
+      "schema": "Mo-Fr 08:00-17:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "9:00 AM – 2:00 PM",
+      "schema": "Sa 09:00-14:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "Closed"
+    }
+  ],
+  "highlights": [
+    {
+      "value": "",
+      "label": ""
+    }
+  ],
+  "_services": "Every service becomes a tappable row people can select, and the selection is texted or emailed to the business as a booking request. \"group\" sorts rows under a heading. \"price\" and \"duration\" are optional — give them only if the business actually published them, never guessed; without them the rows still select and still send.",
+  "servicesHeading": "",
+  "servicesLede": "",
+  "services": [
+    {
+      "group": "",
+      "name": "",
+      "desc": "",
+      "price": "",
+      "duration": ""
+    }
+  ],
+  "_booking": "If they already use a booking platform, put its link here and the Request button sends people there instead of composing a text.",
+  "booking": {
+    "url": ""
+  },
+  "teamHeading": "",
+  "teamLede": "",
+  "team": [
+    {
+      "name": "",
+      "role": ""
+    }
+  ],
+  "aboutHeading": "",
+  "about": "",
+  "points": [],
+  "rating": {
+    "value": "",
+    "count": "",
+    "source": "Yelp"
+  },
+  "reviews": [
+    {
+      "text": "",
+      "author": "",
+      "source": "Yelp",
+      "stars": 5
+    }
+  ],
+  "ctaHeading": "",
+  "ctaLede": "",
+  "cta": {
+    "primary": ""
+  },
+  "theme": {
+    "accent": "#0f6b5c",
+    "ink": "#12181c",
+    "heroImage": ""
+  },
+  "audit": {
+    "https": true,
+    "mobile": false,
+    "speed": false,
+    "phoneTap": true,
+    "hours": true,
+    "address": true,
+    "services": true,
+    "reviews": false,
+    "cta": true,
+    "seo": false,
+    "meta": true,
+    "social": true
+  },
+  "_scout": {
+    "score": 75,
+    "gaps": 4,
+    "rendered": true,
+    "currentSiteStatus": "live",
+    "loadMs": 9902,
+    "pageKb": 1492,
+    "builder": null,
+    "copyrightYear": 2026
+  }
+}

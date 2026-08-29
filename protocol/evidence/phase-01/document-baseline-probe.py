@@ -39,8 +39,26 @@ print("  client's record is SK-37, ACTIVE as of D-001 and landing at Phase 8. Ph
 print("  (documents) comes after Phase 8, so the ordering works.")
 print()
 print("## Immutability")
-edits = re.findall(r"(UPDATE|DELETE)\s+FROM?\s*(ledger_entries|receipts?)", src, re.I)
-print("  UPDATE/DELETE statements against ledger_entries in monti/:", edits or "none found")
+# The first version of this line read `\\s+FROM?\\s*` — which is UPDATE, whitespace,
+# then the literal "FRO" with an optional "M". It could never match "UPDATE
+# ledger_entries" and reported "none found" over two real statements. SK-30 is
+# non-waivable and this probe is the basis for one of its clauses, so it now
+# matches both statement shapes and prints what it finds.
+edits = re.findall(r"(?:UPDATE\s+(ledger_entries)|DELETE\s+FROM\s+(ledger_entries))", src, re.I)
+edit_sites = []
+for f in sorted(Path("monti").rglob("*.py")):
+    for i, line in enumerate(f.read_text().splitlines(), 1):
+        if re.search(r"UPDATE\s+ledger_entries|DELETE\s+FROM\s+ledger_entries", line, re.I):
+            edit_sites.append(f"{f}:{i}  {line.strip()[:88]}")
+print(f"  UPDATE/DELETE statements against ledger_entries in monti/: {len(edit_sites)}")
+for site in edit_sites:
+    print(f"    {site}")
+if edit_sites:
+    print("  Both transition a PENDING row to SETTLED or FAILED — a pending payment")
+    print("  resolving, not an issued receipt being edited. Corrections to settled money")
+    print("  go through ledger.reverse, which writes a linked reversing row. The clause")
+    print("  below therefore rests on an argument, not on an absence, and Phase 16 must")
+    print("  prove it rather than inherit it.")
 print("  ledger.reverse present:", hasattr(L, "reverse"), "— corrections as linked reversing rows")
 print()
 print("## Against CHG-014's gate")
@@ -49,7 +67,7 @@ for clause, state in [
     ("Unbroken immutable numbering",                           "numbering exists (next_receipt_no); 'unbroken' is unasserted"),
     ("Regenerates byte-identical from stored order data",      "UNBUILT — no regeneration path"),
     ("Totals reconcile to the order and both ledgers",         "built — A32/A34 in the existing suite"),
-    ("No code path edits or deletes an issued receipt",        "structurally true — reversal not mutation"),
+    ("No code path edits or deletes an issued receipt",        "holds by argument, not by absence — see the two UPDATEs above"),
     ("Refund yields original + credit note + correct net",     "UNBUILT — no credit note anywhere in code or schema"),
     ("Both exporting as PDF",                                  "UNBUILT — no PDF library, no application/pdf"),
     ("Clients retrieve only their own",                        "built — ledger.receipt scopes by customer_id"),

@@ -1,24 +1,25 @@
-# CHG-017 — impersonation baseline on the frozen build
+# CHG-017 — impersonation baseline
+# Impersonating the throwaway MMI-C-TEST (id 2), never MMI-C-1001 (§4.5, D-029).
+# Boars Head is MMI-C-1001 / Boars Head and is not touched.
 
 ## Before
 security_log rows: 0
 admin GET /portal/ -> 403   (403 = no access yet)
 
 ## The impersonation act
-GET /admin/clients/1/open -> 302 -> /portal/
+GET /admin/clients/2/open -> 302 -> /portal/
   reason prompt before the redirect:  no — it is a GET link, nothing is asked
   confirmation step:                  no
 
 ## After
 admin GET /portal/ -> 200   (200 = full member portal)
-admin-view banner rendered:          yes   (_shell.html:17, g.viewing_as set at auth.py:80)
+admin-view banner rendered:          yes   (_shell.html:17, g.viewing_as at auth.py:80)
 rows written to security_log:        0
 
 ## Write access during impersonation
 POST /portal/requests while impersonating -> 302 /portal/products/MMI-D-003
   a write landed as the member: YES — MMI-Q-1001
   read-only by default: no   separate logged elevation: no
-  (probe rows removed)
 security_log rows after the write:   0
 
 ## Against CHG-017's gate
@@ -32,3 +33,14 @@ security_log rows after the write:   0
 
 security_log is created at schema.sql:502 and written by nothing. Its only other
 reference is monti/purge.py:43, as an orphan-sweep target.
+
+## Cleanup — every row this probe caused, then a re-query to prove zero
+  quotes            rows left from this probe: 0
+  decision_items    rows left from this probe: 0
+  capacity_ledger   rows left from this probe: 0
+  crm_activities    rows left from this probe: 0
+  calendar_events   rows left from this probe: 0
+  customers         rows left from this probe: 0
+  admin credentials restored:        True
+  Boars Head CRM entries (untouched): 1
+  TOTAL residue: 0

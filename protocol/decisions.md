@@ -771,7 +771,7 @@ Measured in Chromium. Both items have the same cause: a class name in a template
 |---|---|---|
 | `.chart-bar`, `.chart-svg`, `.chart-grid`, `.chart-axis`, `.chart-wrap` | nothing (its chart rules at 288-300 use `.chart …`) | bars `fill: rgb(0,0,0)`, grid `stroke: none` |
 | `.meter` + a bare `<span>` | `.meter-head`, `.meter-track`, `.meter-fill` — **used by no template** | meter `127 × 0` px, span `display: inline` at `0 × 0` |
-| `.range-row`, `.range-btn` | nothing | period picker is plain text (D-028) |
+| `.range-row`, `.range-btn` | nothing | period picker is plain text (D-032) |
 | `.meter-green` | nothing | — |
 
 §1.4: *"Where two or more items resolve to a common layer … the layer is the unit of
@@ -780,7 +780,7 @@ this exact shape.
 
 **Options.** (a) Treat the renderer/token contract as the layer: DS-01 defines the
 classes the templates actually use at Phase 4, VIZ-01 consumes them at Phase 5, and
-CHG-001, CHG-005, CHG-010 and D-028 close together. Cost: none — it is the existing
+CHG-001, CHG-005, CHG-010 and D-032 close together. Cost: none — it is the existing
 phase order. (b) Fix each screen at its own phase. Cost: a §1.4 violation, explicitly.
 (c) Rename the template classes to match `app.css`. Cost: the stylesheet's names describe
 a different component (`.meter-head` implies a labelled meter the templates do not
@@ -884,3 +884,44 @@ either — §13.4 forbids RES-01 weakening a gate it does not own.
 answerable and left the wording to Tyler.
 
 ---
+
+---
+
+## D-034 · D-026 closed CHG-012 on a sentence its own evidence contradicts · **needs Tyler**
+
+Found by QA-01 on the third call of the Phase 1 gate. AIM-00 reproduced it and it holds.
+
+§9's closed entry for CHG-012, which the register copies verbatim and correctly, reads:
+
+> *"Sign out renders exactly once across all 56 swept surfaces; the render census is the
+> evidence, countersigned by QA-01."*
+
+The render census does not say that. It says: **once on 30 surfaces, zero on 11, and
+unmeasured on 15** — and **twice on none.** The 11 are the public pages, the password page
+and the two CSV exports, none of which loads the shell that carries the control.
+
+The narrow claim is true and is what matters: **CHG-012's defect does not exist.** The
+sentence that closed it overstates the evidence, and the overstatement came from AIM-00 —
+Phase 1's first inventory said "renders exactly once on every one of the 56 swept
+surfaces", QA-01 caught it, the inventory was corrected, and by then the wording had
+already been carried into a signed decision.
+
+So a signed decision rests on a sentence its own evidence contradicts, and nothing in the
+pack had filed that.
+
+**Options.** (a) Amend §9's CHG-012 entry to what the census shows — *"renders exactly
+once on every surface that loads the application shell, and twice on none of the 56
+swept"* — and leave CHG-012 CLOSED. Cost: one wording change; the closure stands because
+the reason for it is unaffected. (b) Reopen CHG-012 pending a re-check. Cost: real work
+for a defect measured as absent three times. (c) Leave it. Cost: the register carries a
+gate sentence that its cited evidence does not support, and CHG-012's entry is the one a
+later reader would check first, since it is the only closed item.
+
+**AIM-00 recommends (a).** It is a wording correction to a gate, which §1.2 puts with the
+manager *before* work and with Tyler once signed — and this one is signed, so it is
+yours. AIM-00 has not touched the gate text; the register still carries §9 verbatim.
+
+**Where the fault is.** Not QA-01's — it countersigned a census that says 30/11/15/0 and
+the census is right. AIM-00 wrote the overstatement, and a decision was signed on it
+before the correction caught up.
+

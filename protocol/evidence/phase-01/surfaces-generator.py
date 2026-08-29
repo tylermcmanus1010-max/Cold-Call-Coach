@@ -34,8 +34,12 @@ FLASH   = re.compile(r"flash\(")
 ROWBTN  = re.compile(r"<a[^>]*class=\"[^\"]*btn[^\"]*\"[^>]*>(?:(?!</a>).)*</a>", re.S)
 
 TEMPLATES = sorted(Path("monti/templates").rglob("*.html"))
-MODULES   = [p for p in sorted(Path("monti").rglob("*.py")) if "__pycache__" not in str(p)]
-MODULES  += [Path("app.py")] if Path("app.py").exists() else []
+# Every Python module in the engine, not just monti/. The first two versions took
+# monti/*.py plus app.py and left tests/ out — while document-baseline.txt scores two
+# CHG-014 gate clauses against tests/ and requirements.txt. QA-01 failed clause 1 on
+# that same shape three times; the fix is to walk the tree rather than name the parts.
+MODULES = [p for p in sorted(Path(".").rglob("*.py"))
+           if "__pycache__" not in str(p) and ".venv" not in str(p)]
 
 def template_items(p):
     src, rel, out = read(p), str(p), set()
@@ -55,6 +59,12 @@ def template_items(p):
 
 def module_items(p):
     src, rel, out = read(p), str(p), set()
+    if rel.startswith("tests/"):
+        # The suite is a surface: CHG-014's gate is scored partly against A32/A34.
+        if "ledger" in rel or "money" in rel:  out.add("CHG-014")
+        if "tenancy" in rel or "agents" in rel: out.add("CHG-017")
+        if "provenance" in rel or "tooling" in rel: out.add("CHG-001")
+        return out
     if FLASH.search(src):                                    out.add("CHG-016")
     if "analytics" in rel:                    out.update({"CHG-001", "CHG-002", "CHG-008", "CHG-009"})
     if "ledger" in rel:                       out.update({"CHG-009", "CHG-014"})
@@ -104,6 +114,22 @@ for p in MODULES:
 
 rows.append(["schema", "monti/schema.sql", f"{len(read('monti/schema.sql').splitlines())} lines",
              "data", "", "CHG-003,CHG-015,CHG-017"])
+
+# Everything else that is part of the engine and is not code, a template, a table or an
+# asset: the packaging files, the docs, and the Phase-0 evidence directory the document
+# baseline scores CHG-014 against. Enumerated, not listed.
+for p in sorted(Path(".").iterdir()):
+    if p.is_file() and p.suffix not in (".py",) and p.name != "surfaces.tsv":
+        rows.append(["config", str(p), f"{p.stat().st_size} bytes", "engine", "",
+                     "CHG-014" if p.name == "requirements.txt" else ""])
+for p in sorted(Path("evidence").glob("*")) if Path("evidence").exists() else []:
+    if p.is_file():
+        rows.append(["engine-evidence", str(p), f"{len(read(p).splitlines())} lines",
+                     "evidence", "", ""])
+for p in sorted(Path("..").glob("*.md")):
+    if p.is_file():
+        rows.append(["doc", f"monti-makes-it/{p.name}", f"{len(read(p).splitlines())} lines",
+                     "docs", "", ""])
 
 con = sqlite3.connect(os.environ["DATABASE_PATH"])
 for (n,) in con.execute("SELECT name FROM sqlite_master WHERE type='table' "

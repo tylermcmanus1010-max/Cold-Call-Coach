@@ -1,0 +1,25 @@
+# Computed styles, read from Chromium — CHG-001 and CHG-005
+# Written by meter-probe.mjs against a throwaway seeded database (§1.5).
+# These figures are measured, not transcribed: this file is the probe output.
+
+## The chart (CHG-001), with data to draw
+  rect.chart-bar   fill              rgb(0, 0, 0)
+  marks rendered                     90
+  distinct mark heights              81
+
+## The share bar (CHG-005), with rows to draw
+  .meter           background-color  rgba(0, 0, 0, 0)
+  .meter           border-width      0px
+  .meter           height            0px
+  .meter           bounding box      127 x 0
+  .meter > span    display           inline
+  .meter > span    inline style      width:100%
+  .meter > span    bounding box      0 x 0
+  .meter elements on the page        7
+
+  The span is display:inline, so its width:100% does nothing. The bar is 0 pixels
+  tall and 0 pixels wide. It is not illegible; it does not render.
+
+## Screenshots written by this run
+  chg-005-share-bars.png        the Share column, and CHG-010 in the same table
+  chg-001-chart-with-data.png   90 marks, all black

@@ -27,7 +27,19 @@ not carry forward.
 |---|---|---|---|
 | 1 | pre-amendment, 15 OPEN | FAIL — clauses 1 and 3 | void |
 | 2 | pre-amendment, 15 OPEN | FAIL — clauses 1 and 3 | void |
-| 3 | **Amendment 2**, 14 in line + 1 closed | pending | current |
+| 3 | Amendment 2 | FAIL — clauses 1, 3 and 4 | superseded by run 4 |
+| 4 | **Amendment 2**, after RES-01's third pass | pending | current |
+
+**Run 3's findings, all reproduced by RES-01 and all fixed except where noted:** the
+census omitted `tests/`, `engine/evidence/` and the packaging files while
+`document-baseline.txt` scored CHG-014 clauses against two of them; CHG-017's gate had
+swallowed §9's Cross-cutting paragraph through a bad split; **two probes still emitted the
+errors their artifacts said were corrected**, so following the pack's own reproduction
+instructions overwrote the corrections; and **the impersonation probe still targeted
+MMI-C-1001 and still cleaned up only three of five row types** — D-029's remedy had been
+applied to the data and not to the test. Not fixed, filed instead: three false positives
+in the `items` column (D-035 territory, Phase 2 work) and the CHG-012 wording (**D-034**,
+Tyler's).
 
 ---
 
@@ -42,7 +54,7 @@ one Flask-repo surface from the Phase 1 census. **No item cites the prototype** 
 
 ## Decisions
 
-33 filed; **seven signed by Tyler** — D-001, D-002, D-003 (Amendment 1) and D-026, D-027,
+34 filed; **seven signed by Tyler** — D-001, D-002, D-003 (Amendment 1) and D-026, D-027,
 D-028, D-029 (Amendment 2). D-029 is executed: the residue is reverted and re-proved at
 zero.
 
@@ -62,6 +74,7 @@ Open and biting before Phase 4:
 | **D-033** | "No surface is unmapped" has two readings; under one the gate is unpassable |
 | D-013 | Phase 1's skills line omits SK-42, which its own exit gate requires |
 | D-014 | Amendment 1 left four counts stale — Amendment 2 fixed the register, not these |
+| **D-034** | D-026 closed CHG-012 on a sentence its own evidence contradicts — needs your signature |
 | D-032 | The period picker is unstyled; no in-line item covers it |
 
 ---

@@ -178,7 +178,7 @@ repo surface from the Phase 1 census; surface counts per item are in `surfaces.t
 - **Repo surfaces (8)** `GET /admin/clients/<int:customer_id>/open`, `GET /admin/clients/close`, `monti/templates/_shell.html` (+5 more)
 - **Evidence** none
 
-> In scope per D-001. Every impersonation session logged, timestamped, attributed to a named admin, reason-tagged, read-only by default, and visible in the member's security log within one page load; write actions during impersonation require a separate logged elevation. **Cross-cutting** — Tenant isolation verified adversarially by SEC-01 (Phase 19). Every surface renders correctly with the real post-purge dataset (Phase 14). All money surfaces reconcile four ways (Phase 17). A restore drill completed within the cycle (SK-41, §11.2). ---
+> In scope per D-001. Every impersonation session logged, timestamped, attributed to a named admin, reason-tagged, read-only by default, and visible in the member's security log within one page load; write actions during impersonation require a separate logged elevation.
 
 ---
 

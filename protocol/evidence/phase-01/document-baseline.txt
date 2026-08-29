@@ -22,21 +22,14 @@
   (documents) comes after Phase 8, so the ordering works.
 
 ## Immutability
-  UPDATE/DELETE statements against ledger_entries in monti/:
-    monti/ledger.py:147   UPDATE ledger_entries SET status = 'SETTLED', occurred_at = ?
-    monti/ledger.py:159   UPDATE ledger_entries SET status = 'FAILED', note = ?
-
-  CORRECTED after QA-01 failed this phase. The first run of this probe reported
-  "none found" because its regex was broken: `(UPDATE|DELETE)\s+FROM?\s*(...)`
-  reads as UPDATE, whitespace, then the literal "FRO" with an optional "M" — so
-  it could never match "UPDATE ledger_entries". Two statements were missed.
-
-  What they are matters and does not change the conclusion: both transition a
-  PENDING row to SETTLED or FAILED. That is a pending payment resolving, not an
-  issued receipt being edited — the row was never a final document. Corrections
-  to settled money go through ledger.reverse, which writes a linked reversing
-  row. But "no UPDATE exists" was the wrong reason to believe the right thing,
-  and SK-30 is non-waivable, so the clause below now states the real basis.
+  UPDATE/DELETE statements against ledger_entries in monti/: 2
+    monti/ledger.py:147  execute("UPDATE ledger_entries SET status = 'SETTLED', occurred_at = ? WHERE id = ?",
+    monti/ledger.py:159  execute("UPDATE ledger_entries SET status = 'FAILED', note = ? WHERE id = ?",
+  Both transition a PENDING row to SETTLED or FAILED — a pending payment
+  resolving, not an issued receipt being edited. Corrections to settled money
+  go through ledger.reverse, which writes a linked reversing row. The clause
+  below therefore rests on an argument, not on an absence, and Phase 16 must
+  prove it rather than inherit it.
   ledger.reverse present: True — corrections as linked reversing rows
 
 ## Against CHG-014's gate
@@ -44,7 +37,7 @@
   Unbroken immutable numbering                             numbering exists (next_receipt_no); 'unbroken' is unasserted
   Regenerates byte-identical from stored order data        UNBUILT — no regeneration path
   Totals reconcile to the order and both ledgers           built — A32/A34 in the existing suite
-  No code path edits or deletes an issued receipt          structurally true — reversal not mutation
+  No code path edits or deletes an issued receipt          holds by argument, not by absence — see the two UPDATEs above
   Refund yields original + credit note + correct net       UNBUILT — no credit note anywhere in code or schema
   Both exporting as PDF                                    UNBUILT — no PDF library, no application/pdf
   Clients retrieve only their own                          built — ledger.receipt scopes by customer_id

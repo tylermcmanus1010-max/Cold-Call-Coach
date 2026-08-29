@@ -150,4 +150,4 @@ The period picker (1D 7D 21D 45D 90D 180D 365D) renders as unstyled plain text โ
 no button, no border, no padding, no visible active state. It is a control that
 does not look like one. CHG-009 covers its *vocabulary*, not its appearance, and
 CHG-013 covers contrast, not missing rules. Filed under ยง1.9 as an observation,
-not built. See D-028.
+not built. See D-032.

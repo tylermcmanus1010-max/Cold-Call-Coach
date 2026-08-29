@@ -31,8 +31,8 @@ is out of scope for every in-line item.
 | Schema file | 1 — `monti/schema.sql` |
 | Document artifacts | 5 |
 | The prototype | 3 files — `monti-prototype.html`, `monti-makes-it-site.html`, `README.md` |
-| **Rows in the census** | **246** |
-| **Distinct surfaces** | **241** — the 5 document rows are each served by a route already counted, and carry `duplicate_of` |
+| **Rows in the census** | **281** |
+| **Distinct surfaces** | **276** — the 5 document rows are each served by a route already counted, and carry `duplicate_of` |
 
 ---
 
@@ -101,7 +101,7 @@ says a corrected artifact should show what it was corrected from.
 
 ## 3. The surface census
 
-Full list: `evidence/phase-01/surfaces.tsv` — 246 rows, six columns:
+Full list: `evidence/phase-01/surfaces.tsv` — 281 rows, six columns:
 `kind · surface · detail · area · duplicate_of · items`.
 
 | Kind | Count | Where enumerated from |
@@ -109,7 +109,10 @@ Full list: `evidence/phase-01/surfaces.tsv` — 246 rows, six columns:
 | route | 76 | `app.url_map` |
 | template | 63 | tree |
 | email | 18 | `monti/templates/email/` |
-| module | 28 | tree, including `app.py` — added after QA-01's first failure; six items map onto module paths and the first census did not contain them |
+| module | 44 | every `.py` in the engine — `monti/`, `tests/` and `app.py`. The first two censuses took `monti/` plus `app.py` and left `tests/` out, while `document-baseline.txt` scores CHG-014 clauses against `tests/`. QA-01 failed clause 1 on that same shape three times; the generator now walks the tree instead of naming the parts |
+| config | 6 | the engine's packaging and dotfiles, including `requirements.txt`, which a CHG-014 clause is scored against |
+| engine-evidence | 11 | `engine/evidence/` — the pre-protocol artifacts |
+| doc | 2 | `PROTOCOL.md`, `START-HERE.md` |
 | schema | 1 | `monti/schema.sql` — added after QA-01's second failure |
 | table | 45 | `PRAGMA table_info` on a launched database |
 | static | 3 | `monti/static/` |
@@ -153,20 +156,30 @@ The phrase admits two readings and the gate does not say which. Filed as **D-033
 than pick one, the census now answers both from data: `surfaces.tsv` carries an `items`
 column naming every in-line item that lands on each surface.
 
-**Reading A — every surface carries an in-line item.** FALSE, and necessarily so: 152 of
-the 246 rows carry at least one item and 94 carry none. Fifteen items cannot cover 241
+**Reading A — every surface carries an in-line item.** FALSE, and necessarily so: 159 of
+the 281 rows carry at least one item and 122 carry none. Fifteen items cannot cover 276
 distinct surfaces, and a gate demanding it would be unpassable by construction. The 94
 are things like `/webhooks/stripe`, the application routes, `flask init-db`, and 34
 tables no in-line item touches.
 
-**The mapping is derived from content, not from paths.** The first two versions matched
-item patterns against the surface *name*, which gave CHG-011 all 81 templates — 46 of
-which render no currency at all — while missing the two extra share-bar templates for
-CHG-005, both receipt templates for CHG-014, and a repeated primary button in
-`admin/catalog_detail.html` for CHG-010. QA-01 found every one of those. Each rule now
-opens the file and looks: CHG-011 is templates that actually render currency, CHG-010 is
-templates with a button inside a table-row loop, CHG-005 is templates using
-`class="meter"`.
+**The template rules are derived from content; the rest are not, and saying otherwise was
+an overclaim.** An earlier revision of this section said *"each rule now opens the file and
+looks"*. That is true of the template rules and false of the others, and QA-01 was right to
+call it. Precisely:
+
+| Rule set | How it decides |
+|---|---|
+| templates (63) and email (18) | **reads the file** — CHG-011 is templates that actually render currency, CHG-010 a button inside a table-row loop, CHG-005 `class="meter"`, CHG-016 a visible text node |
+| modules (44) | reads the file for `flash(` and `is_fixture`; **matches the path** for analytics / ledger / genome / decisionroom |
+| routes (76) | **matches the path** — `/portal`, `/admin/revenue`, `ledger`, `receipt`, `clients/` |
+| tables, CLI, static, schema, documents | **hand-typed constants** |
+
+Three known imprecisions QA-01 found and this revision has not fixed, recorded rather than
+hidden: CHG-015 matches `admin/crm_detail.html` on the word "revision" in a placeholder;
+CHG-014 matches `admin/_base.html` on "receipt" in a sidebar active-class test; CHG-009
+matches the two single-receipt routes on the substring "ledger". They are false positives
+in the column, not in the register's prose, and tightening them is Phase 2 work rather than
+a Phase 1 fix.
 
 **Reading B — every surface in the build appears in the census.** TRUE as of this
 revision, and it was not true when QA-01 first read it. The first census had six kinds and

@@ -54,16 +54,35 @@ print("  renderer, and Phase 2's degraded-surface list decides whether the gate 
 print("  at Phase 5 at all.")
 print()
 print("## Share bars (CHG-005)")
-share = sorted(set(re.findall(r'class="([^"]*(?:share|bar-track|bar-fill)[^"]*)"', body)))
-print("  share-bar markup on /admin/revenue:", share or "NONE FOUND by class name")
+# Structural, not name-based. The first version searched for class names containing
+# "share" or "bar" and reported the bars absent; they are there and they are called
+# .meter. A grep that finds nothing is not evidence of absence when the grep guessed
+# the name. This enumerates what actually draws a proportional mark.
+meter_tmpl = sorted(str(q) for q in Path("monti/templates").rglob("*.html")
+                    if 'class="meter' in q.read_text())
+print("  templates drawing a proportional bar (class=\"meter\"):", len(meter_tmpl))
+for t in meter_tmpl:
+    print("   ", t)
+css = Path("monti/static/css/app.css").read_text()
+for cls in (".meter", ".meter-head", ".meter-track", ".meter-fill", ".meter-green"):
+    defined = bool(re.search(re.escape(cls) + r"[ ,{:]", css))
+    used = any(cls.lstrip(".") in q.read_text() for q in Path("monti/templates").rglob("*.html"))
+    print(f"  {cls:14} defined in app.css: {'yes' if defined else 'NO':3}   used by a template: {'yes' if used else 'NO'}")
+print("  -> the templates use .meter, which has no rule; app.css defines three")
+print("     meter-* classes that no template uses. Computed styles are in meter-probe.mjs.")
 print("  client rows on the revenue screen: ", len(re.findall(r"/admin/clients/[0-9]+/open", body)))
 css = Path("monti/static/css/app.css").read_text()
 print("  share/track/fill rules in app.css: ", sorted(set(CSS_RULE.findall(css))) or "none")
 print()
 print("## Sparkline (CHG-002)")
-print("  'spark' appears on /admin/revenue: ", "spark" in body)
-sparks = sorted({str(p) for p in Path("monti/templates").rglob("*.html") if "spark" in p.read_text()})
-print("  templates mentioning a sparkline:  ", sparks or "NONE — no sparkline exists in this build")
+# Structural again: a sparkline is a line, so look for elements that draw one rather
+# than for the word "sparkline".
+lines = {tag: sum(len(re.findall("<" + tag + r"\b", q.read_text()))
+                  for q in Path("monti/templates").rglob("*.html"))
+         for tag in ("polyline", "path", "circle")}
+print("  line-drawing SVG elements across all 81 templates:", lines)
+print("  -> no <polyline> and no <path> anywhere. There is no sparkline in this build,")
+print("     and analytics.PERIODS has no 30-day window to draw one for.")
 print()
 print("## Period vocabulary (CHG-009)")
 import monti.analytics as A

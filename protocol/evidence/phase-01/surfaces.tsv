@@ -156,6 +156,7 @@ template	monti/templates/public/how_it_works.html	how_it_works.html	public		CHG-
 template	monti/templates/public/membership.html	membership.html	public		CHG-016
 template	monti/templates/public/quote.html	quote.html	public		CHG-016
 template	monti/templates/public/quote_received.html	quote_received.html	public		CHG-016
+module	app.py	7 lines	engine		
 module	monti/__init__.py	118 lines	monti		CHG-003
 module	monti/agents.py	176 lines	monti		
 module	monti/analytics.py	95 lines	monti		CHG-001,CHG-002,CHG-008,CHG-009
@@ -183,8 +184,42 @@ module	monti/purge.py	161 lines	monti		CHG-003,CHG-017
 module	monti/seed.py	495 lines	monti		CHG-003
 module	monti/tooling.py	169 lines	monti		
 module	monti/utils.py	162 lines	monti		CHG-011
-module	app.py	7 lines	engine		
+module	tests/audit.py	83 lines	tests		
+module	tests/checks/__init__.py	44 lines	checks		
+module	tests/checks/agents.py	100 lines	checks		CHG-017
+module	tests/checks/brand.py	248 lines	checks		
+module	tests/checks/data.py	93 lines	checks		
+module	tests/checks/gating.py	238 lines	checks		
+module	tests/checks/ledgercheck.py	625 lines	checks		CHG-014
+module	tests/checks/money.py	76 lines	checks		CHG-014
+module	tests/checks/onedoor.py	247 lines	checks		
+module	tests/checks/provenance.py	225 lines	checks		CHG-001
+module	tests/checks/tenancy.py	81 lines	checks		CHG-017
+module	tests/checks/tooling.py	188 lines	checks		CHG-001
+module	tests/checks/viewer.py	66 lines	checks		
+module	tests/class_a.py	428 lines	tests		
+module	tests/evidence.py	527 lines	tests		
+module	tests/smoke.py	822 lines	tests		
 schema	monti/schema.sql	804 lines	data		CHG-003,CHG-015,CHG-017
+config	.env.example	2593 bytes	engine		
+config	.gitignore	130 bytes	engine		
+config	Dockerfile	318 bytes	engine		
+config	Procfile	68 bytes	engine		
+config	README.md	17434 bytes	engine		
+config	requirements.txt	52 bytes	engine		CHG-014
+engine-evidence	evidence/brand-inventory.csv	191 lines	evidence		
+engine-evidence	evidence/class-a-proofs.md	101 lines	evidence		
+engine-evidence	evidence/class-a-results.json	98 lines	evidence		
+engine-evidence	evidence/current-clients.md	42 lines	evidence		
+engine-evidence	evidence/final-evidence-report.md	258 lines	evidence		
+engine-evidence	evidence/fixture-inventory.csv	509 lines	evidence		
+engine-evidence	evidence/ledger-period-proofs.md	27 lines	evidence		
+engine-evidence	evidence/ledger-reconciliation.md	24 lines	evidence		
+engine-evidence	evidence/prototype-inventory.md	140 lines	evidence		
+engine-evidence	evidence/punch-list.csv	58 lines	evidence		
+engine-evidence	evidence/purge-evidence.md	53 lines	evidence		
+doc	monti-makes-it/PROTOCOL.md	2639 lines	docs		
+doc	monti-makes-it/START-HERE.md	123 lines	docs		
 table	agent_access_log	7 columns	data		
 table	agent_proposals	9 columns	data		
 table	applications	29 columns	data		CHG-003

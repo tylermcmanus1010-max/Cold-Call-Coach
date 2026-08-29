@@ -36,7 +36,36 @@ const probe = await p.evaluate(() => {
   out.clientRows = document.querySelectorAll('a[href*="/admin/clients/"]').length;
   return out;
 });
-console.log(JSON.stringify(probe,null,2));
+import { writeFileSync } from 'fs';
+const lines = [
+  '# Computed styles, read from Chromium — CHG-001 and CHG-005',
+  '# Written by meter-probe.mjs against a throwaway seeded database (§1.5).',
+  '# These figures are measured, not transcribed: this file is the probe output.',
+  '',
+  '## The chart (CHG-001), with data to draw',
+  `  rect.chart-bar   fill              ${probe.chartBarFill}`,
+  `  marks rendered                     ${probe.chartBars}`,
+  `  distinct mark heights              ${probe.distinctBarHeights}`,
+  '',
+  '## The share bar (CHG-005), with rows to draw',
+  `  .meter           background-color  ${probe.meterBg}`,
+  `  .meter           border-width      ${probe.meterBorder}`,
+  `  .meter           height            ${probe.meterHeight}`,
+  `  .meter           bounding box      ${probe.meterRect?.join(' x ')}`,
+  `  .meter > span    display           ${probe.spanDisplay}`,
+  `  .meter > span    inline style      ${probe.spanInlineWidth}`,
+  `  .meter > span    bounding box      ${probe.spanRect?.join(' x ')}`,
+  `  .meter elements on the page        ${probe.meterCount}`,
+  '',
+  '  The span is display:inline, so its width:100% does nothing. The bar is 0 pixels',
+  '  tall and 0 pixels wide. It is not illegible; it does not render.',
+  '',
+  '## Screenshots written by this run',
+  '  chg-005-share-bars.png        the Share column, and CHG-010 in the same table',
+  '  chg-001-chart-with-data.png   90 marks, all black',
+];
+writeFileSync(OUT + '/computed-styles.txt', lines.join('\n') + '\n');
+console.log(lines.join('\n'));
 const card = p.locator('.card').filter({hasText:'Revenue by client'}).first();
 await card.screenshot({ path: OUT+'/chg-005-share-bars.png' }).catch(()=>p.screenshot({path:OUT+'/chg-005-share-bars.png'}));
 await p.locator('.chart-wrap').screenshot({ path: OUT+'/chg-001-chart-with-data.png' }).catch(()=>{});

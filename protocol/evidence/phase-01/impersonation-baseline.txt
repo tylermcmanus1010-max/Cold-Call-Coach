@@ -11,15 +11,13 @@ GET /admin/clients/1/open -> 302 -> /portal/
 
 ## After
 admin GET /portal/ -> 200   (200 = full member portal)
-admin-view banner rendered:          yes   (template _shell.html:17, g.viewing_as set in auth.py:80)
-  banner text: Admin view · you are looking at Boars Head\'s portal
+admin-view banner rendered:          yes   (_shell.html:17, g.viewing_as set at auth.py:80)
 rows written to security_log:        0
 
 ## Write access during impersonation
 POST /portal/requests while impersonating -> 302 /portal/products/MMI-D-003
   a write landed as the member: YES — MMI-Q-1001
-  separate logged elevation required: no
-  read-only by default:               no
+  read-only by default: no   separate logged elevation: no
   (probe rows removed)
 security_log rows after the write:   0
 
@@ -32,5 +30,5 @@ security_log rows after the write:   0
   visible in the member's security log in one page load    NOT MET — no member-facing security log surface exists
   write actions require a separate logged elevation        NOT MET
 
-The security_log table exists in schema.sql:502 and is written by nothing.
-Its only other reference is monti/purge.py:43, as an orphan-sweep target.
+security_log is created at schema.sql:502 and written by nothing. Its only other
+reference is monti/purge.py:43, as an orphan-sweep target.

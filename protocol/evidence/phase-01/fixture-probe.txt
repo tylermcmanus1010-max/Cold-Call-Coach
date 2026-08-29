@@ -1,46 +1,34 @@
 # CHG-003 baseline — fixture data and the standing guard
 
 ## Tables carrying an is_fixture marker
-  with is_fixture:    7  applications, catalog_items, customers, decision_items, ledger_entries, orders, quotes
-  without:            38
+  with is_fixture: 7  applications, catalog_items, customers, decision_items, ledger_entries, orders, quotes
+  without:         38  — on these a fixture row is not nameable
 
-## Fixture rows on a freshly launched database
+## Fixture rows on this database
   TOTAL fixture rows: 0
 
-## Real data present after launch
+## Rows present (this is a launched database — one real client)
   customers          1
-  users              1   (a bare `flask launch` creates the admin only; the
-                         member user in the render census was added by the
-                         operator to run the sweep, and is not launch output.
-                         Corrected after QA-01.)
+  users              2
   catalog_items      2
   orders             0
   quotes             0
   decision_items     2
   ledger_entries     0
   client_agents      1
+  NOTE: a bare `flask launch` creates ONE user, the admin. Any member user
+  present was added by whoever ran the render census, not by launch.
 
-## Purge machinery in the build
-  purge module                         present, 161 lines
-  demo seeder                          present, 495 lines
-  launch (real client provisioning)    present, 412 lines
+## The standing guard
+  monti/__init__.py:100 — the only guard. `flask launch` refuses to run when a
+  customer carries is_fixture = 1:
+    "Fixture rows are still present. Run `flask purge-fixtures` first — "
+                "laun..."
+  It fires once, at launch, on one table. Nothing refuses a fixture row at write
+  time on any table, and 38 of the 45 tables carry no marker at all.
+  monti/seed.py writes is_fixture = 1 deliberately; monti/purge.py deletes and
+  sweeps orphans. Neither is a guard.
 
-## Standing guard — does a reintroduced fixture row get refused?
-  guard-shaped functions in monti/purge.py: NONE
-  modules that both mention is_fixture and raise/abort: monti/__init__.py,
-  monti/seed.py, monti/purge.py — checked individually rather than trusted:
-
-    monti/__init__.py:100   the ONLY real guard. `flask launch` refuses to run if
-                            any customer carries is_fixture = 1:
-                              "Fixture rows are still present. Run `flask purge-fixtures`
-                               first — launching on top of demo data is how a demo
-                               customer reaches production."
-                            It fires once, at launch, on one table.
-    monti/seed.py           writes is_fixture = 1 deliberately; it is the seeder.
-    monti/purge.py          deletes them and sweeps orphans. Not a guard.
-
-  So the third clause of CHG-003's gate — "the guard fires on a deliberately
-  reintroduced fixture row" — is met only for the launch command and only for the
-  customers table. Nothing refuses a fixture row at write time, and 38 of the 45
-  tables carry no is_fixture marker at all, so on those a fixture row is not even
-  nameable. DATAOPS-01 owns SK-38 and calls this gate at Phase 2.
+  CHG-003's third gate clause — 'the guard fires on a deliberately reintroduced
+  fixture row' — is therefore met only for `flask launch` and only for customers.
+  DATAOPS-01 owns SK-38 and calls this gate at Phase 2.

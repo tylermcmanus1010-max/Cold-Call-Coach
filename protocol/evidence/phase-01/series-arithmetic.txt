@@ -1,0 +1,36 @@
+# CHG-001 — do the marks sum to the headline?
+
+`_window(days)` returns (utcnow() - days, utcnow()) — both carrying a time of day.
+The SQL sums every PAID order in [start, end). The bucket loop then starts at
+parse(start) and emits exactly `days` buckets, one per calendar date.
+
+period        headline      marks sum           gap  points  buckets
+--------------------------------------------------------------------------------------------
+7d          15,372,509     13,461,163     1,911,346       7  Aug 22 .. Aug 28
+21d         44,592,041     42,680,695     1,911,346      21  Aug 8 .. Aug 28
+45d         83,962,892     82,051,546     1,911,346      45  Jul 15 .. Aug 28
+90d        168,278,382    166,367,036     1,911,346      90  May 31 .. Aug 28
+180d       316,297,801    314,386,455     1,911,346     180  Mar 2 .. Aug 28
+365d       536,769,542    534,858,196     1,911,346     365  Aug 29 .. Aug 28
+
+For 7d:  SQL window  [2026-08-22 18:49:40, 2026-08-29 18:49:40)
+         buckets     Aug 22 .. Aug 28
+         today is    Aug 29
+
+Two defects in one loop:
+
+  1. TODAY IS NEVER DRAWN. The window ends at utcnow(), so today's orders are
+     inside the SQL result and inside the headline. The loop emits `days`
+     buckets starting from the window's start date, which lands on yesterday.
+     Today's revenue is counted in the total and has no bar.
+
+  2. THE OLDEST BAR IS A PARTIAL DAY, DRAWN AS A WHOLE ONE. The window starts
+     mid-afternoon seven days ago, so the first bucket holds only part of that
+     date's revenue and is rendered the same height a full day would be.
+
+CHG-001's gate: 'Marks sum to the headline total.' They do not, at any period.
+VIZ-01's charter: 'Every chart that represents a period must reconcile to the
+ledger for that period. A chart that disagrees with the ledger is a P0
+regardless of how it looks.' This one disagrees with its own headline.
+
+This is independent of the black fill. Fixing the stylesheet leaves it intact.

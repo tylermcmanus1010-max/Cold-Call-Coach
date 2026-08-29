@@ -1,8 +1,7 @@
 # Phase board
 
 **Protocol:** Monti Makes It — Master Build Protocol v2.0, **Amendment 1**, 29 Aug 2026
-**Authorization:** `HOLD`
-**Status:** set up, reported, stopped before Phase 1 (§0.1).
+**Authorization:** `GO`
 
 ---
 
@@ -10,87 +9,62 @@
 
 ```
 PHASE 1 — Freeze and inventory
-  owner:     AIM-00            verifier: QA-01 (inventory traversal)
+  gate:      FAIL x2, re-submitted
+  owner:     AIM-00            verifier: QA-01 (inventory traversal, D-003)
   skills:    SK-46, SK-43  (+ SK-42 — see D-013)
-  entry:     Tyler says go. §4.6 answered by D-001; §0.2 recorded.
-  status:    NOT OPENED — AUTHORIZATION is HOLD
+  entry:     MET — Tyler said go; §4.6 answered by D-001; §0.2 recorded
+  frozen at: f0b0e58bf0660a2d3963b3feacbe615b00a948ec
 ```
 
-Phase 1's verifier is QA-01, not RES-01, by **D-003**. §13.4 stands unamended: RES-01 never
-calls a gate, anywhere, with no exceptions. RES-01 is subscribed to Phase 1 as to every
-phase — if the gate FAILs, it wakes.
+**Gate history.** QA-01 has called this gate twice and failed it twice, both times on
+clauses 1 and 3 — the completeness of the census and the mapping inside it. Clauses 2 and
+4 passed both times. RES-01 woke on each FAIL and ran §13.3 in order; move 1 killed
+nothing either time, so both were move 2.
 
-**Entry condition, itemised:**
+| Run | Verdict | What failed | What RES-01 did |
+|---|---|---|---|
+| 1 | FAIL | Census omitted Python modules, CLI commands and the prototype while items were mapped onto module paths. `surfaces.tsv` had no item column, so neither reading of "no surface is unmapped" was answerable. 14 factual errors. | Regenerated the census with an `items` column; corrected all 14 in place, marked as corrections. |
+| 2 | FAIL | `flask init-db`, `app.py`, `schema.sql` and two of three prototype files still missing. The item column was a substring match over paths — CHG-011 on all 81 templates including 46 with no currency, CHG-005 and CHG-014 missing their real surfaces. Most evidence shipped no probe. **And `.meter` has no rule in `app.css` — the share bars render nothing, which the inventory had attributed to one-client data.** | Census now reads CLI from `app.cli.commands` and derives the item mapping from file content. Every probe ships and reproduces. D-030 filed. |
 
-| Requirement | Source | State |
-|---|---|---|
-| §4.6 answered | §7 Phase 1 entry | **MET** — D-001, signed 29 Aug 2026 |
-| §0.2 recorded | §7 Phase 1 entry | **MET** — recorded in the protocol and in `decisions.md` |
-| Tyler says go | §7 Phase 1 entry, §0.1 | **NOT MET** — AUTHORIZATION reads `HOLD` |
-
-Change `AUTHORIZATION: HOLD` to `GO` and Phase 1 opens.
+**res:** §13.3 moves 1–2 both times; moves 3–5 not reached. Nothing is blocked with no
+proposed path (§13.6).
 
 ---
 
-## What §0.7 produced
+## Register
 
-| File | State |
+15 items, all OPEN, no evidence attached to any. Phase 1 produces the map, not the fixes.
+
+---
+
+## Open decisions
+
+31 filed in `decisions.md`. D-001/002/003 answered by Tyler; D-004 to D-031 open. The
+ones that bite before Phase 4 opens:
+
+| ID | One line |
 |---|---|
-| `protocol/register.md` | **SEEDED** — all 15 in-line items, owners, verifiers, skills, phase, status OPEN, and each acceptance gate copied verbatim from §9 |
-| `protocol/decisions.md` | **WRITTEN** — D-001, D-002, D-003 recorded as answered; 22 findings filed as D-004…D-025 |
-| `protocol/phase-board.md` | this file |
-| `protocol/surface-inventory.md` | **NOT PRODUCED** — Phase 1's output |
-| `protocol/citation-register.md` | **NOT OPENED** — Phase 3 opens it |
-| `protocol/evidence/phase-NN/` | 22 directories, all empty |
-
----
-
-## Open
-
-Nothing is failing, because nothing has run. What is open is the 22 findings in
-`decisions.md` Part 2. Four of them touch Phase 1 or Phase 2 and are worth answering before
-`GO`; the rest can wait for the phase they bite at.
-
-| ID | Bites at | One line |
-|---|---|---|
-| **D-016** | Phase 11; blocks a P0 and a launch line | Four gates require a human this session cannot supply |
-| **D-019** | Phase 4 | Four gates score against thresholds the document never states |
-| **D-013** | Phase 1 | Phase 1's skills line omits SK-42, which its own exit gate requires |
-| **D-014** | Phase 1 | Amendment 1 left four counts stale, one of them inside Phase 1 |
-| D-004 | Phase 1 | §2.1 and §9 name different verifiers for CHG-001, CHG-015, CHG-016 |
-| D-012 | Phase 1 | SK-34 and SK-45 are ACTIVE and exercised in no phase |
-| D-020 | Phase 2 | "Cycle" is undefined and is the unit of five gates, one now a launch line |
-| D-010 | now, at §2.4 | A dormant skill sits inside CHG-004's skill range |
-| D-011 | Phase 3 | A dormant skill is listed as executed by two active agents |
-| D-005 | Phase 5 | An item's verifier is not among its phase's verifiers |
-| D-008 | Phase 5 | SK-53 is owned by both VIZ-01 and QA-01 |
-| D-018 | Phase 5 | CHG-001's gate presupposes data Phase 2 may not leave |
-| D-017 | Phase 7 | CHG-005's gate is vacuous with one client |
-| D-006 | Phase 8 | CHG-010's owner is DS-01 in §2.1 and ADMIN-01 at Phase 8 |
-| D-009 | Phase 13 | SK-24's owner is contested three ways |
-| D-021 | Phase 20 | A research domain has no in-scope decision to cite against |
-| D-022 | Phase 16 | Phase 16's entry names one of two financial domains |
-| D-007 | Phase 18 | SK-51 has two owners in §6 and none in any charter |
-| D-015 | Phase 19 | At Phases 19, 20 and 21 nobody performs §4.2's third leg |
-| D-023 | hygiene | §4.1's diagram and prose disagree on three roles |
-| D-024 | hygiene | §10 has no 10.1–10.3; "21 phases" is 22 steps |
-| D-025 | hygiene | RES-01 has no loadout; CLIENT-BH-01's owned skill is not a skill |
-
-**res:** nothing has failed, so RES-01 has not woken. It is subscribed and idle (§13.2).
+| **D-016** | Four gates name a human this session is not — one of them blocks a P0, one is a launch line |
+| **D-019** | Four gates score against thresholds the document never states |
+| **D-030** | CHG-001 and CHG-005 are one layer defect, not two screen defects — §1.4 makes the layer the unit of work |
+| **D-031** | CHG-001's marks do not sum to its headline at any period; the stylesheet fix will not touch it |
+| **D-029** | "No surface is unmapped" has two readings; under one the gate is unpassable |
+| **D-013** | Phase 1's skills line omits SK-42, which its own exit gate requires |
+| **D-014** | Amendment 1 left four counts stale, one inside Phase 1 |
+| D-026 | CHG-002 and CHG-012 describe defects this build does not have |
+| D-027 | VIZ-01's charter diagnoses a defect that is not the one present |
+| D-028 | The period picker is unstyled; no in-line item covers it |
 
 ---
 
 ## Next
 
-`GO` opens Phase 1: AIM-00 freezes the build and inventories every surface, chart, string,
-table and document path; QA-01 traverses the inventory and calls the gate.
-
-The register is already seeded, which is part of Phase 1's work, so Phase 1 opens with that
-half done and the inventory outstanding.
+Nothing opens until QA-01 passes Phase 1. Phase 2 (fixture purge, DATA-01 / DATAOPS-01)
+is what follows it.
 
 ---
 
 ## Standing agents
 
 SITE-01, RSCH-01 and CLIENT-BH-01 run continuously and block nothing (§8.4). None has
-started; the build is not initiated. RES-01 fires on failure only and is never scheduled.
+filed anything yet. RES-01 has woken twice, on the two FAILs, and is idle between them.

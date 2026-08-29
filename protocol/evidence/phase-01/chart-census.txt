@@ -21,29 +21,62 @@
   hover affordance present:      True
   drill-down link on a mark:     NO — marks are not links (CHG-008)
 
-  Note the dataset: after launch this build holds one client and zero orders, so the
-  marks are honest zeroes. CHG-001's gate asks for 'seven distinct daily marks' and
+  Measured again against the throwaway seeded database, where there is data to draw:
+    90 marks, 81 distinct heights, fill rgb(0, 0, 0).
+  That is the solid black block CHG-001 names, seen. Screenshot:
+  chg-001-chart-with-data.png.
+
+  On the launched database this build holds one client and zero orders, so the marks are
+  honest zeroes. CHG-001's gate asks for 'seven distinct daily marks' and
   'tallest equals Best Day' — see D-018; that is a property of the data, not of the
   renderer, and Phase 2's degraded-surface list decides whether the gate is testable
   at Phase 5 at all.
 
-## Share bars (CHG-005) — CORRECTED
+## Share bars (CHG-005) — the same defect as the chart, measured
 
-  A first pass here searched for class names containing "share" or "bar" and reported
-  NONE FOUND. That was the probe being narrower than the build, not the build being
-  empty. Recorded rather than quietly fixed: a grep that returns nothing is not
-  evidence of absence, and this inventory is what every later phase indexes against.
+  Two corrections, both found by QA-01 rather than by me.
 
-  Structurally, the share bars exist:
-    monti/templates/admin/revenue.html   "Revenue by client" table, Share column
-      <div class="meter"><span style="width:{{ (r.revenue / top * 100)|round|int }}%"></span></div>
-    app.css rules: .meter, .meter-track, .meter-fill
-    .meter is used on 4 surfaces: admin/revenue.html, admin/order_detail.html,
-      portal/quote_detail.html, and (as .quota-dot rows) 4 more.
+  FIRST: a probe searching for class names containing "share" or "bar" reported the
+  share bars absent. They are there, called `.meter`, on three templates:
+    monti/templates/admin/revenue.html      "Revenue by client" table, Share column
+    monti/templates/admin/order_detail.html
+    monti/templates/portal/quote_detail.html
+  The markup is:
+    <div class="meter"><span style="width:{{ ...|round|int }}%"></span></div>
 
-  The bar is width-as-percentage-of-top-client. With one client after the purge that is
-  always 100%. See D-017: the gate asks a reader to rank all clients from the bars, and
-  after Phase 2 there is one.
+  SECOND, and this is a build defect rather than a probe error: **`.meter` has no rule
+  in app.css.** The file defines `.meter-head`, `.meter-head strong`, `.meter-track` and
+  `.meter-fill` at lines 270-273 — and NO TEMPLATE USES ANY OF THEM. `.meter-green`
+  (admin/order_detail.html:23) is undefined too. Both halves of the contract exist and
+  they do not match.
+
+  Measured in Chromium at 1440x1000 against a throwaway seeded database (§1.5's
+  explicitly labelled local development seed), so the table had rows to draw:
+
+    .meter        background-color  rgba(0, 0, 0, 0)
+    .meter        border-width      0px
+    .meter        height            0px
+    .meter        bounding box      127 x 0
+    .meter > span display           inline        <-- ignores width
+    .meter > span inline style      width:100%
+    .meter > span bounding box      0 x 0
+
+  The share bar is not illegible. It renders **nothing** — zero pixels, in both themes.
+  CHG-005's gate reads "A reader ranks all clients correctly from the bars alone with
+  numbers hidden. Track and fill visible in both themes." There is no track and no fill.
+
+  Screenshot chg-005-share-bars.png shows the Share column on seven clients: the
+  percentage text and no bar of any kind. The same screenshot shows CHG-010's defect in
+  the same table — a filled "Open portal" button repeated on every row.
+
+  This makes CHG-001 and CHG-005 the same defect: a class name in a template that the
+  only loaded stylesheet does not define. §8.1 predicted exactly this shape — "DS-01 and
+  VIZ-01 doing one job each that closes four items." Filed as D-030.
+
+  An earlier version of this file said "app.css rules: .meter, .meter-track, .meter-fill"
+  and ".meter is used on 4 surfaces ... and (as .quota-dot rows) 4 more". Both were
+  wrong: `.meter` has no rule, three templates use it, and .quota-dot appears in three
+  templates and is not a meter.
 
 ## Sparkline (CHG-002) — this one really is absent
 

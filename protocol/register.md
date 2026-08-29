@@ -7,8 +7,15 @@ Seeded at §0.7 step 2 with all 15 in-line items from §2.1. Every acceptance ga
 **copied verbatim from §9** — per §1.2 these were written before any work starts, and they
 are not reworded here.
 
-**Build status:** AUTHORIZATION is `HOLD`. Phase 1 has not opened. Every item is OPEN and
-no work has begun on any of them.
+**Build status:** AUTHORIZATION is `GO`. **Phase 1 is open** and has been through its
+gate twice — QA-01 called FAIL both times, on the inventory's completeness and on the
+item mapping, and RES-01 has run §13.3 twice. No item below has moved: every one is OPEN
+with no evidence, because Phase 1 produces the map, not the fixes.
+
+Phase 1 measured each item's state against the frozen build rather than trusting §2.1's
+description of it. Those measurements are in `surface-inventory.md` §4 and are **not**
+credit: under §1.1 nothing counts without evidence attached here and countersigned by the
+named verifier.
 
 Severity is assigned by AIM-00 (§3) and is carried here exactly as §2.1 states it. Any
 change to a P0 or P1 severity is a hard stop for Tyler (§12 step 4, §0.8).

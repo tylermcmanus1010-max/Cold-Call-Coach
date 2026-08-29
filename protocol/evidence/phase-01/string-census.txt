@@ -3,8 +3,9 @@
 ## Externalization machinery present in the build
   NONE. No catalogue, no extraction config, no string table, no gettext import.
 
-## Template text nodes (visible copy)
+## Template text nodes   pattern: >\s*([A-Z][^<>{}\n]{3,}?)\s*<
   files with copy: 78   total nodes: 1181
+  of which email templates: 17 files, 90 nodes — part of the total above, not additional to it
        69  monti/templates/admin/crm_detail.html
        49  monti/templates/admin/order_detail.html
        48  monti/templates/portal/products.html
@@ -22,42 +23,25 @@
        27  monti/templates/public/membership.html
     ... 63 more files
 
-## flash() messages (errors, validation, confirmations)
+## flash() messages   pattern: flash\(
   files: 4   total calls: 90
        61  monti/blueprints/admin.py
        21  monti/blueprints/portal.py
         6  monti/auth.py
         2  monti/blueprints/public.py
 
-  CORRECTED after QA-01 failed this phase. The first count read 85 across 3 modules:
-  monti/blueprints/public.py was missed entirely and each of the other three was one
-  short. The regex required a quote immediately after the opening paren, so a call
-  written with the message on the next line slipped past it.
-
-## Email templates — where English leaks (I18N-01 charter, Phase 10 order)
-  templates: 18   text nodes: 90
-
 ## Language preference storage
-
-  users columns: ['id', 'email', 'password_hash', 'name', 'role', 'customer_id',
-                  'is_active', 'must_change_password', 'last_login_at', 'created_at']
-  language column on users:     NO
+  language column on users: NO
   language column on customers: NO
 
-§4.4 I18N-01: "Language preference is stored per user, not per company. A client can
-have an English-speaking buyer and a Spanish-speaking receiver."
-
-Neither column exists. That schema change belongs to Phase 10, owned by I18N-01, and
-SK-39 (migration safety, DATA-01) governs how it lands.
+§4.4 I18N-01: 'Language preference is stored per user, not per company.'
+Neither column exists. That schema change belongs to Phase 10, and SK-39
+(migration safety, DATA-01) governs how it lands.
 
 ## Summary for the register
-
-CHG-016 is unbuilt in full. Nothing is externalized, no catalogue exists, no language
-column exists. The work Phase 10 gates on is 1,181 template text nodes across 78 files — of which the
-18 email templates contribute 90, part of that total and not additional to it — plus 90
-flash() messages across 4 modules. Phase 10's own instruction is that email templates are
-checked first, because that is where English leaks.
-
-Both figures were wrong in the first version of this file: 85 flash calls across 3
-modules, and the email nodes presented as 90 "more". Corrected after QA-01 failed the
-phase.
+CHG-016 is unbuilt in full: no catalogue, no extraction config, no string table,
+no language column. Phase 10 gates on 1181 template text nodes across
+78 files (the 17 email templates contribute 90 of them)
+plus 90 flash() messages across 4 modules. Phase 10's own
+instruction is that email templates are checked first, because that is where
+English leaks.

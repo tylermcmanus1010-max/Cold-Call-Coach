@@ -1,7 +1,7 @@
 # Render census — every GET surface, three viewers, real responses through the app
-# frozen build · 56 GET routes swept
+# 56 GET routes swept
 # member login OK · admin login OK
-# held out of the sweep because they mutate the session, probed separately below:
+# held out because they mutate the session, probed separately below:
 #   admin.close_client, admin.open_client, auth.login, auth.logout
 
 route                                        anon  mbr  adm  signout money$ chart
@@ -64,18 +64,15 @@ route                                        anon  mbr  adm  signout money$ char
 /quote                                        200  200  200        0      1      
 
 GET surfaces swept: 56 · rendered 200 for at least one viewer: 41
-Surfaces where 'Sign out' appears more than once: 0
+'Sign out' per surface — once: 30 · zero: 11 · unmeasured: 15 · MORE THAN ONCE: 0
+  The 'zero' surfaces are the public pages, the password page and the two CSV
+  exports — none of which loads the shell that carries the control.
 
 ## Held-out probes
 GET /admin/clients/1/open -> 302 /portal/
-  rows written to security_log by that impersonation: 0
-  admin now sees the member portal: 200; view marked in the page: YES
-    CORRECTED. The first run of this line searched for the strings 'view_as' or
-    'Viewing as' and reported False. The banner exists and renders — it says
-    "Admin view · you are looking at <company>'s portal" (_shell.html:17, driven
-    by g.viewing_as set at auth.py:80). The probe string was wrong, not the build.
-    impersonation-baseline.txt had the right answer; this file contradicted it and
-    the contradiction went unreconciled until QA-01 found it.
-GET /admin/clients/close -> 302 /admin/crm
+  rows written to security_log: 0
+  admin now sees the member portal: 200
+  admin-view banner rendered: YES (_shell.html:17, g.viewing_as at auth.py:80)
+GET /admin/clients/close -> 302
 GET /logout (member) -> 302 /
-  after logout, GET /portal/ -> 302 (expect 302 to login)
+  after logout, GET /portal/ -> 302 (expect 302)

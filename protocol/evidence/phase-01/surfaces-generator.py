@@ -1,115 +1,145 @@
-"""The canonical surface list, v2 — rebuilt after QA-01 failed clause 1 and clause 3.
+"""The canonical surface list. Run from monti-makes-it/engine with DATABASE_PATH set.
 
-What changed and why:
-  + python modules      six in-line items were mapped onto module paths that the
-                        "complete" census did not contain (QA-01, clause 1).
-  + CLI commands        CHG-003's only guard lives in `flask launch`, which was
-                        not a surface in v1.
-  + the prototype       §1 claimed it was inventoried as one surface. It was not.
-  + an `items` column    v1 had no way to say which surfaces carry an in-line item,
-                        so "no surface is unmapped" was unanswerable from the data
-                        (QA-01, clause 3). Now both readings of that phrase are.
-  ~ document rows       all five duplicated a route row. They are kept, because a
-                        document is a distinct thing from the route that serves it,
-                        but marked `duplicate_of` so the distinct count is honest.
+    PYTHONPATH=. DATABASE_PATH=<a launched db> python surfaces-generator.py > surfaces.tsv
+
+Columns: kind, surface, detail, area, duplicate_of, items
+
+The `items` column is DERIVED FROM CONTENT, not from path prefixes. The first two
+versions of this file matched item patterns against the surface *name*, which gave
+CHG-011 all 81 templates (46 of which render no currency at all) while missing the
+two share-bar templates for CHG-005, the receipt templates for CHG-014, and a
+repeated primary button in admin/catalog_detail.html for CHG-010. QA-01 failed the
+phase on it twice. Each rule below now opens the file and looks.
 """
-import os, sqlite3
+import os, re, sqlite3
 from pathlib import Path
 from monti import create_app
 
 app = create_app()
+ROOT = Path(".")
 
-# The item -> surface mapping, stated once. Values are matched against the
-# surface name, so a prefix covers a family of routes.
-ITEMS = {
-    "CHG-001": ["GET /admin/revenue", "monti/templates/admin/revenue.html",
-                "monti/static/css/app.css", "monti/analytics.py"],
-    "CHG-002": ["GET /admin/revenue", "monti/analytics.py",
-                "monti/templates/admin/revenue.html"],
-    "CHG-003": ["applications", "catalog_items", "customers", "decision_items",
-                "ledger_entries", "orders", "quotes", "monti/purge.py", "monti/seed.py",
-                "flask launch", "flask purge-fixtures", "monti/__init__.py"],
-    "CHG-004": ["/portal/", "monti/templates/portal/"],
-    "CHG-005": ["GET /admin/revenue", "monti/templates/admin/revenue.html",
-                "monti/static/css/app.css"],
-    "CHG-008": ["GET /admin/revenue", "GET /admin/orders", "monti/analytics.py"],
-    "CHG-009": ["GET /admin/revenue", "GET /admin/ledger", "GET /portal/ledger",
-                "monti/analytics.py", "monti/ledger.py"],
-    "CHG-010": ["GET /admin/revenue", "monti/templates/admin/revenue.html",
-                "monti/static/css/app.css"],
-    "CHG-011": ["monti/static/css/app.css", "monti/utils.py",
-                "monti/templates/", "GET /admin/", "/portal/"],
-    "CHG-012": ["monti/templates/_shell.html"],
-    "CHG-013": ["monti/static/css/app.css", "monti/templates/"],
-    "CHG-014": ["monti/ledger.py", "ledger_entries", "GET /admin/ledger/receipt",
-                "GET /portal/ledger/receipt", "Receipt"],
-    "CHG-015": ["decision_items", "item_revisions", "item_genome",
-                "monti/templates/portal/products.html", "monti/templates/admin/desk.html",
-                "monti/genome.py"],
-    "CHG-016": ["monti/templates/", "monti/blueprints/", "monti/auth.py", "users", "customers"],
-    "CHG-017": ["GET /admin/clients/<int:customer_id>/open", "GET /admin/clients/close",
-                "security_log", "monti/blueprints/admin.py", "monti/auth.py",
-                "monti/templates/_shell.html"],
+def read(p):
+    try:
+        return Path(p).read_text()
+    except Exception:
+        return ""
+
+# --- content probes -------------------------------------------------------
+MONEY   = re.compile(r"\|money|'%\.[24]f'\s*\|\s*format|/ 100\b")
+HEX     = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+STATUS  = re.compile(r"var\(--(good|warn|crit|stop|wait|red|amber)\)|badge-(green|red|amber)")
+TEXT    = re.compile(r">\s*([A-Z][^<>{}\n]{3,}?)\s*<")
+FLASH   = re.compile(r"flash\(")
+# a filled primary button inside a row of a loop — CHG-010's stated defect
+ROWBTN  = re.compile(r"<a[^>]*class=\"[^\"]*btn[^\"]*\"[^>]*>(?:(?!</a>).)*</a>", re.S)
+
+TEMPLATES = sorted(Path("monti/templates").rglob("*.html"))
+MODULES   = [p for p in sorted(Path("monti").rglob("*.py")) if "__pycache__" not in str(p)]
+MODULES  += [Path("app.py")] if Path("app.py").exists() else []
+
+def template_items(p):
+    src, rel, out = read(p), str(p), set()
+    if MONEY.search(src):                                   out.add("CHG-011")
+    if HEX.search(src) or STATUS.search(src):                out.add("CHG-013")
+    if TEXT.search(src):                                     out.add("CHG-016")
+    if 'class="meter' in src:                                out.add("CHG-005")
+    if "{% for" in src and ROWBTN.search(src) and "<td" in src: out.add("CHG-010")
+    if rel.startswith("monti/templates/portal/"):            out.add("CHG-004")
+    if "chart-bar" in src or "chart-svg" in src:             out.update({"CHG-001", "CHG-002", "CHG-008"})
+    if "range-btn" in src or "periods" in src:               out.add("CHG-009")
+    if "auth.logout" in src:                                 out.add("CHG-012")
+    if "viewing_as" in src:                                  out.add("CHG-017")
+    if "receipt" in rel or "receipt" in src.lower():          out.add("CHG-014")
+    if "revision" in src.lower() or "genome" in rel:          out.add("CHG-015")
+    return out
+
+def module_items(p):
+    src, rel, out = read(p), str(p), set()
+    if FLASH.search(src):                                    out.add("CHG-016")
+    if "analytics" in rel:                    out.update({"CHG-001", "CHG-002", "CHG-008", "CHG-009"})
+    if "ledger" in rel:                       out.update({"CHG-009", "CHG-014"})
+    if "genome" in rel or "decisionroom" in rel:             out.add("CHG-015")
+    if "is_fixture" in src:                                  out.add("CHG-003")
+    if "view_as" in src or "viewing_as" in src or "security_log" in src: out.add("CHG-017")
+    if "money" in src and "def money" in src:                out.add("CHG-011")
+    return out
+
+TABLE_ITEMS = {
+    "customers": {"CHG-003", "CHG-016"}, "users": {"CHG-016"},
+    "applications": {"CHG-003"}, "catalog_items": {"CHG-003"}, "orders": {"CHG-003"},
+    "quotes": {"CHG-003"}, "decision_items": {"CHG-003", "CHG-015"},
+    "ledger_entries": {"CHG-003", "CHG-014", "CHG-009"},
+    "item_revisions": {"CHG-015"}, "item_genome": {"CHG-015"},
+    "security_log": {"CHG-017"},
 }
 
-def items_for(name):
-    hits = [cid for cid, pats in ITEMS.items() if any(p in name for p in pats)]
-    return ",".join(sorted(hits))
+def route_items(rule, endpoint):
+    out = set()
+    r = str(rule)
+    if r.startswith("/portal"):                              out.add("CHG-004")
+    if r == "/admin/revenue":     out.update({"CHG-001", "CHG-002", "CHG-005", "CHG-008", "CHG-009", "CHG-010"})
+    if "ledger" in r:                                        out.add("CHG-009")
+    if "receipt" in r:                                       out.add("CHG-014")
+    if "clients/" in r:                                      out.add("CHG-017")
+    return out
 
-rows = []
-route_names = set()
+rows, route_rules = [], set()
 for r in sorted(app.url_map.iter_rules(), key=lambda x: str(x.rule)):
     if r.endpoint == "static":
         continue
     methods = ",".join(sorted(m for m in r.methods if m not in ("HEAD", "OPTIONS")))
-    name = f"{methods} {r.rule}"
-    route_names.add(str(r.rule))
-    rows.append(["route", name, r.endpoint, r.endpoint.split(".")[0], "", items_for(name)])
+    route_rules.add(str(r.rule))
+    rows.append(["route", f"{methods} {r.rule}", r.endpoint, r.endpoint.split(".")[0],
+                 "", ",".join(sorted(route_items(r.rule, r.endpoint)))])
 
-for p in sorted(Path("monti/templates").rglob("*.html")):
+for p in TEMPLATES:
     rel = str(p)
+    kind = "email" if "/email/" in rel else "template"
     area = p.parent.name if p.parent.name != "templates" else "shared"
-    rows.append(["email" if "/email/" in rel else "template", rel, p.name, area, "", items_for(rel)])
+    rows.append([kind, rel, p.name, area, "", ",".join(sorted(template_items(p)))])
 
-for p in sorted(Path("monti").rglob("*.py")):
-    if "__pycache__" in str(p):
-        continue
-    rel = str(p)
-    rows.append(["module", rel, f"{len(p.read_text().splitlines())} lines",
-                 p.parent.name, "", items_for(rel)])
+for p in MODULES:
+    rows.append(["module", str(p), f"{len(read(p).splitlines())} lines",
+                 p.parent.name or "engine", "", ",".join(sorted(module_items(p)))])
+
+rows.append(["schema", "monti/schema.sql", f"{len(read('monti/schema.sql').splitlines())} lines",
+             "data", "", "CHG-003,CHG-015,CHG-017"])
 
 con = sqlite3.connect(os.environ["DATABASE_PATH"])
 for (n,) in con.execute("SELECT name FROM sqlite_master WHERE type='table' "
                         "AND name NOT LIKE 'sqlite_%' ORDER BY name"):
     cols = len(con.execute(f"PRAGMA table_info({n})").fetchall())
-    rows.append(["table", n, f"{cols} columns", "data", "", items_for(n)])
+    rows.append(["table", n, f"{cols} columns", "data", "",
+                 ",".join(sorted(TABLE_ITEMS.get(n, set())))])
 
 for p in sorted(Path("monti/static").rglob("*")):
     if p.is_file():
-        rows.append(["static", str(p), f"{p.stat().st_size} bytes", "static", "", items_for(str(p))])
+        rel = str(p)
+        it = {"CHG-001", "CHG-005", "CHG-010", "CHG-011", "CHG-013"} if rel.endswith("app.css") else set()
+        rows.append(["static", rel, f"{p.stat().st_size} bytes", "static", "", ",".join(sorted(it))])
 
-# CLI commands — CHG-003's only guard is one of these.
-for cmd, what in [("flask launch", "brings the database to launch state; refuses on fixture customers"),
-                  ("flask purge-fixtures", "deletes seeded rows after a verified backup"),
-                  ("flask seed", "writes the demo dataset; is_fixture = 1")]:
-    rows.append(["cli", cmd, what, "cli", "", items_for(cmd)])
+# Every CLI command the app actually registers — read from app.cli, not typed.
+CLI_WHAT = {"init-db": "creates the schema and runs migrations",
+            "launch": "brings the database to launch state; refuses on fixture customers",
+            "purge-fixtures": "deletes seeded rows after a verified backup",
+            "seed": "writes the demo dataset; is_fixture = 1"}
+for cmd in sorted(app.cli.commands):
+    it = "CHG-003" if cmd in ("launch", "purge-fixtures", "seed") else ""
+    rows.append(["cli", f"flask {cmd}", CLI_WHAT.get(cmd, ""), "cli", "", it])
 
-# Documents. Each is served by a route already listed above; kept as its own
-# surface because the artifact is not the route, and marked so the count is honest.
-for name, rule in [("Receipt PDF/HTML — admin retrieval", "/admin/ledger/receipt/<receipt_no>"),
-                   ("Receipt PDF/HTML — client retrieval", "/portal/ledger/receipt/<receipt_no>"),
+for name, rule in [("Receipt document — admin retrieval", "/admin/ledger/receipt/<receipt_no>"),
+                   ("Receipt document — client retrieval", "/portal/ledger/receipt/<receipt_no>"),
                    ("Ledger export CSV — admin", "/admin/ledger/export.csv"),
                    ("Ledger export CSV — client", "/portal/ledger/export.csv"),
                    ("Uploaded quote file", "/portal/files/<int:file_id>")]:
     rows.append(["document", name, rule, "documents",
-                 f"route {rule}" if rule in route_names else "", items_for(name + " " + rule)])
+                 f"route {rule}" if rule in route_rules else "",
+                 "CHG-014" if "Receipt" in name else ""])
 
-# The prototype. One surface, out of scope for every in-line item, recorded so the
-# census covers the repository rather than only the engine.
-pr = Path("../prototype/monti-prototype.html")
-rows.append(["prototype", "monti-makes-it/prototype/monti-prototype.html",
-             f"{len(pr.read_text().splitlines())} lines, in-memory demo" if pr.exists() else "n/a",
-             "prototype", "", ""])
+for p in sorted(Path("../prototype").glob("*")):
+    if p.is_file():
+        rows.append(["prototype", f"monti-makes-it/prototype/{p.name}",
+                     f"{len(read(p).splitlines())} lines", "prototype", "", ""])
 
 print("\t".join(["kind", "surface", "detail", "area", "duplicate_of", "items"]))
 for r in rows:

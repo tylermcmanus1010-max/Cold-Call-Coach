@@ -17,7 +17,9 @@ status:    1 uncommitted change(s)
 
 ```
 engine (the deployable):  monti-makes-it/engine
-  python files:           27
+  python files:           28   (27 under monti/ plus app.py, the WSGI entry;
+                               the first count omitted app.py and the total did not
+                               reconcile with the 44 .py files in the tree)
   templates:              81
   static css:             1
   static js:              1

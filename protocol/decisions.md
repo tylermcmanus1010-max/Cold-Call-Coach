@@ -735,3 +735,62 @@ either — §13.4 forbids RES-01 weakening a gate it does not own.
 **AIM-00 recommends (a).** RES-01 has not touched the clause; it made both readings
 answerable and left the wording to Tyler.
 
+---
+
+## D-030 · CHG-001 and CHG-005 are one layer defect, not two screen defects · **bites at Phase 4**
+
+Measured in Chromium. Both items have the same cause: a class name in a template that
+`app.css` — the only stylesheet either shell loads — does not define.
+
+| Template asks for | app.css defines | Result, measured |
+|---|---|---|
+| `.chart-bar`, `.chart-svg`, `.chart-grid`, `.chart-axis`, `.chart-wrap` | nothing (its chart rules at 288-300 use `.chart …`) | bars `fill: rgb(0,0,0)`, grid `stroke: none` |
+| `.meter` + a bare `<span>` | `.meter-head`, `.meter-track`, `.meter-fill` — **used by no template** | meter `127 × 0` px, span `display: inline` at `0 × 0` |
+| `.range-row`, `.range-btn` | nothing | period picker is plain text (D-028) |
+| `.meter-green` | nothing | — |
+
+§1.4: *"Where two or more items resolve to a common layer … the layer is the unit of
+work. Per-screen patching of a shared defect is a protocol violation."* §8.1 predicts
+this exact shape.
+
+**Options.** (a) Treat the renderer/token contract as the layer: DS-01 defines the
+classes the templates actually use at Phase 4, VIZ-01 consumes them at Phase 5, and
+CHG-001, CHG-005, CHG-010 and D-028 close together. Cost: none — it is the existing
+phase order. (b) Fix each screen at its own phase. Cost: a §1.4 violation, explicitly.
+(c) Rename the template classes to match `app.css`. Cost: the stylesheet's names describe
+a different component (`.meter-head` implies a labelled meter the templates do not
+build), so this fits the markup to the leftovers rather than the other way round.
+
+**AIM-00 recommends (a).** Note the ordering already works, so this is a framing decision
+rather than a resequencing one — but it changes what Phase 4's exit gate has to cover,
+and that gate is pre-written, so it is Tyler's under §1.2.
+
+---
+
+## D-031 · CHG-001's marks do not sum to its headline, and the stylesheet fix will not touch it · **bites at Phase 5**
+
+`analytics.series()` emits `days` calendar buckets starting from the window's start date,
+while `analytics.summary()` sums the same window including today. Today's revenue is in
+the total and has no bar. The gap is **1,911,346 cents at every one of 7d, 21d, 45d, 90d,
+180d and 365d** — identical because it is always the same missing day. The oldest bar is
+the mirror: a partial day drawn as a full one.
+
+CHG-001's gate: *"Marks sum to the headline total."* VIZ-01's charter: *"A chart that
+disagrees with the ledger is a P0 regardless of how it looks."*
+
+This matters because it is invisible to the work everyone expects to do. The black chart
+is what got reported; fixing the stylesheet makes the bars green and leaves the
+arithmetic exactly as wrong, and the surface will then look correct while under-reporting
+by a day.
+
+**Options.** (a) It is inside CHG-001's existing gate clause, so Phase 5 fixes it and
+LEDGER-01's reconciliation is what proves it. Cost: none, no new item. (b) File it as its
+own CHG with its own gate, since a rendering defect and an arithmetic defect are
+different work with different verifiers. Cost: a new register item — Tyler's under §0.8.
+(c) Treat it as a P0 in its own right: CHG-001 is already P0, and this half is a money
+surface disagreeing with itself.
+
+**AIM-00 recommends (a),** and flags that CHG-001 cannot be closed on the chart looking
+right — the clause that catches this is "marks sum to the headline", and LEDGER-01, not
+QA-01, is the verifier who would notice.
+

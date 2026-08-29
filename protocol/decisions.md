@@ -925,3 +925,161 @@ yours. AIM-00 has not touched the gate text; the register still carries §9 verb
 the census is right. AIM-00 wrote the overstatement, and a decision was signed on it
 before the correction caught up.
 
+---
+
+# PART 5 — FROM THE PROTOCOL SWEEP
+
+An adversarial read of the protocol, launched at Phase 1 and finished after Amendment 2
+landed. 216 agents: six readers over the full document, then **every finding re-checked by
+an independent agent that was told to refute it**. 210 findings raised, **111 confirmed and
+99 refuted** — the refutation rate is the reason the 111 are worth reading.
+
+Triaged against Amendment 2 in `protocol/evidence/phase-01/protocol-sweep.json`: 27 no
+longer apply, 32 are already filed as D-004…D-034, and 52 survive unfiled. Those 52 are not
+52 problems. They are four causes and a tail.
+
+**Caveat on the triage.** The sweep read v2.0 *original*; Amendments 1 and 2 landed while it
+ran. "No longer applies" was decided by checking whether the quoted text still appears in
+the amended packet, which is a crude test — it will call a finding dead when the wording
+moved and alive when the wording survived but the meaning changed. The four below were
+re-checked by hand against Amendment 2. The tail was not.
+
+---
+
+## D-035 · The verifier of record is stated in four places that disagree · **bites at Phase 4**
+
+Nineteen of the 52 are instances of this one cause. §2.1's Verifier column, §9's
+`*(verifier: …)*`, §7's per-phase Verifier line, and each agent's own "Verifies:" roster are
+four independent lists, and no two agree everywhere.
+
+| Item or phase | §2.1 | §9 | §7's phase line | the agent's own charter |
+|---|---|---|---|---|
+| CHG-001 | QA-01 | QA-01 + LEDGER-01 | QA-01 + LEDGER-01 | LEDGER-01 does not list CHG-001 |
+| CHG-002 | A11Y-01 | A11Y-01 | Phase 5 names QA-01 + LEDGER-01 | A11Y-01 claims Phase 5 |
+| CHG-010 | A11Y-01 | A11Y-01 | Phase 8 names QA-01 + LEDGER-01 + SEC-01 | A11Y-01 claims Phase 8 |
+| CHG-015 | SEC-01 | SEC-01 + GENOME-01 + NOTIFY-01 | same three | both extra agents claim it |
+| Phase 4 | — | — | A11Y-01 sole verifier | A11Y-01 does not claim Phase 4 |
+| Phase 6 | — | — | QA-01 | QA-01 does not claim Phase 6 |
+| Phase 11 | — | — | CONTENT-01 + A11Y-01 | NOTIFY-01 claims it |
+
+§4.2 makes the countersigning verifier the hinge of the whole model and §4.3 duty 3 makes
+AIM-00 confirm it. Neither is checkable while four lists disagree. The sharpest instance:
+**CHG-002's gate can be called by nobody at Phase 5.** Its only authorized verifier is
+A11Y-01, Phase 5 does not name A11Y-01, and §4.2 bars VIZ-01 from calling its own.
+
+Worse under Amendment 2, not better: CHG-002's rewritten gate now also requires *"a 30-day
+window exists in `analytics.PERIODS`, and the sparkline renders"* — build conditions, on top
+of a reconciliation clause, all assigned to an agent whose charter confines it to contrast,
+hue-independence and keyboard access.
+
+**Options.** (a) Declare **§9 the register of record for verifiers** and regenerate the other
+three from it, with compound verifiers allowed and each clause of a gate attributed to the
+agent competent for it. Cost: one pass over §2.1, §7 and the rosters. (b) Declare §7 of
+record. Cost: CHG-015 loses two of the three countersignatures its gate text actually
+requires. (c) Leave it and resolve per phase. Cost: nineteen judgement calls made under
+time pressure by whoever runs the phase.
+
+**AIM-00 recommends (a),** and notes it subsumes D-004 and D-005, which are fragments of the
+same cause found from a smaller sample.
+
+---
+
+## D-036 · The standing tier is chartered as never-blocking and sits on the critical path · **bites at Phase 3**
+
+§4.1: *"**Standing tier** (RSCH-01, SITE-01, per-client agents) — never block a phase; always
+advisory."* §8.4 repeats it. But:
+
+- **RSCH-01 is Phase 3's named verifier**, its confirmation *is* Phase 3's exit gate, and §5.4
+  makes it the only agent that may declare a research domain satisfied. Phase 4 cannot open
+  without it.
+- **CLIENT-BH-01 is a named verifier of Phase 12**, and Appendix A says it countersigns that
+  phase. Phase 12b cannot open without it.
+- **DATAOPS-01** claims a standing check on *"every phase thereafter"* after Phase 2, which §7
+  never schedules.
+
+An agent that gates a phase is not advisory. §2.4's test for whether an agent may act keys
+off §2.1, and none of the three appears there as an owner or verifier of an in-line item.
+
+**Options.** (a) Move RSCH-01 and CLIENT-BH-01 into the verification tier for the phases
+where §7 names them, and strike "never blocking" for those phases only. Cost: none; it is
+what §7 already does. (b) Give Phases 3 and 12 different verifiers. Cost: RSCH-01 is the only
+agent §5.4 permits to close a research domain, so (b) is not available for Phase 3. (c) Leave
+it. Cost: the tier definition contradicts the sequence at two gates.
+
+**AIM-00 recommends (a).**
+
+---
+
+## D-037 · §5 requires 250 sources and gives 195 of them no phase, no owner-time and no gate · **bites at Phase 20**
+
+Phase 3 is the only research phase in §7. It covers the two foundation domains — **55
+sources**. §5.3 stages three more thresholds by phase entry, and §11 line 5 requires all 250
+before launch. **The remaining 195 sources are required by the go/no-go and produced by no
+phase.** No phase owns the time, no gate checks them until launch, and RSCH-01 — the only
+agent that may close a domain — is scheduled at Phase 3 and nowhere else.
+
+Two smaller instances ride along: SITE-01 owns 55 of the 250 while being chartered as
+never-blocking (D-036), and the payment-states domain's 20 sources have no in-scope decision
+to cite against (D-021), so 20 of the 250 may be unspendable as written.
+
+**Options.** (a) Stage the remaining domains against the phases that consume them — usability
+before Phase 13, tenancy before Phase 19, the two SITE-01 domains before Phase 20 — and give
+each a gate. Cost: the staging §5.3 already implies, written down. (b) Add a research phase
+before Phase 20. Cost: one phase, and it lands where research is least useful — after
+everything is built. (c) Reduce the 250. Cost: a scope change, and §5.1's bar is what makes
+the number mean anything.
+
+**AIM-00 recommends (a).** This is the largest unscheduled obligation in the document and it
+falls due at the last gate before launch.
+
+---
+
+## D-038 · §11.1 lets Tyler override lines that restate the non-waivable directives · **bites at go/no-go**
+
+§11.1: *"Tyler holds the final call and **may override any line above**."* Four of the lines
+above restate §1 directives verbatim:
+
+| §11 line | Restates |
+|---|---|
+| Fixture purge verified; no fabricated data on any client-facing surface | §1.5 |
+| Tenant isolation verified adversarially by SEC-01 | §1.8 |
+| Every issued document retrievable by its intended party and by nobody else | §1.7 / §1.8 |
+| Every phase gate countersigned by a verifier who is not the owner | §4.2, which §1.1 enforces |
+
+§1.12 says the opposite and says it deliberately: *"Tyler may override a **gate** under §11
+and have the override recorded; no one overrides a **directive**."* §11.2 then re-states the
+prohibition. So the document contains both "may override any line" and "may not override
+these four", one section apart.
+
+§1.12 plainly governs — it is the safety model and it names itself as such. But §11.1's
+sentence is unqualified, it is the sentence someone reads at go/no-go under pressure, and
+**§0.10 says that when the only way through carves an exception into a §1 directive, that is
+the finding.** This is that shape, sitting inside the protocol rather than arising from work.
+
+**Options.** (a) Qualify §11.1 — *"may override any line above **except those restating a §1
+directive, which §1.12 makes non-waivable**"* — and mark the four lines. Cost: one clause.
+(b) Leave it, on the grounds that §1.12 governs. Cost: the contradiction stays in the
+sentence that gets read at the moment it matters most. (c) Remove the four lines from §11 as
+redundant with §1. Cost: the go/no-go pack stops showing that they were checked.
+
+**AIM-00 recommends (a).** It is not a real ambiguity about what governs; it is a real
+ambiguity about what §11.1 says, and it is one clause to close.
+
+---
+
+## The tail
+
+Thirty-three further confirmed findings survive and are not written up here: gate clauses
+with no falsifiable signal beyond the four in D-019 (SK-21's "vocabulary of what it
+controls", SK-11's "no two components with the same job", the six unnamed Genome sections,
+SK-50's "next three actions", Phase 14's "accusingly empty"), phase/skill loadout mismatches
+(Phase 7 exercises SK-18 which DS-01 does not hold; Phase 18 exercises SK-49 and names its
+owner as verifier), the §8.2-versus-entry-line dependency gaps, CHG-004d appearing in line at
+two phases with different verifiers, and SK-44's visual-regression gate governing merges
+while being scheduled only at Phases 20–21.
+
+They are in `protocol/evidence/phase-01/protocol-sweep.json` with their kind, their claim,
+and whether the triage judged them still live. AIM-00 has not written them up individually
+because they are Phase-4-and-later concerns and the four causes above are what change the
+plan. Say the word and they get filed properly.
+

@@ -1,0 +1,779 @@
+[
+ {
+  "id": "SKC-01",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "SK-51 is the only skill in the catalog with two owners in the owner column ('UX-01 + ADMIN-01'), directly violating the catalog's own first rule and \u00a70's 'No shared ownership'. Nothing in the document says which of the two is accountable for the standard, so no one can be held to it and AIM-00 cannot seed the register with a single accountable owner."
+ },
+ {
+  "id": "SKC-02",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "Even accepting \u00a76's dual-owner entry, neither named owner claims SK-51 in its charter: UX-01 lists SK-51 under 'Skills executed', and ADMIN-01 also lists SK-51 under 'Skills executed'. No agent anywhere lists SK-51 as owned, so SK-51 has zero owners in \u00a74, one row with two owners in \u00a76, and no accountable party for its acceptance gate."
+ },
+ {
+  "id": "SKC-04",
+  "kind": "contradiction",
+  "covered_by": "D-009",
+  "survives_amendment_2": true,
+  "claim": "\u00a72.1's range 'SK-21\u2013SK-28' expands to SK-21, SK-22, SK-23, SK-24, SK-25, SK-26, SK-27, SK-28. SK-27 is DORMANT and owned by dormant agent PERF-01, yet it is cited by a P0 in-line item. \u00a72.2 puts every DORMANT skill explicitly out of scope, and \u00a76 repeats it. So the highest-severity item in scope cites an out-of-scope skill. \u00a77 Phase 13 lists the same work without SK-27, which means the range and the phase disagree about whether latency craft is in the build at all \u2014 and whether PERF-01 activates."
+ },
+ {
+  "id": "SKC-06",
+  "kind": "contradiction",
+  "covered_by": "D-011",
+  "survives_amendment_2": true,
+  "claim": "SK-06 (Claim substantiation, owner COMPL-01) is DORMANT, but two ACTIVE standing agents list it as a skill they execute: SITE-01 'Skills executed: SK-01, SK-06, SK-15, SK-21' and RSCH-01 'Skills executed: SK-06'. Appendix D item 7 confirms SK-06 only comes alive when COMPL-01 activates. Both standing agents run from day one, so they carry an out-of-scope skill in their loadout from Phase 1."
+ },
+ {
+  "id": "SKC-08",
+  "kind": "contradiction",
+  "covered_by": "D-009",
+  "survives_amendment_2": true,
+  "claim": "SK-24 is split across three agents: \u00a76 gives it one ACTIVE owner (UX-01), while \u00a74.7 records QUOTE-01 as holding 'SK-24 (intake half)' and MEMBER-01 as holding 'SK-24 (application half)'. That is three holders for a skill the catalog says has exactly one owning agent, and two of the three are DORMANT while the skill is exercised in Phases 13 and 14. Whether the intake/application halves of SK-24's gate ('quote submission completable on a phone in one sitting', which is explicitly CHG-004 work) are in scope or dormant is unresolvable from the text."
+ },
+ {
+  "id": "SKC-09",
+  "kind": "contradiction",
+  "covered_by": "D-012",
+  "survives_amendment_2": false,
+  "claim": "SK-34 (Pricing strategy publishing, owner ADMIN-01) is marked ACTIVE but is exercised in no phase of \u00a77 and appears in no Appendix E row, yet it is not in Appendix E's 'Dormant, exercised in no phase' list. It is also attached to no \u00a72.1 item. Under \u00a72.4 an agent may act only where \u00a72.1 contains an item it owns or verifies, so an ACTIVE skill exists with no scope home, no phase and no gate to call \u2014 either it is unscheduled active work or it is an unmarked dormant skill."
+ },
+ {
+  "id": "SKC-10",
+  "kind": "contradiction",
+  "covered_by": "D-012",
+  "survives_amendment_2": true,
+  "claim": "SK-45 (Severity triage, owner AIM-00) is ACTIVE and is in AIM-00's loadout, but it appears in no phase row of Appendix E \u2014 including the 'Continuous' row, which lists only SK-01, SK-02, SK-41, SK-46, SK-50 \u2014 and it is not in the dormant list either. \u00a73 makes severity assignment a continuous AIM-00 duty, so the phase index contradicts the catalog and the manager charter about when SK-45 is exercised."
+ },
+ {
+  "id": "SKC-11",
+  "kind": "contradiction",
+  "covered_by": "D-013",
+  "survives_amendment_2": false,
+  "claim": "Phase 1's skill line names only SK-46, but Phase 1's own work and exit gate require SK-42 ('pre-written gates (SK-42)', 'every in-line item has a gate written before any work starts'), and Appendix E lists Phase 1's skills as 'SK-42, SK-46'. The two indices of the same phase disagree on which skills are exercised, and SK-42 is a NON-WAIVABLE skill, so omitting it from the phase header is not cosmetic."
+ },
+ {
+  "id": "SKC-13",
+  "kind": "unexecutable",
+  "covered_by": "D-007",
+  "survives_amendment_2": false,
+  "claim": "Phase 8 exercises SK-12 (owner UX-01) and SK-28 (owner A11Y-01), but Phase 8's only owner is ADMIN-01, whose charter lists neither skill as owned or executed ('SK-34, SK-54' owned; 'SK-19, SK-21, SK-22, SK-23, SK-31, SK-51' executed), and neither skill's owner is named in the phase. A11Y-01 is additionally 'VERIFIES, NEVER BUILDS', so no agent in Phase 8 is chartered to execute the keyboard-access work its exit gate depends on (CHG-010)."
+ },
+ {
+  "id": "SKC-14",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "CHG-010's verifier is A11Y-01 in \u00a72.1 and in \u00a79, and A11Y-01's charter claims Phase 8 among the phases it verifies \u2014 but Phase 8's verifier line names only QA-01 + LEDGER-01, and Phase 8's exit gate says CHG-010's gate passes there. \u00a72.1 also gives CHG-010 owner DS-01, while Phase 8's owner is ADMIN-01. So the agent that owns SK-28 and is designated to call CHG-010's gate is absent from the only phase where CHG-010 is closed, and \u00a711's requirement that every gate be countersigned by the named verifier cannot be satisfied as written."
+ },
+ {
+  "id": "SKC-15",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "A11Y-01's charter claims it verifies Phase 5, and \u00a72.1 and \u00a79 both make A11Y-01 the verifier of CHG-002 \u2014 but CHG-002 is closed in Phase 5, whose verifier line names QA-01 (battery) and LEDGER-01 (reconciliation) only. Either A11Y-01 must countersign Phase 5 (contradicting the phase header) or CHG-002 closes without its named verifier (contradicting \u00a72.1, \u00a79 and the \u00a711 countersignature line)."
+ },
+ {
+  "id": "SKC-19",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Phase 7 exercises SK-18 (Share bar legibility, owner VIZ-01) with DS-01 as sole owner and A11Y-01 as verifier. DS-01's loadout does not include SK-18 in either 'Skills owned' or 'Skills executed', and \u00a72.1 gives CHG-005 \u2014 the item SK-18 closes \u2014 the joint owner 'DS-01 + VIZ-01'. VIZ-01 is not named in Phase 7 at all, so the only agent chartered for SK-18 is absent from the phase where its gate is called."
+ },
+ {
+  "id": "SKC-20",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Phase 18 exercises SK-49 (Transactional email craft, owner NOTIFY-01) and names NOTIFY-01 as the email VERIFIER. None of Phase 18's three owners (UX-01, ADMIN-01, DOC-01) lists SK-49 as owned or executed, so the only agent chartered for SK-49 is the one forbidden from producing the evidence by \u00a74.2. The notification-email half of CHG-015 has no builder."
+ },
+ {
+  "id": "SKC-22",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a72.1 gives CHG-015 a single verifier, SEC-01; \u00a79 gives it three, 'SEC-01 + GENOME-01 + NOTIFY-01', matching GENOME-01's and NOTIFY-01's charters, which each claim a half of CHG-015. The register seeded at Phase 1 from \u00a72.1 would carry one verifier while the gate register demands three countersignatures, and \u00a711 tests for the verifier of record."
+ },
+ {
+  "id": "SKC-27",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": true,
+  "claim": "Appendix F asserts that every one of the 27 roles carries a skill loadout, but RES-01's charter entry names no skill \u2014 no 'Skills owned' and no 'Skills executed' line \u2014 and RES-01 owns no \u00a76 skill anywhere in the catalog. RES-01 is nevertheless Phase 1's named verifier, required to run a 'completeness sweep' with no skill and no falsifiable check behind it, and \u00a713.6 gives it a gate of its own that no skill encodes."
+ },
+ {
+  "id": "SKC-30",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "\u00a70 states the fleet rule as one owning agent per item with no shared ownership, but four \u00a72.1 rows carry two owners: CHG-001 'ADMIN-01 + VIZ-01', CHG-005 'DS-01 + VIZ-01', CHG-008 'VIZ-01 + ADMIN-01', CHG-015 'UX-01 + ADMIN-01'. This is the same defect as SK-51's dual ownership and it propagates into \u00a77 (Phases 9, 11, 14, 17, 18 all have multi-owner headers), so no single agent is accountable for four of the fourteen in-line items."
+ },
+ {
+  "id": "OV-01",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-001's verifier is QA-01 alone in \u00a72.1, but QA-01 + LEDGER-01 in \u00a79 and in both phases that carry it. LEDGER-01's own charter does not list CHG-001 among the items it verifies, so the agent \u00a79 conscripts as co-verifier has no charter basis for calling that gate."
+ },
+ {
+  "id": "OV-03",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "A11Y-01's charter claims it verifies Phases 5 and 8; \u00a77 names QA-01 + LEDGER-01 at both and never names A11Y-01 at either. Conversely \u00a77 makes A11Y-01 the sole verifier of Phase 4, which its charter does not list. Appendix E matches \u00a77, not the charter."
+ },
+ {
+  "id": "OV-04",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "CHG-002's gate ends in a ledger reconciliation clause, but its sole named verifier, A11Y-01, defines its own callable gate purely as contrast, hue-independence and keyboard access. A11Y-01 is not competent, by its own charter, to call the reconciliation half of the gate it is assigned, and LEDGER-01 \u2014 the agent that is \u2014 is not named as CHG-002's verifier anywhere."
+ },
+ {
+  "id": "OV-05",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "VIZ-01's charter names exactly two agents that verify its work, QA-01 and LEDGER-01. \u00a72.1 assigns A11Y-01 as the verifier of two of VIZ-01's four in-line items (CHG-002 and CHG-005). An agent that VIZ-01's charter does not recognise as its verifier holds the gate on half its scope."
+ },
+ {
+  "id": "OV-06",
+  "kind": "contradiction",
+  "covered_by": "D-008",
+  "survives_amendment_2": true,
+  "claim": "SK-53 is claimed as an owned skill by both VIZ-01 and QA-01, in direct violation of the catalog's own one-owner rule. Since 'owner' means 'accountable for the standard', two agents hold the standard for the hostile battery that Phase 5's exit gate turns on."
+ },
+ {
+  "id": "OV-07",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a74.2 splits the roles so the owner produces evidence and the verifier only judges it. At Phase 5 the evidence \u2014 the hostile-battery renders \u2014 is produced by QA-01, the verifier, on QA-01's own owned skill, and QA-01 then calls the gate on evidence it generated. This is the exact failure mode \u00a74.5 says QA-01 was created to remove from AIM-00."
+ },
+ {
+  "id": "OV-09",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-005 is co-owned by DS-01 and VIZ-01 in \u00a72.1 and in both charters, and its skill SK-18 is owned by VIZ-01. Phase 7, the only phase carrying CHG-005, names DS-01 as sole owner and exercises SK-18 there. VIZ-01 \u2014 co-owner of the item and owner of the skill \u2014 appears nowhere in Phase 7, as owner or verifier."
+ },
+ {
+  "id": "OV-10",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-010 is owned by DS-01 in \u00a72.1 and in DS-01's charter, but Phase 8 \u2014 the only phase that carries it \u2014 is owned by ADMIN-01, whose in-line list does not contain CHG-010. DS-01 is additionally forbidden from doing the work its ownership implies. No agent can both own CHG-010 and legitimately do it."
+ },
+ {
+  "id": "OV-11",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "CHG-010's verifier is A11Y-01 in both \u00a72.1 and \u00a79, and its gate is a keyboard/focus/hover gate squarely inside A11Y-01's charter. Phase 8 names QA-01 + LEDGER-01 and does not name A11Y-01, yet makes the CHG-010 gate an exit condition. Neither QA-01's charter gate (traversal records) nor LEDGER-01's (money reconciliation) covers focus states or keyboard reachability."
+ },
+ {
+  "id": "OV-12",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "QA-01's charter enumerates the phases it verifies as 5, 8, 13, 20, 21. \u00a77 and Appendix E also make QA-01 the sole verifier of Phase 6, the phase carrying CHG-011 \u2014 which QA-01's charter does list as an item it verifies. The phase list and the item list in the same charter disagree."
+ },
+ {
+  "id": "OV-15",
+  "kind": "unexecutable",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "Phase 1 names RES-01 as its verifier. \u00a713.4 explicitly forbids RES-01 from calling any gate and states it is neither owner nor verifier of anything; \u00a713.6 makes 'gates recorded as passed by any agent other than the named verifier' a failure of RES-01's own gate. Phase 1's gate therefore cannot be called by the agent \u00a77 names, and Phase 1 is the entry condition for every other phase."
+ },
+ {
+  "id": "OV-16",
+  "kind": "contradiction",
+  "covered_by": "D-024",
+  "survives_amendment_2": true,
+  "claim": "RES-01 is defined as firing only on failure, subscribed rather than summoned, and never on the critical path except at \u00a710.4. Phase 1 gives it a scheduled, on-the-critical-path duty (the completeness sweep) with no failure having occurred. The two definitions of when RES-01 acts are incompatible."
+ },
+ {
+  "id": "OV-17",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": true,
+  "claim": "\u00a72.4 sets a single test for whether an agent may act: \u00a72.1 must contain an item it owns or verifies. RES-01 owns and verifies nothing by its own charter, and RSCH-01 verifies a research gate rather than any \u00a72.1 item. Both are declared ACTIVE with phase duties, so either \u00a72.4's test is wrong or two active agents are acting in violation of \u00a71.9."
+ },
+ {
+  "id": "OV-23",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "NOTIFY-01's charter claims Phase 11 among the phases it verifies. Phase 11's verifiers in \u00a77 are CONTENT-01 and A11Y-01; Appendix E agrees. NOTIFY-01 is not named there, so either a countersignature is missing or a charter claims a gate that does not exist."
+ },
+ {
+  "id": "OV-27",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CLIENT-BH-01 is declared never-blocking and advisory, yet \u00a77 makes it a named verifier of Phase 12 and Appendix A says it countersigns that phase. Under \u00a74.2 a missing verifier countersignature means the gate cannot be reported passed \u2014 which is precisely blocking. An advisory agent cannot hold a gate."
+ },
+ {
+  "id": "OV-31",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-004d is carried in line by both Phase 13 and Phase 15, with different verifier sets (QA-01 + A11Y-01 versus A11Y-01 alone) and overlapping skills (SK-25, SK-28). It is undefined whether CHG-004d's gate is called twice, by whom it is finally closed, and whether a Phase 13 pass on d can be reopened by A11Y-01 at Phase 15."
+ },
+ {
+  "id": "OV-33",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Phase 14 is co-owned by ADMIN-01 and carries CHG-004g. \u00a72.1 gives CHG-004 to UX-01 alone, and ADMIN-01's charter in-line list does not contain CHG-004 in any form. \u00a72.1 promises exactly one owning agent per item; Phase 14 adds a second."
+ },
+ {
+  "id": "OV-36",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "DATAOPS-01 claims a standing check on 'every phase thereafter' after Phase 2, but \u00a77 names it as verifier only at Phases 2 and 14. \u00a711 requires every phase gate to be countersigned by a verifier. It is undefined whether a Phase 5 or Phase 16 gate additionally requires DATAOPS-01's countersignature to pass, which changes who must sign nineteen gates."
+ },
+ {
+  "id": "OV-38",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-015 is owned by UX-01 + ADMIN-01 in \u00a72.1. Phase 18, the only phase carrying it, is owned by UX-01 + ADMIN-01 + DOC-01, and DOC-01's charter claims CHG-015's revision record as an in-line item. \u00a72.1 \u2014 the scope fence and the register seed for Phase 1 \u2014 omits one of the three owners."
+ },
+ {
+  "id": "OV-39",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-015's verifier is SEC-01 alone in \u00a72.1, but SEC-01 + GENOME-01 + NOTIFY-01 in \u00a79 and at Phase 18. Two of the three countersignatures the gate actually requires are absent from the scope table that Phase 1 seeds the register from."
+ },
+ {
+  "id": "OV-41",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "SK-51 is listed with two owning agents, contradicting the catalog's own rule and \u00a70's summary that every skill has one owner. Since ownership means accountability for the standard, no single agent is accountable for the standard governing all of CHG-015 at Phase 18."
+ },
+ {
+  "id": "OV-42",
+  "kind": "unexecutable",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "CHG-015's gate contains a cross-tenant reachability clause, and SEC-01 is its tenancy verifier at Phase 18. But Phase 18's skills are SK-51, SK-26, SK-49 \u2014 SK-52, the adversarial-verification skill that produces the attempted-access matrix SEC-01's gate is defined in terms of, is not exercised until Phase 19, after Phase 18's gate must already have passed."
+ },
+ {
+  "id": "OV-46",
+  "kind": "contradiction",
+  "covered_by": "D-011",
+  "survives_amendment_2": true,
+  "claim": "Two active, standing agents list SK-06 among the skills they execute. SK-06 is DORMANT and owned by the dormant COMPL-01, and \u00a72.2 places every dormant skill out of scope. Either the charters authorise out-of-scope execution or the standing agents cannot do what their charters say."
+ },
+ {
+  "id": "OV-49",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "Phase 1's entry condition requires \u00a74.6 to be answered, and \u00a74.6's own heading says it must be decided before Phase 1. The same section's last line and \u00a78.2's dependency map instead tie the decision to Phase 8, and Phase 8's entry repeats it. Whether the build may start without the OPEN-A answer \u2014 and whether ADMIN-01's ownership of a possible CHG-017 exists at register-seeding time \u2014 is stated both ways."
+ },
+ {
+  "id": "OV-50",
+  "kind": "ambiguity",
+  "covered_by": "D-021",
+  "survives_amendment_2": true,
+  "claim": "\u00a75.2 obliges DOC-01 to gather 20 sources on payment states and ACH/card settlement, and \u00a711 requires the full 250 before launch. The work those sources inform is CHG-007, scrapped in \u00a72.2, and its home agent PAY-01 is dormant. DOC-01 is the named owner of a research domain for scope the document says does not get done, which \u00a72.2's dormant-is-not-scope rule contradicts."
+ },
+ {
+  "id": "SEQ-03",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a78.2 makes Phase 4 a hard predecessor of Phase 13, but Phase 13's entry line names only Phase 12b, and the chain 12b\u219012\u219011\u219010 terminates in '\u00a75 i18n domain satisfied' \u2014 it never touches Phase 4. Combined with \u00a78.4's permission to start Phase 10 right after Phase 1, the entire client-portal rebuild can legally complete before the token set exists, which is exactly what \u00a78.1 forbids."
+ },
+ {
+  "id": "SEQ-05",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a78.4 permits Phase 6 alongside Phase 5 and Phase 15 alongside Phase 14. The global ordering rule stated twice (in \u00a70 and in the \u00a77 preamble) forbids both, because Phase 6's prior phase is Phase 5 and Phase 15's prior phase is Phase 14. The phases' own entry lines happen to permit the parallel run, so the prohibition comes only from the global rule \u2014 which is the one a literal executor will apply."
+ },
+ {
+  "id": "SEQ-08",
+  "kind": "unexecutable",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "Phase 1 names RES-01 as its verifier, and Appendix E repeats it. \u00a713.4 states RES-01 may not call a gate at all and is neither owner nor verifier of anything. Phase 1's exit gate therefore requires a countersignature from the one agent forbidden to give one, and \u00a74.2 requires AIM-00 to confirm a verifier that \u00a713.4 says does not exist. Phase 2 cannot legally open."
+ },
+ {
+  "id": "SEQ-09",
+  "kind": "contradiction",
+  "covered_by": "D-024",
+  "survives_amendment_2": false,
+  "claim": "\u00a78.4 and \u00a74.1 say RES-01 fires only on failure and is never on the critical path except at \u00a710.4. Phase 1 puts RES-01 on the critical path as the gatekeeper of the first gate, before any failure can have occurred. Whether RES-01 must be running at Phase 1 or only on demand changes whether Phase 1 can close."
+ },
+ {
+  "id": "SEQ-11",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "RSCH-01 is declared never-blocking and advisory, yet it is Phase 3's named verifier, its confirmation is Phase 3's exit gate, and \u00a75.4 makes it the only agent who can certify the domain conditions that form the entry lines of Phases 10, 16 and 20. A never-blocking agent that four phases cannot open without is a contradiction that decides whether those phases wait."
+ },
+ {
+  "id": "SEQ-12",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CLIENT-BH-01 is marked ACTIVE, NEVER BLOCKING and \u00a78.4 says it blocks nothing, but Phase 12 names it a verifier and Appendix A says it countersigns Phase 12. A verifier that cannot block cannot fail a gate, so it is undefined whether a CLIENT-BH-01 objection stops Phase 12b from opening."
+ },
+ {
+  "id": "SEQ-13",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "A11Y-01's charter claims Phases 5 and 8. Neither phase's verifier line names A11Y-01, and Appendix E lists Phase 5 as QA-01/LEDGER-01 and Phase 8 as QA-01/LEDGER-01 (SEC-01). Yet Phase 5's exit gate requires CHG-002's gate to pass and Phase 8's requires CHG-010's, and \u00a72.1 and \u00a79 both name A11Y-01 as the verifier of those two items. Either the phase closes without its item's named gate-caller, or a verifier not on the phase roster must countersign."
+ },
+ {
+  "id": "SEQ-15",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CONTENT-01's charter names Phases 11 and 12, but \u00a77 also makes it a verifier of Phase 10 and the sole verifier of Phase 12b. NOTIFY-01's charter claims Phase 11, where \u00a77 names only CONTENT-01 and A11Y-01. Three phase gates therefore have rosters that disagree with the charters of the agents holding them."
+ },
+ {
+  "id": "SEQ-18",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "\u00a74.6 must be answered before Phase 1 opens. If the answer is 'move it in', CHG-017 exists from that moment and \u00a79 already carries its gate. Phase 1's exit gate then counts the wrong number of items \u2014 it checks fourteen when fifteen are in line \u2014 so the newly created P1 item is never mapped to a surface and never receives a pre-written gate at the only phase that produces them."
+ },
+ {
+  "id": "SEQ-20",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "CHG-001's gate is written against the admin revenue screen \u2014 seven daily marks, a headline total, hover behaviour \u2014 but it is required to pass at Phase 5's exit, three phases before that screen is rebuilt, and required again at Phase 8's exit. The same P0 gate is a closing condition of two phases, and at the first of them the surface it describes does not yet exist in its rebuilt form."
+ },
+ {
+  "id": "SEQ-21",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-004d is listed in line at Phase 13 and again in line at Phase 15, and CHG-004g is deferred to Phase 14. Phase 13's exit gate nonetheless calls the whole CHG-004 gate, including find-my-item and view-image, before the image viewer (Phase 15) and the empty states (Phase 14) are built. Either the gate cannot pass at Phase 13 or Phases 14 and 15 are building against an already-closed item."
+ },
+ {
+  "id": "SEQ-22",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "SK-41 is written into DATAOPS-01's standing gate from Phase 2 onward and into \u00a79's cross-cutting definition of done, but \u00a711.2 says it is only proposed and becomes DORMANT if Tyler declines \u2014 and \u00a72.2 says dormant skills are out of scope. The decision arrives at \u00a711, after twenty phases have already been gated on it. Whether restore drills are run from Phase 2 is unresolved at the point the work starts."
+ },
+ {
+  "id": "SEQ-23",
+  "kind": "unexecutable",
+  "covered_by": "D-021",
+  "survives_amendment_2": true,
+  "claim": "\u00a75.2 requires 20 qualifying sources on payment states and settlement, owned by DOC-01, and Phase 20 cannot open until \u00a75 is satisfied in full. But the work those sources would inform \u2014 CHG-007 and order-level payment state \u2014 is scrapped in \u00a72.2, PAY-01 is dormant, and LEDGER-01 is forbidden to introduce payment state. SK-01's gate demands every citation name the decision it informs; there is no such decision in scope, so those 20 sources cannot be entered on the terms the register requires."
+ },
+ {
+  "id": "SEQ-24",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "SITE-01 owns 55 of the 250 required sources (30 contract-manufacturing plus 25 teardown), and Phase 20's entry and \u00a711's go/no-go both require the full 250. That makes SITE-01's output a hard blocker of the final two phases, while \u00a72.3 says its findings are not work and its charter says it never blocks a phase."
+ },
+ {
+  "id": "SEQ-25",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a75.3 stages only three domains \u2014 foundation before Phase 4, financial before Phase 16, i18n before Phase 10 \u2014 and pushes the rest to before Phase 20. That places the usability domain (30 sources, UX-01) after Phases 12 and 13, where the P0 item CHG-004 is decided and built, and the tenancy domain (25 sources, ADMIN-01) after Phase 19, the adversarial isolation phase. \u00a75.1's own rule and \u00a75.3's own principle both say the opposite."
+ },
+ {
+  "id": "SEQ-26",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Phase 3 is the only research phase in the sequence and covers 55 of the 250 sources. The other 195 have no phase, no owner-time and no gate anywhere in \u00a77, yet three entry conditions depend on them being complete, and SK-46 forbids work outside the register. A build session executing \u00a77 literally never performs the research that Phases 10, 16 and 20 cannot open without."
+ },
+ {
+  "id": "SEQ-27",
+  "kind": "contradiction",
+  "covered_by": "D-010",
+  "survives_amendment_2": true,
+  "claim": "SK-27 is DORMANT, and \u00a72.2 puts every dormant skill out of scope. It is nonetheless listed inside CHG-004's in-line skill range and in the executed-skills loadouts of two active agents. Phase 1 seeds the register with the in-line items' skills, so the first phase writes an out-of-scope skill into the register. SK-06 has the same problem via SITE-01 and RSCH-01."
+ },
+ {
+  "id": "SEQ-28",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a74.7's preamble and \u00a712.2 both say a dormant agent activates only on a \u00a712 filing by Tyler and never activates itself. PERF-01's row gives a second, self-executing trigger \u2014 a speed complaint surfacing inside Phase 13. It is undecided whether a Phase 13 finding activates PERF-01 mid-phase, which \u00a71.9 would otherwise forbid."
+ },
+ {
+  "id": "SEQ-35",
+  "kind": "contradiction",
+  "covered_by": "D-013",
+  "survives_amendment_2": false,
+  "claim": "Phase 1's skills line names only SK-46, while its own work and exit gate require SK-42 \u2014 the non-waivable gate-authoring skill \u2014 and Appendix E lists both for Phase 1. A session reading the skills line as authoritative writes no gates in Phase 1, and every later phase then inherits items with no pre-written gate, violating \u00a71.2."
+ },
+ {
+  "id": "SEQ-36",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a72.1 and \u00a79 name different verifiers for three items: CHG-001 (QA-01 vs QA-01 + LEDGER-01), CHG-015 (SEC-01 vs SEC-01 + GENOME-01 + NOTIFY-01), CHG-016 (CONTENT-01 vs CONTENT-01 + A11Y-01). Phase 1 seeds the register from \u00a72.1, so the countersignatures required to close Phases 5, 8, 11 and 18 are recorded incompletely at the outset, and \u00a711's requirement that every gate be countersigned cannot be checked against a single list."
+ },
+ {
+  "id": "GX-02",
+  "kind": "ambiguity",
+  "covered_by": "D-013",
+  "survives_amendment_2": true,
+  "claim": "The CHG-004 gate is scored against 'its stated step count' / 'a stated step count', but no step count is stated anywhere in the document for submit-quote, find-my-item, view-image or read-my-ledger. A session cannot know whether 6 steps or 12 steps passes, so the gate cannot be run without asking Tyler \u2014 the exact condition SK-42 (NON-WAIVABLE, \u00a71.2) forbids. Phase 1's exit gate claims every in-line item has such a gate, which is false for CHG-004 (P0). Blocks \u00a711 line 1."
+ },
+ {
+  "id": "GX-08",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "RSCH-01 and CLIENT-BH-01 are declared never-blocking standing agents, yet both are named as the verifier that calls a phase exit gate \u2014 RSCH-01 alone gates Phase 3 (which Phase 4 depends on), CLIENT-BH-01 co-gates Phase 12 (which Phase 12b and 13 depend on). A verifier whose countersignature is required is by definition blocking. A session cannot tell whether to hold Phase 4 on RSCH-01 or proceed; \u00a711 requires every phase gate countersigned by a verifier, so this affects the go/no-go line 'Every phase gate countersigned by a verifier who is not the owner'."
+ },
+ {
+  "id": "GX-10",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "Phase 1 names RES-01 as its verifier, but \u00a713.4 forbids RES-01 from calling any gate and states it is 'neither owner nor verifier of anything'; \u00a74.1 further says RES-01 'fires on failure; never on schedule'. Phase 1's exit gate therefore has no agent permitted to countersign it, and the very first gate of the build is unclosable as written. \u00a713.6's own gate ('Zero gates recorded as passed by any agent other than the named verifier') makes the deadlock explicit. Blocks \u00a711 line 'Every phase gate countersigned by a verifier who is not the owner'."
+ },
+ {
+  "id": "GX-11",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The verification rosters in \u00a74.5 disagree with the verifier lines in \u00a77. A11Y-01 claims Phases 5 and 8, which \u00a77 assigns to QA-01 + LEDGER-01; NOTIFY-01 claims Phase 11, which \u00a77 assigns to CONTENT-01 + A11Y-01. A session cannot determine whose countersignature closes those gates, and the \u00a711 countersignature line cannot be audited against a roster that names verifiers the phases do not."
+ },
+ {
+  "id": "GX-13",
+  "kind": "ambiguity",
+  "covered_by": "D-025",
+  "survives_amendment_2": true,
+  "claim": "'Cycle' is the unit of every time-bound gate in the document \u2014 RES-01's SLA, the 'open longer than one cycle' trigger, the restore drill window, \u00a713.6's 'no proposed path older than one cycle' \u2014 and it is never defined anywhere. A session cannot tell whether a cycle is a phase, a day, or a session, so it cannot determine when an item has breached SLA, when a drill has expired, or whether \u00a711's 'Zero register items blocked with no proposed path (\u00a71.11)' is satisfied."
+ },
+ {
+  "id": "GX-14",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "NOTIFY-01's gate requires real transactional email delivery \u2014 'sender identity correct' and 'centralized orders routing intact' are properties of production mail infrastructure (sending domain, SPF/DKIM, routing), not of a template file, and a sandboxed session cannot verify them. 'Every state transition a human should know about' is additionally a judgment call with no enumerated list of transitions, contrary to \u00a76. This gates CHG-015 and CHG-016 (both P1); blocks \u00a711 line 2."
+ },
+ {
+  "id": "GX-17",
+  "kind": "ambiguity",
+  "covered_by": "D-013",
+  "survives_amendment_2": true,
+  "claim": "The contrast gate is scored against 'minimums' / 'contrast minimums' that the document never specifies \u2014 no standard is named, no ratio is given, and 'UI pairing' is not defined (non-text components have a different threshold from text under every published standard). A third party cannot run this without asking, which SK-42 forbids, and two sessions could reach opposite verdicts on the same palette. CHG-013 is P1; blocks \u00a711 line 2."
+ },
+ {
+  "id": "GX-18",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "'Broken, misleading, or accusingly empty' is an aesthetic judgment with no true/false signal, and it is assigned to DATAOPS-01 \u2014 an environment-integrity verifier whose other gates are row counts. Two sessions will disagree on whether a sparse surface reads as 'accusingly empty', so the gate cannot be called consistently, contrary to \u00a71.2's binary requirement. CHG-004g is part of P0 CHG-004; blocks \u00a711 line 1 and the cross-cutting \u00a79 line 'Every surface renders correctly with the real post-purge dataset (Phase 14)'."
+ },
+ {
+  "id": "GX-19",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "SK-13 is exercised at Phases 4 and 7 but its acceptance signal requires capturing artifacts that do not exist yet: charts land at Phase 5, email templates at Phase 10, document previews at Phase 16. The evidence the skill names cannot be produced at Phase 4 or 7, so either the skill cannot pass there or it must be silently deferred \u2014 and Phase 4's exit gate does not mention SK-13 at all, leaving a session unable to tell whether dark-mode parity gates Phase 4 or not."
+ },
+ {
+  "id": "GX-20",
+  "kind": "ambiguity",
+  "covered_by": "D-013",
+  "survives_amendment_2": true,
+  "claim": "Phases 12, 13 and 14 are scoped by CHG-004 sub-item letters (b; a, c, d, e, f, h; g), but the eight sub-items are never enumerated anywhere in the document \u2014 \u00a72.1 gives only a one-line title and \u00a79's gate names four unrelated tasks. A session cannot determine what CHG-004e or CHG-004f require, cannot verify that all eight were covered, and cannot tell whether Phase 13's six work bullets exhaust its six letters. CHG-004 is P0; blocks \u00a711 line 1 and violates SK-42 at Phase 1."
+ },
+ {
+  "id": "GX-21",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-014's gate requires 'Admin retrieval logged', but the only skill in the catalog that logs admin access to a client's records is SK-37, which is DORMANT and therefore out of scope under \u00a72.2 and \u00a76, and stays dormant if Tyler declines \u00a74.6. Phase 16 lists only SK-29, SK-30 and SK-31, none of which mention logging, so no owner and no procedure exists to produce that evidence. CHG-014 is P0; blocks \u00a711 line 1 and the line 'Every issued document retrievable by its intended party and by nobody else'."
+ },
+ {
+  "id": "GX-22",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "SK-21's entire acceptance signal is a judgment about whether a label matches 'the vocabulary of what it controls' \u2014 there is no test, no inventory, no pass threshold and no named judge. \u00a76's own definition forbids exactly this. A session cannot produce evidence of it, and it is a listed skill in three phases including Phase 9, whose exit gate covers P1 CHG-009."
+ },
+ {
+  "id": "GX-23",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Two problems in one gate. 'Six client-facing Genome sections held' names a count but never enumerates which six, so a session cannot verify they were held rather than swapped; and 'first screen of any item scannable in ten seconds' is a human perception-and-timing test with no subject named and no definition of 'scannable'. Neither half yields a true/false signal a session can produce. Feeds P0 CHG-004 at Phase 13 and P1 CHG-015 at Phase 18."
+ },
+ {
+  "id": "GX-24",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "'No two components with the same job' is a judgment call with no definition of 'job' and no inventory to check against, contrary to \u00a76. Compounding it, Phase 4 exercises SK-11 but its exit gate lists only token conditions, so a session cannot tell whether the component inventory gates Phase 4 or is merely exercised in it \u2014 i.e. whether Phase 5 opens without it."
+ },
+ {
+  "id": "GX-25",
+  "kind": "ambiguity",
+  "covered_by": "D-008",
+  "survives_amendment_2": true,
+  "claim": "The hostile battery's six datasets are precisely specified, but two of its three pass conditions are not: 'no distortion' and 'no silent drop' have no definition or measurement. A crash is detectable; distortion is a judgment. Since CHG-001 is P0 and must survive this battery on two consecutive passes (\u00a710), a subjective clause sits on the critical path to \u00a711 line 1."
+ },
+ {
+  "id": "GX-26",
+  "kind": "ambiguity",
+  "covered_by": "D-012",
+  "survives_amendment_2": false,
+  "claim": "SK-34 and SK-45 are marked ACTIVE (so in scope under \u00a76) but appear in no phase row of Appendix E and in no \u00a77 phase, and Appendix E's dormant list does not include them \u2014 so no session knows when, or whether, to run their gates. SK-34's gate is additionally unrunnable as written: an admin preview and a published member view are different surfaces with different chrome, so 'byte-identical' has no defined comparison target. SK-34 is also tied to no in-line item, so \u00a72.4's test for whether ADMIN-01 may act on it returns no."
+ },
+ {
+  "id": "GX-27",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "SK-44's gate governs merges ('No unexplained visual diff merged; baselines per route per theme') but the skill is scheduled only at Phases 20 and 21, after every merge in the build has already happened. The evidence cannot be produced retroactively, and no earlier phase is told to capture baselines \u2014 Phase 4's specimen sheet and Phase 8's screenshots are not designated as baselines. 'Unexplained' is also a judgment call. Blocks \u00a711's two-clean-passes line, since SK-44 is named in both passes."
+ },
+ {
+  "id": "GX-30",
+  "kind": "ambiguity",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "SK-50's gate \u2014 a fresh session naming 'the next three actions correctly' \u2014 has no reference answer to score against, so correctness is a judgment call, and it requires standing up a second, uncontaminated session. It is also listed only as 'Continuous' with no phase and no exit gate anywhere in \u00a77, so no gate ever demands its evidence and no phase is blocked by its failure, despite being ACTIVE and owned by DOC-01."
+ },
+ {
+  "id": "GX-31",
+  "kind": "unexecutable",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "Phase 17 requires that every ledger row resolve to a retrievable document, but receipts are generated at purchase by an engine that does not exist until Phase 16 \u2014 so the one real client's ledger rows from before Phase 16 have no document, and the only ways to close the gate are backfilling receipts (which DOC-01's charter does not authorize and which collides with 'unbroken immutable sequence') or having zero prior rows. The evidence named cannot exist for the historical period. CHG-014 is P0; blocks \u00a711's 'Money reconciles four ways for every period offered'."
+ },
+ {
+  "id": "F-01",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The \u00a75.2 table's nine domains are owned by SEVEN distinct agents (DS-01, VIZ-01, DOC-01, I18N-01, ADMIN-01, UX-01, SITE-01 \u2014 DOC-01 owns two domains and SITE-01 owns two), not six. Both places that state the owner count say six."
+ },
+ {
+  "id": "F-05",
+  "kind": "arithmetic",
+  "covered_by": "D-012",
+  "survives_amendment_2": false,
+  "claim": "Appendix E claims exactly ten skills are exercised in no phase. Counting the union of every skill named in Appendix E's 22 phase rows plus the Continuous row against the 56-skill catalog, TWELVE skills appear in no phase: the ten listed plus SK-34 (Pricing strategy publishing, ADMIN-01) and SK-45 (Severity triage, AIM-00) \u2014 both marked ACTIVE, both unlisted as dormant, both scheduled nowhere."
+ },
+ {
+  "id": "F-06",
+  "kind": "contradiction",
+  "covered_by": "D-010",
+  "survives_amendment_2": true,
+  "claim": "\u00a72.1 assigns CHG-004 the inclusive range \"SK-21\u2013SK-28\", which contains SK-27. SK-27 is DORMANT and owned by dormant PERF-01, and \u00a72.2 puts every DORMANT skill out of scope. SK-27 is also listed under \"Skills executed\" for both VIZ-01 (\u00a74.4) and UX-01 (\u00a74.4). \u00a77 Phase 13 and Appendix E both silently drop SK-27, so the three lists of CHG-004's skills disagree."
+ },
+ {
+  "id": "F-07",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "\u00a76's first rule is an explicit count \u2014 exactly one owning agent per skill. SK-51's Owner cell names two agents. \u00a72.1 also gives CHG-015 two owners and \u00a77 Phase 18 gives it three. There is no tiebreak for which of UX-01 or ADMIN-01 is \"accountable for the standard\"."
+ },
+ {
+  "id": "F-08",
+  "kind": "contradiction",
+  "covered_by": "D-008",
+  "survives_amendment_2": true,
+  "claim": "SK-53 is claimed as an owned skill by two agents. VIZ-01's brief lists SK-53 under \"Skills owned\"; \u00a76 gives the owner as QA-01; QA-01's brief also lists SK-53 under \"Skills owned\". VIZ-01's own charter note then says QA-01 runs it. Two agents own one skill, against \u00a76's exactly-one rule."
+ },
+ {
+  "id": "F-09",
+  "kind": "contradiction",
+  "covered_by": "D-009",
+  "survives_amendment_2": true,
+  "claim": "SK-24 is owned by UX-01 and is ACTIVE, yet \u00a74.7 splits it into an \"intake half\" held by dormant QUOTE-01 and an \"application half\" held by dormant MEMBER-01. That is three claimants on one skill, and it puts fractions of an ACTIVE, in-scope skill inside two agents \u00a72.2 declares out of scope."
+ },
+ {
+  "id": "F-11",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a72.1 gives each item exactly one verifier; \u00a79 and the agent briefs give several the same items with more. CHG-001: \u00a72.1 says QA-01, \u00a79 says QA-01 + LEDGER-01. CHG-015: \u00a72.1 says SEC-01, \u00a79 says SEC-01 + GENOME-01 + NOTIFY-01. CHG-016: \u00a72.1 says CONTENT-01, \u00a79 says CONTENT-01 + A11Y-01. CHG-004: \u00a72.1 says QA-01, UX-01's brief names four verifiers. The countersignature required by \u00a711 (\"Every phase gate countersigned by a verifier\") is therefore ambiguous in count for four of the fourteen items."
+ },
+ {
+  "id": "F-12",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "Appendix F records v1.0 at 12 go/no-go lines and v2.0 at 15 \u2014 a net addition of three \u2014 while flagging only ONE addition (SK-41) as proposed rather than assumed. The 15 body lines are correct as counted, but three of them are new in v2.0 and were added without the explicit-acceptance treatment \u00a711.2 says a new line gets: \"Every phase gate countersigned by a verifier who is not the owner (\u00a74.2)\", \"Zero register items blocked with no proposed path (\u00a71.11)\", and \"\u00a74.6 answered and recorded\" all depend on v2.0-only mechanisms."
+ },
+ {
+  "id": "F-15",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "\u00a77 and Appendix E both name RES-01 as the verifier of Phase 1. \u00a713.4 states RES-01 may not call a gate at all and is neither owner nor verifier of anything. \u00a711 requires every phase gate to be countersigned by a verifier. Phase 1 therefore cannot be countersigned by the agent both lists assign to it."
+ },
+ {
+  "id": "F-18",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Four verifier rosters give phase counts that do not match \u00a77. A11Y-01 lists six phases (5, 7, 8, 11, 13, 15) but \u00a77 names it at 4, 7, 11, 13, 15 \u2014 it is absent from Phases 5 and 8 and present at Phase 4, which it does not list. QA-01 lists five (5, 8, 13, 20, 21) but \u00a77 also makes it the Phase 6 verifier of CHG-011, which QA-01 does list as an item it verifies. NOTIFY-01 lists Phases 10, 11, 18 but \u00a77 does not name it at Phase 11. CONTENT-01 lists Phases 11, 12 but \u00a77 names it at 10, 11, 12 and 12b."
+ },
+ {
+  "id": "F-19",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The diagram places eight agents under the VERIFY heading (A11Y-01, SEC-01, QA-01, LEDGER-01, DATAOPS-01, CONTENT-01, GENOME-01, NOTIFY-01). The legend defines the Verification tier as exactly five and assigns CONTENT-01, GENOME-01 and NOTIFY-01 to the Capability tier instead. Since the Verification tier carries the rule \"never build\", the two counts imply different permissions for three agents."
+ },
+ {
+  "id": "F-20",
+  "kind": "arithmetic",
+  "covered_by": "D-013",
+  "survives_amendment_2": false,
+  "claim": "\u00a77 Phase 1 lists one skill, SK-46. Appendix E lists two for the same phase, SK-42 and SK-46, and Phase 1's own Work paragraph invokes SK-42. This is the only phase where \u00a77's skill line and Appendix E's disagree; the omitted skill is a NON-WAIVABLE one."
+ },
+ {
+  "id": "F-21",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "CHG-005's gate is a ranking test over multiple clients, and Appendix B's OPEN-D asserts a client at 31% of revenue. After Phase 2 the system holds exactly one client, whose revenue share is by arithmetic 100%. A ranking of one item cannot be got wrong, so the gate becomes vacuous rather than passed, and the 31% figure describes a dataset the protocol destroys in Phase 2."
+ },
+ {
+  "id": "F-23",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "\u00a70.1 counts the Tyler-facing decisions at exactly one and says it is flagged in exactly one place. \u00a711.2 forces a second explicit accept/decline from Tyler (SK-41), \u00a711's checklist has a line for Appendix B's seven open decisions, and OPEN-A itself is flagged in at least six further places: Appendix B, \u00a77 Phase 8's branch, \u00a78.2's dependency list, \u00a79's conditional CHG-017 gate, \u00a711's \"\u00a74.6 answered and recorded\" line, and Appendix E's Phase 8 row."
+ },
+ {
+  "id": "F1",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "Phase 1 (and Appendix E's Phase 1 row) names RES-01 as the phase verifier, but RES-01's own charter forbids it from calling any gate and states it verifies nothing. Under \u00a74.2 a phase gate passes only on a verifier's countersignature, so Phase 1's exit gate can never be validly countersigned \u2014 and every later phase is gated on Phase 1 passing. This also makes the \u00a711 line 'Every phase gate countersigned by a verifier who is not the owner (\u00a74.2)' permanently unsatisfiable, and it collides with \u00a713.6's own check 'Zero gates recorded as passed by any agent other than the named verifier.'"
+ },
+ {
+  "id": "F2",
+  "kind": "contradiction",
+  "covered_by": "D-024",
+  "survives_amendment_2": true,
+  "claim": "RES-01 is chartered as firing only on failure and as never being on the critical path (except \u00a710.4), yet Phase 1 places it on the critical path on schedule, as the scheduled verifier of the build's first gate, before any failure has occurred. \u00a713.2's trigger list ('any gate reported FAIL', 'any P0 or P1 open longer than one cycle', 'any item reopened twice', 'any agent reporting itself stuck', 'any item AIM-00 is about to escalate') contains no trigger that Phase 1 satisfies, so RES-01 has no lawful reason to be awake at Phase 1 at all."
+ },
+ {
+  "id": "F4",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "\u00a711.1 grants Tyler an unqualified power to override any line of the \u00a711 checklist. Four of those lines are direct restatements of \u00a71 directives that \u00a711.2 says he may not override: 'Fixture purge verified; no fabricated data on any client-facing surface' (\u00a71.5), 'Tenant isolation verified adversarially by SEC-01 with the attempted-access matrix' (\u00a71.8), 'Every issued document retrievable by its intended party and by nobody else' (\u00a71.8), and \u2014 via \u00a710's two clean passes and \u00a71.7 \u2014 the document lines. Exercising \u00a711.1 on any of those violates \u00a71.12. The document never says which of the two sentences wins."
+ },
+ {
+  "id": "F7",
+  "kind": "contradiction",
+  "covered_by": "D-013",
+  "survives_amendment_2": false,
+  "claim": "SK-41 is 'proposed, not assumed' and declinable, yet four other locations already treat it as accepted and would each have to be edited on a DECLINE: (1) \u00a74.5 DATAOPS-01's 'Gate it calls' lists the restore drill unconditionally, in the same brief that then calls it a proposal; (2) \u00a76 Family F gives SK-41 status ACTIVE, while \u00a76's own rule makes DORMANT skills out of scope; (3) \u00a79's Cross-cutting acceptance gate lists it as part of the definition of done; (4) Appendix E schedules SK-41 in the 'Continuous' row and omits it from 'Dormant, exercised in no phase'. Compounding this, no phase or deadline is set for Tyler's SK-41 answer, while DATAOPS-01's gate bites from Phase 2 \u2014 so a decline arriving after Phase 2 rewrites a written gate after work has started, which \u00a71.2 (non-waivable via SK-42) forbids."
+ },
+ {
+  "id": "F9",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "The MOVE-IN answer creates CHG-017 as a fifteenth in-line item, but the document hard-codes fourteen in three places that would each have to change and are not flagged as conditional: \u00a72.1's heading, Phase 1's exit gate ('every one of the 14 in-line items'), and Appendix F's scope row ('14 in line, 2 scrapped | unchanged'). Appendix E's Phase 8 row also adds only SK-37 on move-in and silently drops SK-52 \u2014 a NON-WAIVABLE skill that \u00a77 Phase 8 and \u00a74.6 both require. Full list of locations a MOVE-IN must be applied to: \u00a72.1 table and heading; \u00a77 Phase 1 exit gate; \u00a77 Phase 8; \u00a77 Phase 19 evidence (decline branch removed); \u00a76 SK-37 status; \u00a74.4 ADMIN-01 must-not; \u00a74.5 SEC-01 'Holds SK-37 dormant'; \u00a79 CHG-017; \u00a711 checklist; Appendix B OPEN-A; Appendix E Phase 8 row and dormant list; Appendix F OPEN-A row."
+ },
+ {
+  "id": "F11",
+  "kind": "unexecutable",
+  "covered_by": "D-013",
+  "survives_amendment_2": true,
+  "claim": "CHG-017's written gate contains a requirement that neither of its two assigned skills covers: a separate logged elevation for write actions during impersonation. SK-37's acceptance signal stops at read-only-by-default and log visibility; SK-52 is cross-tenant reachability. \u00a76 requires every gate to rest on a skill with a falsifiable check and one accountable owner, and SK-42 requires a gate a third party could run \u2014 no agent owns the elevation check, so nobody can call that clause."
+ },
+ {
+  "id": "F13",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": false,
+  "claim": "\u00a70.1 tells the build session there is exactly one decision Tyler must make and that it is flagged in one place only. Both halves are false in ways that change work: \u00a711.2 requires a second explicit Tyler decision (accept or decline SK-41), the \u00a711 checklist requires a third ('Appendix B decisions either resolved or explicitly deferred by Tyler', covering OPEN-B through OPEN-G), and \u00a74.6 is in fact cross-referenced in at least ten other locations. A session that trusts \u00a70.1 will never surface the SK-41 decision, whose deadline is nowhere stated (see F7)."
+ },
+ {
+  "id": "F14",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The standing tier is chartered as never blocking a phase, yet all three of its members sit on the critical path: RSCH-01 alone can close Phase 3's exit gate (and the \u00a75 gate at Phases 10, 16, 20); \u00a75.3 puts SITE-01's two domains (55 of the 250 sources) in the remainder that must be complete before Phase 20 opens; and CLIENT-BH-01 is a named verifier of Phase 12, which Appendix A upgrades to a countersignature \u2014 and \u00a74.2 makes a countersignature a precondition of the gate passing. Whether these agents can hold a phase determines whether Phases 3, 12 and 20 can open."
+ },
+ {
+  "id": "F15",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The verifier of record differs between the three places that name one, and \u00a74.2 makes the countersigning verifier a hard precondition. CHG-001: \u00a72.1 says QA-01, \u00a79 says 'QA-01 + LEDGER-01', LEDGER-01's charter does not list CHG-001. CHG-015: \u00a72.1 says SEC-01, \u00a79 says 'SEC-01 + GENOME-01 + NOTIFY-01'. CHG-016: \u00a72.1 says CONTENT-01, \u00a79 says 'CONTENT-01 + A11Y-01', and A11Y-01's charter does not list CHG-016. Separately, A11Y-01's charter claims Phases 5 and 8 but neither phase names A11Y-01 as verifier \u2014 while CHG-002 (Phase 5) and CHG-010 (Phase 8) both have A11Y-01 as their item verifier, so those two item gates have no authorised caller inside their phase. QA-01's charter omits Phase 6 although Phase 6 names QA-01 as verifier of CHG-011."
+ },
+ {
+  "id": "F16",
+  "kind": "contradiction",
+  "covered_by": "D-007",
+  "survives_amendment_2": true,
+  "claim": "\u00a70 states every item has exactly one owning agent and forbids shared ownership; \u00a76 states every skill has exactly one owning agent. \u00a72.1 gives four items two owners each (CHG-001, CHG-005, CHG-008, CHG-015), and SK-51 is assigned to 'UX-01 + ADMIN-01'. Under \u00a74.2 'the owner produces the evidence' and under SK-46 nothing closes without an owner's evidence and a verifier countersignature \u2014 with two owners there is no single agent accountable for either, and no rule for breaking a disagreement between them."
+ },
+ {
+  "id": "F22",
+  "kind": "unexecutable",
+  "covered_by": "D-021",
+  "survives_amendment_2": true,
+  "claim": "\u00a75.2 requires 20 sources on payment states and settlement behaviour, owned by DOC-01, and the 250 total cannot be reached without them. But the only work those sources could inform \u2014 CHG-007, order-level payment state \u2014 is scrapped, PAY-01 is dormant, and LEDGER-01 is explicitly barred from introducing payment state. SK-01's acceptance signal requires every citation to name the decision it informs, and there is no such decision in scope. The domain therefore cannot be closed by RSCH-01, so the \u00a711 line '250 qualifying sources, confirmed by RSCH-01' cannot be satisfied and Phase 20 cannot open."
+ },
+ {
+  "id": "F23",
+  "kind": "arithmetic",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The \u00a75.2 table has seven distinct owning agents \u2014 DS-01, VIZ-01, DOC-01 (two domains), I18N-01, ADMIN-01, UX-01, SITE-01 (two domains) \u2014 not six. Both \u00a74.5 and Appendix F state six. This matters for RSCH-01's custodial gate, which must confirm domain coverage agent by agent; a session reconciling the register against 'six owners' will conclude a domain is unassigned."
+ },
+ {
+  "id": "F24",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "The multi-tenant isolation research domain is owned by ADMIN-01 \u2014 the agent \u00a74.2 and Phase 19 explicitly disqualify from grading tenancy \u2014 while the non-waivable gate it feeds is called by SEC-01, who owns no part of the reading. Worse, \u00a75.3 stages only accessibility/dataviz (Phase 4), financial documents (Phase 16) and i18n (Phase 10), leaving tenancy in 'the remainder' due before Phase 20. Phase 19 runs the two NON-WAIVABLE tenancy skills before its own research domain is required to exist, which \u00a75.1's 'No P0 decision is made on assumption' forbids."
+ },
+ {
+  "id": "F27",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": true,
+  "claim": "\u00a713.4 forbids RES-01 from weakening 'a gate it does not own', which presupposes gates it does own \u2014 but two bullets earlier the same subsection says RES-01 is neither owner nor verifier of anything, and \u00a713.6 nonetheless gives RES-01 a gate of its own. The carve-out therefore either licenses RES-01 to weaken \u00a713.6 (its own performance gate), which \u00a71.2 forbids, or is meaningless. The \u00a74.5 one-line summary compounds it: 'cannot pass a gate it did not pass' implies RES-01 may pass gates it did pass, while \u00a713.4 says it may not call a gate at all."
+ },
+ {
+  "id": "F29",
+  "kind": "contradiction",
+  "covered_by": "D-025",
+  "survives_amendment_2": false,
+  "claim": "AIM-00 may escalate an Appendix B open decision to Tyler only after RES-01 has run \u00a713, and \u00a713.2 repeats that RES-01 runs first on anything headed for Tyler. Both of the document's actual escalations to Tyler \u2014 OPEN-A/\u00a74.6, which must be answered before Phase 1, and SK-41 in \u00a711.2 \u2014 are made by the protocol itself with recommendations already attached and no RES-01 run. \u00a74.6 is due before Phase 1 opens, i.e. before RES-01 is even active ('ACTIVE FROM PHASE 1'), so compliance is impossible rather than merely skipped."
+ },
+ {
+  "id": "F30",
+  "kind": "unexecutable",
+  "covered_by": "D-013",
+  "survives_amendment_2": true,
+  "claim": "Phase 14's exit gate turns on 'broken, misleading, or accusingly empty' \u2014 a pure judgment call, which \u00a76 says disqualifies it as a skill check and \u00a71.2 (enforced by the non-waivable SK-42) says a gate may not be. Its named verifier, DATAOPS-01, has a charter gate covering only fixture rows, the standing guard and the restore drill; nothing in it authorises a judgment about empty-state design, and DATAOPS-01 never builds, so it cannot be the one deciding what 'accusingly empty' means. The same defect sits in SK-21 ('use the vocabulary of what they control') and SK-26 ('scannable in ten seconds')."
+ },
+ {
+  "id": "F31",
+  "kind": "contradiction",
+  "covered_by": null,
+  "survives_amendment_2": true,
+  "claim": "Phase 5's exit gate requires CHG-001's gate to pass, but CHG-001's \u00a79 gate is a revenue-screen gate ('Seven distinct daily marks... Marks sum to the headline total... Tallest equals Best Day') and the revenue screen is not rebuilt until Phase 8, which lists CHG-001 in line again and requires the same gate. Either Phase 5 cannot close, or CHG-001's gate is called twice by different verifier sets (Phase 5: QA-01 + LEDGER-01; Phase 8: QA-01 + LEDGER-01, with \u00a72.1 naming only QA-01), with no rule for which call is authoritative or what happens if Phase 8's call fails a gate Phase 5 already passed."
+ }
+]

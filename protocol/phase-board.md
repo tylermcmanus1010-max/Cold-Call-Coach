@@ -54,7 +54,7 @@ one Flask-repo surface from the Phase 1 census. **No item cites the prototype** 
 
 ## Decisions
 
-34 filed; **seven signed by Tyler** — D-001, D-002, D-003 (Amendment 1) and D-026, D-027,
+38 filed; **seven signed by Tyler** — D-001, D-002, D-003 (Amendment 1) and D-026, D-027,
 D-028, D-029 (Amendment 2). D-029 is executed: the residue is reverted and re-proved at
 zero.
 
@@ -75,6 +75,10 @@ Open and biting before Phase 4:
 | D-013 | Phase 1's skills line omits SK-42, which its own exit gate requires |
 | D-014 | Amendment 1 left four counts stale — Amendment 2 fixed the register, not these |
 | **D-034** | D-026 closed CHG-012 on a sentence its own evidence contradicts — needs your signature |
+| **D-035** | The verifier of record is stated in four places that disagree; CHG-002's gate can be called by nobody at Phase 5 |
+| **D-036** | The standing tier is chartered never-blocking and gates Phases 3 and 12 |
+| **D-037** | §5 requires 250 sources and gives 195 of them no phase — due at the last gate before launch |
+| **D-038** | §11.1 lets Tyler override four lines that §1.12 makes non-waivable |
 | D-032 | The period picker is unstyled; no in-line item covers it |
 
 ---

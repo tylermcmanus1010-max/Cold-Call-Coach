@@ -1211,7 +1211,18 @@ function processingFor(net, method) {
 
 /* Freight and customs, the way a forwarder works it out. The figure is shown to
    the client struck through, so it has to be one we can defend line by line. */
-var LANE = {SEA: {perKg: 260, min: 45000, days: 32}, AIR: {perKg: 720, min: 28000, days: 9}};
+/* Three lanes, because the Decision Room offers three arrival methods. SPLIT was
+   missing, so choosing it in the room and then buying quoted ocean at checkout —
+   the arrival method a member picked never reached the window they paid in.
+   Split is 30% air / 70% ocean, weighted on both rate and transit. */
+var LANE = {
+  SEA:   {perKg: 260, min: 45000, days: 32, label: "Ocean, consolidated"},
+  SPLIT: {perKg: 398, min: 39000, days: 16, label: "Split — 30% air, 70% ocean"},
+  AIR:   {perKg: 720, min: 28000, days: 9,  label: "Air, direct"}
+};
+/* The room speaks ocean/split/air; the estimator speaks SEA/SPLIT/AIR. One map,
+   in one place, so the two cannot drift. */
+var MODE_TO_LANE = {ocean: "SEA", split: "SPLIT", air: "AIR"};
 var DUTY = {"Bags & leather goods": 17.6, "Apparel & textiles": 14.9, "Packaging & print": 0,
             "Metal & machined parts": 2.9, "Molded plastics": 5.3, "Silicone & rubber": 3.4,
             "Ceramics & glass": 6.0, "Furniture & fixtures": 0, "default": 4.2};
@@ -1560,10 +1571,18 @@ function ordersFor(id) {
    with no entered saving is not offered. Boars Head's real container, not a
    demo part.
    ========================================================================== */
+/* One transit number per lane, not two. The room quoted "14 days average" for
+   split while the checkout estimator quoted 16, and "6 days in the air" against
+   9 — a member was shown one arrival date while being priced against another.
+   The days now come from LANE, which is what checkout uses, so the two surfaces
+   cannot drift apart again. The rest of each entry is the room's own. */
 var FREIGHT_LANES = {
-  ocean: {perUnit: 2, fixed: 54000, transit: "32 days at sea", lane: "Ocean, consolidated"},
-  split: {perUnit: 5, fixed: 65000, transit: "14 days average", lane: "Split — 30% air, 70% ocean"},
-  air:   {perUnit: 14, fixed: 90000, transit: "6 days in the air", lane: "Air, direct"}
+  ocean: {perUnit: 2,  fixed: 54000, lane: "Ocean, consolidated",
+          get transit() { return LANE.SEA.days + " days at sea"; }},
+  split: {perUnit: 5,  fixed: 65000, lane: "Split — 30% air, 70% ocean",
+          get transit() { return LANE.SPLIT.days + " days average"; }},
+  air:   {perUnit: 14, fixed: 90000, lane: "Air, direct",
+          get transit() { return LANE.AIR.days + " days in the air"; }}
 };
 
 /* The six named cost inputs. Each one is a figure an admin entered; nothing in
@@ -2877,8 +2896,13 @@ function purchasesView(c, orders) {
 /* ---------- checkout ---------- */
 function viewCheckout() {
   var c = client(S.user.id), it = CATALOG.filter(function (x) { return x.sku === S.cart.sku; })[0];
-  var goods = it.price * S.cart.qty;
-  var est = freightEstimate(goods, S.cart.qty, it.cat, c.country, "SEA");
+  /* The route the member picked, carried in on the cart. Unit price comes from
+     the route they priced, not the catalogue list price, and freight is quoted
+     on the arrival method they chose rather than always on ocean. */
+  var unit = S.cart.unitOverride !== undefined ? S.cart.unitOverride : it.price;
+  var goods = Math.round(unit * S.cart.qty);
+  var laneKey = MODE_TO_LANE[S.cart.mode] || "SEA";
+  var est = freightEstimate(goods, S.cart.qty, it.cat, c.country, laneKey);
   var waived = !!c.freightWaived;
   var charged = waived ? 0 : est.total;
   var fee = feeOn(goods + charged);
@@ -2891,17 +2915,30 @@ function viewCheckout() {
   ].map(function (o) { o.total = net + o.fee; return o; });
   S.quote = {goods: goods, est: est, waived: waived, charged: charged, fee: fee, net: net, opts: opts};
 
+  var arrivalRow =
+    '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
+      '<span class="sum-name">Arrival method</span>' +
+      '<span class="sum-note">' + esc(LANE[est.mode].label) + ' · ' + est.days +
+        ' days transit' +
+        (S.cart.lead ? ' · ' + S.cart.lead + ' days door to door' : '') +
+      '</span></div></td>' +
+    '<td class="right"><span class="mono">' + esc(S.cart.route || "Standard") + '</span></td></tr>';
+
   var freightRow = waived
     ? '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
         '<span class="sum-name">Freight &amp; customs to ' + esc(est.destination) + '</span>' +
+        '<span class="sum-note">' + esc(LANE[est.mode].label) + ' · ' + est.days +
+        ' days transit' + (S.cart.route ? ' · chosen route: ' + esc(S.cart.route) : '') +
+        '</span>' +
         '<span class="free-tag">Client ' + esc(c.name) + ' marked as free in system</span>' +
       '</div></td><td class="right"><div class="sum-stack">' +
         '<span class="struck mono sum-was">' + money(est.total) + '</span>' +
         '<span class="mono sum-now">$0.00</span></div></td></tr>'
     : '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
         '<span class="sum-name">Freight &amp; customs to ' + esc(est.destination) + '</span>' +
-        '<span class="sum-note">' + est.mode.toLowerCase() + ' freight, ' + est.days +
-        ' days transit</span></div></td>' +
+        '<span class="sum-note">' + esc(LANE[est.mode].label) + ' · ' + est.days +
+        ' days transit' + (S.cart.route ? ' · chosen route: ' + esc(S.cart.route) : '') +
+        '</span></div></td>' +
       '<td class="right mono sum-amount">' + money(est.total) + '</td></tr>';
 
   return '<div class="shell"><aside class="sidebar">' +
@@ -2928,7 +2965,7 @@ function viewCheckout() {
         '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
           '<span class="sum-name">Goods subtotal</span></div></td>' +
           '<td class="right mono sum-amount" id="sub">' + money(goods) + '</td></tr>' +
-        freightRow +
+        arrivalRow + freightRow +
         '<tr class="sum-row"><td colspan="3" class="right"><div class="sum-label">' +
           '<span class="sum-name">Convenience fee</span>' +
           '<span class="sum-note">' + FEE_PERCENT + '% of the order</span>' +
@@ -3335,9 +3372,16 @@ function drPricedPane(it) {
         '<input type="text" id="drTarget" value="' + (v.target / 100).toFixed(4) + '"></label>' +
       '<div class="dr-control"><span class="stat-label">Freight</span><div class="seg">' +
         ["ocean", "split", "air"].map(function (m) {
-          return '<button data-drmode="' + m + '" class="' + (v.mode === m ? "on" : "") + '">' +
+          return '<button data-drmode="' + m + '" class="' + (v.mode === m ? "on" : "") + '"' +
+            ' aria-pressed="' + (v.mode === m) + '">' +
             m.charAt(0).toUpperCase() + m.slice(1) + '</button>';
-        }).join("") + '</div></div>' +
+        }).join("") + '</div>' +
+        /* The selected arrival method states itself in words as well as colour.
+           CHG-013's rule is that no state is carried by hue alone, and a member
+           choosing how their goods travel should be able to read the answer. */
+        '<p class="tiny dim" id="drLaneNote">' + esc(FREIGHT_LANES[v.mode].lane) + ' · ' +
+          esc(FREIGHT_LANES[v.mode].transit) + ' · this is what checkout will quote.</p>' +
+        '</div>' +
       /* One treatment. The tool is always amortised into the unit price, so
          there is nothing to toggle: a "pay upfront" option showed a lower unit
          price for the same part, which is a discount that is not one — the money

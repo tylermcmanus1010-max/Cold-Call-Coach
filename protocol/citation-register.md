@@ -30,12 +30,9 @@ owning agent says it read enough (§5.4).
 - Phase 16 does not open until the financial-document domain is satisfied.
 - The remainder must be complete before Phase 20.
 
-## Open question against §5, filed for AIM-00
+## Open against §5
 
-The **payment states / ACH and card settlement** domain requires 20 sources and is
-assigned to DOC-01. CHG-007 was scrapped (§2.2) and PAY-01 is dormant (§4.7), so no
-in-scope decision depends on that domain. §5.1 requires every source to be *"cited
-against the decision it informs."* Twenty sources with no decision to inform cannot
-satisfy that test. Either the domain minimum drops and the §5 total becomes 230, or the
-in-scope decisions those 20 sources inform must be named. Recorded here rather than
-resolved, because changing a §5 minimum is a scope change under §12.
+**D-021** — the payment-states / ACH and card-settlement domain requires 20 sources and has
+no in-scope decision to cite against. **D-022** — Phase 16's entry names one of the two
+financial domains. Both are filed in `decisions.md` with options and a recommendation; both
+change when a phase may open, and neither is resolved here.

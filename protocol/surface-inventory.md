@@ -1,6 +1,6 @@
 # Surface inventory
 
-Phase 1 output, owned by AIM-00, verified by RES-01 (see decisions.md D-003).
+Phase 1 output, owned by AIM-00, **verified by QA-01** (D-003).
 
 **Status: NOT PRODUCED.** Phase 1 has not opened.
 

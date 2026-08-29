@@ -2,39 +2,69 @@
   "name": "short-03-send-me-an-email",
   "notes": "BATCH-01 script #7. OBJECTION pillar. Hook: loss framing. Script-heavy structure.",
   "scenes": [
-    { "type": "title", "duration": 3.6, "reveal": 0.55,
+    {
+      "type": "title",
+      "duration": 5.06,
+      "reveal": 0.55,
       "text": "\"Send me an email\" is a no wearing a suit.",
-      "highlight": ["no"],
-      "vo": "Send me an email is a no wearing a suit. Sometimes." },
-
-    { "type": "line", "duration": 3.2,
+      "highlight": [
+        "no"
+      ],
+      "vo": "Send me an email is a no wearing a suit. Sometimes."
+    },
+    {
+      "type": "line",
+      "duration": 4.93,
       "text": "It means one of two things and you have to find out which.",
-      "vo": "It means one of two completely different things, and you have to find out which." },
-
-    { "type": "waveform", "duration": 2.8, "caption": "a polite no, or genuinely busy",
-      "vo": "A polite no. Or genuinely busy." },
-
-    { "type": "line", "duration": 2.6,
+      "vo": "It means one of two completely different things, and you have to find out which."
+    },
+    {
+      "type": "waveform",
+      "duration": 3.32,
+      "caption": "a polite no, or genuinely busy",
+      "vo": "A polite no. Or genuinely busy."
+    },
+    {
+      "type": "line",
+      "duration": 2.03,
       "text": "One question separates them.",
-      "highlight": ["one"],
-      "vo": "One question separates them." },
-
-    { "type": "script", "duration": 5.6, "label": "SAY THIS",
-      "text": "\"Happy to. So I don't send you something useless — what would need to be in it for you to actually reply?\"",
-      "vo": "Happy to. So I don't send you something useless. What would need to be in it for you to actually reply?" },
-
-    { "type": "line", "duration": 3.6,
+      "highlight": [
+        "one"
+      ],
+      "vo": "One question separates them."
+    },
+    {
+      "type": "script",
+      "duration": 6.25,
+      "label": "SAY THIS",
+      "text": "\"Happy to. So I don't send you something useless \u2014 what would need to be in it for you to actually reply?\"",
+      "vo": "Happy to. So I don't send you something useless. What would need to be in it for you to actually reply?"
+    },
+    {
+      "type": "line",
+      "duration": 5.86,
       "text": "A polite no can't answer that. They'll say \"just send whatever.\"",
-      "vo": "A polite no can't answer that. They'll say, just send whatever. That was your answer." },
-
-    { "type": "line", "duration": 3.4,
+      "vo": "A polite no can't answer that. They'll say, just send whatever. That was your answer."
+    },
+    {
+      "type": "line",
+      "duration": 5.95,
       "text": "A busy person tells you exactly what to write.",
-      "highlight": ["exactly"],
-      "vo": "A genuinely busy person tells you exactly what to write. Now it's a warm email." },
-
-    { "type": "title", "duration": 3.0, "reveal": 0.35,
+      "highlight": [
+        "exactly"
+      ],
+      "vo": "A genuinely busy person tells you exactly what to write. Now it's a warm email."
+    },
+    {
+      "type": "title",
+      "duration": 6.09,
+      "reveal": 0.35,
       "text": "Never ask for their email.",
-      "highlight": ["never"],
-      "vo": "And never ask for their email. You already have it. Asking proves you didn't prepare." }
-  ]
+      "highlight": [
+        "never"
+      ],
+      "vo": "And never ask for their email. You already have it. Asking proves you didn't prepare."
+    }
+  ],
+  "audio": "/home/user/Cold-Call-Coach/content-ops/video/out/short-03-send-me-an-email.wav"
 }

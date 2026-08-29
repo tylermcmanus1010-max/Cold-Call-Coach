@@ -180,9 +180,15 @@ tr>th:last-child,tr>td:last-child{padding-right:0}
 .room-grid{display:grid; grid-template-columns:288px minmax(0,1fr); gap:22px; align-items:start}
 .controls{position:sticky; top:76px}
 .qty-read{font-size:2.1rem; line-height:1.1; margin:4px 0 10px; letter-spacing:-.03em}
-input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:3px; background:var(--rule); border-radius:2px; outline-offset:6px}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--green-deep); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-deep); cursor:grab}
-input[type=range]::-moz-range-thumb{width:14px; height:14px; border-radius:50%; background:var(--green-deep); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-deep); cursor:grab}
+/* The control was a 44px grey slab with a dot floating in it: `min-height:44px`
+   (the touch-target rule, further down) overrode the 3px height, so the input's
+   own background inflated to fill the whole block. Native rendering with an
+   accent colour draws a real rail, a real filled portion and a real thumb, in
+   both themes, and keeps the 44px target as padding rather than as paint. */
+input[type=range]{
+  width:100%; background:transparent; accent-color:var(--green-deep);
+  min-height:44px; padding:0; margin:0; outline-offset:6px; cursor:pointer;
+}
 .rangeticks{display:flex; justify-content:space-between; margin-top:7px; font-family:"IBM Plex Mono",monospace; font-size:.66rem; color:var(--muted)}
 .fieldrow{display:flex; flex-direction:column; gap:14px}
 .fieldrow label{display:flex; flex-direction:column; gap:6px; font-size:.78rem; color:var(--muted); font-weight:500}
@@ -272,6 +278,13 @@ input[type=range]::-moz-range-thumb{width:14px; height:14px; border-radius:50%; 
 .goldmeta div{display:flex; flex-direction:column; gap:2px}
 .goldmeta strong{font-size:.84rem; font-weight:500}
 
+/* The share bar. The markup is <div class="meter"><span style="width:N%">, and
+   .meter had no rule at all — so the track had no height and the span, being
+   inline by default, ignored its own width. It rendered as nothing. The three
+   .meter-* rules below were written for markup no screen uses. */
+.meter{display:block; height:8px; background:var(--sunk); border:1px solid var(--rule);
+  border-radius:2px; overflow:hidden}
+.meter > span{display:block; height:100%; background:var(--green); border-radius:0 2px 2px 0}
 .meter-head{display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:8px; color:var(--muted)}
 .meter-head strong{color:var(--ink)}
 .meter-track{height:8px; background:var(--sunk); border:1px solid var(--rule); border-radius:2px; overflow:hidden}
@@ -290,6 +303,24 @@ input[type=range]::-moz-range-thumb{width:14px; height:14px; border-radius:50%; 
 .lesson p{font-size:.79rem; line-height:1.5}
 .lesson b{color:var(--ink); font-weight:600}
 
+/* Restored. These rules existed until b708710, where adopting the new stylesheet
+   dropped them: the markup kept emitting .chart-bar / .chart-line and nothing
+   defined them any more, so every mark fell back to SVG's default fill — black.
+   Re-pointed at the current tokens rather than the old ones. */
+.chart-wrap{position:relative}
+.chart-svg{width:100%; height:auto; display:block; overflow:visible}
+.chart-grid line{stroke:var(--rule); stroke-width:1}
+.chart-axis text{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:10px; fill:var(--muted)}
+.chart-area{fill:color-mix(in srgb, var(--green) 14%, transparent)}
+.chart-line{fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; stroke-linecap:round}
+.chart-bar{fill:var(--green); rx:2}
+.chart-bar.dim{fill:color-mix(in srgb, var(--green) 55%, transparent)}
+.chart-end{fill:var(--green-deep); stroke:var(--surface); stroke-width:2}
+.chart-hit{fill:transparent; cursor:crosshair}
+.chart-cross{stroke:var(--muted); stroke-width:1; stroke-dasharray:3 3}
+.spark{display:block; width:100%; height:34px}
+.spark .chart-line{stroke-width:1.75}
+.spark .chart-area{fill:color-mix(in srgb, var(--green) 12%, transparent)}
 .chart{margin:18px 0 0; padding:0}
 .chart svg{display:block; width:100%; height:auto; overflow:hidden}
 .chart .legend{display:flex; gap:18px; margin-bottom:14px; font-size:.78rem; align-items:center; flex-wrap:wrap}
@@ -803,15 +834,41 @@ legend {
   overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
 }
 .cat-card:hover { border-color: var(--green); }
+.attachlist{list-style:none; margin:.8rem 0 0; padding:0; display:grid; gap:6px}
+.attachlist li{
+  display:flex; align-items:center; gap:10px; padding:8px 10px;
+  border:1px solid var(--rule); border-left:2px solid var(--green); border-radius:var(--r);
+  background:var(--surface-2); font-size:.82rem;
+}
+.attachlist .aname{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.attachlist .akind{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.66rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.attachlist .asize{font-variant-numeric:tabular-nums; color:var(--muted); font-size:.74rem}
+.attachlist button{border:0; background:none; cursor:pointer; color:var(--muted); font-size:1rem; line-height:1}
+.attachlist button:hover{color:var(--crit)}
+.attachlist audio{height:30px}
+.cat-card h3 { margin:0; font-size:.98rem; line-height:1.3 }
+.cat-more { margin-top:.15rem }
+.cat-more > summary {
+  cursor:pointer; list-style:none; font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--green-deep);
+  padding:.3rem 0; user-select:none;
+}
+.cat-more > summary::-webkit-details-marker { display:none }
+.cat-more > summary::after { content:" +"; font-weight:600 }
+.cat-more[open] > summary::after { content:" −" }
+.cat-more > summary:hover { color:var(--green) }
+.cat-more > div, .cat-more > p { margin-top:.4rem }
+.cat-more .cat-meta { display:flex; flex-wrap:wrap; gap:.35rem .9rem; font-size:.74rem; color:var(--ink-2) }
 .cat-card-media {
-  aspect-ratio: 4 / 3; background: #FFFFFF; border-bottom: 1px solid var(--rule);
+  aspect-ratio: 16 / 9; background: #FFFFFF; border-bottom: 1px solid var(--rule);
   display: grid; place-items: center; overflow: hidden;
 }
 .cat-card-media img, .cat-card-media svg { width: 100%; height: 100%; object-fit: cover; }
 /* A white box and a question mark, not a drawing: a picture of a product we have
    not been sent is invented evidence. */
 .cat-card-placeholder { font-family: "IBM Plex Mono", monospace; font-size: 2.2rem; color: var(--muted); }
-.cat-card-body { padding: 1.1rem; display: grid; gap: .5rem; }
+.cat-card-body { padding: .8rem .85rem; display: grid; gap: .35rem; }
 .cat-range {
   font-family: "IBM Plex Mono", monospace; font-size: 1.15rem; color: var(--green-deep);
   font-variant-numeric: tabular-nums;
@@ -894,7 +951,7 @@ body.iv-open { overflow: hidden; }
 .dr-control { display: flex; flex-direction: column; gap: .4rem; }
 .dr-qty { font-family: "IBM Plex Mono", monospace; font-size: 1.9rem; font-weight: 600;
   letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.dr-controls input[type=range] { width: 100%; accent-color: var(--green-deep); min-height: 44px; }
+.dr-controls input[type=range] { width: 100%; }
 .rangeticks { display: flex; justify-content: space-between;
   font-family: "IBM Plex Mono", monospace; font-size: .66rem; color: var(--muted); }
 .seg { display: flex; border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
@@ -1068,6 +1125,12 @@ body.iv-open { overflow: hidden; }
    cascade — `color: var(--stop)` computes to `inherit` — so an overdue clock
    rendered in ordinary ink and looked deliberate. */
 :root, :root[data-theme="dark"], :root[data-theme="light"] {
+  /* Orphaned by the theme swap at b708710: the markup still asks for these and
+     nothing defined them any more, so a share bar drew on no background and
+     fifteen sunken surfaces drew on none either. An undefined custom property
+     does not fall back — it computes to nothing at all. */
+  --chart: var(--green); --chart-fill: color-mix(in srgb, var(--green) 14%, transparent);
+  --sunk: var(--surface-2); --line: var(--rule); --grid: var(--rule); --ink-3: var(--muted);
   --stop: var(--crit); --red: var(--crit);
   --wait: var(--warn); --amber: var(--warn);
   --ok: var(--good);
@@ -1510,7 +1573,8 @@ var DR_ITEMS = [
     ref: "MMI-D-001", auto: "Unapproved item 001", name: "Carry-out container, 750ml",
     status: "approved", publishedAt: addDays(TODAY, -1),
     source: "Existing production part — specification supplied by the client",
-    qtyMin: 20000, qtyMax: 500000, qtyStep: 5000, runs: 0,
+    sku: "MMI-B-0101",
+    qtyMin: 20000, qtyMax: 2500000, qtyStep: 10000, runs: 0,
     costs: {material: 11, tooling: 84000, pkgCustom: 1, pkgStd: 0, duty: 0, lab: 65000},
     strats: [
       {slot:0, label:"Lowest landed cost", title:"Consolidated ocean, single batch",
@@ -1519,11 +1583,11 @@ var DR_ITEMS = [
        lab:false, treatment:"amortized"},
       {slot:1, label:"Fastest arrival", title:"Air freight, priority line",
        extra:2, lead:26, mode:"air", prod:"Priority slot",
-       inspect:"AQL 2.5 sampling", foot:"Slot held 48 hours", lab:false, treatment:"upfront"},
+       inspect:"AQL 2.5 sampling", foot:"Slot held 48 hours", lab:false, treatment:"amortized"},
       {slot:2, label:"Highest certainty", title:"Ocean, full inspection, sample run",
        extra:3, lead:74, mode:"ocean", prod:"Reserved capacity",
        inspect:"100% functional plus third-party lab",
-       foot:"Includes the certification pack", lab:true, treatment:"upfront_with_sample"}
+       foot:"Includes the certification pack", lab:true, treatment:"amortized"}
     ],
     levers: [
       {kind:"qty", label:"Order QTYNEW instead of QTYNOW",
@@ -2279,14 +2343,25 @@ function viewCatalogue() {
         '</div>' +
         '<div class="cat-card-body">' +
           '<div class="tiny mono dim">' + esc(item.cat) + '</div>' +
-          '<h3 style="margin:0;font-size:1.05rem">' + esc(item.name) + '</h3>' +
+          '<h3>' + esc(item.name) + '</h3>' +
           (rangeText(item)
             ? '<div class="cat-range">' + rangeText(item) + ' <span class="tiny dim">per unit</span></div>'
             : '<div class="cat-range-note">Priced per specification — ask us.</div>') +
-          '<div class="cat-meta">' +
-            (item.typicalMoq ? '<span>MOQ ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
-            (item.typicalLead ? '<span>' + item.typicalLead + ' days typical</span>' : '') +
-          '</div></div>' +
+          /* Everything past the price is behind a disclosure. A catalogue is for
+             scanning; the card carries what tells you whether to look closer,
+             and the rest opens on demand rather than making every card tall. */
+          '<details class="cat-more"><summary>Details</summary>' +
+            '<div class="cat-meta">' +
+              (item.typicalMoq ? '<span><b>MOQ</b> ~' + item.typicalMoq.toLocaleString("en-US") + '</span>' : '') +
+              (item.typicalLead ? '<span><b>Lead time</b> ~' + item.typicalLead + ' days</span>' : '') +
+              '<span><b>Origin</b> China</span>' +
+            '</div>' +
+            (item.description ? '<p class="tiny">' + esc(item.description.slice(0, 180)) +
+              (item.description.length > 180 ? '…' : '') + '</p>' : '') +
+            (item.drivers ? '<p class="tiny dim"><b>What moves the price:</b> ' +
+              esc(item.drivers) + '</p>' : '') +
+          '</details>' +
+        '</div>' +
         '<div class="cat-cta"><button class="btn btn-outline btn-sm" data-cat="' +
           esc(item.sku) + '">See it</button></div>' +
       '</article>';
@@ -2683,11 +2758,15 @@ function viewPortal() {
 
 /* ---------- purchased items + order timeline ---------- */
 function timeline(o) {
+  /* Order - Pay - Confirmation - Ship. Four stages, in the order they happen.
+     "Reviewed" and "In production" were two names for the same waiting period
+     between paying and shipping, and neither told a buyer anything they could
+     act on; they are one confirmation step now. Delivery is kept because it is
+     the only stage that happens after the goods leave us. */
   var stages = [
     ["Ordered", o.ordered, "Your order was created"],
     ["Paid", o.paid, "Funds confirmed" + (o.method ? " by " + (o.method === "ACH" ? "bank transfer" : "card") : "")],
-    ["Reviewed", o.reviewed, "24h manufacturer review cleared"],
-    ["In production", o.production, "On the floor"],
+    ["Confirmed", o.reviewed || o.production, "Specification checked and the run scheduled"],
     ["Shipped", o.shipped, o.tracking ? (o.carrier + " · " + o.tracking) : "Left the factory"],
     ["Delivered", o.delivered, "Signed for"]
   ];
@@ -2949,6 +3028,35 @@ function viewPaid() {
     '<div class="main"><div class="main-head"><div><div class="eyebrow">' + esc(o.ref) + '</div>' +
     '<h1>' + (ach ? "Bank transfer started" : "Payment confirmed") + '</h1></div></div>' +
     '<div class="main-body"><div style="max-width:680px">' +
+    /* The confirmation email, shown rather than claimed. This page has no server
+       and cannot post a byte anywhere, so it renders the message that would go
+       out instead of pretending to have sent one. The engine's mail.send() is
+       the thing that delivers it, and only once SMTP credentials exist. */
+    '<div class="card" style="border-left:2px solid var(--brass);margin-bottom:1.25rem">' +
+      '<span class="eyebrow-label" style="color:var(--brass)">Confirmation email</span>' +
+      '<dl class="kv" style="margin-top:.75rem">' +
+        '<dt>To</dt><dd class="mono">' + esc(client(S.user.id).email) + '</dd>' +
+        '<dt>Copy</dt><dd class="mono">Valentinoportal26@gmail.com</dd>' +
+        '<dt>Subject</dt><dd>Payment confirmed — ' + esc(o.ref) + ' · ' + esc(o.name) + '</dd>' +
+      '</dl>' +
+      '<div style="margin-top:.9rem;padding:.9rem 1rem;background:var(--surface-2);' +
+        'border:1px solid var(--rule);border-radius:var(--r);font-size:.86rem;line-height:1.6">' +
+        '<p style="margin:0"><strong>' + esc(o.name) + '</strong><br>' +
+          num(o.qty) + ' units' + (o.route ? ' · ' + esc(o.route) : '') +
+          (o.mode ? ' · ' + esc(o.mode) : '') + '</p>' +
+        '<p style="margin:.6rem 0 0">' +
+          money(goods) + ' goods<br>' +
+          money(fee) + ' convenience fee (' + FEE_PERCENT + '%)<br>' +
+          money(proc) + ' payment processing, at cost<br>' +
+          '<strong>' + money(paidTotal) + ' ' + (ach ? 'authorised' : 'paid') + '</strong></p>' +
+        '<p style="margin:.6rem 0 0" class="dim">Order ' + esc(o.ref) + ' · ' +
+          (ach ? 'settling in 1–3 business days' : 'funds confirmed') + '. ' +
+          'Next: we confirm the specification and schedule the run, then it ships.</p>' +
+      '</div>' +
+      '<p class="tiny dim" style="margin-top:.7rem">Rendered, not sent — this prototype ' +
+        'runs entirely in your browser. Delivery is the engine\'s job and needs an SMTP ' +
+        'host configured.</p>' +
+    '</div>' +
     '<div class="card card-lg" style="border-left:2px solid var(--green)">' +
       '<span class="eyebrow-label">' + (ach ? "Awaiting settlement" : "Funds confirmed") + '</span>' +
       '<h2 style="margin-top:.75rem">' + money(paidTotal) + ' · ' + esc(o.name) + '</h2>' +
@@ -3230,22 +3338,17 @@ function drPricedPane(it) {
           return '<button data-drmode="' + m + '" class="' + (v.mode === m ? "on" : "") + '">' +
             m.charAt(0).toUpperCase() + m.slice(1) + '</button>';
         }).join("") + '</div></div>' +
-      /* The three routes carry different tooling defaults (§11.3.3), so the
-         first option is to leave them alone. Forcing one on all three by
-         default erases the difference the section exists to express. */
+      /* One treatment. The tool is always amortised into the unit price, so
+         there is nothing to toggle: a "pay upfront" option showed a lower unit
+         price for the same part, which is a discount that is not one — the money
+         moves, it does not shrink. Every route now quotes a unit price with the
+         tool already inside it. */
       '<div class="dr-control"><span class="stat-label">Tooling · ' + money(it.costs.tooling) +
-        '</span><div class="seg">' +
-        '<button data-drtool="" class="' + (!v.treatment ? "on" : "") +
-          '">As each route prices it</button>' +
-        '<button data-drtool="amortized" class="' + (v.treatment === "amortized" ? "on" : "") +
-          '">Amortise</button>' +
-        '<button data-drtool="upfront" class="' + (v.treatment === "upfront" ? "on" : "") +
-          '">Pay upfront</button></div>' +
-        '<p class="tiny dim">' + (!v.treatment
-          ? "Each route prices the tool the way that route works — the cheapest one spreads it, the other two charge it upfront so the unit price stays clean."
-          : v.treatment === "amortized"
-            ? "Spread across this run — adds " + cents4(it.costs.tooling / v.qty) + " per unit at this quantity. The tool remains your property."
-            : "Invoiced once at " + money(it.costs.tooling) + ", before the run.") + '</p></div>' +
+        '</span>' +
+'<p class="tiny dim">Spread across this run — adds ' +
+          cents4(it.costs.tooling / v.qty) + ' per unit at ' + num(v.qty) +
+          ' units. The tool remains your property, and every route below quotes a ' +
+          'unit price with it already inside.</p></div>' +
     '</div>' +
     '<div class="strategies">' + cards + '</div>' +
     '<div class="card card-lg wwntc">' +
@@ -3306,6 +3409,17 @@ var INTAKE_FORMATS = [
   ["CAD or a drawing", "STEP, IGES, DXF or PDF go straight to a manufacturability review."],
   ["The thing itself", "Ask for a Make This Box. Prepaid, tamper-evident, and tracked from the moment it leaves your hands."]
 ];
+var INTAKE_ACCEPT = {
+  "Voice note": "audio/*",
+  "Phone video": "video/*",
+  "Sketch": "image/*,.pdf",
+  "Photo with something for scale": "image/*",
+  "A competitor's listing": "image/*,.pdf,.txt",
+  "Your current supplier's quote": ".pdf,.xls,.xlsx,.csv,image/*",
+  "CAD or a drawing": ".step,.stp,.iges,.igs,.dxf,.dwg,.pdf,.stl",
+  "The thing itself": "*/*"
+};
+
 var INTAKE_WEIGHTS = [
   [1, "A change to something we already make for you"],
   [2, "A new product — one part, one process"],
@@ -3325,12 +3439,24 @@ function viewIntake() {
     '<div class="dimrule" style="margin:1.75rem 0 1.5rem"><i></i></div>' +
     '<div class="grid grid-sidebar"><div class="card card-lg" style="display:grid;gap:1.5rem">' +
       '<div><span class="eyebrow">What you already have</span>' +
+        /* Each chip is the upload for its own kind of thing. The point of this
+           screen is that people do not send a voice note because they assume it
+           is not usable — so the chip says what happens to it, and then takes it. */
         '<div class="chips" style="margin-top:.7rem">' + INTAKE_FORMATS.map(function (f, i) {
           return '<button class="chip" type="button" data-inote="' + esc(f[1]) + '" ' +
+            'data-accept="' + esc(INTAKE_ACCEPT[f[0]] || '*/*') + '" ' +
+            'data-label="' + esc(f[0]) + '" ' +
             'aria-pressed="' + (i === 0) + '">' + esc(f[0]) + '</button>';
         }).join("") + '</div>' +
         '<p class="note-line" id="chipNote"><span class="mono">&rarr;</span> ' +
-          esc(INTAKE_FORMATS[0][1]) + '</p></div>' +
+          esc(INTAKE_FORMATS[0][1]) + '</p>' +
+        '<input type="file" id="inFiles" multiple hidden>' +
+        '<div class="row wrap" style="gap:.5rem;margin-top:.8rem">' +
+          '<button class="btn btn-sm" type="button" id="inPick">Choose files</button>' +
+          '<button class="btn btn-sm" type="button" id="inRec">Record a voice note</button>' +
+          '<span class="tiny dim" id="inRecNote"></span>' +
+        '</div>' +
+        '<ul class="attachlist" id="inList"></ul></div>' +
       '<div class="dimrule"><i></i></div>' +
       '<div><span class="eyebrow">Rough answers are fine</span>' +
         '<div class="qgrid" style="margin-top:.8rem">' +
@@ -3890,6 +4016,112 @@ function wire() {
     app.querySelector("#chipNote").innerHTML =
       '<span class="mono">&rarr;</span> ' + esc(chip.getAttribute("data-inote"));
   });
+  /* Uploads on "describe it badly". Files stay in the page — there is no server
+     here — but they are real File objects: picked, listed, sized, previewed and
+     removable, and a voice note is genuinely recorded from the microphone. What
+     the engine adds is persistence, not the interaction. */
+  (function () {
+    var picker = app.querySelector("#inFiles");
+    var list   = app.querySelector("#inList");
+    if (!picker || !list) { return; }
+    S.attach = S.attach || [];
+
+    function kind(f) {
+      var t = (f.type || "").split("/")[0];
+      if (t === "audio") return "voice";
+      if (t === "video") return "video";
+      if (t === "image") return "image";
+      var n = (f.name || "").toLowerCase();
+      if (/\.(step|stp|iges|igs|dxf|dwg|stl)$/.test(n)) return "cad";
+      if (/\.pdf$/.test(n)) return "pdf";
+      return "file";
+    }
+    function size(b) {
+      if (b < 1024) return b + " B";
+      if (b < 1048576) return (b / 1024).toFixed(0) + " KB";
+      return (b / 1048576).toFixed(1) + " MB";
+    }
+    function draw() {
+      list.innerHTML = S.attach.map(function (a, i) {
+        var preview = "";
+        if (a.kind === "image") {
+          preview = '<img src="' + a.url + '" alt="" style="width:34px;height:34px;' +
+            'object-fit:cover;border-radius:2px">';
+        } else if (a.kind === "voice") {
+          preview = '<audio controls src="' + a.url + '"></audio>';
+        }
+        return '<li>' + preview +
+          '<span class="akind">' + a.kind + '</span>' +
+          '<span class="aname">' + esc(a.name) + '</span>' +
+          '<span class="asize">' + size(a.bytes) + '</span>' +
+          '<button type="button" data-adrop="' + i + '" aria-label="Remove ' +
+            esc(a.name) + '">×</button></li>';
+      }).join("");
+      list.querySelectorAll("[data-adrop]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var i = +b.getAttribute("data-adrop");
+          try { URL.revokeObjectURL(S.attach[i].url); } catch (e) {}
+          S.attach.splice(i, 1);
+          draw();
+        });
+      });
+    }
+    function add(files) {
+      Array.prototype.forEach.call(files, function (f) {
+        S.attach.push({name: f.name, bytes: f.size, kind: kind(f),
+                       url: URL.createObjectURL(f)});
+      });
+      draw();
+    }
+
+    picker.addEventListener("change", function () { add(picker.files); picker.value = ""; });
+    var pick = app.querySelector("#inPick");
+    if (pick) pick.addEventListener("click", function () { picker.accept = ""; picker.click(); });
+
+    /* Every chip takes its own kind of thing, with the file dialog filtered to it. */
+    app.querySelectorAll(".chip[data-accept]").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        if (chip.getAttribute("data-label") === "The thing itself") { return; }
+        picker.accept = chip.getAttribute("data-accept") || "";
+        picker.click();
+      });
+    });
+
+    /* A real recording, not a mock. Browsers that refuse the microphone say so. */
+    var recBtn = app.querySelector("#inRec"), note = app.querySelector("#inRecNote");
+    var rec = null, chunks = [];
+    if (recBtn) recBtn.addEventListener("click", function () {
+      if (rec && rec.state === "recording") {
+        rec.stop();
+        return;
+      }
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        note.textContent = "This browser will not record audio — attach a file instead.";
+        return;
+      }
+      navigator.mediaDevices.getUserMedia({audio: true}).then(function (stream) {
+        chunks = [];
+        rec = new MediaRecorder(stream);
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          var blob = new Blob(chunks, {type: rec.mimeType || "audio/webm"});
+          S.attach.push({name: "Voice note.webm", bytes: blob.size, kind: "voice",
+                         url: URL.createObjectURL(blob)});
+          recBtn.textContent = "Record a voice note";
+          note.textContent = "Recorded. Play it back above before you send it.";
+          draw();
+        };
+        rec.start();
+        recBtn.textContent = "Stop recording";
+        note.textContent = "Recording — say what it needs to do.";
+      }).catch(function () {
+        note.textContent = "Microphone blocked. Attach an audio file instead.";
+      });
+    });
+    draw();
+  })();
+
   app.querySelectorAll("[data-intake]").forEach(function (el) {
     el.addEventListener("click", function () {
       var summary = (app.querySelector("#inSummary") || {}).value || "";
@@ -3912,7 +4144,11 @@ function wire() {
       DR_ITEMS.unshift({
         ref: ref, auto: "Unapproved item " + String(n).padStart(3, "0"), name: "",
         status: "pending", stage: 1, quoteRef: qref,
-        source: "Sent from the portal",
+        source: (S.attach && S.attach.length
+                ? S.attach.length + " attachment" + (S.attach.length === 1 ? "" : "s") + " — " +
+                  S.attach.map(function (a) { return a.kind; }).filter(function (v, i, arr) {
+                    return arr.indexOf(v) === i; }).join(", ")
+                : "A written description"),
         outstanding: "Nothing yet. We will come back within 24 hours with a structured " +
           "draft, and a named engineer signs it before it becomes a price."
       });
@@ -3922,7 +4158,7 @@ function wire() {
                              classified: INTAKE_WEIGHTS.filter(function (x) { return x[0] === w; })[0][1],
                              outcome: "In progress", charged: w});
       CAPACITY.used += w; CAPACITY.left = Math.max(0, CAPACITY.total - CAPACITY.used);
-      S.drRef = ref; S.portalTab = "products"; go("portal");
+      S.attach = []; S.drRef = ref; S.portalTab = "products"; go("portal");
     });
   });
   app.querySelectorAll("[data-box]").forEach(function (el) {
@@ -3997,6 +4233,27 @@ function wire() {
     el.addEventListener("click", function () {
       S.receipt = el.getAttribute("data-receipt");
       go("receipt");
+    });
+  });
+
+  /* "Buy this route" was inert — the button rendered and nothing listened for it.
+     It now carries the chosen route, the quantity on the slider and the freight
+     mode into checkout, so what you priced is what you pay for. The route is
+     snapshotted onto the cart rather than re-read later: a desk edit after the
+     fact must not change what someone bought. */
+  app.querySelectorAll("[data-drbuy]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var it = drItem(S.drRef) || DR_ITEMS[0];
+      var slot = parseInt(el.getAttribute("data-drbuy"), 10);
+      var strat = it.strats.filter(function (x) { return x.slot === slot; })[0];
+      var c = drStrategyView(it, strat, it.view.qty, it.view.mode, it.view.treatment);
+      S.cart = {
+        sku: it.sku, qty: it.view.qty,
+        route: strat.label, routeTitle: strat.title,
+        mode: c.mode, lead: c.lead, unitOverride: c.landed
+      };
+      S.flash = "";
+      go("checkout");
     });
   });
 

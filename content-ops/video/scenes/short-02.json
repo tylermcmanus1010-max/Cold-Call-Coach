@@ -4,7 +4,7 @@
   "scenes": [
     {
       "type": "title",
-      "duration": 5.65,
+      "duration": 5.57,
       "reveal": 0.5,
       "text": "Cold calling and going viral are the same skill.",
       "highlight": [
@@ -15,7 +15,7 @@
     },
     {
       "type": "line",
-      "duration": 4.15,
+      "duration": 4.78,
       "text": "Both are a stranger deciding whether to keep paying attention.",
       "highlight": [
         "stranger"
@@ -24,7 +24,7 @@
     },
     {
       "type": "counter",
-      "duration": 3.11,
+      "duration": 3.85,
       "value": 8,
       "label": "SECONDS ON A CALL",
       "vo": "On a call, you get about eight seconds."
@@ -38,13 +38,13 @@
     },
     {
       "type": "line",
-      "duration": 3.04,
+      "duration": 3.45,
       "text": "Both die from the exact same thing.",
       "vo": "Both die from the exact same thing."
     },
     {
       "type": "title",
-      "duration": 1.42,
+      "duration": 1.62,
       "reveal": 0.3,
       "text": "Preamble.",
       "highlight": [
@@ -54,20 +54,20 @@
     },
     {
       "type": "line",
-      "duration": 5.51,
+      "duration": 5.22,
       "text": "\"Hey, how's your day going?\" is the same mistake as \"hey guys, welcome back.\"",
       "vo": "Hey, how's your day going, is the same mistake as, hey guys welcome back."
     },
     {
       "type": "script",
-      "duration": 9.3,
+      "duration": 3.9,
       "label": "THE FIX",
       "text": "Open mid-motion. No throat-clearing, no permission, no warm-up. Start where it's already interesting.",
       "vo": "The fix is the same too. Open mid motion. No throat clearing, no permission, no warm up. Start where it's already interesting."
     },
     {
       "type": "line",
-      "duration": 2.75,
+      "duration": 2.78,
       "text": "Every good opener is a cold open.",
       "highlight": [
         "cold",

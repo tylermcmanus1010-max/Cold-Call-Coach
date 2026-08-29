@@ -215,6 +215,15 @@ def batch_synth(lines, out_dir, voice=None, backend=None, gap=0.65):
     if cur < total - 0.15:
         bounds.append((cur, total))
 
+    # A line containing a sentence break can read with an internal pause long
+    # enough to look like a boundary, giving more segments than lines. Merge
+    # the pairs separated by the smallest gaps until the counts line up.
+    while len(bounds) > len(lines):
+        gaps = [(bounds[i + 1][0] - bounds[i][1], i) for i in range(len(bounds) - 1)]
+        _, i = min(gaps)
+        bounds[i] = (bounds[i][0], bounds[i + 1][1])
+        del bounds[i + 1]
+
     if len(bounds) != len(lines):
         print(f"  split found {len(bounds)} segments for {len(lines)} lines "
               f"— falling back to per-line requests")

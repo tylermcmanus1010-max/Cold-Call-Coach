@@ -1,0 +1,211 @@
+kind	surface	detail	area
+route	GET /	public.home	public
+route	GET,POST /account/password	auth.change_password	auth
+route	GET /admin/	admin.dashboard	admin
+route	GET /admin/applications	admin.applications	admin
+route	GET,POST /admin/applications/<int:app_id>	admin.application_detail	admin
+route	GET /admin/calendar	admin.calendar_view	admin
+route	POST /admin/calendar/<int:event_id>/delete	admin.calendar_delete	admin
+route	POST /admin/calendar/<int:event_id>/done	admin.calendar_done	admin
+route	POST /admin/calendar/new	admin.calendar_new	admin
+route	GET /admin/catalog	admin.catalog	admin
+route	GET,POST /admin/catalog/<int:item_id>	admin.catalog_detail	admin
+route	GET,POST /admin/catalog/new	admin.catalog_new	admin
+route	GET /admin/clients/<int:customer_id>/open	admin.open_client	admin
+route	GET /admin/clients/close	admin.close_client	admin
+route	GET /admin/crm	admin.crm	admin
+route	GET,POST /admin/crm/<int:customer_id>	admin.crm_detail	admin
+route	GET,POST /admin/crm/new	admin.crm_new	admin
+route	GET /admin/desk	admin.desk	admin
+route	GET /admin/desk/<ref>	admin.desk	admin
+route	POST /admin/desk/<ref>	admin.desk_save	admin
+route	GET /admin/emails	admin.emails	admin
+route	GET /admin/incoming	admin.incoming	admin
+route	POST /admin/incoming/<int:quote_id>/<action>	admin.triage	admin
+route	GET /admin/ledger	admin.ledger_view	admin
+route	GET /admin/ledger/export.csv	admin.ledger_export	admin
+route	GET /admin/ledger/receipt/<receipt_no>	admin.ledger_receipt	admin
+route	GET /admin/orders	admin.orders	admin
+route	GET,POST /admin/orders/<int:order_id>	admin.order_detail	admin
+route	GET /admin/quotes	admin.quotes	admin
+route	GET,POST /admin/quotes/<int:quote_id>	admin.quote_detail	admin
+route	POST /admin/quotes/<int:quote_id>/to-catalog	admin.quote_to_catalog	admin
+route	GET /admin/revenue	admin.revenue	admin
+route	GET,POST /admin/settings	admin.settings	admin
+route	GET,POST /apply	public.apply	public
+route	GET /catalogue	public.catalogue_index	public
+route	GET /catalogue/<sku>	public.catalogue_item	public
+route	GET /contact	public.contact	public
+route	GET /how-it-works	public.how_it_works	public
+route	GET,POST /login	auth.login	auth
+route	GET /logout	auth.logout	auth
+route	GET /membership	public.membership_page	public
+route	GET /portal/	portal.dashboard	portal
+route	GET /portal/cart	portal.cart	portal
+route	POST /portal/cart/add/<int:item_id>	portal.cart_add	portal
+route	POST /portal/cart/checkout	portal.cart_checkout	portal
+route	POST /portal/cart/remove/<int:cart_id>	portal.cart_remove	portal
+route	GET /portal/catalog	portal.catalog	portal
+route	GET /portal/catalog/<int:item_id>	portal.catalog_item	portal
+route	GET /portal/checkout/return/<ref>	portal.checkout_return	portal
+route	GET,POST /portal/checkout/simulate/<ref>	portal.mock_bank	portal
+route	GET /portal/files/<int:file_id>	portal.download_file	portal
+route	GET /portal/genome/<int:item_id>	portal.genome	portal
+route	GET,POST /portal/intake	portal.intake	portal
+route	POST /portal/intake/box	portal.request_box	portal
+route	GET /portal/ledger	portal.ledger_view	portal
+route	GET /portal/ledger/export.csv	portal.ledger_export	portal
+route	GET /portal/ledger/receipt/<receipt_no>	portal.ledger_receipt	portal
+route	GET /portal/membership	portal.membership_record	portal
+route	GET /portal/orders	portal.orders	portal
+route	GET /portal/orders/<int:order_id>	portal.order_detail	portal
+route	GET /portal/orders/<int:order_id>/checkout	portal.checkout	portal
+route	POST /portal/orders/<int:order_id>/pay	portal.pay	portal
+route	GET /portal/products	portal.products	portal
+route	GET /portal/products/<ref>	portal.products	portal
+route	POST /portal/products/<ref>/accept	portal.product_accept	portal
+route	POST /portal/products/<ref>/name	portal.product_rename	portal
+route	GET /portal/purchases	portal.purchases	portal
+route	GET /portal/quotes	portal.quotes	portal
+route	GET /portal/quotes/<int:quote_id>	portal.quote_detail	portal
+route	POST /portal/quotes/<int:quote_id>/accept	portal.accept_quote	portal
+route	POST /portal/quotes/<int:quote_id>/decline	portal.decline_quote	portal
+route	GET,POST /portal/requests	portal.requests_page	portal
+route	GET /portal/room	portal.room	portal
+route	GET /portal/room/<ref>	portal.room	portal
+route	GET,POST /quote	public.quote	public
+route	POST /webhooks/stripe	webhooks.stripe	webhooks
+template	monti/templates/_flashes.html	_flashes.html	shared
+template	monti/templates/_image_viewer.html	_image_viewer.html	shared
+template	monti/templates/_ledger.html	_ledger.html	shared
+template	monti/templates/_shell.html	_shell.html	shared
+template	monti/templates/admin/_base.html	_base.html	admin
+template	monti/templates/admin/application_detail.html	application_detail.html	admin
+template	monti/templates/admin/applications.html	applications.html	admin
+template	monti/templates/admin/calendar.html	calendar.html	admin
+template	monti/templates/admin/catalog.html	catalog.html	admin
+template	monti/templates/admin/catalog_detail.html	catalog_detail.html	admin
+template	monti/templates/admin/catalog_form.html	catalog_form.html	admin
+template	monti/templates/admin/crm.html	crm.html	admin
+template	monti/templates/admin/crm_detail.html	crm_detail.html	admin
+template	monti/templates/admin/crm_new.html	crm_new.html	admin
+template	monti/templates/admin/dashboard.html	dashboard.html	admin
+template	monti/templates/admin/desk.html	desk.html	admin
+template	monti/templates/admin/emails.html	emails.html	admin
+template	monti/templates/admin/incoming.html	incoming.html	admin
+template	monti/templates/admin/ledger.html	ledger.html	admin
+template	monti/templates/admin/order_detail.html	order_detail.html	admin
+template	monti/templates/admin/orders.html	orders.html	admin
+template	monti/templates/admin/quote_detail.html	quote_detail.html	admin
+template	monti/templates/admin/quotes.html	quotes.html	admin
+template	monti/templates/admin/receipt.html	receipt.html	admin
+template	monti/templates/admin/revenue.html	revenue.html	admin
+template	monti/templates/admin/settings.html	settings.html	admin
+template	monti/templates/auth/change_password.html	change_password.html	auth
+template	monti/templates/auth/login.html	login.html	auth
+template	monti/templates/base.html	base.html	shared
+email	monti/templates/email/_layout.html	_layout.html	email
+email	monti/templates/email/application_approved.html	application_approved.html	email
+email	monti/templates/email/application_declined.html	application_declined.html	email
+email	monti/templates/email/application_internal.html	application_internal.html	email
+email	monti/templates/email/application_interview.html	application_interview.html	email
+email	monti/templates/email/application_received.html	application_received.html	email
+email	monti/templates/email/estimate_ready.html	estimate_ready.html	email
+email	monti/templates/email/order_approved.html	order_approved.html	email
+email	monti/templates/email/order_held.html	order_held.html	email
+email	monti/templates/email/order_internal.html	order_internal.html	email
+email	monti/templates/email/order_receipt.html	order_receipt.html	email
+email	monti/templates/email/order_shipped.html	order_shipped.html	email
+email	monti/templates/email/order_tracking.html	order_tracking.html	email
+email	monti/templates/email/portal_invite.html	portal_invite.html	email
+email	monti/templates/email/quote_accepted.html	quote_accepted.html	email
+email	monti/templates/email/quote_internal.html	quote_internal.html	email
+email	monti/templates/email/quote_received.html	quote_received.html	email
+email	monti/templates/email/quote_rejected.html	quote_rejected.html	email
+template	monti/templates/errors/400.html	400.html	errors
+template	monti/templates/errors/403.html	403.html	errors
+template	monti/templates/errors/404.html	404.html	errors
+template	monti/templates/errors/413.html	413.html	errors
+template	monti/templates/portal/_base.html	_base.html	portal
+template	monti/templates/portal/_order_progress.html	_order_progress.html	portal
+template	monti/templates/portal/_timeline.html	_timeline.html	portal
+template	monti/templates/portal/cart.html	cart.html	portal
+template	monti/templates/portal/catalog.html	catalog.html	portal
+template	monti/templates/portal/catalog_item.html	catalog_item.html	portal
+template	monti/templates/portal/checkout.html	checkout.html	portal
+template	monti/templates/portal/checkout_complete.html	checkout_complete.html	portal
+template	monti/templates/portal/dashboard.html	dashboard.html	portal
+template	monti/templates/portal/genome.html	genome.html	portal
+template	monti/templates/portal/ledger.html	ledger.html	portal
+template	monti/templates/portal/membership.html	membership.html	portal
+template	monti/templates/portal/mock_bank.html	mock_bank.html	portal
+template	monti/templates/portal/order_detail.html	order_detail.html	portal
+template	monti/templates/portal/orders.html	orders.html	portal
+template	monti/templates/portal/products.html	products.html	portal
+template	monti/templates/portal/purchases.html	purchases.html	portal
+template	monti/templates/portal/quote_detail.html	quote_detail.html	portal
+template	monti/templates/portal/receipt.html	receipt.html	portal
+template	monti/templates/portal/requests.html	requests.html	portal
+template	monti/templates/public/apply.html	apply.html	public
+template	monti/templates/public/apply_received.html	apply_received.html	public
+template	monti/templates/public/catalogue.html	catalogue.html	public
+template	monti/templates/public/catalogue_item.html	catalogue_item.html	public
+template	monti/templates/public/contact.html	contact.html	public
+template	monti/templates/public/home.html	home.html	public
+template	monti/templates/public/how_it_works.html	how_it_works.html	public
+template	monti/templates/public/membership.html	membership.html	public
+template	monti/templates/public/quote.html	quote.html	public
+template	monti/templates/public/quote_received.html	quote_received.html	public
+table	agent_access_log	7 columns	data
+table	agent_proposals	9 columns	data
+table	applications	29 columns	data
+table	calendar_events	13 columns	data
+table	capacity_ledger	11 columns	data
+table	cart_items	6 columns	data
+table	catalog_assignments	8 columns	data
+table	catalog_items	23 columns	data
+table	catalogue_registrations	13 columns	data
+table	client_agents	9 columns	data
+table	commitments	7 columns	data
+table	crm_activities	6 columns	data
+table	customers	28 columns	data
+table	decision_items	21 columns	data
+table	email_log	9 columns	data
+table	estimates	17 columns	data
+table	factory_plans	11 columns	data
+table	freight_lanes	8 columns	data
+table	golden_samples	7 columns	data
+table	item_claims	8 columns	data
+table	item_genome	8 columns	data
+table	item_images	11 columns	data
+table	item_levers	7 columns	data
+table	item_revisions	7 columns	data
+table	item_runs	11 columns	data
+table	item_strategies	13 columns	data
+table	ledger_entries	20 columns	data
+table	order_events	6 columns	data
+table	order_items	9 columns	data
+table	orders	39 columns	data
+table	performance_credits	7 columns	data
+table	price_matrices	10 columns	data
+table	price_matrix_cells	7 columns	data
+table	pricing_inputs	10 columns	data
+table	quality_checks	6 columns	data
+table	quote_files	7 columns	data
+table	quotes	30 columns	data
+table	reconciliation_runs	9 columns	data
+table	sample_boxes	8 columns	data
+table	sample_events	6 columns	data
+table	security_log	7 columns	data
+table	settings	3 columns	data
+table	tools	17 columns	data
+table	users	10 columns	data
+table	webhook_log	8 columns	data
+static	monti/static/css/app.css	73996 bytes	static
+static	monti/static/js/image-viewer.js	9111 bytes	static
+static	monti/static/uploads/.gitkeep	0 bytes	static
+document	CSV export — admin ledger	GET /admin/ledger/export.csv	documents
+document	CSV export — client ledger	GET /portal/ledger/export.csv	documents
+document	Receipt — admin retrieval	GET /admin/ledger/receipt/<receipt_no>	documents
+document	Receipt — client retrieval	GET /portal/ledger/receipt/<receipt_no>	documents
+document	Uploaded quote file	GET /portal/files/<int:file_id>	documents

@@ -1,0 +1,75 @@
+# Render census — every GET surface, three viewers, real responses through the app
+# frozen build · 56 GET routes swept
+# member login OK · admin login OK
+# held out of the sweep because they mutate the session, probed separately below:
+#   admin.close_client, admin.open_client, auth.login, auth.logout
+
+route                                        anon  mbr  adm  signout money$ chart
+------------------------------------------------------------------------------------------
+/admin/                                       302  403  200        1      2      
+/admin/applications                           302  403  200        1      0      
+/admin/applications/1                         302  403  302                      
+/admin/calendar                               302  403  200        1      0      
+/admin/catalog                                302  403  200        1      2      
+/admin/catalog/1                              302  403  200        1      3      
+/admin/catalog/new                            302  403  200        1      0      
+/admin/crm                                    302  403  200        1      2      
+/admin/crm/1                                  302  403  200        1      7      
+/admin/crm/new                                302  403  200        1      0      
+/admin/desk                                   302  403  200        1      1      
+/admin/desk/MMI-D-001                         302  403  200        1      2      
+/admin/emails                                 302  403  200        1      0      
+/admin/incoming                               302  403  200        1      0      
+/admin/ledger                                 302  403  200        1      1      
+/admin/ledger/export.csv                      302  403  200        0      0      
+/admin/ledger/receipt/MMI-R-100001            302  403  404                      
+/admin/orders                                 302  403  200        1      2      
+/admin/orders/1                               302  403  302                      
+/admin/quotes                                 302  403  200        1      0      
+/admin/quotes/1                               302  403  302                      
+/admin/revenue                                302  403  200        1     11   yes
+/admin/settings                               302  403  200        1      0      
+/account/password                             302  200  200        0      0      
+/portal/                                      302  200  403        1      0      
+/portal/cart                                  302  200  403        1      0      
+/portal/catalog                               302  200  403        1      2      
+/portal/catalog/1                             302  200  403        1      3      
+/portal/checkout/return/MMI-D-001             302  404  403                      
+/portal/checkout/simulate/MMI-D-001           302  404  403                      
+/portal/files/1                               302  404  403                      
+/portal/genome/1                              302  200  403        1      3      
+/portal/intake                                302  302  403                      
+/portal/ledger                                302  200  403        1      0      
+/portal/ledger/export.csv                     302  200  403        0      0      
+/portal/ledger/receipt/MMI-R-100001           302  404  403                      
+/portal/membership                            302  200  403        1      0      
+/portal/orders                                302  200  403        1      0      
+/portal/orders/1                              302  404  403                      
+/portal/orders/1/checkout                     302  404  403                      
+/portal/products                              302  200  403        1      0      
+/portal/products/MMI-D-001                    302  200  403        1     29      
+/portal/purchases                             302  200  403        1      1      
+/portal/quotes                                302  302  403                      
+/portal/quotes/1                              302  404  403                      
+/portal/requests                              302  200  403        1      0      
+/portal/room                                  302  301  403                      
+/portal/room/MMI-D-001                        302  301  403                      
+/                                             200  200  200        0      0      
+/apply                                        200  200  200        0      0      
+/catalogue                                    200  200  200        0      4      
+/catalogue/MMI-B-0101                         200  200  200        0      2      
+/contact                                      200  200  200        0      0      
+/how-it-works                                 200  200  200        0      0      
+/membership                                   200  200  200        0      0      
+/quote                                        200  200  200        0      1      
+
+GET surfaces swept: 56 · rendered 200 for at least one viewer: 41
+Surfaces where 'Sign out' appears more than once: 0
+
+## Held-out probes
+GET /admin/clients/1/open -> 302 /portal/
+  rows written to security_log by that impersonation: 0
+  admin now sees the member portal: 200; view marked in the page: False
+GET /admin/clients/close -> 302 /admin/crm
+GET /logout (member) -> 302 /
+  after logout, GET /portal/ -> 302 (expect 302 to login)

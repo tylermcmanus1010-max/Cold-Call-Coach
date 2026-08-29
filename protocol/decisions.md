@@ -606,3 +606,98 @@ work has begun. §0.9 forbids AIM-00 amending the protocol, and the four hard st
 appear above — a new skill number (D-007c, D-009b, D-025b), a dormant-role activation
 (D-010b, D-011b), a §5 minimum change (D-021a), and any gate rewrite (D-016b, D-017b,
 D-019) — are Tyler's alone under §0.8 and §12.
+
+---
+
+# PART 4 — FILED FROM PHASE 1'S INVENTORY
+
+Three more, found by measuring the frozen build rather than reading the protocol. Same
+rule: filed, not resolved.
+
+---
+
+## D-026 · Two in-line items describe a defect the build does not have · **open now**
+
+Measured. Evidence in `protocol/evidence/phase-01/`.
+
+- **CHG-002 (P1), "30-day sparkline is sloppy."** There is no sparkline. No `<polyline>`
+  and no `<path>` appears in any template in the build; the only data marks anywhere are
+  the `<rect class="chart-bar">` elements on the revenue screen. There is no 30-day window
+  either — `analytics.PERIODS` runs 1d/7d/21d/45d/90d/180d/365d.
+- **CHG-012 (P2), "Sign out appears twice."** It renders exactly once, from
+  `_shell.html:43`, on every one of the 56 GET surfaces swept as three viewers. Zero
+  surfaces show it twice.
+
+An item whose stated defect is absent may still carry real work — a 30-day trend line can
+be wanted even though no sloppy one exists — so "not present" is not the same as "done".
+
+**Options.** (a) Both stay OPEN and are re-scoped by Tyler into what is actually wanted:
+CHG-002 becomes "build a 30-day trend line", CHG-012 becomes "keep sign out to one per
+view and prove it". Cost: CHG-002 turns from a fix into a build, which is a bigger Phase 5.
+(b) Both close as not-present, with the measurement as evidence. Cost: CHG-002 is P1 and
+§3 says no launch with an open P1 unless Tyler defers it by ID — closing it needs the same
+signature, and the 30-day view the item implies never gets built. (c) CHG-012 closes (a P2,
+deferrable by AIM-00 with a recorded reason under §3) and CHG-002 goes to Tyler.
+
+**AIM-00 recommends (a)** for CHG-002 and (c)'s first half for CHG-012 — but will not
+close either without a signature, because closing an item on the grounds that its defect is
+absent is a scope judgement and §1.9 puts scope with Tyler. Both are recorded OPEN in the
+register with their measured state beside them.
+
+---
+
+## D-027 · VIZ-01's charter diagnoses a defect that is not the one present · **bites at Phase 5**
+
+Measured in Chromium, not inferred. `rect.chart-bar` on `GET /admin/revenue` computes to
+`fill: rgb(0, 0, 0)`. The cause: `.chart-wrap`, `.chart-svg`, `.chart-grid`, `.chart-axis`
+and `.chart-bar` are **undefined in `monti/static/css/app.css`**, which is the only
+stylesheet either shell loads (`_shell.html:11`, `base.html:11`). `app.css` carries chart
+rules at 288–300 under a different naming scheme the template never uses. SVG's default
+fill is black, so the bars paint black; the grid computes to `stroke: none` and is
+invisible.
+
+§4.4's VIZ-01 charter says: *"The current defect class is a fill path closing against the
+wrong baseline and a y-domain admitting non-numeric values. Fix the renderer, not the four
+charts."* Neither half describes what is here. There is no fill path — there is no fill
+rule at all — and the y-domain is derived correctly at `revenue.html:34-35`.
+
+It matters because §1.4 defines the unit of work as the layer, and which layer differs: a
+fill-path bug lives in the renderer, a missing-rule bug lives in the contract between the
+renderer and DS-01's token set. That contract is Phase 4's output consumed at Phase 5, so
+the ordering already works — but VIZ-01 briefed on the charter would look in the wrong file.
+
+**Options.** (a) Correct the charter's diagnosis to what was measured, leaving the
+instruction ("fix the renderer, not the four charts") intact. Cost: none; the instruction
+was right and only the diagnosis was wrong. (b) Leave it and let VIZ-01 rediscover.
+Cost: a phase spent looking for a fill path that does not exist. (c) Treat it as evidence
+that §2.1 predates the theme work and re-inventory the other charter diagnoses.
+Cost: more Phase 1, but it is the same class of error as D-026.
+
+**AIM-00 recommends (a),** and notes (c) is already partly done: this inventory measured
+every in-line item's state rather than trusting §2.1's description, which is how D-026 and
+this were found.
+
+---
+
+## D-028 · A defect on an in-line surface that no in-line item covers · **bites at Phase 8**
+
+Measured. `.range-row` and `.range-btn` are also undefined in `app.css`, so the revenue
+screen's period control renders as plain text: `background rgba(0,0,0,0)`, `border-width
+0px`, `padding 0px`, no visible active state. `1D 7D 21D 45D 90D 180D 365D` is a row of
+words that happen to be links.
+
+No in-line item covers it. CHG-009 covers the period *vocabulary*; CHG-013 covers contrast
+and colour-only status; CHG-010 covers button weight in tables. A control that does not
+look like a control is none of those.
+
+Per §1.9 this is filed and not built.
+
+**Options.** (a) It rides along with Phase 8, which rebuilds this exact surface on the new
+tokens, and closes as part of CHG-001's "correct in both themes" clause without a new ID.
+Cost: none, but nothing names it, so nothing checks it. (b) File it as a new CHG under §12
+with an ID, a severity and a pre-written gate. Cost: a new register item — Tyler's, under
+§0.8. (c) Leave it to Appendix B.
+
+**AIM-00 recommends (b) at P2.** The whole reason this is visible is that Phase 1 measured
+rather than read, and the cheapest moment to name it is before Phase 4 sets the tokens it
+will consume. But a new CHG item is a hard stop, so it waits for a signature.

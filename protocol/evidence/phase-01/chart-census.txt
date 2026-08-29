@@ -1,0 +1,120 @@
+# Charting baseline on the frozen build
+
+## Is there a charting layer?
+  static/js files: ['image-viewer.js']
+  a chart module:  NONE — no chart module of any kind
+  templates drawing marks inline: 4
+    monti/templates/_image_viewer.html
+    monti/templates/_shell.html
+    monti/templates/admin/revenue.html
+    monti/templates/base.html
+
+  Every chart is drawn as inline SVG inside its own template. There is no shared
+  renderer, so a fill-path or y-domain fix would have to be made per template —
+  which §1.4 calls a protocol violation. VIZ-01 builds the layer at Phase 5.
+
+## GET /admin/revenue — what the chart actually renders on real data
+  <rect class="chart-bar"> marks: 7
+  distinct heights:              1  sample: ['1']
+  all marks zero-height:         False
+  fill attribute on marks:       (none — filled by CSS)
+  hover affordance present:      True
+  drill-down link on a mark:     NO — marks are not links (CHG-008)
+
+  Note the dataset: after launch this build holds one client and zero orders, so the
+  marks are honest zeroes. CHG-001's gate asks for 'seven distinct daily marks' and
+  'tallest equals Best Day' — see D-018; that is a property of the data, not of the
+  renderer, and Phase 2's degraded-surface list decides whether the gate is testable
+  at Phase 5 at all.
+
+## Share bars (CHG-005) — CORRECTED
+
+  A first pass here searched for class names containing "share" or "bar" and reported
+  NONE FOUND. That was the probe being narrower than the build, not the build being
+  empty. Recorded rather than quietly fixed: a grep that returns nothing is not
+  evidence of absence, and this inventory is what every later phase indexes against.
+
+  Structurally, the share bars exist:
+    monti/templates/admin/revenue.html   "Revenue by client" table, Share column
+      <div class="meter"><span style="width:{{ (r.revenue / top * 100)|round|int }}%"></span></div>
+    app.css rules: .meter, .meter-track, .meter-fill
+    .meter is used on 4 surfaces: admin/revenue.html, admin/order_detail.html,
+      portal/quote_detail.html, and (as .quota-dot rows) 4 more.
+
+  The bar is width-as-percentage-of-top-client. With one client after the purge that is
+  always 100%. See D-017: the gate asks a reader to rank all clients from the bars, and
+  after Phase 2 there is one.
+
+## Sparkline (CHG-002) — this one really is absent
+
+  Checked structurally, not by name: no <polyline> and no <path> appears in ANY template
+  in the build. The only data marks drawn anywhere are the <rect class="chart-bar">
+  elements on admin/revenue.html.
+
+  There is no sparkline in this build. There is also no 30-day window to draw one for:
+  analytics.PERIODS offers 1d, 7d, 21d, 45d, 90d, 180d, 365d — no 30d.
+
+  CHG-002 reads "30-day sparkline is sloppy." The surface it describes does not exist
+  here. See the note on protocol-versus-build drift in surface-inventory.md.
+
+## Period vocabulary (CHG-009)
+  analytics.PERIODS: [('1d', 1, '1D'), ('7d', 7, '7D'), ('21d', 21, '21D'), ('45d', 45, '45D'), ('90d', 90, '90D'), ('180d', 180, '180D'), ('365d', 365, '365D')]
+  ledger vocabulary: month / quarter / year (monti/ledger.py:periods)
+  The revenue screen offers rolling day-windows; the ledger offers calendar
+  month/quarter/year. Two vocabularies over the same money — that is CHG-009.
+
+================================================================================
+## ROOT CAUSE — measured in a browser, not inferred
+
+Every class the revenue chart uses is undefined in the only stylesheet the
+application loads. Both shells load exactly one: monti/static/css/app.css
+(_shell.html:11, base.html:11).
+
+  .chart-wrap    NOT DEFINED in app.css
+  .chart-svg     NOT DEFINED
+  .chart-grid    NOT DEFINED
+  .chart-axis    NOT DEFINED
+  .chart-bar     NOT DEFINED
+  .range-row     NOT DEFINED
+  .range-btn     NOT DEFINED
+
+app.css does carry chart rules — at lines 288-300 — but under a different naming
+scheme (.chart, .chart svg, .chart .legend, .chart .swatch, .chart .cap) that
+admin/revenue.html never uses.
+
+Computed style, read from Chromium at 1440x900 on GET /admin/revenue:
+
+  rect.chart-bar   fill    rgb(0, 0, 0)      <-- SVG default. Black.
+  rect.chart-bar   stroke  none
+  .chart-grid line stroke  none              <-- grid invisible
+  .range-btn       background  rgba(0,0,0,0) <-- period picker is plain text,
+  .range-btn       border-width 0px              0px border, 0px padding
+  .range-btn       padding-left 0px
+  :root            --green  #1E8F63          <-- brand green is defined and
+                                                 reaches nothing on this surface
+
+  bars rendered: 7
+
+So CHG-001 — "Revenue chart renders as solid black block" — is real, and its cause
+is a stylesheet naming mismatch, not a fill-path bug. An SVG <rect> with no fill
+declared paints black; give the bars real heights and the result is a solid black
+block.
+
+This matters for Phase 5. §4.4's VIZ-01 charter diagnoses the defect as "a fill path
+closing against the wrong baseline and a y-domain admitting non-numeric values."
+That is not what is wrong here. §1.4 says fix the layer — and the layer is the
+contract between the renderer and the token set, which is DS-01's Phase 4 output
+and VIZ-01's Phase 5 consumer. Filed as D-027.
+
+Screenshots: chg-001-revenue-chart.png (the chart), chg-001-revenue-full.png (the
+surface). Taken on the real post-launch dataset: $0.00 revenue, 0 orders, so the
+marks are at the zero floor and read as thin black slivers rather than a block.
+The fill is the same either way; only the height differs.
+
+## A second defect on the same surface, not in any in-line item
+
+The period picker (1D 7D 21D 45D 90D 180D 365D) renders as unstyled plain text —
+no button, no border, no padding, no visible active state. It is a control that
+does not look like one. CHG-009 covers its *vocabulary*, not its appearance, and
+CHG-013 covers contrast, not missing rules. Filed under §1.9 as an observation,
+not built. See D-028.

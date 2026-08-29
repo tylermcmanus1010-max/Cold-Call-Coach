@@ -1,17 +1,198 @@
-# Surface inventory
+# Surface inventory — Phase 1
 
-Phase 1 output, owned by AIM-00, **verified by QA-01** (D-003).
+**Owner** AIM-00 · **Verifier** QA-01 (inventory traversal, D-003) · **Skills** SK-46, SK-43, SK-42
+**Frozen at** `f0b0e58bf0660a2d3963b3feacbe615b00a948ec` · branch `claude/protocol-document-website-0uerva`
 
-**Status: NOT PRODUCED.** Phase 1 has not opened.
+This is the map every later phase indexes against. It is generated from the running
+application and the working tree, not typed from memory: routes come from `app.url_map`,
+tables from `PRAGMA table_info` on a freshly launched database, templates and assets from
+the tree, and the render column from real HTTP responses through the app.
 
-Scope when it does: every surface, every chart, every string, every table, every document
-path. This is the map every later phase indexes against, so nothing else starts before it
-exists.
+Evidence for every claim below is in `protocol/evidence/phase-01/`.
 
-One thing to settle here and not before: the protocol describes defects (a revenue chart
-rendering as a solid black block, a sloppy 30-day sparkline, illegible share bars, a
-duplicated sign out, demo clients still present) against a build this session has not yet
-inventoried under protocol conditions. Work done in this repository before the protocol
-was handed over is **not** credit against any in-line item — under §1.1 nothing counts
-without evidence attached to this register and countersigned by the named verifier. Phase
-1 records what is actually there; it does not assume any item is already closed.
+---
+
+## 1. What was frozen
+
+The build under protocol is **`monti-makes-it/engine`** — the deployable Flask + SQLite
+application. `monti-makes-it/prototype` is a single-file in-memory demo whose own README
+says *"What it is not: the product. The data is generated, state is in memory, payments
+are simulated, and there is no real authentication."* It is inventoried as one surface and
+is out of scope for every in-line item.
+
+| | |
+|---|---|
+| Python modules | 27 |
+| Templates | 81 (63 screen, 18 email) |
+| Static assets | 3 (`css/app.css`, `js/image-viewer.js`, one more) |
+| Routes | 76 (excluding `/static`) |
+| Database tables | 45 |
+| Document paths | 5 |
+| **Total surfaces** | **210** |
+
+---
+
+## 2. Method, and two places the method was wrong
+
+Two probes in this inventory returned a wrong answer before returning the right one, and
+both are recorded rather than quietly corrected — a grep that finds nothing is not
+evidence of absence, and this document is what twenty later phases index against.
+
+**The render census signed itself out.** The first sweep walked routes in sorted order,
+which put `GET /logout` before every `/portal/*` route. Every portal row after it read as
+anonymous — 302 across the board, which looks exactly like a gating defect and is not one.
+Session-mutating routes (`/logout`, `/admin/clients/<id>/open`, `/admin/clients/close`,
+`/login`) are now held out of the sweep and probed separately, and the held-out probes are
+the CHG-017 baseline.
+
+**The share bars were found by the wrong name.** A probe searching for class names
+containing `share` or `bar` reported the share bars absent from the revenue screen. They
+are there; they are called `.meter`. The corrected structural method — enumerate every
+element that draws a mark, whatever it is called — is what found them, and is what
+established that the sparkline genuinely is absent.
+
+Where a probe and the build disagreed, the build won.
+
+---
+
+## 3. The surface census
+
+Full list: `evidence/phase-01/surfaces.tsv` (210 rows, one surface per row).
+
+| Kind | Count | Where enumerated from |
+|---|---|---|
+| route | 76 | `app.url_map`, `evidence/phase-01/routes.txt` |
+| template | 63 | tree, `evidence/phase-01/templates.txt` |
+| email | 18 | `monti/templates/email/` |
+| table | 45 | `PRAGMA table_info` on a launched database |
+| static | 3 | `monti/static/` |
+| document | 5 | two CSV exports, two receipt retrievals, one file download |
+
+**Rendered:** 56 GET surfaces swept as anonymous, as the member and as admin; 41 return
+200 for at least one viewer. Full matrix in `evidence/phase-01/render-census.txt`.
+
+---
+
+## 4. The 15 in-line items, each on a named surface
+
+Every item maps to at least one surface. The **state** column is what the frozen build
+actually does, measured, not assumed — and for three items it is not what §2.1 describes.
+
+| ID | Primary surface | Also touches | State on the frozen build |
+|---|---|---|---|
+| CHG-001 | `GET /admin/revenue` · `admin/revenue.html:36-69` | `monti/static/css/app.css`, `monti/analytics.py:series` | **Present, and the cause is found.** Every class the chart uses — `.chart-wrap`, `.chart-svg`, `.chart-grid`, `.chart-axis`, `.chart-bar` — is **undefined in app.css**, the only stylesheet either shell loads. Measured in Chromium: `rect.chart-bar` computes to `fill: rgb(0,0,0)`; the grid computes to `stroke: none`. Bars paint black because SVG's default fill is black. Give them real heights and that is the solid black block. Root cause is a stylesheet naming mismatch, **not the fill path VIZ-01's charter diagnoses (D-027)**. |
+| CHG-002 | `GET /admin/revenue` (the surface a 30-day trend would live on) | `monti/analytics.py:PERIODS` | **NO SUCH SURFACE.** No `<polyline>` and no `<path>` in any template in the build. `PERIODS` offers 1d/7d/21d/45d/90d/180d/365d — there is no 30-day window either. See §6. |
+| CHG-003 | 7 tables carrying `is_fixture` | `monti/purge.py`, `monti/seed.py`, `monti/__init__.py:100` | **Partly remediated.** Zero fixture rows on a fresh launch. But only 7 of 45 tables carry the marker, and the only guard fires at `flask launch`, on `customers` alone. Nothing refuses a fixture row at write time. |
+| CHG-004 | 24 `/portal/*` routes | `portal/*.html` (17 templates) | Present as a mandate. The eight sub-items a–h that scope Phases 12, 13 and 14 are **never enumerated in the protocol** (D-019). |
+| CHG-005 | `admin/revenue.html`, "Revenue by client" Share column | `.meter` on 3 more surfaces | Surface exists: `<div class="meter"><span style="width:…%">`. With one client the bar is always 100% (D-017). |
+| CHG-008 | `GET /admin/revenue` | `admin/orders` | **Present.** Marks are not links — no `<a>` wraps a `chart-bar`. No drill-down of any kind. |
+| CHG-009 | `GET /admin/revenue`, `GET /admin/ledger`, `GET /portal/ledger` | `analytics.PERIODS`, `ledger.periods` | **Present.** Revenue offers rolling day-windows; both ledgers offer calendar month/quarter/year. Two vocabularies over the same money. |
+| CHG-010 | `admin/revenue.html`, Revenue-by-client table | every table with a per-row action | **Present.** `<a class="btn btn-sm" …>Open portal</a>` repeated on every row — exactly the pattern the gate forbids. |
+| CHG-011 | Both portals | 132 `|money` uses, 16 `'%.4f'|format`, 32 `/ 100` in templates | **Present.** At least three distinct renderings of currency. |
+| CHG-012 | `_shell.html:43` | — | **NOT PRESENT.** "Sign out" renders exactly once on every one of the 56 swept surfaces. Zero surfaces show it twice. See §6. |
+| CHG-013 | `monti/static/css/app.css` | 3 screen templates, 18 email templates | **Present.** 261 hard-coded hex literals: 258 in email templates, and **3 in real screen files** — `portal/requests.html`, `portal/order_detail.html`, `admin/order_detail.html`. SK-07 says zero in any screen file; whether an email template is one is D-019's question. |
+| CHG-014 | `monti/ledger.py`, 2 receipt routes | `ledger_entries` | **Half built.** Receipts, numbering and scoped retrieval exist. **No credit note anywhere in code or schema. No PDF library, no `application/pdf`. No byte-identical regeneration path. Admin retrieval unlogged.** |
+| CHG-015 | `decision_items`, `item_revisions`, `portal/products.html`, `admin/desk.html` | `item_genome` | Revisions and the Genome exist. Threads, promotion and the notification email are the unbuilt half. |
+| CHG-016 | Every screen and email surface | 78 templates, 3 modules | **Unbuilt in full.** No catalogue, no extraction config, no string table, no gettext. 1,181 template text nodes, 85 `flash()` messages, 18 email templates carrying 90 more. No `language` column on `users` or `customers`, and §4.4 requires per-user storage. |
+| CHG-017 | `GET /admin/clients/<id>/open` · `admin.py:111` | `security_log` (unwritten), `_shell.html:17` | **Present, and measured.** One GET, no reason prompt, no confirmation. Admin gains a 200 on the full member portal. A banner does render. **Zero rows written to `security_log`, and a POST as the member succeeded** — not read-only, no elevation, no audit. |
+
+---
+
+## 5. No surface is unmapped
+
+Every one of the 210 surfaces is accounted for in `surfaces.tsv`. Surfaces that carry no
+in-line item are the majority and are listed there as such — an unmapped surface would be
+one absent from the census, and the census is generated from the application rather than
+compiled by hand, which is what makes that checkable rather than asserted.
+
+---
+
+## 6. The findings this phase exists to produce
+
+### 6a. The revenue chart is black because its stylesheet rules do not exist
+
+Measured, not inferred. `rect.chart-bar` computes to `fill: rgb(0, 0, 0)` in Chromium
+because none of `.chart-wrap`, `.chart-svg`, `.chart-grid`, `.chart-axis` or `.chart-bar`
+is defined in `monti/static/css/app.css` — and both shells load that file and nothing
+else. `app.css` does carry chart rules, at lines 288–300, under a different naming scheme
+the template never uses. Brand green is defined at `--green: #1E8F63` and reaches nothing
+on this surface.
+
+This changes what Phase 5 is. §4.4's VIZ-01 charter says *"the current defect class is a
+fill path closing against the wrong baseline and a y-domain admitting non-numeric
+values."* That is not what is wrong. §1.4 says fix the layer, and the layer here is the
+contract between the renderer and DS-01's token set — Phase 4's output, consumed at Phase
+5. Filed as **D-027**; the charter's diagnosis is not AIM-00's to rewrite.
+
+The same failure hits the period picker on the same surface: `.range-row` and `.range-btn`
+are also undefined, so `1D 7D 21D 45D 90D 180D 365D` renders as plain text with no border,
+no padding and no visible active state. No in-line item covers a control that does not look
+like one — CHG-009 covers its vocabulary, CHG-013 its contrast. Filed as **D-028**, not
+built (§1.9).
+
+### 6b. §2.1 describes a build state that is not this one
+
+Two of the fifteen items describe a defect that is not present:
+
+- **CHG-002**, *"30-day sparkline is sloppy"* — there is no sparkline in the build, no
+  `<polyline>` or `<path>` in any template, and no 30-day window in `analytics.PERIODS`.
+- **CHG-012**, *"Sign out appears twice"* — it renders exactly once, on all 56 swept
+  surfaces, from a single template line.
+
+A third, **CHG-003**, is partly remediated: zero fixture rows survive a launch, but the
+standing guard the gate requires exists only at `flask launch` and only for one table.
+
+This is not an argument that the items are finished. An item whose defect is absent may
+still carry real work — a 30-day trend line may be wanted even though the sloppy one
+described does not exist — and deciding that is scope, which is Tyler's under §1.9 and
+§12, not AIM-00's. Filed as **D-026**.
+
+What AIM-00 will not do is mark either item closed on its own authority, or quietly
+rewrite it to match what is here. Both are recorded as OPEN in the register with their
+measured state beside them.
+
+---
+
+## 7. What Phase 2 inherits
+
+Phase 2 is the fixture purge, owned by DATA-01 and verified by DATAOPS-01. From this
+inventory it inherits:
+
+- **7 tables carry `is_fixture`**; 38 do not. On those, a fixture row is not nameable, so
+  "zero fixture rows at the data layer" is only checkable on 7/45 of the data layer.
+- **The guard clause is the gap.** `monti/__init__.py:100` refuses `flask launch` when a
+  fixture *customer* exists. Nothing refuses a fixture row at write time on any table.
+- **The degraded-surface list** Phase 2 must file is pre-shaped by the render census: 41
+  of 56 GET surfaces render 200 today, on a dataset with one client, two catalogue items,
+  two decision items and **zero orders and zero ledger entries**. Every money surface is
+  already rendering its empty state.
+- **Phase 5 depends on this.** CHG-001's gate wants seven distinct daily marks; with zero
+  orders there are none. Whether that gate is testable at Phase 5 turns on what Phase 2's
+  list says (D-018).
+
+---
+
+## 8. Evidence index
+
+| File | What it demonstrates |
+|---|---|
+| `freeze.md` | The commit, tree and file counts the inventory was taken at |
+| `routes.txt` | All 76 routes from `app.url_map` — the route half of the census |
+| `templates.txt` | All 81 templates with line counts |
+| `surfaces.tsv` | The canonical 210-surface list, one per row, by kind |
+| `render-census.txt` | 56 GET surfaces × 3 viewers, real responses; sign-out count per surface |
+| `chart-census.txt` | Every drawn mark in the build; CHG-001/002/005/008/009 baselines |
+| `fixture-probe.txt` | CHG-003's three gate clauses measured; the guard located exactly |
+| `document-baseline.txt` | CHG-014 clause by clause; no credit note, no PDF |
+| `string-census.txt` | CHG-016 baseline: 1,181 + 85 + 90 literals, no machinery |
+| `impersonation-baseline.txt` | CHG-017 measured: zero log rows, and a write that succeeded |
+
+---
+
+## 9. A note on prior work in this repository
+
+Work done here before the protocol was handed over is **not** credit against any in-line
+item. Under §1.1 nothing counts without evidence attached to this register and
+countersigned by the named verifier, and every item above is recorded OPEN regardless of
+what the code already does. Where the frozen build already satisfies part of a gate, this
+inventory says so as a measurement — not as a pass.

@@ -1,0 +1,37 @@
+# CHG-014 baseline — the document engine as it stands
+
+## What exists in monti/ledger.py
+  public functions: backfill_from_orders, charge, client_row, client_totals, entry_for_order, execute, fail, fee, manual_confirmation, next_receipt_no, order_chain, period_key, period_label, periods, query, receipt, reconcile, refund, reverse, search, settle, to_export, totals
+
+  Exactly one receipt per purchase         present
+  Unbroken immutable numbering             present
+  Credit note issuance                     ABSENT
+  Refund path                              present
+  Reversal path                            present
+
+## PDF export
+  PDF libraries importable: NONE
+  requirements.txt: Flask>=3.0 Jinja2>=3.1 Werkzeug>=3.0 gunicorn>=21.2
+  'application/pdf' anywhere in monti/: False
+
+## Retrieval routes
+  GET /portal/ledger/receipt/<receipt_no>   client — scoped by customer_id (ledger.receipt)
+  GET /admin/ledger/receipt/<receipt_no>    admin  — unscoped
+  'Admin retrieval logged' clause: the only skill that logs admin access to a
+  client's record is SK-37, ACTIVE as of D-001 and landing at Phase 8. Phase 16
+  (documents) comes after Phase 8, so the ordering works.
+
+## Immutability
+  UPDATE/DELETE statements against ledger_entries in monti/: none found
+  ledger.reverse present: True — corrections as linked reversing rows
+
+## Against CHG-014's gate
+  Exactly one receipt per purchase                         partly — receipts exist, one-per-purchase not asserted anywhere
+  Unbroken immutable numbering                             numbering exists (next_receipt_no); 'unbroken' is unasserted
+  Regenerates byte-identical from stored order data        UNBUILT — no regeneration path
+  Totals reconcile to the order and both ledgers           built — A32/A34 in the existing suite
+  No code path edits or deletes an issued receipt          structurally true — reversal not mutation
+  Refund yields original + credit note + correct net       UNBUILT — no credit note anywhere in code or schema
+  Both exporting as PDF                                    UNBUILT — no PDF library, no application/pdf
+  Clients retrieve only their own                          built — ledger.receipt scopes by customer_id
+  Admin retrieval logged                                   UNBUILT — security_log unwritten (see CHG-017)

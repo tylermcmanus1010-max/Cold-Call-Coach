@@ -149,7 +149,7 @@ actually does, measured, not assumed — and for three items it is not what §2.
 
 ## 5. "No surface is unmapped"
 
-The phrase admits two readings and the gate does not say which. Filed as **D-029**. Rather
+The phrase admits two readings and the gate does not say which. Filed as **D-033**. Rather
 than pick one, the census now answers both from data: `surfaces.tsv` carries an `items`
 column naming every in-line item that lands on each surface.
 
@@ -239,7 +239,7 @@ Filed as **D-030**.
 And the period picker on the same surface: `.range-row` and `.range-btn` are also
 undefined, so `1D 7D 21D 45D 90D 180D 365D` renders as plain text with no border, no
 padding and no visible active state. No in-line item covers a control that does not look
-like one — CHG-009 covers its vocabulary, CHG-013 its contrast. Filed as **D-028**, not
+like one — CHG-009 covers its vocabulary, CHG-013 its contrast. Filed as **D-032**, not
 built (§1.9).
 
 ### 6c. §2.1 describes a build state that is not this one

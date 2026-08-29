@@ -89,7 +89,143 @@ Appendix F gains a Phase-1-verifier row.
 
 ---
 
+## D-026 · CHG-002 and CHG-012 · **SPLIT**
+
+**Signed:** Tyler · **Date:** 29 Aug 2026 · **Expiry:** none — this is an amendment.
+
+**Question.** Phase 1 measured two in-line items whose stated defect is absent from the
+build. Are they finished, or is the work something else?
+
+**Answer.** Split, and neither is "finished".
+
+- **CHG-012 — CLOSED, verified absent.** Sign out renders exactly once across all 56
+  swept surfaces. The render census is the evidence, countersigned by QA-01. It stays in
+  the register as CLOSED, never deleted. **Any later view that renders it twice reopens
+  this ID rather than opening a new one.**
+- **CHG-002 — stays OPEN, rewritten.** There is no sparkline, no `<polyline>` or `<path>`
+  in any template, and no 30-day window in `analytics.PERIODS`. A sparkline was seen on
+  the prototype, so the work is build-it-correctly, not fix-it. Its §9 gate gains the
+  build conditions. Severity unchanged at P1.
+
+**The rule it sets:** *an absent defect is not finished work.* Closing an item is a scope
+decision and belongs to Tyler under §12, never to the agent that found it.
+
+**Applied at:** §2.1 — CHG-002's row rewritten, skills now SK-15/SK-17/SK-53; CHG-012's
+row marked CLOSED with no owner and no severity · §9 — both gates rewritten · the register
+is now 14 in line, 1 closed.
+
+---
+
+## D-027 · §4.4's VIZ-01 charter asserted a cause measurement contradicts · **CORRECTED**
+
+**Signed:** Tyler · **Date:** 29 Aug 2026 · **Expiry:** none — this is an amendment.
+
+**Question.** The charter said CHG-001's defect was *"a fill path closing against the
+wrong baseline and a y-domain admitting non-numeric values."* Measured in Chromium at
+Phase 1 it is neither: every chart class is undefined in `app.css`, so the bars take
+SVG's default black fill. Correct the charter, or correct the practice?
+
+**Answer.** Both. The charter is corrected in §4.4, and **§4.8 now forbids any charter
+note from asserting a cause at all.**
+
+**The reasoning is the part worth keeping.** That sentence came from v1.0 and was carried
+into v2.0 verbatim without being tested — the merge preserved it faithfully, which is
+precisely how a wrong diagnosis survives a revision. A diagnosis inside a charter is
+worse than no diagnosis, because it reads as settled and survives every revision
+unchallenged. It would have sent VIZ-01 into the renderer while the fault sat in a
+stylesheet, with the authority of the protocol behind it.
+
+**Standing rule (§4.8):** a charter note may state a principle, a standard, a prohibition
+or a scope boundary. It may not say what is wrong with the code. Diagnoses belong in the
+register — attached to an item, sourced to evidence, dated, falsifiable. **Any charter
+note that asserts a cause is itself a finding.**
+
+---
+
+## D-028 · The change register was written against the prototype · **THE FLASK REPO IS THE BUILD OF RECORD**
+
+**Signed:** Tyler · **Date:** 29 Aug 2026 · **Expiry:** none — this is an amendment.
+
+**Question.** Phase 1 found CHG-002 and CHG-012 describe defects the repo does not have.
+Two bad items, or something structural?
+
+**Answer.** Structural. The 16 change items were logged against the claude.ai prototype
+surface, and the repo is a different codebase. It is a register-provenance problem, not a
+two-item problem — and Phase 1's mapping gate is exactly where it should surface.
+
+**The repo is what ships. The prototype becomes the design reference.** Every in-line item
+is re-mapped against the repo, and where a prototype feature is simply absent, the item is
+rewritten from *fix-a-defect* to *build-to-intent* with a gate that says so. This makes
+the work larger and the register honest; the alternative was building against a surface
+nobody is shipping.
+
+**Standing consequence: no item may cite the prototype as its evidence surface.**
+Prototype behaviour is intent, never a baseline.
+
+**AIM-00 note.** Phase 1's inventory already treated the engine as the build under
+protocol and recorded the prototype as one out-of-scope surface, so nothing in the
+evidence pack cites it. What changes is the framing of the absences: they were reported
+as "the protocol describes a build state that is not this one", which named the symptom.
+D-028 names the cause.
+
+---
+
+## D-029 · The Phase 1 impersonation test wrote a record as Boars Head · **REVERT IT, AND NO TEST LEAVES RESIDUE AGAIN**
+
+**Raised in review, not by the build.** **Signed:** Tyler · **Date:** 29 Aug 2026 ·
+**Expiry:** none — this is an amendment.
+
+**Question.** Phase 1's CHG-017 baseline was established by impersonating Boars Head and
+writing a record as them. Correct test, correct finding — `security_log` stayed at zero
+rows, so impersonation is not read-only, has no elevation step and no audit. But the
+written record was not reported as removed, and Boars Head is the only real client in the
+system.
+
+**Answer.** Locate and revert it, evidence the revert, and add the no-residue rule to
+SEC-01's charter (§4.5): **every write performed while testing is reverted in the same
+phase, and a test that must write uses a throwaway account, never MMI-C-1001.**
+
+**Executed — and it was worse than the decision assumed.** Evidence:
+`protocol/evidence/phase-01/d029-revert.txt`, probe `d029-revert-probe.py`.
+
+`monti/intake.py:create_request` writes **five** rows per submission. The Phase 1 probe's
+own cleanup deleted three of them — the quote, the product and the capacity debit — and
+**missed the CRM activity and the calendar deadline**, then printed *"(probe rows
+removed)"*. That line was in the evidence pack and it was false.
+
+Found and reverted: **12 rows across four databases**, of which **8 sat on Boars Head's own
+account** — 2 CRM activities and 2 calendar deadlines in each of the two launched
+databases. Boars Head's CRM timeline had three entries where it should have had one.
+
+Re-proved by fresh query after the revert, not asserted: all five markers return **0
+rows**, and the timeline is back to its single genuine entry, *"Account opened as the
+first client on the platform."* His two real products, MMI-D-001 and MMI-D-002, are
+untouched.
+
+**What the first probe got wrong, stated plainly:** it searched for its own text marker
+only. The calendar row carries neither the marker nor the item reference — only the quote
+reference — so a search by marker could never have found it. A search that finds nothing
+is not proof that nothing is there if the search was too narrow. The shipped probe now
+searches by marker *and* by both generated references.
+
+
 # PART 2 — FILED BY AIM-00, UNANSWERED
+
+> **ID collision, resolved and recorded.** AIM-00 had already filed findings under D-026
+> to D-029 at Phase 1. Amendment 2 assigns those four numbers to Tyler's signed decisions.
+> Two of the four are the same subject and merge cleanly — the agent's D-026 (two items
+> whose defect is absent) and D-027 (the VIZ-01 charter's wrong cause) are the findings
+> Tyler's D-026 and D-027 answer. **Two collide on different subjects:** the agent's D-028
+> (the unstyled period picker) and D-029 (the ambiguous gate clause) are unrelated to
+> Tyler's D-028 and D-029.
+>
+> Resolved by precedence: a signed decision keeps its number, an unsigned agent finding
+> moves. The agent's D-028 is now **D-032** and its D-029 is now **D-033**, both with a
+> note recording the move. Nothing is deleted and no number is reused. References in
+> `surface-inventory.md` and `phase-board.md` are updated to match.
+>
+> AIM-00 did not decide this so much as apply the only ordering that loses nothing —
+> but it is a change to the record, so it is stated here rather than done quietly.
 
 Twenty-two findings, each verified against the amended text rather than asserted. They are
 ordered by the phase they first bite at. None is resolved here; §0.9 forbids AIM-00
@@ -616,124 +752,13 @@ rule: filed, not resolved.
 
 ---
 
-## D-026 · Two in-line items describe a defect the build does not have · **open now**
+## Superseded — the Phase 1 findings behind D-026 and D-027
 
-Measured. Evidence in `protocol/evidence/phase-01/`.
-
-- **CHG-002 (P1), "30-day sparkline is sloppy."** There is no sparkline. No `<polyline>`
-  and no `<path>` appears in any template in the build; the only data marks anywhere are
-  the `<rect class="chart-bar">` elements on the revenue screen. There is no 30-day window
-  either — `analytics.PERIODS` runs 1d/7d/21d/45d/90d/180d/365d.
-- **CHG-012 (P2), "Sign out appears twice."** It renders exactly once, from
-  `_shell.html:43`, on every one of the 56 GET surfaces swept as three viewers. Zero
-  surfaces show it twice.
-
-An item whose stated defect is absent may still carry real work — a 30-day trend line can
-be wanted even though no sloppy one exists — so "not present" is not the same as "done".
-
-**Options.** (a) Both stay OPEN and are re-scoped by Tyler into what is actually wanted:
-CHG-002 becomes "build a 30-day trend line", CHG-012 becomes "keep sign out to one per
-view and prove it". Cost: CHG-002 turns from a fix into a build, which is a bigger Phase 5.
-(b) Both close as not-present, with the measurement as evidence. Cost: CHG-002 is P1 and
-§3 says no launch with an open P1 unless Tyler defers it by ID — closing it needs the same
-signature, and the 30-day view the item implies never gets built. (c) CHG-012 closes (a P2,
-deferrable by AIM-00 with a recorded reason under §3) and CHG-002 goes to Tyler.
-
-**AIM-00 recommends (a)** for CHG-002 and (c)'s first half for CHG-012 — but will not
-close either without a signature, because closing an item on the grounds that its defect is
-absent is a scope judgement and §1.9 puts scope with Tyler. Both are recorded OPEN in the
-register with their measured state beside them.
-
----
-
-## D-027 · VIZ-01's charter diagnoses a defect that is not the one present · **bites at Phase 5**
-
-Measured in Chromium, not inferred. `rect.chart-bar` on `GET /admin/revenue` computes to
-`fill: rgb(0, 0, 0)`. The cause: `.chart-wrap`, `.chart-svg`, `.chart-grid`, `.chart-axis`
-and `.chart-bar` are **undefined in `monti/static/css/app.css`**, which is the only
-stylesheet either shell loads (`_shell.html:11`, `base.html:11`). `app.css` carries chart
-rules at 288–300 under a different naming scheme the template never uses. SVG's default
-fill is black, so the bars paint black; the grid computes to `stroke: none` and is
-invisible.
-
-§4.4's VIZ-01 charter says: *"The current defect class is a fill path closing against the
-wrong baseline and a y-domain admitting non-numeric values. Fix the renderer, not the four
-charts."* Neither half describes what is here. There is no fill path — there is no fill
-rule at all — and the y-domain is derived correctly at `revenue.html:34-35`.
-
-It matters because §1.4 defines the unit of work as the layer, and which layer differs: a
-fill-path bug lives in the renderer, a missing-rule bug lives in the contract between the
-renderer and DS-01's token set. That contract is Phase 4's output consumed at Phase 5, so
-the ordering already works — but VIZ-01 briefed on the charter would look in the wrong file.
-
-**Options.** (a) Correct the charter's diagnosis to what was measured, leaving the
-instruction ("fix the renderer, not the four charts") intact. Cost: none; the instruction
-was right and only the diagnosis was wrong. (b) Leave it and let VIZ-01 rediscover.
-Cost: a phase spent looking for a fill path that does not exist. (c) Treat it as evidence
-that §2.1 predates the theme work and re-inventory the other charter diagnoses.
-Cost: more Phase 1, but it is the same class of error as D-026.
-
-**AIM-00 recommends (a),** and notes (c) is already partly done: this inventory measured
-every in-line item's state rather than trusting §2.1's description, which is how D-026 and
-this were found.
-
----
-
-## D-028 · A defect on an in-line surface that no in-line item covers · **bites at Phase 8**
-
-Measured. `.range-row` and `.range-btn` are also undefined in `app.css`, so the revenue
-screen's period control renders as plain text: `background rgba(0,0,0,0)`, `border-width
-0px`, `padding 0px`, no visible active state. `1D 7D 21D 45D 90D 180D 365D` is a row of
-words that happen to be links.
-
-No in-line item covers it. CHG-009 covers the period *vocabulary*; CHG-013 covers contrast
-and colour-only status; CHG-010 covers button weight in tables. A control that does not
-look like a control is none of those.
-
-Per §1.9 this is filed and not built.
-
-**Options.** (a) It rides along with Phase 8, which rebuilds this exact surface on the new
-tokens, and closes as part of CHG-001's "correct in both themes" clause without a new ID.
-Cost: none, but nothing names it, so nothing checks it. (b) File it as a new CHG under §12
-with an ID, a severity and a pre-written gate. Cost: a new register item — Tyler's, under
-§0.8. (c) Leave it to Appendix B.
-
-**AIM-00 recommends (b) at P2.** The whole reason this is visible is that Phase 1 measured
-rather than read, and the cheapest moment to name it is before Phase 4 sets the tokens it
-will consume. But a new CHG item is a hard stop, so it waits for a signature.
-
----
-
-## D-029 · Phase 1's gate clause "no surface is unmapped" has two readings · **bites at Phase 1, now**
-
-Raised by QA-01 when it failed this phase, and it is right that the gate does not
-disambiguate.
-
-  Reading A — every surface in the census carries an in-line item.
-  Reading B — every surface in the build appears in the census.
-
-Under **A** the gate is unpassable by construction: fifteen items cannot cover 236
-distinct surfaces, and 74 rows legitimately carry no item (`/webhooks/stripe`, the
-calendar routes, 20 untouched tables). Under **B** it is the completeness check the
-phase is obviously for, and it is what §5 assumed without saying so.
-
-SK-42's own standard is *"a gate a third party could run without asking questions."*
-This one made a third party ask a question.
-
-**Resolved for now without amending anything:** the census answers both. `surfaces.tsv`
-gained an `items` column, so A is computable (167 of 241 rows carry an item, 74 do not)
-and B is checkable (the census is generated from `app.url_map`, `PRAGMA table_info` and
-the tree). The inventory states both answers rather than choosing.
-
-**Options for the wording itself.** (a) Read it as B and say so in the gate. Cost: none;
-it is what the phase is for. (b) Read it as A and rewrite the clause to something
-passable — "every surface an in-line item touches is named in the census". Cost: a gate
-rewrite, which §1.2 allows only before the work and this phase's work is done. (c) Leave
-it ambiguous. Cost: the next verifier asks the same question, and RES-01 cannot answer it
-either — §13.4 forbids RES-01 weakening a gate it does not own.
-
-**AIM-00 recommends (a).** RES-01 has not touched the clause; it made both readings
-answerable and left the wording to Tyler.
+AIM-00 filed two findings under these numbers at Phase 1: *two in-line items describe
+a defect the build does not have*, and *VIZ-01's charter diagnoses a defect that is not
+the one present*. Both are answered by Tyler's signed D-026 and D-027 in Part 1, which
+carry the same subjects. The findings are not deleted — they are the questions those
+decisions answer, and they are quoted inside them.
 
 ---
 
@@ -794,3 +819,68 @@ surface disagreeing with itself.
 right — the clause that catches this is "marks sum to the headline", and LEDGER-01, not
 QA-01, is the verifier who would notice.
 
+---
+
+## D-032 · A defect on an in-line surface that no in-line item covers · **bites at Phase 8**
+
+Measured. `.range-row` and `.range-btn` are also undefined in `app.css`, so the revenue
+screen's period control renders as plain text: `background rgba(0,0,0,0)`, `border-width
+0px`, `padding 0px`, no visible active state. `1D 7D 21D 45D 90D 180D 365D` is a row of
+words that happen to be links.
+
+No in-line item covers it. CHG-009 covers the period *vocabulary*; CHG-013 covers contrast
+and colour-only status; CHG-010 covers button weight in tables. A control that does not
+look like a control is none of those.
+
+Per §1.9 this is filed and not built.
+
+*Filed by AIM-00 at Phase 1 as D-028. Renumbered to D-032 when Amendment 2 assigned D-028 to a different, signed decision — see the collision note at the head of Part 2.*
+
+**Options.** (a) It rides along with Phase 8, which rebuilds this exact surface on the new
+tokens, and closes as part of CHG-001's "correct in both themes" clause without a new ID.
+Cost: none, but nothing names it, so nothing checks it. (b) File it as a new CHG under §12
+with an ID, a severity and a pre-written gate. Cost: a new register item — Tyler's, under
+§0.8. (c) Leave it to Appendix B.
+
+**AIM-00 recommends (b) at P2.** The whole reason this is visible is that Phase 1 measured
+rather than read, and the cheapest moment to name it is before Phase 4 sets the tokens it
+will consume. But a new CHG item is a hard stop, so it waits for a signature.
+
+---
+
+---
+
+## D-033 · Phase 1's gate clause "no surface is unmapped" has two readings · **bites at Phase 1, now**
+
+Raised by QA-01 when it failed this phase, and it is right that the gate does not
+disambiguate.
+
+  Reading A — every surface in the census carries an in-line item.
+  Reading B — every surface in the build appears in the census.
+
+Under **A** the gate is unpassable by construction: fifteen items cannot cover 236
+distinct surfaces, and 74 rows legitimately carry no item (`/webhooks/stripe`, the
+calendar routes, 20 untouched tables). Under **B** it is the completeness check the
+phase is obviously for, and it is what §5 assumed without saying so.
+
+SK-42's own standard is *"a gate a third party could run without asking questions."*
+This one made a third party ask a question.
+
+**Resolved for now without amending anything:** the census answers both. `surfaces.tsv`
+gained an `items` column, so A is computable (167 of 241 rows carry an item, 74 do not)
+and B is checkable (the census is generated from `app.url_map`, `PRAGMA table_info` and
+the tree). The inventory states both answers rather than choosing.
+
+**Options for the wording itself.** (a) Read it as B and say so in the gate. Cost: none;
+it is what the phase is for. (b) Read it as A and rewrite the clause to something
+passable — "every surface an in-line item touches is named in the census". Cost: a gate
+rewrite, which §1.2 allows only before the work and this phase's work is done. (c) Leave
+it ambiguous. Cost: the next verifier asks the same question, and RES-01 cannot answer it
+either — §13.4 forbids RES-01 weakening a gate it does not own.
+
+*Filed by AIM-00 at Phase 1 as D-029. Renumbered to D-033 when Amendment 2 assigned D-029 to a different, signed decision.*
+
+**AIM-00 recommends (a).** RES-01 has not touched the clause; it made both readings
+answerable and left the wording to Tyler.
+
+---

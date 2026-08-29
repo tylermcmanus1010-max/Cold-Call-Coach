@@ -1,0 +1,139 @@
+# D-029 — impersonation test residue on Boars Head (MMI-C-1001)
+# mode: REVERT
+
+## instance/test.db
+   customers: 11  (MMI-C-1001/Halcyon Goods, MMI-C-1002/Northfield Outfitters, MMI-C-1003/Verano Skincare, ...)
+   BEFORE:
+   quotes            1 row(s)
+       (13, 'MMI-Q-1001', 'Waxed canvas tote, 18L')
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    1 row(s)
+       (7, 1, 'Sent estimate on MMI-Q-1001 — $10,714.00')
+   calendar_events   0 row(s)
+   AFTER the revert:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 2 residue row(s), 0 remaining
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/p1.db
+   customers: 1  (MMI-C-1001/Boars Head)
+   BEFORE:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    2 row(s)
+       (2, 1, 'Requested MMI-Q-1001 / MMI-D-003: CHG-017 baseline write probe')
+       (3, 1, 'Requested MMI-Q-1001 / MMI-D-003: CHG-017 baseline write probe')
+   calendar_events   2 row(s)
+       (1, 1, 'Quote due · MMI-Q-1001')
+       (2, 1, 'Quote due · MMI-Q-1001')
+   AFTER the revert:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 4 residue row(s), 0 remaining
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/dev.db
+   customers: 1  (MMI-C-1001/Boars Head)
+   BEFORE:
+   quotes            1 row(s)
+       (1, 'MMI-Q-1001', 'Lidded tray for a hot counter')
+   decision_items    1 row(s)
+       (3, 'MMI-D-003', 'Unapproved item 003')
+   capacity_ledger   0 row(s)
+   crm_activities    1 row(s)
+       (2, 1, 'Requested MMI-Q-1001 / MMI-D-003: Lidded tray for a hot counter')
+   calendar_events   1 row(s)
+       (1, 1, 'Quote due · MMI-Q-1001')
+   AFTER the revert:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 4 residue row(s), 0 remaining
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/seeded.db
+   customers: 10  (MMI-C-1001/Halcyon Goods, MMI-C-1002/Northfield Outfitters, MMI-C-1003/Verano Skincare, ...)
+   BEFORE:
+   quotes            1 row(s)
+       (13, 'MMI-Q-1001', 'Waxed canvas tote, 18L')
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    1 row(s)
+       (7, 1, 'Sent estimate on MMI-Q-1001 — $10,714.00')
+   calendar_events   0 row(s)
+   AFTER the revert:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 2 residue row(s), 0 remaining
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/fresh.db
+   customers: 1  (MMI-C-1001/Boars Head)
+   BEFORE:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 0 residue row(s)
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/inv.db
+   customers: 0  ()
+   BEFORE:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 0 residue row(s)
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/probe.db
+   customers: 0  ()
+   BEFORE:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 0 residue row(s)
+
+## /tmp/claude-0/-home-user-Cold-Call-Coach/9bc1e7aa-8be7-5609-b97f-fb3a4c1208b7/scratchpad/purgetest.db
+   customers: 1  (MMI-C-1011/Test Fixtures Co)
+   BEFORE:
+   quotes            0 row(s)
+   decision_items    0 row(s)
+   capacity_ledger   0 row(s)
+   crm_activities    0 row(s)
+   calendar_events   0 row(s)
+   -> 0 residue row(s)
+
+TOTAL found: 12 · TOTAL remaining after revert: 0
+
+## Re-proof — queried again after the revert, not asserted
+
+   crm_activities naming the probe          0 rows
+   calendar_events naming the probe         0 rows
+   quotes with ref MMI-Q-1001               0 rows
+   decision_items with ref MMI-D-003        0 rows
+   capacity_ledger naming the probe         0 rows
+
+## Boars Head's CRM timeline, in full, as it now stands
+   (1, 'SYSTEM', 'Account opened as the first client on the platform. Price matrix published; container SKUs registered.', 'Tyler Monti')
+
+## The account's other records, unaffected
+   quotes             0 rows for MMI-C-1001
+   decision_items     2 rows for MMI-C-1001
+   capacity_ledger    0 rows for MMI-C-1001
+   orders             0 rows for MMI-C-1001
+   ledger_entries     0 rows for MMI-C-1001
+   calendar_events    0 rows for MMI-C-1001

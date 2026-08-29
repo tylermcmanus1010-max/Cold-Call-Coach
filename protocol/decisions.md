@@ -701,3 +701,37 @@ with an ID, a severity and a pre-written gate. Cost: a new register item — Tyl
 **AIM-00 recommends (b) at P2.** The whole reason this is visible is that Phase 1 measured
 rather than read, and the cheapest moment to name it is before Phase 4 sets the tokens it
 will consume. But a new CHG item is a hard stop, so it waits for a signature.
+
+---
+
+## D-029 · Phase 1's gate clause "no surface is unmapped" has two readings · **bites at Phase 1, now**
+
+Raised by QA-01 when it failed this phase, and it is right that the gate does not
+disambiguate.
+
+  Reading A — every surface in the census carries an in-line item.
+  Reading B — every surface in the build appears in the census.
+
+Under **A** the gate is unpassable by construction: fifteen items cannot cover 236
+distinct surfaces, and 74 rows legitimately carry no item (`/webhooks/stripe`, the
+calendar routes, 20 untouched tables). Under **B** it is the completeness check the
+phase is obviously for, and it is what §5 assumed without saying so.
+
+SK-42's own standard is *"a gate a third party could run without asking questions."*
+This one made a third party ask a question.
+
+**Resolved for now without amending anything:** the census answers both. `surfaces.tsv`
+gained an `items` column, so A is computable (167 of 241 rows carry an item, 74 do not)
+and B is checkable (the census is generated from `app.url_map`, `PRAGMA table_info` and
+the tree). The inventory states both answers rather than choosing.
+
+**Options for the wording itself.** (a) Read it as B and say so in the gate. Cost: none;
+it is what the phase is for. (b) Read it as A and rewrite the clause to something
+passable — "every surface an in-line item touches is named in the census". Cost: a gate
+rewrite, which §1.2 allows only before the work and this phase's work is done. (c) Leave
+it ambiguous. Cost: the next verifier asks the same question, and RES-01 cannot answer it
+either — §13.4 forbids RES-01 weakening a gate it does not own.
+
+**AIM-00 recommends (a).** RES-01 has not touched the clause; it made both readings
+answerable and left the wording to Tyler.
+

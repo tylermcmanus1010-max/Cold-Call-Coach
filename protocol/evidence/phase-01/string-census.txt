@@ -23,10 +23,16 @@
     ... 63 more files
 
 ## flash() messages (errors, validation, confirmations)
-  files: 3   total calls: 85
-       60  monti/blueprints/admin.py
-       20  monti/blueprints/portal.py
-        5  monti/auth.py
+  files: 4   total calls: 90
+       61  monti/blueprints/admin.py
+       21  monti/blueprints/portal.py
+        6  monti/auth.py
+        2  monti/blueprints/public.py
+
+  CORRECTED after QA-01 failed this phase. The first count read 85 across 3 modules:
+  monti/blueprints/public.py was missed entirely and each of the other three was one
+  short. The regex required a quote immediately after the opening paren, so a call
+  written with the message on the next line slipped past it.
 
 ## Email templates — where English leaks (I18N-01 charter, Phase 10 order)
   templates: 18   text nodes: 90
@@ -47,7 +53,11 @@ SK-39 (migration safety, DATA-01) governs how it lands.
 ## Summary for the register
 
 CHG-016 is unbuilt in full. Nothing is externalized, no catalogue exists, no language
-column exists. The work Phase 10 gates on is roughly 1,181 template text nodes across 78
-files, 85 flash() messages across 3 modules, and 18 email templates carrying 90 more —
-and Phase 10's own instruction is that email templates are checked first, because that is
-where English leaks.
+column exists. The work Phase 10 gates on is 1,181 template text nodes across 78 files — of which the
+18 email templates contribute 90, part of that total and not additional to it — plus 90
+flash() messages across 4 modules. Phase 10's own instruction is that email templates are
+checked first, because that is where English leaks.
+
+Both figures were wrong in the first version of this file: 85 flash calls across 3
+modules, and the email nodes presented as 90 "more". Corrected after QA-01 failed the
+phase.

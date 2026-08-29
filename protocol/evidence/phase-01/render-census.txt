@@ -69,7 +69,13 @@ Surfaces where 'Sign out' appears more than once: 0
 ## Held-out probes
 GET /admin/clients/1/open -> 302 /portal/
   rows written to security_log by that impersonation: 0
-  admin now sees the member portal: 200; view marked in the page: False
+  admin now sees the member portal: 200; view marked in the page: YES
+    CORRECTED. The first run of this line searched for the strings 'view_as' or
+    'Viewing as' and reported False. The banner exists and renders — it says
+    "Admin view · you are looking at <company>'s portal" (_shell.html:17, driven
+    by g.viewing_as set at auth.py:80). The probe string was wrong, not the build.
+    impersonation-baseline.txt had the right answer; this file contradicted it and
+    the contradiction went unreconciled until QA-01 found it.
 GET /admin/clients/close -> 302 /admin/crm
 GET /logout (member) -> 302 /
   after logout, GET /portal/ -> 302 (expect 302 to login)

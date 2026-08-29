@@ -22,7 +22,21 @@
   (documents) comes after Phase 8, so the ordering works.
 
 ## Immutability
-  UPDATE/DELETE statements against ledger_entries in monti/: none found
+  UPDATE/DELETE statements against ledger_entries in monti/:
+    monti/ledger.py:147   UPDATE ledger_entries SET status = 'SETTLED', occurred_at = ?
+    monti/ledger.py:159   UPDATE ledger_entries SET status = 'FAILED', note = ?
+
+  CORRECTED after QA-01 failed this phase. The first run of this probe reported
+  "none found" because its regex was broken: `(UPDATE|DELETE)\s+FROM?\s*(...)`
+  reads as UPDATE, whitespace, then the literal "FRO" with an optional "M" — so
+  it could never match "UPDATE ledger_entries". Two statements were missed.
+
+  What they are matters and does not change the conclusion: both transition a
+  PENDING row to SETTLED or FAILED. That is a pending payment resolving, not an
+  issued receipt being edited — the row was never a final document. Corrections
+  to settled money go through ledger.reverse, which writes a linked reversing
+  row. But "no UPDATE exists" was the wrong reason to believe the right thing,
+  and SK-30 is non-waivable, so the clause below now states the real basis.
   ledger.reverse present: True — corrections as linked reversing rows
 
 ## Against CHG-014's gate

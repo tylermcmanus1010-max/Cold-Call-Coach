@@ -22,13 +22,16 @@ is out of scope for every in-line item.
 
 | | |
 |---|---|
-| Python modules | 27 |
-| Templates | 81 (63 screen, 18 email) |
-| Static assets | 3 (`css/app.css`, `js/image-viewer.js`, one more) |
 | Routes | 76 (excluding `/static`) |
+| Templates | 63 screen + 18 email = 81 |
+| Python modules | 27 |
 | Database tables | 45 |
-| Document paths | 5 |
-| **Total surfaces** | **210** |
+| Static assets | 3 — `css/app.css`, `js/image-viewer.js`, and `static/uploads/.gitkeep`, a 0-byte git placeholder |
+| CLI commands | 3 — `flask launch`, `flask purge-fixtures`, `flask seed` |
+| Document artifacts | 5 |
+| The prototype | 1 |
+| **Rows in the census** | **241** |
+| **Distinct surfaces** | **236** — the 5 document rows are each served by a route already counted, and carry `duplicate_of` |
 
 ---
 
@@ -51,22 +54,66 @@ are there; they are called `.meter`. The corrected structural method — enumera
 element that draws a mark, whatever it is called — is what found them, and is what
 established that the sparkline genuinely is absent.
 
+**The share-bar probe's twin, which went unreconciled.** The same held-out probe that
+became the CHG-017 baseline reported *"view marked in the page: False"* — it searched for
+`view_as` / `Viewing as` and the banner says *"Admin view · you are looking at …"*. The
+impersonation baseline recorded the right answer; `render-census.txt` kept the wrong one,
+and two files in the same evidence pack contradicted each other until QA-01 read them
+both.
+
 Where a probe and the build disagreed, the build won.
+
+### 2a. QA-01 failed this phase on its first submission
+
+The gate was called FAIL on clauses 1 and 3, and RES-01 reproduced every material finding
+before accepting it (§13.3 move 1). What was wrong:
+
+| | |
+|---|---|
+| **Clause 1** | The census had six kinds and omitted **Python modules**, **CLI commands** and **the prototype** — while §4 mapped six items onto module paths, CHG-003's only guard lives in `flask launch`, and §1 claimed the prototype was inventoried. Items were mapped to things the "complete" census did not contain. |
+| **Clause 3** | `surfaces.tsv` had no item column and contained the string `CHG` zero times, so neither reading of "no surface is unmapped" was answerable from the evidence. The only mapping in existence was prose. |
+
+Fourteen factual errors came with it, and all fourteen reproduced. The ones that mattered:
+
+- **`document-baseline.txt` said no `UPDATE` touches `ledger_entries`.** Two do, at
+  `ledger.py:147` and `:159`. The probe's regex was `(UPDATE|DELETE)\s+FROM?\s*(…)`,
+  which reads as UPDATE, whitespace, then the literal `FRO` with an optional `M` — it
+  could never match. That broken probe was the stated basis for an SK-30 clause, and
+  SK-30 is non-waivable.
+- **The total was 210 and 5 of those rows were duplicates** of routes already counted.
+- **`flash()` came out 85 across 3 modules.** It is 90 across 4; `public.py` was missed
+  entirely and the other three were each one short.
+- **The 90 email text nodes were presented as additional to the 1,181.** They are inside
+  it.
+- **"Sign out renders exactly once on all 56 surfaces"** overstated a true narrower
+  claim; 11 surfaces do not load the shell at all.
+- Smaller miscounts in CHG-004's route and template counts, CHG-005's `.meter` count,
+  CHG-011's `/ 100` count, the third static asset (a 0-byte `.gitkeep`, counted but not
+  named), and `fixture-probe.txt`'s user count, which included a user the operator
+  created rather than one `flask launch` produced.
+
+Every one is corrected in place with the correction marked, rather than silently
+overwritten. §1.10's rule is about not reporting a partial pass as a pass; the same logic
+says a corrected artifact should show what it was corrected from.
 
 ---
 
 ## 3. The surface census
 
-Full list: `evidence/phase-01/surfaces.tsv` (210 rows, one surface per row).
+Full list: `evidence/phase-01/surfaces.tsv` — 241 rows, six columns:
+`kind · surface · detail · area · duplicate_of · items`.
 
 | Kind | Count | Where enumerated from |
 |---|---|---|
-| route | 76 | `app.url_map`, `evidence/phase-01/routes.txt` |
-| template | 63 | tree, `evidence/phase-01/templates.txt` |
+| route | 76 | `app.url_map` |
+| template | 63 | tree |
 | email | 18 | `monti/templates/email/` |
+| module | 27 | tree — added after QA-01 failed clause 1; six items are mapped onto module paths and the first census did not contain them |
 | table | 45 | `PRAGMA table_info` on a launched database |
 | static | 3 | `monti/static/` |
-| document | 5 | two CSV exports, two receipt retrievals, one file download |
+| cli | 3 | added after QA-01 — CHG-003's only guard lives in `flask launch`, which was not a surface in the first census |
+| document | 5 | each marked `duplicate_of` the route that serves it |
+| prototype | 1 | added after QA-01 — §1 claimed it was inventoried and it was not |
 
 **Rendered:** 56 GET surfaces swept as anonymous, as the member and as admin; 41 return
 200 for at least one viewer. Full matrix in `evidence/phase-01/render-census.txt`.
@@ -83,27 +130,42 @@ actually does, measured, not assumed — and for three items it is not what §2.
 | CHG-001 | `GET /admin/revenue` · `admin/revenue.html:36-69` | `monti/static/css/app.css`, `monti/analytics.py:series` | **Present, and the cause is found.** Every class the chart uses — `.chart-wrap`, `.chart-svg`, `.chart-grid`, `.chart-axis`, `.chart-bar` — is **undefined in app.css**, the only stylesheet either shell loads. Measured in Chromium: `rect.chart-bar` computes to `fill: rgb(0,0,0)`; the grid computes to `stroke: none`. Bars paint black because SVG's default fill is black. Give them real heights and that is the solid black block. Root cause is a stylesheet naming mismatch, **not the fill path VIZ-01's charter diagnoses (D-027)**. |
 | CHG-002 | `GET /admin/revenue` (the surface a 30-day trend would live on) | `monti/analytics.py:PERIODS` | **NO SUCH SURFACE.** No `<polyline>` and no `<path>` in any template in the build. `PERIODS` offers 1d/7d/21d/45d/90d/180d/365d — there is no 30-day window either. See §6. |
 | CHG-003 | 7 tables carrying `is_fixture` | `monti/purge.py`, `monti/seed.py`, `monti/__init__.py:100` | **Partly remediated.** Zero fixture rows on a fresh launch. But only 7 of 45 tables carry the marker, and the only guard fires at `flask launch`, on `customers` alone. Nothing refuses a fixture row at write time. |
-| CHG-004 | 24 `/portal/*` routes | `portal/*.html` (17 templates) | Present as a mandate. The eight sub-items a–h that scope Phases 12, 13 and 14 are **never enumerated in the protocol** (D-019). |
-| CHG-005 | `admin/revenue.html`, "Revenue by client" Share column | `.meter` on 3 more surfaces | Surface exists: `<div class="meter"><span style="width:…%">`. With one client the bar is always 100% (D-017). |
+| CHG-004 | 33 `/portal/*` route rows | `monti/templates/portal/` (20 files) | Present as a mandate. The eight sub-items a–h that scope Phases 12, 13 and 14 are **never enumerated in the protocol** (D-019). |
+| CHG-005 | `admin/revenue.html`, "Revenue by client" Share column | `.meter` on 2 more (`admin/order_detail.html`, `portal/quote_detail.html`) | Surface exists: `<div class="meter"><span style="width:…%">`. With one client the bar is always 100% (D-017). |
 | CHG-008 | `GET /admin/revenue` | `admin/orders` | **Present.** Marks are not links — no `<a>` wraps a `chart-bar`. No drill-down of any kind. |
 | CHG-009 | `GET /admin/revenue`, `GET /admin/ledger`, `GET /portal/ledger` | `analytics.PERIODS`, `ledger.periods` | **Present.** Revenue offers rolling day-windows; both ledgers offer calendar month/quarter/year. Two vocabularies over the same money. |
 | CHG-010 | `admin/revenue.html`, Revenue-by-client table | every table with a per-row action | **Present.** `<a class="btn btn-sm" …>Open portal</a>` repeated on every row — exactly the pattern the gate forbids. |
-| CHG-011 | Both portals | 132 `|money` uses, 16 `'%.4f'|format`, 32 `/ 100` in templates | **Present.** At least three distinct renderings of currency. |
-| CHG-012 | `_shell.html:43` | — | **NOT PRESENT.** "Sign out" renders exactly once on every one of the 56 swept surfaces. Zero surfaces show it twice. See §6. |
-| CHG-013 | `monti/static/css/app.css` | 3 screen templates, 18 email templates | **Present.** 261 hard-coded hex literals: 258 in email templates, and **3 in real screen files** — `portal/requests.html`, `portal/order_detail.html`, `admin/order_detail.html`. SK-07 says zero in any screen file; whether an email template is one is D-019's question. |
+| CHG-011 | Both portals | 132 `|money` uses, 16 `'%.4f'|format`, 30 `/ 100` in templates | **Present.** At least three distinct renderings of currency. |
+| CHG-012 | `_shell.html:43` | — | **NOT PRESENT.** Of the 56 swept surfaces, 30 render "Sign out" once, 11 render it zero times (the public pages, the password page and the two CSV exports — none of which loads the shell), and 15 could not be measured because no viewer got a 200. **Zero surfaces render it twice.** See §6b. |
+| CHG-013 | `monti/static/css/app.css` | 3 screen templates, 18 email templates | **Present.** 261 hard-coded hex literals in templates: 258 in email, **3 in real screen files** — `portal/requests.html`, `portal/order_detail.html`, `admin/order_detail.html`. SK-07 says zero in any screen file; whether an email template is one is D-019's question. |
 | CHG-014 | `monti/ledger.py`, 2 receipt routes | `ledger_entries` | **Half built.** Receipts, numbering and scoped retrieval exist. **No credit note anywhere in code or schema. No PDF library, no `application/pdf`. No byte-identical regeneration path. Admin retrieval unlogged.** |
 | CHG-015 | `decision_items`, `item_revisions`, `portal/products.html`, `admin/desk.html` | `item_genome` | Revisions and the Genome exist. Threads, promotion and the notification email are the unbuilt half. |
-| CHG-016 | Every screen and email surface | 78 templates, 3 modules | **Unbuilt in full.** No catalogue, no extraction config, no string table, no gettext. 1,181 template text nodes, 85 `flash()` messages, 18 email templates carrying 90 more. No `language` column on `users` or `customers`, and §4.4 requires per-user storage. |
+| CHG-016 | Every screen and email surface | 78 templates, 4 modules | **Unbuilt in full.** No catalogue, no extraction config, no string table, no gettext. 1,181 template text nodes (the 18 email templates contribute 90 of them, not 90 more) and 90 `flash()` messages across 4 modules. No `language` column on `users` or `customers`, and §4.4 requires per-user storage. |
 | CHG-017 | `GET /admin/clients/<id>/open` · `admin.py:111` | `security_log` (unwritten), `_shell.html:17` | **Present, and measured.** One GET, no reason prompt, no confirmation. Admin gains a 200 on the full member portal. A banner does render. **Zero rows written to `security_log`, and a POST as the member succeeded** — not read-only, no elevation, no audit. |
 
 ---
 
-## 5. No surface is unmapped
+## 5. "No surface is unmapped"
 
-Every one of the 210 surfaces is accounted for in `surfaces.tsv`. Surfaces that carry no
-in-line item are the majority and are listed there as such — an unmapped surface would be
-one absent from the census, and the census is generated from the application rather than
-compiled by hand, which is what makes that checkable rather than asserted.
+The phrase admits two readings and the gate does not say which. Filed as **D-029**. Rather
+than pick one, the census now answers both from data: `surfaces.tsv` carries an `items`
+column naming every in-line item that lands on each surface.
+
+**Reading A — every surface carries an in-line item.** FALSE, and necessarily so: 167 of
+the 241 rows carry at least one item and 74 carry none. Fifteen items cannot cover 236
+distinct surfaces, and a gate demanding it would be unpassable by construction. The 74
+are things like `/webhooks/stripe`, the calendar routes and 20 unaffected tables.
+
+**Reading B — every surface in the build appears in the census.** TRUE as of this
+revision, and it was not true when QA-01 first read it. The first census had six kinds and
+omitted Python modules, CLI commands and the prototype — while §4 mapped six items onto
+module paths and §1 claimed the prototype was inventoried. Modules, CLI commands and the
+prototype are now rows. The census is generated from `app.url_map`, `PRAGMA table_info`
+and the tree, so an omission is a bug in the generator rather than a lapse of attention,
+and the generator is `evidence/phase-01/` alongside its output.
+
+Counting honestly: 241 rows, of which 5 document rows are each served by a route already
+counted and carry `duplicate_of`. **236 distinct surfaces.**
 
 ---
 
@@ -136,8 +198,10 @@ Two of the fifteen items describe a defect that is not present:
 
 - **CHG-002**, *"30-day sparkline is sloppy"* — there is no sparkline in the build, no
   `<polyline>` or `<path>` in any template, and no 30-day window in `analytics.PERIODS`.
-- **CHG-012**, *"Sign out appears twice"* — it renders exactly once, on all 56 swept
-  surfaces, from a single template line.
+- **CHG-012**, *"Sign out appears twice"* — it renders from a single template line
+  (`_shell.html:43`) and appears twice on nothing. Precisely: once on 30 of the 56 swept
+  surfaces, zero times on 11 that do not load the shell, and unmeasured on 15 that no
+  viewer could reach with a 200.
 
 A third, **CHG-003**, is partly remediated: zero fixture rows survive a launch, but the
 standing guard the gate requires exists only at `flask launch` and only for one table.

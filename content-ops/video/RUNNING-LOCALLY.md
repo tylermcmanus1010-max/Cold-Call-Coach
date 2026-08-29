@@ -83,10 +83,29 @@ export ELEVENLABS_VOICE_ID=onwK4e9ZLuTAKqWW03F9
 python3 content-ops/video/build.py <spec> --backend elevenlabs
 ```
 
-**Anything else (ZSky, Replicate, …)** — needs an adapter. It's about thirty
-lines: a function that takes text and a path, writes a 24kHz mono WAV, and gets
-registered in `synth()` in `voice.py`. Send me the provider's API docs and I'll
-write it; you pull and run.
+**ZSky** — the adapter is written, `content-ops/video/zsky.py`, ported from
+their official Go SDK so the endpoints and job model are the real ones:
+
+```
+export ZSKY_API_KEY=zsky_live_...
+python3 content-ops/video/zsky.py --check
+python3 content-ops/video/zsky.py --video "slow push over an empty office at night" \
+    --aspect 9:16 --seconds 8 --out broll.mp4
+```
+
+Two things to know before relying on it:
+
+- **ZSky generates footage, not speech.** It replaces Veo, not ElevenLabs.
+  There is no TTS endpoint, so it does not solve the voiceover bottleneck.
+  Our shorts are kinetic typography with narration — ZSky supplies b-roll to
+  cut behind them.
+- **Clips cap at ~10 seconds.** The API takes a frame count clamped to 241 at
+  24fps. Vertical output is 720x1280, below our 1080x1920 renderer, so ZSky
+  footage gets composited or upscaled rather than used as a full frame.
+
+**Any other provider** — needs an adapter, about thirty lines. For a voice
+provider: take text and a path, write a 24kHz mono WAV, register it in
+`synth()` in `voice.py`. Send me the API docs and I will write it.
 
 ## Pushing work back
 

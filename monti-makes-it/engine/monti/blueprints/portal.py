@@ -21,6 +21,7 @@ from .. import catalog as catalog_mod
 from .. import catalogue
 from .. import decisionroom as dr
 from .. import genome as genome_mod
+from .. import intake as intake_mod
 from .. import ledger
 from .. import membership
 from .. import orders as orders_mod
@@ -157,18 +158,15 @@ def dashboard():
 @bp.route("/quotes")
 @client_required
 def quotes():
-    status = request.args.get("status", "")
-    sql = "SELECT * FROM quotes WHERE customer_id = ?"
-    args = [_cid()]
-    if status:
-        sql += " AND status = ?"
-        args.append(status)
-    sql += " ORDER BY created_at DESC"
-    rows = query(sql, args)
-    estimates = {r["quote_id"]: r for r in query(
-        "SELECT e.* FROM estimates e JOIN quotes q ON q.id = e.quote_id WHERE q.customer_id = ?",
-        (_cid(),))}
-    return render_template("portal/quotes.html", quotes=rows, estimates=estimates, status=status)
+    """Kept as a redirect. Quotes and "describe it badly" are one surface now.
+
+    A member had two places to look at the same request — a Quotes tab with the
+    clock and the estimate, and an intake form that created something else
+    entirely. Both are `portal.requests_page`; this route survives only so that
+    links in old emails and bookmarks still land somewhere real.
+    """
+    return redirect(url_for("portal.requests_page",
+                            status=request.args.get("status", "") or None))
 
 
 @bp.route("/quotes/<int:quote_id>")
@@ -367,96 +365,109 @@ def cart_checkout():
 # orders + checkout
 # --------------------------------------------------------------------------
 # --------------------------------------------------------------------------
-# intake — "describe it badly" (Appendix E, INTK-00…03)
+# requests — "describe it badly", which is also the quotes list
 #
-# The door. It accepts whatever the member already has, says what happens to
-# each kind of thing, and turns a submission into an unapproved item in their
-# Decision Room. Two rules shape it:
+# One surface, because it is one act. A member used to have a Quotes tab (a
+# reference, a 24-hour clock, an estimate to accept) and, separately, an intake
+# form that created a product with none of those things. Watching a request
+# meant watching two lists that did not know about each other, and the two
+# counters over the same allowance each saw half the traffic.
 #
-#   No spec reaches a price without a person (WI-I-03). Submitting creates an
-#   item at stage 1, not a price. The item advances only when a named engineer
-#   has signed the specification, which is a recorded event, not a timer.
+# So the form and the list live on one page and write one record through
+# `monti.intake.create_request`. Two rules survive the merge intact:
 #
-#   A request that costs nothing says so before it is sent (E4.04's fairness
-#   rules). The capacity a submission will consume is shown on the form, with
-#   the rule that a declined or incomplete request is never charged.
+#   No spec reaches a price without a person (WI-I-03). Submitting creates a
+#   product at stage 1, not a price. It advances when a named engineer has
+#   signed the specification, which is a recorded event and not a timer.
+#
+#   A request that costs nothing says so before it is sent (E4.04). The capacity
+#   a submission will consume is shown on the form, with the rule that a
+#   declined or incomplete request is never charged.
 # --------------------------------------------------------------------------
-INTAKE_FORMATS = [
-    ("Voice note", "A transcript, then a structured feature list you confirm. "
-                   "Most members do this from the floor."),
-    ("Phone video", "We pull still frames, identify construction, and mark what we "
-                    "still need to see."),
-    ("Sketch", "We redraw it to scale and send it back with the assumptions we made "
-               "highlighted."),
-    ("Photo with something for scale", "Put a coin, a ruler or a caliper in frame and "
-                                       "we can scale the whole part from it."),
-    ("A competitor's listing", "We treat the listing as a requirements document, not a "
-                               "target to copy."),
-    ("Your current supplier's quote", "We normalise it into a true landed cost and show "
-                                      "you every line it left out."),
-    ("CAD or a drawing", "STEP, IGES, DXF or PDF go straight to a manufacturability "
-                         "review."),
-    ("The thing itself", "Ask for a Make This Box. Prepaid, tamper-evident, and tracked "
-                         "from the moment it leaves your hands."),
+QUOTE_FILTERS = [
+    ("NEW", "Submitted"), ("IN_REVIEW", "Being priced"),
+    ("ESTIMATE_SENT", "Estimate ready"), ("ACCEPTED", "Accepted"),
+    ("DECLINED", "Declined"),
 ]
 
-# §MEM-06 — the weight a request consumes is decided by the engineering it takes,
-# not by counting requests. Shown before sending, never after.
-INTAKE_WEIGHTS = [
-    ("variation", 1, "A change to something we already make for you"),
-    ("new", 2, "A new product — one part, one process"),
-    ("assembly", 4, "A complex assembly — several parts, tooling, or sub-suppliers"),
-]
+
+@bp.route("/requests", methods=("GET", "POST"))
+@client_required
+def requests_page():
+    if request.method == "POST":
+        return _submit_request()
+
+    status = request.args.get("status", "")
+    sql = "SELECT * FROM quotes WHERE customer_id = ?"
+    args = [_cid()]
+    if status:
+        sql += " AND status = ?"
+        args.append(status)
+    sql += " ORDER BY created_at DESC"
+    rows = query(sql, args)
+    estimates = {r["quote_id"]: r for r in query(
+        "SELECT e.* FROM estimates e JOIN quotes q ON q.id = e.quote_id WHERE q.customer_id = ?",
+        (_cid(),))}
+    # The product each request became, so a row can carry a link to the thing
+    # rather than to a second record describing the same thing. Keyed by
+    # quote id; a request that predates the merge simply has no entry.
+    products = {r["quote_id"]: r for r in query(
+        "SELECT * FROM decision_items WHERE customer_id = ? AND quote_id IS NOT NULL",
+        (_cid(),))}
+
+    return render_template(
+        "portal/requests.html", quotes=rows, estimates=estimates, status=status,
+        products=products, filters=QUOTE_FILTERS,
+        formats=intake_mod.FORMATS, weights=intake_mod.WEIGHTS,
+        capacity=genome_mod.capacity(g.customer), boxes=genome_mod.boxes(_cid()))
+
+
+def _submit_request():
+    """One submission. One quote, one product, one capacity debit."""
+    summary = (request.form.get("summary") or "").strip()
+    if not summary:
+        flash("Tell us what you want made — a sentence is enough.", "error")
+        return redirect(url_for("portal.requests_page"))
+
+    # The same allowance gate the public form applies. It reads `quotes`, and
+    # every request now writes one, so the counter finally sees all of them.
+    blocked = membership.check_quota(g.customer)
+    if blocked:
+        flash(blocked, "error")
+        return redirect(url_for("portal.requests_page"))
+
+    quantity = (request.form.get("quantity") or "").strip()
+    material = (request.form.get("material") or "").strip()
+    needed_by = (request.form.get("needed_by") or "").strip()
+    detail = " · ".join(filter(None, [quantity, material, needed_by]))
+
+    quote_row, item_row = intake_mod.create_request(
+        g.customer,
+        title=summary,
+        # The four rough answers are the description. They are stored as the
+        # member wrote them — "a few hundred thousand a year" is not turned into
+        # a number here, because nobody has agreed one yet.
+        description=detail or summary,
+        source=((request.form.get("brought") or "").strip() or "A written description")
+        + (f" — {detail}" if detail else ""),
+        weight=to_int(request.form.get("weight"), intake_mod.DEFAULT_WEIGHT),
+        author="portal",
+        materials=material or None,
+        needed_by=needed_by or None,
+        destination_country=g.customer["country"])
+
+    flash(f"{item_row['ref']} is in your products, and {quote_row['ref']} is on the "
+          f"pricing desk's clock. We come back within 24 hours.", "ok")
+    return redirect(url_for("portal.products", ref=item_row["ref"]))
 
 
 @bp.route("/intake", methods=("GET", "POST"))
 @client_required
 def intake():
-    if request.method == "GET":
-        return render_template("portal/intake.html",
-                               formats=INTAKE_FORMATS, weights=INTAKE_WEIGHTS,
-                               capacity=genome_mod.capacity(g.customer),
-                               boxes=genome_mod.boxes(_cid()))
-
-    summary = (request.form.get("summary") or "").strip()
-    if not summary:
-        flash("Tell us what you want made — a sentence is enough.", "error")
-        return redirect(url_for("portal.intake"))
-
-    weight = to_int(request.form.get("weight"), 2)
-    classified = next((label for key, w, label in INTAKE_WEIGHTS if w == weight),
-                      "New product")
-
-    count = query("SELECT COUNT(*) AS c FROM decision_items", one=True)["c"]
-    ref = f"MMI-D-{count + 1:03d}"
-    detail = " · ".join(filter(None, [
-        (request.form.get("quantity") or "").strip(),
-        (request.form.get("material") or "").strip(),
-        (request.form.get("needed_by") or "").strip(),
-    ]))
-
-    item_id = execute(
-        "INSERT INTO decision_items (ref, auto_name, customer_id, status, stage, "
-        "source, outstanding, is_fixture) VALUES (?, ?, ?, 'PENDING', 1, ?, ?, 0)",
-        (ref, f"Unapproved item {count + 1:03d}", _cid(),
-         (request.form.get("brought") or "A written description").strip()
-         + (f" — {detail}" if detail else ""),
-         "Nothing yet. We will come back within 24 hours with a structured draft, "
-         "and a named engineer signs it before it becomes a price."))
-
-    # The capacity debit is recorded with the request, so the ledger and the
-    # header can never disagree about what was charged (E4.04).
-    execute(
-        "INSERT INTO capacity_ledger (customer_id, item_id, label, classified, "
-        "weight, outcome, charged) VALUES (?, ?, ?, ?, ?, 'In progress', ?)",
-        (_cid(), item_id, summary[:120], classified, weight, weight))
-
-    execute("INSERT INTO crm_activities (customer_id, kind, body, author) "
-            "VALUES (?, 'SYSTEM', ?, 'portal')",
-            (_cid(), f"Intake {ref}: {summary[:160]}"))
-
-    flash(f"{ref} is in your Decision Room. We will come back within 24 hours.", "ok")
-    return redirect(url_for("portal.room", ref=ref))
+    """The old intake URL. Same page, one address."""
+    if request.method == "POST":
+        return _submit_request()
+    return redirect(url_for("portal.requests_page"))
 
 
 @bp.route("/intake/box", methods=("POST",))
@@ -471,16 +482,23 @@ def request_box():
             "VALUES (?, 0, 'Requested from the portal', 'portal')", (box_id,))
     flash(f"Box {ref} requested. It ships prepaid — put the thing inside and scan the "
           f"code on the lid.", "ok")
-    return redirect(url_for("portal.intake"))
+    return redirect(url_for("portal.requests_page"))
 
 
 # --------------------------------------------------------------------------
-# the Decision Room (Appendix E.1)
+# My products — the Decision Room, under the name a member would use for it
+# (Appendix E.1)
 #
-# Two rails: what is waiting on us, and what has been priced and released. An
-# item only reaches the second rail when an admin publishes, and the read below
-# filters on `published_at` — so "no prices before publish" is a WHERE clause,
-# not a convention.
+# The tab is "My products" because that is what it holds: everything the member
+# has asked us to make, in one list, from the request that arrived this morning
+# to the part that has been running for a year. "Decision Room" survives as the
+# name of what a *priced* product opens into — the three routes, the slider and
+# the levers — which is a thing you enter, not a place your products live.
+#
+# Two rails down the left: what is waiting on us, and what has been priced and
+# released. An item only reaches the second rail when an admin publishes, and
+# the read below filters on `published_at` — so "no prices before publish" is a
+# WHERE clause, not a convention.
 # --------------------------------------------------------------------------
 def _items_for_member():
     rows = query(
@@ -494,6 +512,15 @@ def _items_for_member():
 @bp.route("/room/<ref>")
 @client_required
 def room(ref=None):
+    """The tab was called the Decision Room. Old links keep working."""
+    return redirect(url_for("portal.products", ref=ref) if ref
+                    else url_for("portal.products"), code=301)
+
+
+@bp.route("/products")
+@bp.route("/products/<ref>")
+@client_required
+def products(ref=None):
     pending, approved = _items_for_member()
     chosen = None
     for row in pending + approved:
@@ -505,8 +532,21 @@ def room(ref=None):
     if chosen is not None and chosen["status"] == "APPROVED" and chosen["published_at"]:
         view = _room_view(chosen)
 
-    return render_template("portal/room.html", pending=pending, approved=approved,
-                           item=chosen, view=view, stages=DR_STAGES)
+    # The request this product came from, so the clock and the estimate live on
+    # the product rather than on a second page about the same thing. Products
+    # migrated from before the merge have no quote, and the panel is omitted
+    # rather than filled with a placeholder clock.
+    quote = estimate = None
+    if chosen is not None and chosen["quote_id"]:
+        quote = query("SELECT * FROM quotes WHERE id = ? AND customer_id = ?",
+                      (chosen["quote_id"], _cid()), one=True)
+        if quote:
+            estimate = query("SELECT * FROM estimates WHERE quote_id = ?",
+                             (quote["id"],), one=True)
+
+    return render_template("portal/products.html", pending=pending, approved=approved,
+                           item=chosen, view=view, stages=DR_STAGES,
+                           quote=quote, estimate=estimate)
 
 
 DR_STAGES = ["Received", "Specification in review", "Priced — awaiting release"]
@@ -624,10 +664,10 @@ def membership_record():
         boxes=genome_mod.boxes(_cid()))
 
 
-@bp.route("/room/<ref>/accept", methods=("POST",))
+@bp.route("/products/<ref>/accept", methods=("POST",))
 @client_required
 @member_only
-def room_accept(ref):
+def product_accept(ref):
     """"Buy this route" — the strategy, quantity, freight mode and tooling
     treatment all travel into the order (E1.13).
 
@@ -650,13 +690,13 @@ def room_accept(ref):
     bounds = dr.quantity_bounds(item)
     if strat is None or not costs or not lane_rows or not bounds:
         flash("That route is no longer available. Ask us and we will re-price it.", "error")
-        return redirect(url_for("portal.room", ref=ref))
+        return redirect(url_for("portal.products", ref=ref))
 
     qty = max(bounds["min"], min(bounds["max"], qty or bounds["min"]))
     card = dr.strategy_view(item, strat, costs, lane_rows, qty, mode, treatment)
     if card is None:
         flash("That route is no longer priceable.", "error")
-        return redirect(url_for("portal.room", ref=ref))
+        return redirect(url_for("portal.products", ref=ref))
 
     order = orders_mod.create_order(
         customer_id=_cid(),
@@ -673,15 +713,15 @@ def room_accept(ref):
     return redirect(url_for("portal.checkout", order_id=order["id"]))
 
 
-@bp.route("/room/<ref>/name", methods=("POST",))
+@bp.route("/products/<ref>/name", methods=("POST",))
 @client_required
-def room_rename(ref):
+def product_rename(ref):
     """Their name for it. The internal ref never moves (E1.03)."""
     item = own_or_404(query("SELECT * FROM decision_items WHERE ref = ?", (ref,), one=True))
     name = (request.form.get("client_name") or "").strip()[:200]
     execute("UPDATE decision_items SET client_name = ? WHERE id = ?",
             (name or None, item["id"]))
-    return redirect(url_for("portal.room", ref=ref))
+    return redirect(url_for("portal.products", ref=ref))
 
 
 # --------------------------------------------------------------------------

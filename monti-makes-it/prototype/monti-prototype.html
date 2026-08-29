@@ -416,8 +416,14 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
   background:var(--green-deep); color:#fff; padding:12px 20px; border-radius:var(--r);
   font-size:.86rem; box-shadow:0 10px 30px -10px rgba(0,0,0,.5); max-width:min(560px,90vw);
 }
-@media (max-width:1080px){
-  .room-shell, .admin-grid{grid-template-columns:minmax(0,1fr)}
+/* The products list is the left column and stays one down to tablet width. It
+   used to fold into a row above the pane at 1080px, which on a portal that
+   already spends 240px on the nav meant the products stopped being a list you
+   scan and became a header you scroll past. */
+@media (max-width:1180px){ .room-shell{grid-template-columns:216px minmax(0,1fr); gap:20px} }
+@media (max-width:1080px){ .admin-grid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:900px){
+  .room-shell{grid-template-columns:minmax(0,1fr)}
   .itemrail{position:static; flex-direction:row; flex-wrap:wrap; gap:20px}
   .railgroup{flex:1; min-width:240px}
   .railnote{display:none}
@@ -1048,7 +1054,43 @@ body.iv-open { overflow: hidden; }
 .avatar-accent { background: var(--green-soft); color: var(--green-deep); }
 .avatar-amber { background: var(--brass-soft); color: var(--brass); }
 .sticky-side { position: sticky; top: 6rem; }
+/* Tabs. The container had a rule under it and the tabs themselves had nothing,
+   so a filter row rendered as one run-on sentence of link text. */
 .tabs { display: flex; gap: .3rem; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
+.tabs .tab {
+  padding: .5rem .8rem; font-size: .82rem; font-weight: 500; color: var(--muted);
+  border: 1px solid transparent; border-bottom: none; border-radius: var(--r) var(--r) 0 0;
+  margin-bottom: -1px; text-decoration: none; white-space: nowrap; cursor: pointer;
+  background: none; font-family: inherit;
+}
+.tabs .tab:hover { color: var(--ink); background: var(--surface-2); }
+.tabs .tab.active {
+  color: var(--green-deep); font-weight: 600; background: var(--surface);
+  border-color: var(--rule); border-bottom: 1px solid var(--surface);
+}
+
+/* Status-colour aliases. An undefined custom property does not fall back to the
+   cascade — `color: var(--stop)` computes to `inherit` — so an overdue clock
+   rendered in ordinary ink and looked deliberate. */
+:root, :root[data-theme="dark"], :root[data-theme="light"] {
+  --stop: var(--crit); --red: var(--crit);
+  --wait: var(--warn); --amber: var(--warn);
+  --ok: var(--good);
+}
+
+/* The rename field, a segmented control that can actually shrink, and a routes
+   row that folds instead of crushing its cards. */
+.namefield { margin-top: 1.25rem; }
+@media (min-width: 620px) {
+  .namefield { flex-direction: row; align-items: center; flex-wrap: wrap; max-width: none; }
+  .namefield .field-label { flex-basis: 100%; }
+  .namefield input { flex: 0 1 320px; }
+  .namefield button { flex: 0 0 auto; }
+}
+.seg button { min-width: 0; white-space: normal; }
+.strategies { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.roomhead { margin: 1.5rem 0 1rem; padding-bottom: .85rem; border-bottom: 1px solid var(--rule); }
+.roomhead p { margin-top: .45rem; max-width: 64ch; }
 .code-block { font-family: "IBM Plex Mono", monospace; font-size: .78rem;
   background: var(--sunk); border: 1px solid var(--rule); border-radius: var(--r);
   padding: .8rem 1rem; overflow-x: auto; }
@@ -2476,8 +2518,14 @@ function viewLogin() {
 function viewPortal() {
   var c = client(S.user.id);
   var qs = quotesFor(c.id), used = cycleUsed(c.id), left = Math.max(0, c.quoteLimit - used);
-  var nav = [["overview","◈","Overview"],["quotes","◷","My quotes"],["catalog","▤","My products"],
-             ["intake","+","Describe it badly"],["room","◆","Decision Room"],["purchases","▣","Purchased items"],
+  /* One tab per thing, and the products are the thing. "Decision Room" was the
+     name of the tab and also the name of what a priced product opens into; only
+     the second is a place, so the tab is My products and the Decision Room is
+     what you enter from it. Quotes and Describe it badly were two tabs for one
+     act — asking us to make something — and are now one. */
+  var nav = [["overview","◈","Overview"],["products","◆","My products"],
+             ["intake","+","Describe it badly"],["catalog","▤","My catalog"],
+             ["purchases","▣","Purchased items"],
              ["ledger","≡","My ledger"],
              ["account","◎","Account"]];
   var mine = itemsForClient(c), myOrders = ordersFor(c.id);
@@ -2491,9 +2539,7 @@ function viewPortal() {
         return '<button class="side-link ' + (S.portalTab === n[0] ? "active" : "") + '" data-ptab="' + n[0] + '">' +
           '<span class="side-icon">' + n[1] + '</span> ' + n[2] + '</button>';
       }).join("") + '</div>' +
-    '<div class="side-group"><div class="side-title">Need something new</div>' +
-      '<button class="side-link" data-act="quote-member"><span class="side-icon">+</span> Request a detailed quote</button>' +
-    '</div>' +
+
     '<div style="padding:0 .65rem"><div class="side-title" style="padding-left:0">This cycle</div>' +
       '<div class="quota-dots" style="margin-bottom:.4rem">' +
       Array.from({length: c.quoteLimit}).map(function (_, i) {
@@ -2527,7 +2573,7 @@ function viewPortal() {
           'want built and we\'ll come back inside 24 hours with a detailed quote: unit cost, tooling, lead time, ' +
           'freight and duties, landed at your door. Anything we make for you appears here as a product you can reorder.</p>' +
         '</div>' +
-        '<button class="btn btn-primary" data-act="quote-member">Request a detailed quote</button></div>' +
+        '<button class="btn btn-primary" data-act="quote-member">Describe it badly</button></div>' +
       '</div>') +
       (mine.length ?
       '<div class="card card-flush" style="margin-top:1.5rem">' +
@@ -2545,13 +2591,8 @@ function viewPortal() {
         }).join("") + '</tbody></table></div></div>' : '') +
       '<div class="card card-flush" style="margin-top:1.5rem">' +
         '<div class="card-head"><h3>Recent quote requests</h3>' +
-          '<a class="tiny" style="color:var(--green);cursor:pointer" data-ptab="quotes">View all →</a></div>' +
+          '<a class="tiny" style="color:var(--green);cursor:pointer" data-ptab="intake">View all →</a></div>' +
         quoteTable(qs.slice(0, 6)) + '</div>';
-  } else if (S.portalTab === "quotes") {
-    body = '<div class="card card-flush">' +
-      '<div class="card-head"><h3>Every request you\'ve sent us</h3>' +
-      '<button class="btn btn-primary btn-sm" data-act="quote-member">Request a detailed quote</button></div>' +
-      quoteTable(qs) + '</div>';
   } else if (S.portalTab === "catalog") {
     body = mine.length ?
       ('<div class="row wrap" style="gap:.4rem;margin-bottom:1.5rem;align-items:center">' +
@@ -2600,13 +2641,22 @@ function viewPortal() {
           'priced an item for you. Send us a request and anything we price and produce for you ' +
           'lands here at your agreed price, ready to reorder in two clicks.</p>' +
         '<button class="btn btn-outline btn-lg" style="margin-top:1.75rem;margin-right:.6rem" data-act="catalogue">Browse the catalogue</button>' +
-        '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Request a detailed quote</button>' +
+        '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Describe it badly</button>' +
       '</div></div>');
   } else if (S.portalTab === "purchases") {
     body = purchasesView(c, myOrders);
   } else if (S.portalTab === "intake") {
-    body = viewIntake();
-  } else if (S.portalTab === "room") {
+    /* The form and the list of what it has already produced, on one page. */
+    body = viewIntake() +
+      '<div class="dimrule" style="margin:2.25rem 0 1.5rem"><i></i></div>' +
+      '<div class="row-between wrap" style="gap:1rem;margin-bottom:1rem">' +
+        '<div><span class="eyebrow">What you have already asked for</span>' +
+        '<p class="tiny dim" style="margin-top:.35rem">Every request opens a product at ' +
+        'the same moment. The clock is our 24-hour estimate deadline.</p></div>' +
+        '<a class="reqlink tiny" style="cursor:pointer" data-ptab="products">All my products →</a>' +
+      '</div>' +
+      '<div class="card card-flush">' + quoteTable(qs) + '</div>';
+  } else if (S.portalTab === "products") {
     body = viewRoom();
   } else if (S.portalTab === "ledger") {
     body = '<p class="muted" style="max-width:62ch;margin-bottom:1.5rem">' +
@@ -2632,7 +2682,7 @@ function viewPortal() {
   return '<div class="shell">' + side + '<div class="main">' +
     '<div class="main-head"><div><div class="eyebrow">' + esc(c.ref) + ' · Member</div>' +
       '<h1>' + esc(c.name) + '</h1></div>' +
-      '<div class="row"><button class="btn btn-primary" data-act="quote-member">Request a detailed quote</button></div>' +
+      '<div class="row"><button class="btn btn-primary" data-act="quote-member">Describe it badly</button></div>' +
     '</div><div class="main-body">' + body + '</div></div></div>';
 }
 
@@ -2677,7 +2727,7 @@ function purchasesView(c, orders) {
       'Once you accept an estimate and pay, every item lands here with its own timeline — ordered, ' +
       'paid, reviewed, in production, shipped, delivered — and a tracking code as soon as it leaves ' +
       'the factory.</p>' +
-      '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Request a detailed quote</button>' +
+      '<button class="btn btn-primary btn-lg" style="margin-top:1.75rem" data-act="quote-member">Describe it badly</button>' +
       '</div></div>';
   }
   var units = orders.reduce(function (t, o) { return t + o.qty; }, 0);
@@ -3162,6 +3212,12 @@ function drPricedPane(it) {
   var hit = v.target && eng.landed !== null && eng.landed <= v.target;
 
   return drNameField(it) +
+    /* The Decision Room is what a priced product opens into, and it is worth
+       naming here: below this line the page stops describing the product and
+       starts pricing it three different ways. */
+    '<div class="roomhead"><span class="eyebrow-label">Decision Room</span>' +
+    '<p class="tiny dim">Three ways to buy the same part. Move the quantity, change the ' +
+    'route, and every figure below re-prices from what the desk actually entered.</p></div>' +
     '<div class="dr-controls">' +
       '<div class="dr-control"><span class="stat-label">Order quantity</span>' +
         '<output class="dr-qty" id="drQty">' + num(v.qty) + '</output>' +
@@ -3336,7 +3392,9 @@ function viewRoom() {
   return '<div class="room-shell"><aside class="itemrail">' +
       '<div class="railgroup"><span class="stat-label">Awaiting approval <b>' +
         pending.length + '</b></span><ul class="itemlist">' +
-        (pending.map(drRailRow).join("") || '<li class="emptyrow">Nothing waiting.</li>') +
+        (pending.map(drRailRow).join("") ||
+          '<li class="emptyrow">Nothing waiting. <a class="reqlink" style="cursor:pointer" ' +
+          'data-ptab="intake">Send us something.</a></li>') +
       '</ul></div>' +
       '<div class="railgroup"><span class="stat-label">Approved catalogue <b>' +
         approved.length + '</b></span><ul class="itemlist">' +
@@ -3355,12 +3413,23 @@ function stat(label, value, sub, accent) {
     (sub ? '<div class="stat-sub">' + esc(sub) + '</div>' : '') + '</div>';
 }
 function quoteTable(list) {
-  if (!list.length) return '<div class="empty">No quote requests yet.</div>';
+  if (!list.length) {
+    return '<div class="empty">You have not asked us for anything yet. The form above is ' +
+      'the only door — there is no second place to fill in.</div>';
+  }
+  /* The product column is the merge, made visible: a request opens a product at
+     the same moment, and the row links to it. A request from before the merge
+     has none, and says so rather than linking to nothing. */
   return '<div class="table-wrap"><table class="data"><thead><tr>' +
-    '<th>Ref</th><th>Project</th><th>Quantity</th><th>Sent</th><th>Status</th><th class="right">Estimate</th>' +
+    '<th>Request</th><th>What you asked for</th><th>Product</th><th>Quantity</th><th>Sent</th>' +
+    '<th>Status</th><th class="right">Estimate</th>' +
     '</tr></thead><tbody>' + list.map(function (q) {
       return '<tr><td class="mono tiny">' + esc(q.ref) + '</td>' +
         '<td>' + esc(q.title) + '</td>' +
+        '<td class="mono tiny">' + (q.itemRef
+          ? '<a class="cell-link" style="cursor:pointer" data-dr="' + esc(q.itemRef) + '">' +
+            esc(q.itemRef) + '</a>'
+          : '<span class="dim">—</span>') + '</td>' +
         '<td class="muted tnum">' + (q.qty ? q.qty.toLocaleString("en-US") : "—") + '</td>' +
         '<td class="tiny dim">' + esc(fmtFull(q.created)) + '</td>' +
         '<td>' + statusBadge(q.status) + '</td>' +
@@ -3770,7 +3839,14 @@ function wire() {
       if (act === "admin-demo") { S.user = {kind:"admin"}; S.adminClient = null; S.adminTab = "revenue"; go("admin"); return; }
       if (act === "client-demo") { S.user = {kind:"client", id:1}; S.portalTab = "overview"; go("portal"); return; }
       if (act === "portal" && !S.user) { go("login"); return; }
-      if (act === "quote-member" && !S.user) { go("login"); return; }
+      /* "Request a detailed quote" was a second door onto the same act, with
+         its own form and its own record. It is the intake tab now — one door,
+         so every entry point leads to the same page rather than to a rival of
+         it. Signed-out visitors still get the public quote form. */
+      if (act === "quote-member") {
+        if (!S.user) { go("login"); return; }
+        S.portalTab = "intake"; S.flash = ""; go("portal"); return;
+      }
       if (act === "admin" && (!S.user || S.user.kind !== "admin")) { go("login"); return; }
       go(act);
     });
@@ -3826,9 +3902,21 @@ function wire() {
       var w = +(app.querySelector('input[name="inw"]:checked') || {}).value || 2;
       var n = DR_ITEMS.length + 1;
       var ref = "MMI-D-" + String(n).padStart(3, "0");
+      /* One door. Describing something badly and asking for a quote were two
+         acts writing two unconnected records — a quote with a reference and a
+         24-hour clock but no product, or a product with neither. One submission
+         now opens all three: the request, the product it becomes, and the
+         weighted debit that links them. */
+      var c = client(S.user.id);
+      var qref = "MMI-Q-" + (QUOTES.length + S.submitted.length + 1001);
+      S.submitted.push({
+        ref: qref, clientId: c.id, title: summary.trim(),
+        qty: null, unit: null, total: null, status: "NEW",
+        created: TODAY, due: addDays(TODAY, 1), itemRef: ref
+      });
       DR_ITEMS.unshift({
         ref: ref, auto: "Unapproved item " + String(n).padStart(3, "0"), name: "",
-        status: "pending", stage: 1,
+        status: "pending", stage: 1, quoteRef: qref,
         source: "Sent from the portal",
         outstanding: "Nothing yet. We will come back within 24 hours with a structured " +
           "draft, and a named engineer signs it before it becomes a price."
@@ -3839,7 +3927,7 @@ function wire() {
                              classified: INTAKE_WEIGHTS.filter(function (x) { return x[0] === w; })[0][1],
                              outcome: "In progress", charged: w});
       CAPACITY.used += w; CAPACITY.left = Math.max(0, CAPACITY.total - CAPACITY.used);
-      S.drRef = ref; S.portalTab = "room"; go("portal");
+      S.drRef = ref; S.portalTab = "products"; go("portal");
     });
   });
   app.querySelectorAll("[data-box]").forEach(function (el) {
@@ -3850,7 +3938,12 @@ function wire() {
   });
 
   app.querySelectorAll("[data-dr]").forEach(function (el) {
-    el.addEventListener("click", function () { S.drRef = el.getAttribute("data-dr"); go(S.route); });
+    el.addEventListener("click", function () {
+      S.drRef = el.getAttribute("data-dr");
+      /* Opening a product from the request list has to land on the product. */
+      if (S.route === "portal") { S.portalTab = "products"; }
+      go(S.route);
+    });
   });
   var drRange = app.querySelector("#drQtyRange");
   if (drRange) {

@@ -14,10 +14,10 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from .. import catalogue, mail, membership
+from .. import catalogue, intake, mail, membership
 from ..auth import ensure_portal_user
 from ..db import execute, next_ref, query
-from ..utils import money, now_str, plus_hours, pretty_dt, to_cents, to_int
+from ..utils import money, now_str, pretty_dt, to_cents, to_int
 
 bp = Blueprint("public", __name__)
 
@@ -137,35 +137,36 @@ def quote():
             (now_str(), existing["id"]))
 
     sla = current_app.config["QUOTE_SLA_HOURS"]
-    q_ref = next_ref("MMI-Q", "quotes", start=1001)
-    quote_id = execute(
-        "INSERT INTO quotes (ref, customer_id, title, description, category, quantity, "
-        "quantity_unit, target_unit_price_cents, materials, dimensions, color_finish, packaging, "
-        "certifications, destination_country, destination_city, incoterm, needed_by, priority, due_at) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (q_ref, existing["id"], form["title"].strip(), form["description"].strip(),
-         form.get("category"), to_int(form.get("quantity"), 0),
-         form.get("quantity_unit") or "units", to_cents(form.get("target_unit_price")),
-         form.get("materials"), form.get("dimensions"), form.get("color_finish"),
-         form.get("packaging"), form.get("certifications"), form.get("destination_country"),
-         form.get("destination_city"), form.get("incoterm") or "DDP", form.get("needed_by"),
-         "NORMAL", plus_hours(sla)))
+    # One door (monti/intake.py). This form and "describe it badly" in the portal
+    # are the same act, so both write the same records through the same function.
+    # The only difference is how much of the specification arrives with it: this
+    # form asks for all of it, the portal asks four rough questions. Neither
+    # invents the fields the other collected.
+    quote_row, item_row = intake.create_request(
+        existing,
+        title=form["title"].strip(),
+        description=form["description"].strip(),
+        source=(form.get("brought") or "").strip() or "A written description",
+        weight=to_int(form.get("weight"), intake.DEFAULT_WEIGHT),
+        author="website",
+        category=form.get("category"),
+        quantity=to_int(form.get("quantity"), 0),
+        quantity_unit=form.get("quantity_unit") or "units",
+        target_unit_price_cents=to_cents(form.get("target_unit_price")),
+        materials=form.get("materials"), dimensions=form.get("dimensions"),
+        color_finish=form.get("color_finish"), packaging=form.get("packaging"),
+        certifications=form.get("certifications"),
+        destination_country=form.get("destination_country"),
+        destination_city=form.get("destination_city"),
+        incoterm=form.get("incoterm") or "DDP", needed_by=form.get("needed_by"))
+    quote_id, q_ref = quote_row["id"], quote_row["ref"]
 
     saved = _save_uploads(quote_id, request.files.getlist("files"))
-
-    execute("INSERT INTO crm_activities (customer_id, kind, body, author) VALUES (?, 'SYSTEM', ?, 'website')",
-            (existing["id"], f"Requested a quote — {q_ref}: {form['title'].strip()}"))
-    execute(
-        "INSERT INTO calendar_events (title, customer_id, kind, starts_at, notes, created_by) "
-        "VALUES (?, ?, 'DEADLINE', ?, ?, 'system')",
-        (f"Quote due · {q_ref}", existing["id"], plus_hours(sla),
-         f"{sla}h estimate deadline for {existing['company_name']}."))
 
     password = None
     if membership.is_member(existing):
         ensure_portal_user(existing, name=form["contact_name"].strip())
 
-    quote_row = query("SELECT * FROM quotes WHERE id = ?", (quote_id,), one=True)
     cfg = current_app.config
     mail.send(existing["email"], f"We've got it — {q_ref}", template="quote_received",
               quote=quote_row, customer=existing, company=cfg["COMPANY_NAME"], sla=sla,

@@ -6,9 +6,9 @@ Reproduce with:
 flask --app app seed && python tests/evidence.py
 ```
 
-- historic orders backfilled into the ledger: **465**
-- ledger total (settled charges and manual confirmations): **$5,357,632.62**
-- order-log total (orders marked paid): **$5,357,632.62**
+- historic orders backfilled into the ledger: **464**
+- ledger total (settled charges and manual confirmations): **$5,367,695.42**
+- order-log total (orders marked paid): **$5,367,695.42**
 - payment-provider total: **not compared** — there is no provider connection in this environment, so the third leg of §11.4.2's reconciliation is unverified. Ledger and order log are compared; ledger and provider are not.
 - breaks: **0**
 

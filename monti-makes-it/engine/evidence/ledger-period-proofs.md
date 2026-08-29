@@ -5,18 +5,18 @@ over the same range — and the finer grouping must compose into the coarser.
 
 | view | buckets | bucket sum | grand total | agree |
 |---|---|---|---|---|
-| month | 13 | $5,357,632.62 | $5,357,632.62 | yes |
-| quarter | 5 | $5,357,632.62 | $5,357,632.62 | yes |
-| year | 2 | $5,357,632.62 | $5,357,632.62 | yes |
+| month | 12 | $5,367,695.42 | $5,367,695.42 | yes |
+| quarter | 5 | $5,367,695.42 | $5,367,695.42 | yes |
+| year | 2 | $5,367,695.42 | $5,367,695.42 | yes |
 
 ## Boundary handling
 
 Ranges are half-open — inclusive start, exclusive end. Split at `2026-04-01 00:00:00`:
 
-- rows before: **476**
+- rows before: **474**
 - rows from that instant on: **454**
-- rows in the ledger: **930**
-- 476 + 454 = 930 ✓
+- rows in the ledger: **928**
+- 474 + 454 = 928 ✓
 
 ## Roll-up
 

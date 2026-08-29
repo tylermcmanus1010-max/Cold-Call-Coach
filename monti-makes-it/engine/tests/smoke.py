@@ -114,6 +114,19 @@ def main():
         check("non-member is pointed at membership", "Apply for Membership" in body)
         check("no portal is handed to a non-member", 'class="pw-reveal"' not in body)
 
+        # The other half of the merge. `A37` probes the portal door; this is the
+        # public one, and it has to produce the same three linked records —
+        # writing only a quote here is exactly the split that was fixed.
+        with app.app_context():
+            from monti.db import query
+            q = query("SELECT * FROM quotes WHERE title = 'Machined brass bracket' "
+                      "ORDER BY id DESC", one=True)
+            d = query("SELECT * FROM decision_items WHERE quote_id = ?", (q["id"],), one=True)
+            cap = query("SELECT * FROM capacity_ledger WHERE quote_id = ?", (q["id"],), one=True)
+        check("the public door opens a product too", d is not None)
+        check("and debits capacity against the same request", cap is not None
+              and cap["item_id"] == (d["id"] if d else None))
+
         print("\n— membership application —")
         r = post(c, "/apply", {
             "company_name": "Test Fixtures Co", "contact_name": "Ada Byron",
@@ -251,11 +264,23 @@ def main():
             from monti.db import query
             own_quote = query("SELECT q.id FROM quotes q JOIN customers c ON c.id = q.customer_id "
                               "WHERE c.company_name = 'Halcyon Goods' ORDER BY q.id LIMIT 1", one=True)
-        for url in ("/portal/", "/portal/quotes", "/portal/catalog", "/portal/orders",
-                    "/portal/cart", "/portal/quotes/" + str(own_quote["id"]),
+        for url in ("/portal/", "/portal/requests", "/portal/products", "/portal/catalog",
+                    "/portal/orders", "/portal/cart", "/portal/quotes/" + str(own_quote["id"]),
                     "/portal/orders/1", "/portal/orders/3", "/portal/catalog/1",
                     "/portal/purchases"):
             get(c, url)
+
+        # The two tabs are one now. Both old addresses still land somewhere real.
+        for legacy, target in (("/portal/quotes", "/portal/requests"),
+                               ("/portal/intake", "/portal/requests"),
+                               ("/portal/room", "/portal/products")):
+            r = c.get(legacy, follow_redirects=False)
+            check(f"{legacy} redirects to {target}",
+                  r.status_code in (301, 302) and target in r.headers["Location"],
+                  f"got {r.status_code} -> {r.headers.get('Location')}")
+        r = c.get("/portal/requests")
+        check("the request form and the request list are one page",
+              b"Describe it badly" in r.data and b"What you have already asked for" in r.data)
 
         r = c.get("/portal/purchases")
         check("purchased items lists what they bought", b"Purchased items" in r.data)
@@ -713,8 +738,14 @@ def main():
             wide, narrow = analytics.summary("365d"), analytics.summary("7d")
             check("a longer window books more revenue", wide["revenue"] >= narrow["revenue"],
                   f"{wide['revenue']} vs {narrow['revenue']}")
-            check("revenue by client is ranked", [r["revenue"] for r in analytics.by_customer("90d")] ==
-                  sorted([r["revenue"] for r in analytics.by_customer("90d")], reverse=True))
+            # One call, compared against its own sort. Calling `by_customer`
+            # twice and comparing the two results is not a ranking assertion:
+            # each call re-derives its window from the clock, and tied revenues
+            # have no secondary order, so the check failed intermittently on
+            # differences that were never about ranking.
+            ranked = [r["revenue"] for r in analytics.by_customer("90d")]
+            check("revenue by client is ranked", ranked == sorted(ranked, reverse=True),
+                  str(ranked))
 
         print("\n— admin opens a client portal —")
         with app.app_context():

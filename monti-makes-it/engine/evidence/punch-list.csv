@@ -50,4 +50,9 @@ WI-L-10,Continuous reconciliation,A,PARTIAL,ledger-to-order-log reconciles with 
 WI-L-11,Ledger performance at volume,B,NOT STARTED,no budget measured against a 100x seeded set
 WI-L-12,Ledger on a phone,B,CERTIFIED,"all three period views, both surfaces, zero overflow at 320/390/768/1280"
 WI-G-19,Ledger harness,A,CERTIFIED,A32-A36 built and each proven by a deliberate defect
-APP-E,Appendix E rows mapped to work items,A,PARTIAL,"evidence/prototype-inventory.md; all 35 rows mapped, but the source prototype session is unreachable here so none is confirmed against its real behaviour"
+APP-E,Appendix E rows mapped to work items,A,PARTIAL,"evidence/prototype-inventory.md; all 40 rows mapped and confirmed against the prototype, which was supplied directly. Parity is asserted on behaviour and content, not on interaction quality — the screenshot matrix is not built"
+WI-I-01,One door: quotes and intake are one act,A,CERTIFIED,"A37; monti/intake.py is the only path that writes a request, and both doors call it. /portal/quotes and /portal/intake redirect to /portal/requests"
+WI-I-02,"One request, one product, one debit, linked",A,CERTIFIED,"A37; the quote, the decision_items row and the capacity_ledger row are written together and carry each other's ids. Proven by dropping each link in turn"
+WI-I-03,No specification reaches a price without a person,A,CERTIFIED,a submission lands at stage 1 with published_at null; A15 proves no figure renders without a published input behind it
+WI-M-07b,Both allowances see every request,A,CERTIFIED,A37; membership.quota_state (counts quotes) and genome.capacity (sums weights) both move for one submission. They previously each saw one door's traffic
+WI-R-02b,My products is the tab; Decision Room is what a product opens,B,CERTIFIED,/portal/products with the list as the left column down to 900px; /portal/room redirects 301

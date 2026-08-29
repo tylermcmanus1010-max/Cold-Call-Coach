@@ -93,3 +93,9 @@ counting an unproven check toward coverage is itself a P0.
 - **Result on the current build:** pass
 - **Proof:** caught
 - **Defect introduced and reverted:** member search dropping a match -> ledger.search(member) — returned 8 rows for Boars Head, 9 exist; a search truncating silently -> ledger.search(date) — 4 + 5 != 5 — the range boundary drops or double-counts a row
+
+## A37 — Every request writes one quote, one product and one debit, linked
+
+- **Result on the current build:** pass
+- **Proof:** caught
+- **Defect introduced and reverted:** the door wrote a quote with no product -> POST /portal/requests — the door raised instead of answering — TypeError: 'NoneType' object is not subscriptable; the product was created without the link back to the request -> POST /portal/requests — wrote no product linked to the quote — the member has a reference with nothing behind it; the capacity debit lost the request it was charged for -> MMI-Q-1002 / MMI-D-004 — the capacity row does not carry the quote id, so the debit cannot be traced back to the request that caused it

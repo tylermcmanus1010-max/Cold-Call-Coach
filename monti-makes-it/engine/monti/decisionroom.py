@@ -100,7 +100,7 @@ def quantity_bounds(item):
     """
     if item["qty_min"] and item["qty_max"]:
         return {"min": item["qty_min"], "max": item["qty_max"],
-                "step": item["qty_step"], "source": "entered on the item"}
+                "step": item["qty_step"], "source": "the band an admin entered on this item"}
 
     if item["catalog_item_id"]:
         band = query(

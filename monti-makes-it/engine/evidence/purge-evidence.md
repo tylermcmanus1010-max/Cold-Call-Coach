@@ -8,7 +8,7 @@ flask --app app seed && flask --app app purge-fixtures
 
 ## Backup, taken before any deletion
 
-- path: `/tmp/tmpfzxjqzk9/backups/purge-pre-purge-20260828T224456Z.db`
+- path: `/tmp/tmptxy5hakr/backups/purge-pre-purge-20260829T004522Z.db`
 - customers in the backup: 10
 - `PRAGMA integrity_check`: ok
 
@@ -21,13 +21,13 @@ a copy nobody has read back is a file, not a backup.
 |---|---|
 | applications | 5 |
 | quotes | 21 |
-| orders | 466 |
+| orders | 465 |
 | catalog_items | 7 |
 | ledger_entries | 0 |
 | decision_items | 0 |
 | customers | 10 |
 
-Total fixture rows inventoried before deletion: **509**
+Total fixture rows inventoried before deletion: **508**
 
 ## Orphan sweep
 

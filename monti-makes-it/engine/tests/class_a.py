@@ -127,9 +127,18 @@ class Context:
                 "'probe@example.invalid', 'MEMBER', 0)")
             provision_agent(other_id)
             # Rows for the first member to fail to reach.
-            execute("INSERT INTO quotes (ref, customer_id, title, due_at) "
-                    "VALUES ('MMI-Q-9001', ?, 'Probe quote', datetime('now', '+1 day'))",
-                    (other_id,))
+            quote_id = execute(
+                "INSERT INTO quotes (ref, customer_id, title, due_at) "
+                "VALUES ('MMI-Q-9001', ?, 'Probe quote', datetime('now', '+1 day'))",
+                (other_id,))
+            # The product that request became. A request without one is what
+            # `A37` reports as half a record, and a probe row that violates a
+            # real invariant would make the check unusable — so the scaffolding
+            # is built the way the door builds it, and A37 keeps no exemptions.
+            execute(
+                "INSERT INTO decision_items (ref, auto_name, customer_id, quote_id, "
+                "source, is_fixture) VALUES ('MMI-D-9001', 'Unapproved item 9001', ?, ?, "
+                "'Probe request', 0)", (other_id, quote_id))
             execute("INSERT INTO orders (ref, customer_id, status) "
                     "VALUES ('MMI-O-9001', ?, 'PENDING_PAYMENT')", (other_id,))
         else:
@@ -285,8 +294,8 @@ class Context:
 
     @property
     def member_routes(self):
-        return ["/portal/", "/portal/quotes", "/portal/orders", "/portal/catalog",
-                "/portal/purchases", "/portal/cart"]
+        return ["/portal/", "/portal/requests", "/portal/products", "/portal/orders",
+                "/portal/catalog", "/portal/purchases", "/portal/cart"]
 
     @property
     def admin_routes(self):

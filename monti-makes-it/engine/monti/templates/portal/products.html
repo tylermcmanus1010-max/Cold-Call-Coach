@@ -3,7 +3,7 @@
 {% macro name_field(item) %}
   {# E1.03 — their name, our reference. The ref never changes underneath. #}
   <form class="namefield" method="post"
-        action="{{ url_for('portal.room_rename', ref=item.ref) }}">
+        action="{{ url_for('portal.product_rename', ref=item.ref) }}">
     {{ csrf_input() }}
     <label class="field-label" for="nm">Your name for it</label>
     <input id="nm" type="text" name="client_name" value="{{ item.client_name or '' }}"
@@ -13,9 +13,9 @@
   </form>
 {% endmacro %}
 
-{% block title %}Decision Room · {{ company }}{% endblock %}
-{% block eyebrow %}Decision Room{% endblock %}
-{% block heading %}{{ (item.client_name or item.auto_name) if item else 'Your items' }}{% endblock %}
+{% block title %}My products · {{ company }}{% endblock %}
+{% block eyebrow %}My products{% endblock %}
+{% block heading %}{{ (item.client_name or item.auto_name) if item else 'My products' }}{% endblock %}
 {% block content %}
 
 <div class="room-shell">
@@ -30,14 +30,15 @@
       <ul class="itemlist">
         {% for row in pending %}
           <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
-                 href="{{ url_for('portal.room', ref=row.ref) }}">
+                 href="{{ url_for('portal.products', ref=row.ref) }}">
             <span class="iref mono">{{ row.ref }}</span>
             <span class="iname {{ '' if row.client_name else 'unnamed' }}">
               {{ row.client_name or row.auto_name }}</span>
             <em>{{ stages[row.stage - 1] }}</em>
           </a></li>
         {% else %}
-          <li class="emptyrow">Nothing waiting. Send us something.</li>
+          <li class="emptyrow">Nothing waiting.
+            <a class="reqlink" href="{{ url_for('portal.requests_page') }}">Send us something.</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -47,7 +48,7 @@
       <ul class="itemlist">
         {% for row in approved %}
           <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
-                 href="{{ url_for('portal.room', ref=row.ref) }}">
+                 href="{{ url_for('portal.products', ref=row.ref) }}">
             <span class="iref mono">{{ row.ref }}</span>
             <span class="iname {{ '' if row.client_name else 'unnamed' }}">
               {{ row.client_name or row.auto_name }}</span>
@@ -66,10 +67,10 @@
   {% if not item %}
     <div class="empty" style="padding:3rem 1rem">
       <h3>Nothing here yet</h3>
-      <p class="muted">Tell us what you want made and it appears on the left, unnamed and
+      <p class="muted">Describe something badly and it appears on the left, unnamed and
         numbered, while we work out what it costs.</p>
       <a class="btn btn-primary" style="margin-top:1.25rem"
-         href="{{ url_for('public.quote') }}">Request a quote</a>
+         href="{{ url_for('portal.requests_page') }}">Describe it badly</a>
     </div>
 
   {% elif item.status == 'PENDING' or not item.published_at %}
@@ -79,8 +80,9 @@
       <span class="eyebrow-label">Awaiting approval · <span class="mono">{{ item.ref }}</span></span>
       <h2 style="margin-top:.6rem">{{ item.client_name or item.auto_name }}</h2>
       <p class="muted" style="margin-top:.7rem;max-width:62ch">
-        No prices yet. An item gets its Decision Room the moment a manufacturing engineer
-        signs the specification and the pricing desk publishes the strategies.
+        No prices yet. A product opens its Decision Room — the three routes, the quantity
+        slider and the levers — the moment a manufacturing engineer signs the specification
+        and the pricing desk publishes the strategies.
       </p>
 
       {{ name_field(item) }}
@@ -96,6 +98,30 @@
       <dl class="kv" style="margin-top:1.5rem">
         <dt>Received</dt><dd>{{ item.received_at|date }}</dd>
         <dt>What you sent</dt><dd>{{ item.source or 'Not recorded' }}</dd>
+        {#
+          The request and the product are one thing now, so the reference, the
+          clock and the estimate belong here rather than on a separate Quotes
+          page about the same request. A product migrated from before the merge
+          has no quote behind it, and this simply does not render.
+        #}
+        {% if quote %}
+          {% set label, tone = status_label(quote.status, 'quote') %}
+          <dt>Request</dt>
+          <dd><span class="mono">{{ quote.ref }}</span>
+            <span class="badge badge-{{ tone }}" style="margin-left:.4rem">{{ label }}</span></dd>
+          {% if quote.status in ('NEW','IN_REVIEW') %}
+            {% set cd = countdown(quote.due_at) %}
+            <dt>Estimate due</dt>
+            <dd style="color:{{ 'var(--stop)' if cd.overdue else ('var(--wait)' if cd.urgent else 'inherit') }}">
+              {{ cd.text }}</dd>
+          {% endif %}
+          {% if estimate %}
+            <dt>Landed estimate</dt>
+            <dd class="mono">{{ estimate.total_cents|money }} —
+              <a class="reqlink" href="{{ url_for('portal.quote_detail', quote_id=quote.id) }}">read
+                it and decide</a></dd>
+          {% endif %}
+        {% endif %}
       </dl>
 
       {% if item.outstanding %}
@@ -126,7 +152,16 @@
   {% else %}
     {{ name_field(item) }}
 
-    <form method="get" class="dr-controls" action="{{ url_for('portal.room', ref=item.ref) }}">
+    {# The Decision Room is what a priced product opens into, and it is worth
+       naming here: below this line the page stops describing the product and
+       starts pricing it three different ways. #}
+    <div class="roomhead">
+      <span class="eyebrow-label">Decision Room</span>
+      <p class="tiny dim">Three ways to buy the same part. Move the quantity, change the
+        route, and every figure below re-prices from what the desk actually entered.</p>
+    </div>
+
+    <form method="get" class="dr-controls" action="{{ url_for('portal.products', ref=item.ref) }}">
       <div class="dr-control">
         <span class="stat-label">Order quantity</span>
         <output class="dr-qty" id="qtyRead">{{ '{:,}'.format(view.qty) }}</output>
@@ -221,7 +256,7 @@
             <div><dt>Order total</dt><dd>{{ card.order_total_cents|round|int|money }}</dd></div>
           </dl>
           <footer>
-            <form method="post" action="{{ url_for('portal.room_accept', ref=item.ref) }}">
+            <form method="post" action="{{ url_for('portal.product_accept', ref=item.ref) }}">
               {{ csrf_input() }}
               <input type="hidden" name="slot" value="{{ card.slot }}">
               <input type="hidden" name="qty" value="{{ view.qty }}">
@@ -256,7 +291,7 @@
           {% endif %}
         </div>
 
-        <form method="get" action="{{ url_for('portal.room', ref=item.ref) }}">
+        <form method="get" action="{{ url_for('portal.products', ref=item.ref) }}">
           <input type="hidden" name="qty" value="{{ view.qty }}">
           <input type="hidden" name="mode" value="{{ view.mode }}">
           <input type="hidden" name="tooling" value="{{ view.treatment }}">

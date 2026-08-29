@@ -1,6 +1,6 @@
 {% extends "portal/_base.html" %}
-{% block title %}Describe it badly · {{ company }}{% endblock %}
-{% block eyebrow %}Start a product{% endblock %}
+{% block title %}Requests · {{ company }}{% endblock %}
+{% block eyebrow %}Requests{% endblock %}
 {% block heading %}Describe it badly{% endblock %}
 {% block content %}
 
@@ -13,7 +13,7 @@
 <div class="dimrule" style="margin:1.75rem 0 1.5rem"><i></i></div>
 
 <div class="grid grid-sidebar">
-  <form method="post" action="{{ url_for('portal.intake') }}" class="card card-lg"
+  <form method="post" action="{{ url_for('portal.requests_page') }}" class="card card-lg"
         style="display:grid;gap:1.5rem">
     {{ csrf_input() }}
 
@@ -146,6 +146,68 @@
       {% endif %}
     </div>
   </aside>
+</div>
+<div class="dimrule" style="margin:2.25rem 0 1.5rem"><i></i></div>
+
+{#
+  The same page, because it is the same act. Sending this form opens a request
+  and a product at once — the row below carries the reference the desk works
+  from and the clock it works against, and links to the product it became.
+#}
+<div class="row-between wrap" style="gap:1rem;margin-bottom:1rem">
+  <div>
+    <span class="eyebrow">What you have already asked for</span>
+    <p class="tiny dim" style="margin-top:.35rem">Every request opens a product at the
+      same moment. The clock is our 24-hour estimate deadline.</p>
+  </div>
+  <a class="reqlink tiny" href="{{ url_for('portal.products') }}">All my products &rarr;</a>
+</div>
+
+<div class="tabs">
+  <a class="tab {{ 'active' if not status }}" href="{{ url_for('portal.requests_page') }}">All</a>
+  {% for key, label in filters %}
+    <a class="tab {{ 'active' if status == key }}"
+       href="{{ url_for('portal.requests_page', status=key) }}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="card card-flush">
+  {% if quotes %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Request</th><th>What you asked for</th><th>Product</th><th>Submitted</th>
+      <th>Status</th><th>Clock</th><th class="right">Landed estimate</th></tr></thead>
+    <tbody>
+    {% for q in quotes %}
+      {% set label, tone = status_label(q.status, 'quote') %}
+      {% set est = estimates.get(q.id) %}
+      {% set product = products.get(q.id) %}
+      <tr>
+        <td class="mono"><a class="cell-link"
+          href="{{ url_for('portal.quote_detail', quote_id=q.id) }}">{{ q.ref }}</a></td>
+        <td>{{ q.title }}
+          {% if q.priority == 'RUSH' %}<span class="badge badge-red" style="margin-left:.4rem">Rush</span>{% endif %}</td>
+        <td class="mono tiny">
+          {# A request from before the merge has no product behind it, and says
+             so rather than linking to nothing. #}
+          {% if product %}
+            <a class="cell-link" href="{{ url_for('portal.products', ref=product.ref) }}">{{ product.ref }}</a>
+          {% else %}<span class="dim">—</span>{% endif %}</td>
+        <td class="muted tiny">{{ q.created_at|dt }}</td>
+        <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
+        <td class="tiny">
+          {% if q.status in ('NEW','IN_REVIEW') %}{% set cd = countdown(q.due_at) %}
+            <span style="color:{{ 'var(--stop)' if cd.overdue else ('var(--wait)' if cd.urgent else 'inherit') }}">{{ cd.text }}</span>
+          {% else %}<span class="dim">—</span>{% endif %}
+        </td>
+        <td class="right mono tnum">{{ est.total_cents|money if est else '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% else %}
+    <div class="empty"><div class="empty-icon">◷</div>
+      {% if status %}Nothing with that status.{% else %}You have not asked us for anything
+      yet. The form above is the only door — there is no second place to fill in.{% endif %}</div>
+  {% endif %}
 </div>
 {% endblock %}
 

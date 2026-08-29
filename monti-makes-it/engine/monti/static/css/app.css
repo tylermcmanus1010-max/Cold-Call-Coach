@@ -363,6 +363,13 @@ nav.screens button.staff[aria-current="true"]{background:var(--brass); color:#ff
 .railnote{font-size:.76rem; color:var(--muted); padding:0 2px; line-height:1.5}
 .roompane{min-width:0}
 
+/* The products list is the left column, and stays one down to tablet width.
+   It used to fold into a row above the pane at 1080px, which on a portal that
+   already spends 240px on the nav meant the products stopped being a list you
+   scan and became a header you scroll past. */
+.roomhead{margin:1.5rem 0 1rem; padding-bottom:.85rem; border-bottom:1px solid var(--rule)}
+.roomhead p{margin-top:.45rem; max-width:64ch}
+
 .namefield{display:flex; flex-direction:column; gap:6px; max-width:460px}
 .namefield.inline{flex-direction:row; align-items:center; gap:12px; max-width:none; flex-wrap:wrap}
 .namefield label{font-weight:500}
@@ -406,12 +413,16 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
   background:var(--green-deep); color:#fff; padding:12px 20px; border-radius:var(--r);
   font-size:.86rem; box-shadow:0 10px 30px -10px rgba(0,0,0,.5); max-width:min(560px,90vw);
 }
-@media (max-width:1080px){
+@media (max-width:1180px){
+  .room-shell{grid-template-columns:216px minmax(0,1fr); gap:20px}
+}
+@media (max-width:900px){
   .room-shell, .admin-grid{grid-template-columns:minmax(0,1fr)}
   .itemrail{position:static; flex-direction:row; flex-wrap:wrap; gap:20px}
   .railgroup{flex:1; min-width:240px}
   .railnote{display:none}
 }
+@media (max-width:1080px){ .admin-grid{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:820px){ .itemrail{top:auto} .tracker.flat{grid-template-columns:1fr} }
 /* controls become a settings bar above the strategies (the item rail takes the left column) */
 .room-grid{grid-template-columns:minmax(0,1fr) !important; gap:16px}
@@ -520,6 +531,19 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
    ========================================================================== */
 
 /* ---------- 1. aliases ------------------------------------------------- */
+/* Colour names first. The prototype names its status colours for what they are
+   — good, warn, crit — and the engine's templates ask for them by the older
+   `--stop` / `--wait` / `--red` / `--amber`. An undefined custom property does
+   not fall back to the cascade: `color: var(--stop)` computes to `inherit`, so
+   an overdue clock and a positive gap were rendering in ordinary ink and
+   looking deliberate. One alias each, pointed at the real token, rather than
+   two vocabularies drifting apart. */
+:root, :root[data-theme="dark"], :root[data-theme="light"] {
+  --stop: var(--crit); --red: var(--crit);
+  --wait: var(--warn); --amber: var(--warn);
+  --ok: var(--good);
+}
+
 /* Typography and utility names our templates already use. */
 .eyebrow-label, .stat-label, .side-title, .field-label, .divider-label {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -1038,7 +1062,41 @@ body.iv-open { overflow: hidden; }
 .avatar-accent { background: var(--green-soft); color: var(--green-deep); }
 .avatar-amber { background: var(--brass-soft); color: var(--brass); }
 .sticky-side { position: sticky; top: 6rem; }
+/* Tabs. The container had a rule under it and the tabs themselves had nothing,
+   so a filter row rendered as one run-on sentence of link text. */
 .tabs { display: flex; gap: .3rem; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
+.tabs .tab {
+  padding: .5rem .8rem; font-size: .82rem; font-weight: 500; color: var(--muted);
+  border: 1px solid transparent; border-bottom: none; border-radius: var(--r) var(--r) 0 0;
+  margin-bottom: -1px; text-decoration: none; white-space: nowrap;
+}
+.tabs .tab:hover { color: var(--ink); background: var(--surface-2); }
+.tabs .tab.active {
+  color: var(--green-deep); font-weight: 600; background: var(--surface);
+  border-color: var(--rule); border-bottom: 1px solid var(--surface);
+}
+
+/* The rename field. Left as a plain column, the Save button stretched the full
+   width of the card and read as the page's primary action, which it is not. */
+.namefield { margin-top: 1.25rem; }
+
+/* A segmented control whose buttons cannot shrink is not a segmented control —
+   `white-space: nowrap` with the flex default `min-width: auto` let the three
+   tooling options grow the row past its grid cell, and `overflow: hidden` on
+   the wrapper cut the last one in half. Let the labels wrap inside the button
+   instead; three visible options beat two and a stub. */
+.seg button { min-width: 0; white-space: normal; }
+
+/* The three routes sit in a pane that is already sharing the width with the
+   nav and the products list, so a hard three-column grid squeezed them to
+   about 200px each. Let the row fold instead of crushing the cards. */
+.strategies { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+@media (min-width: 620px) {
+  .namefield { flex-direction: row; align-items: center; flex-wrap: wrap; max-width: none; }
+  .namefield .field-label { flex-basis: 100%; }
+  .namefield input { flex: 0 1 320px; }
+  .namefield button { flex: 0 0 auto; }
+}
 .code-block { font-family: "IBM Plex Mono", monospace; font-size: .78rem;
   background: var(--sunk); border: 1px solid var(--rule); border-radius: var(--r);
   padding: .8rem 1rem; overflow-x: auto; }

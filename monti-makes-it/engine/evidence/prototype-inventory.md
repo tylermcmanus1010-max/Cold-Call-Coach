@@ -21,17 +21,24 @@ prototype.
 
 ---
 
-## E.1 — Decision Room
+## E.1 — My products (the Decision Room)
 
-Built this run, against Boars Head's real data. The demo item and demo member
-from the prototype are not carried over.
+Built against Boars Head's real data. The demo item and demo member from the
+prototype are not carried over.
+
+**Renamed this run.** "Decision Room" was the name of the tab *and* the name of
+what a priced product opens into. Only the second is a place you enter, so the
+tab is **My products** — everything the member has asked us to make, priced or
+not — and the Decision Room is the three-route pricing surface inside a product
+that has been published. `/portal/room` redirects; the internal refs are
+unchanged.
 
 | # | Behaviour | Work item | State |
 |---|---|---|---|
 | E1.01 | Two rails with live counts | WI-R-02 | BUILT — counts derive from the rendered lists, so they cannot disagree with them |
-| E1.02 | Click swaps the detail pane | WI-R-02 | BUILT — as a route rather than a client-side swap, so a room is linkable and survives a refresh |
+| E1.02 | Click swaps the detail pane | WI-R-02 | BUILT — as a route rather than a client-side swap, so a product is linkable and survives a refresh. The list is the left column down to 900px rather than folding into a header at 1080 |
 | E1.03 | Inline rename, internal ref fixed | WI-R-02 | BUILT — `client_name` is nullable and separate from `ref`, which never changes |
-| E1.04 | Pending view: tracker, outstanding list | WI-R-02, WI-I-03 | BUILT — the outstanding question on MMI-D-002 is the real board-grade escalation, not filler |
+| E1.04 | Pending view: tracker, outstanding list | WI-R-02, WI-I-03 | BUILT — the outstanding question on MMI-D-002 is the real board-grade escalation, not filler. Now also carries the request's reference, its 24-hour clock and its estimate, because the request and the product are one record |
 | E1.05 | Quantity slider, bounds from the matrix | WI-R-04 | BUILT — `quantity_bounds()` reads the entered band or the published matrix; a request outside it clamps. `A15` proves the clamp |
 | E1.06 | Target price and date | WI-R-05 | PARTIAL — target price is live and an unreachable target produces a recommendation rather than silence; target *date* is stored but not yet used in the arithmetic |
 | E1.07 | Freight mode selector | WI-R-06 | BUILT — three lanes, each an entered `freight_lanes` row |
@@ -69,7 +76,7 @@ from the prototype are not carried over.
 | E4.01 | Factory Plan | WI-M-06 | BUILT — one page, from the acceptance call, with unknowns stated as unknown |
 | E4.02 | Commitment lists with live performance | WI-M-06, WI-M-08 | BUILT — both columns, and `met` is nullable so an unmeasured commitment renders as unmeasured rather than as a tick. All ten currently are: Boars Head has no runs yet |
 | E4.03 | Automatic performance credits | WI-M-08 | PARTIAL — the record and its surface exist; nothing accrues them automatically yet, because the events that would trigger one have not happened |
-| E4.04 | Capacity: stats, usage bar, ledger, weighting, fairness | WI-M-07 | PARTIAL — the weighted ledger, the weighting table and the fairness rules are built, and `used` is summed from the rows so the header cannot disagree with them. `A27` is not written, and the intake path does not yet write a capacity row |
+| E4.04 | Capacity: stats, usage bar, ledger, weighting, fairness | WI-M-07 | BUILT — the weighted ledger, the weighting table and the fairness rules are built, and `used` is summed from the rows so the header cannot disagree with them. Both doors now write a capacity row carrying the quote and the product it was charged for, and `A37` proves the debit and both counters move together. `A27` is still not written |
 
 ## E.5 — Admin bay
 
@@ -92,6 +99,7 @@ from the prototype are not carried over.
 | E6.01 | Light and dark themes | WI-V-01, WI-V-02 | PARTIAL — both themes are tokenized across all three theme states; the capture matrix and the contrast check `A20` are not built |
 | E6.02 | Responsive to phone width | WI-V-02, WI-A-01 | PARTIAL — verified at 320/390/768/1280 with zero horizontal overflow, including all three ledger period views; the full §12.2 matrix and touch capture are not done |
 | E6.03 | **Client ledger in the member portal** | **WI-L-07, WI-L-08** | **BUILT** — `A34`; client totals equal the admin ledger filtered to that customer |
+| E6.04 | **One door: quotes and "describe it badly" are one surface** | **WI-I-01…03** | **BUILT this run** — `A37`. Both doors write one quote, one product and one weighted debit through `monti/intake.py`; `/portal/quotes` and `/portal/intake` redirect to `/portal/requests` |
 
 ---
 
@@ -109,11 +117,16 @@ from the prototype are not carried over.
 
 | State | Rows |
 |---|---|
-| BUILT | 27 |
+| BUILT | 32 |
 | PARTIAL | 7 |
 | NOT BUILT | 1 |
+| **Total** | **40** |
 
-The Decision Room tier, which was the largest gap in the previous run, is built.
+*(The previous run's summary read 27 / 7 / 1 against 35 rows. The rows were
+right and the tally was hand-written and stale — it had not been recounted after
+the Decision Room tier landed. Counted from the table above, which is the only
+number worth printing.)*
+
 What remains:
 
 - **E2.04, the guarantee panel** — the only NOT BUILT row, and deliberately.
@@ -122,6 +135,6 @@ What remains:
   exists but nothing issues one automatically, so writing the panel would be
   making a promise the software does not keep.
 - **E1.06's target date**, **E3.03/E3.04's chart and curve table**,
-  **E4.03's automatic accrual**, **E4.04's `A27`** and the intake path that
-  writes a capacity row, **E5.07's republish versioning**, and **E6.01/E6.02's
-  capture matrix**.
+  **E4.03's automatic accrual**, **E4.04's `A27`**, **E5.07's republish
+  versioning**, **E5.08's impersonation entry in the member's security log**,
+  and **E6.01/E6.02's capture matrix**.

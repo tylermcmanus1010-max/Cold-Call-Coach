@@ -8,8 +8,8 @@ command that produces it, and each of those runs without me.
 cd monti-makes-it/engine
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
-SECRET_KEY=test .venv/bin/python tests/smoke.py          # 210 end-to-end checks
-.venv/bin/python tests/class_a.py --all                  # 14 Class A checks + proofs
+SECRET_KEY=test .venv/bin/python tests/smoke.py          # 217 end-to-end checks
+.venv/bin/python tests/class_a.py --all                  # 16 Class A checks + proofs
 .venv/bin/python tests/evidence.py                       # regenerates this directory
 ```
 
@@ -19,11 +19,11 @@ SECRET_KEY=test .venv/bin/python tests/smoke.py          # 210 end-to-end checks
 
 | | |
 |---|---|
-| Class A checks | 14 written, **14 pass**, **14 proven able to fail** |
-| End-to-end checks | 210 pass |
-| Punch-list items tracked | 52 — 43 certified, 5 partial, 3 not started, 1 blocked external |
-| Ledger | 465 orders backfilled, **0 reconciliation breaks**, three period views agreeing |
-| Appendix E rows | 35 mapped — 8 built, 11 partial, 15 not built, 1 unverifiable here |
+| Class A checks | 16 written, **16 pass**, **16 proven able to fail** |
+| End-to-end checks | 217 pass |
+| Punch-list items tracked | 57 — 48 certified, 5 partial, 3 not started, 1 blocked external |
+| Ledger | 464 orders backfilled, **0 reconciliation breaks**, three period views agreeing |
+| Appendix E rows | 40 mapped and confirmed against the prototype — 32 built, 7 partial, 1 not built |
 | Old-brand occurrences | 190 before, **0** after, across source, database and rendered output |
 | Fixture rows | 509 inventoried, 509 deleted, **0 orphans** |
 | Live clients | 1 — Boars Head, with a published matrix, registrations, a genome, images, a tool and a scope-verified agent |
@@ -75,6 +75,8 @@ per-check record; the defect each proof introduces is named there.
 | A34 | ledger tenancy, and client totals equal to the admin's for them | drops the client scope; adds our fee to the client payload |
 | A35 | the export is the screen | adds a column the screen lacks; drops a row |
 | A36 | search completeness across all four modes | makes member search miss a row; truncates silently |
+| A15 | every rendered figure traces to a published input, and nothing is priced past the entered band | drops provenance from the arithmetic; unpublishes an input under a live price; widens the quantity band |
+| A37 | one request writes one quote, one product and one weighted debit, linked | writes the quote with no product; drops the link; drops the quote id from the debit |
 
 ### What the proofs found
 
@@ -104,6 +106,36 @@ quarters inside each year and compares, which is what §11.5.1 means by the view
 agreeing, and it caught the skew immediately.
 
 None of these were visible from the pass column.
+
+---
+
+## 3b. One split found in the existing engine
+
+Worth separating from the check table, because it was not a bug in a guard — it
+was two features that had grown into the same act and did not know it.
+
+A member could ask us to make something two ways. The public quote form wrote a
+`quotes` row: a reference, a 24-hour clock, a quota debit, an estimate to accept
+or decline, and **no product**. "Describe it badly" in the portal wrote a
+`decision_items` row: a product with a stage tracker and, once priced, a
+Decision Room, and **no quote** — so no clock and no debit. Nothing linked them.
+
+The visible cost was two tabs for one act. The real cost was in the accounting.
+`membership.quota_state` limits a member by counting rows in `quotes`;
+`genome.capacity` shows them their weighted allowance by summing
+`capacity_ledger`. Both measure the same `quote_limit`, and each door was
+invisible to one of them. A member could open a request that the gate limiting
+requests never counted.
+
+`monti/intake.py` is now the only path that writes a request, and both doors
+call it. One submission writes the quote, the product it becomes, and the
+weighted debit carrying both ids. `A37` probes the portal door end to end and
+asserts every link, both counters moving, and no `quotes` row anywhere without a
+product behind it; the smoke suite asserts the same of the public door. Its
+proof breaks each link in turn.
+
+The schema already had `decision_items.quote_id` and `capacity_ledger.quote_id`.
+The columns were there the whole time and nothing wrote them.
 
 ---
 
@@ -139,14 +171,15 @@ provider cannot catch the case where our records agree with each other and both
 disagree with the money. `WI-L-10` is PARTIAL for that reason, not because the
 code is unfinished.
 
-**Appendix E could not be confirmed.** The appendix's first instruction is to
-open the prototype in session `cse_01B2fEc4ZUQ49QMhmcd672yq` and confirm every
-row against what it actually does. That session is not reachable from here. All
-35 rows are mapped to work items with a build state, and none is confirmed
-against real prototype behaviour. The appendix also makes prototype behaviour
-the floor — nothing may ship worse than it demonstrated — and I cannot certify
-that against a prototype I cannot see. `prototype-inventory.md` says so at the
-top rather than in a footnote.
+**Appendix E is confirmed on behaviour, not on feel.** The appendix's first
+instruction is to open the prototype and confirm every row against what it
+actually does. The session reference is still unreachable from here, but the
+prototype itself was supplied directly and has been read in full: all 40 rows
+are confirmed against what it renders and does. The appendix also makes
+prototype behaviour the floor — nothing may ship worse than it demonstrated —
+and reading a prototype tells you what it renders, not how it feels to use. So
+parity is asserted on behaviour and content only. The §12.2 screenshot matrix
+that would settle the rest is still not built.
 
 **Not built at all:**
 

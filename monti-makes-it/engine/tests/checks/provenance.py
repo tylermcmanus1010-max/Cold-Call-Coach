@@ -117,7 +117,7 @@ def run(ctx):
             entered_max = _entered_ceiling(ctx, item)
             if entered_max:
                 body = ctx.member_client.get(
-                    f"/portal/room/{item['ref']}?qty={entered_max * 10}"
+                    f"/portal/products/{item['ref']}?qty={entered_max * 10}"
                 ).get_data(as_text=True)
                 shown = re.search(r'id="qtyRead">([\d,]+)<', body)
                 if shown is None:
@@ -133,7 +133,7 @@ def run(ctx):
                 # No band means no priceable quantity, so the room must not be
                 # showing a price at all.
                 if 'class="card strat' in ctx.member_client.get(
-                        f"/portal/room/{item['ref']}").get_data(as_text=True):
+                        f"/portal/products/{item['ref']}").get_data(as_text=True):
                     findings.append(Finding(
                         f"{item['ref']}",
                         "renders strategy cards with no entered quantity band behind them"))

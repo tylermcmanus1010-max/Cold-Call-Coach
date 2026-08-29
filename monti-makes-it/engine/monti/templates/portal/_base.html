@@ -1,23 +1,28 @@
 {% extends "_shell.html" %}
 {% block shell_name %}Member portal{% endblock %}
 {% block sidebar %}
+  {#
+    Order follows what a member actually comes here for. My products is the
+    tab — everything they have asked us to make, priced or not — so it sits
+    directly under Overview, and the door that adds to it sits directly under
+    that. Quotes used to be its own row; it is the same list as Describe it
+    badly now, and two rows for one act is what the merge removed.
+  #}
   <div class="side-group">
     <div class="side-title">{{ g.customer.company_name if g.customer }}</div>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.dashboard' }}" href="{{ url_for('portal.dashboard') }}"><span class="side-icon">◈</span> Overview</a>
-    <a class="side-link {{ 'active' if 'quote' in (request.endpoint or '') }}" href="{{ url_for('portal.quotes') }}"><span class="side-icon">◷</span> Quotes</a>
+    <a class="side-link {{ 'active' if 'product' in (request.endpoint or '') }}" href="{{ url_for('portal.products') }}"><span class="side-icon">◆</span> My products</a>
+    <a class="side-link {{ 'active' if 'request' in (request.endpoint or '') or 'quote' in (request.endpoint or '') or 'intake' in (request.endpoint or '') }}" href="{{ url_for('portal.requests_page') }}"><span class="side-icon">+</span> Describe it badly</a>
     <a class="side-link {{ 'active' if 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.catalog') }}"><span class="side-icon">▤</span> My catalog</a>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.purchases' }}" href="{{ url_for('portal.purchases') }}"><span class="side-icon">▣</span> Purchased items</a>
     <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('portal.orders') }}"><span class="side-icon">◱</span> Orders</a>
-    <a class="side-link {{ 'active' if 'intake' in (request.endpoint or '') }}" href="{{ url_for('portal.intake') }}"><span class="side-icon">+</span> Describe it badly</a>
-    <a class="side-link {{ 'active' if 'room' in (request.endpoint or '') }}" href="{{ url_for('portal.room') }}"><span class="side-icon">◆</span> Decision Room</a>
     <a class="side-link {{ 'active' if 'ledger' in (request.endpoint or '') }}" href="{{ url_for('portal.ledger_view') }}"><span class="side-icon">≡</span> My ledger</a>
     <a class="side-link {{ 'active' if 'membership_record' in (request.endpoint or '') }}" href="{{ url_for('portal.membership_record') }}"><span class="side-icon">◎</span> Membership</a>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.cart' }}" href="{{ url_for('portal.cart') }}"><span class="side-icon">▸</span> Current order
       {% if cart_count %}<span class="side-count">{{ cart_count }}</span>{% endif %}</a>
   </div>
   <div class="side-group">
-    <div class="side-title">Need something new</div>
-    <a class="side-link" href="{{ url_for('portal.intake') }}"><span class="side-icon">+</span> New quote request</a>
+    <div class="side-title">Anything else</div>
     <a class="side-link" href="mailto:{{ cfg.SUPPORT_EMAIL }}"><span class="side-icon">✉</span> Contact us</a>
   </div>
   {% if quota %}
@@ -26,7 +31,7 @@
       <div class="quota-dots" style="margin-bottom:.4rem">
         {% for i in range(quota.limit) %}<span class="quota-dot {{ 'spent' if i < quota.used }}"></span>{% endfor %}
       </div>
-      <div class="tiny dim">{{ quota.remaining }} of {{ quota.limit }} quote requests left</div>
+      <div class="tiny dim">{{ quota.remaining }} of {{ quota.limit }} requests left this cycle</div>
     </div>
   {% endif %}
 {% endblock %}

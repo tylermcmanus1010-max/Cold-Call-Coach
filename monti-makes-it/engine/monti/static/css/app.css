@@ -1525,3 +1525,56 @@ details.more > .more-body { padding-top: 1.5rem; }
 .nav-links .langswitch { margin-left: .35rem; }
 .nav-links .langswitch .langswitch-label { display: none; }
 .nav-links a.here { color: var(--green-deep); font-weight: 600; }
+
+/* ---------- CHG-029 · the question box ------------------------------------
+   Bottom right, above everything, and out of the way. It opens on the home page
+   and stays shut everywhere else until asked for — and once closed, closed for
+   the session. */
+.ask { position: fixed; right: 1.1rem; bottom: 1.1rem; z-index: 60;
+  display: flex; flex-direction: column; align-items: flex-end; gap: .5rem;
+  max-width: calc(100vw - 2.2rem); }
+.ask-tab { font: inherit; font-size: .85rem; font-weight: 500; cursor: pointer;
+  display: inline-flex; align-items: center; gap: .45rem;
+  background: var(--green-deep); color: #fff; border: 0; border-radius: 999px;
+  padding: .62rem 1.05rem; box-shadow: 0 6px 22px -8px rgba(16,30,24,.5); }
+.ask-tab:hover { background: var(--green); }
+.ask-tab span { font-family: var(--mono); opacity: .8; }
+
+.ask-panel { width: min(370px, calc(100vw - 2.2rem));
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: calc(var(--r) * 2); box-shadow: 0 10px 40px -12px rgba(16,30,24,.35);
+  display: flex; flex-direction: column; overflow: hidden; }
+.ask-head { display: flex; align-items: flex-start; justify-content: space-between;
+  gap: .6rem; padding: .8rem .9rem .65rem; border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface-2); }
+.ask-head strong { display: block; font-size: .9rem; }
+.ask-head .tiny { display: block; margin-top: .1rem; }
+.ask-x { font: inherit; font-size: 1.15rem; line-height: 1; background: none;
+  border: 0; color: var(--muted); cursor: pointer; padding: 0 .15rem; }
+.ask-x:hover { color: var(--ink); }
+
+.ask-log { padding: .8rem .9rem; display: flex; flex-direction: column; gap: .55rem;
+  max-height: 46vh; overflow-y: auto; }
+.ask-msg { margin: 0; font-size: .855rem; line-height: 1.55; padding: .55rem .7rem;
+  border-radius: var(--r); max-width: 92%; }
+.ask-them { background: var(--surface-2); color: var(--ink-2); align-self: flex-start; }
+.ask-me { background: var(--green-deep); color: #fff; align-self: flex-end; }
+.ask-links { margin: -.2rem 0 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.ask-links a { font-size: .78rem; text-decoration: none; color: var(--green-deep);
+  border: 1px solid var(--green-line); border-radius: 999px; padding: .2rem .6rem; }
+.ask-links a:hover { background: var(--green-soft); }
+
+.ask-form { display: flex; gap: .4rem; padding: .7rem .9rem;
+  border-top: 1px solid var(--rule-soft); }
+.ask-form input { flex: 1; min-width: 0; font: inherit; font-size: .85rem;
+  padding: .45rem .6rem; border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); }
+.ask-foot { padding: 0 .9rem .8rem; margin: 0; }
+
+/* ---------- CHG-034 · published reviews ---------------------------------- */
+.quote-card { margin: 0; padding: 1.25rem 1.35rem; background: var(--surface);
+  border: 1px solid var(--rule); border-left: 2px solid var(--brass);
+  border-radius: var(--r); }
+.quote-card blockquote { margin: 0; font-family: "Spectral", Georgia, serif;
+  font-size: 1.02rem; line-height: 1.65; color: var(--ink); white-space: pre-wrap; }
+.quote-card figcaption { margin-top: .8rem; font-size: .82rem; color: var(--ink-2); }

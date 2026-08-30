@@ -1,0 +1,45 @@
+{# The question box in the corner (CHG-029).
+
+   Closed is the default on every page except the home page, and once someone
+   closes it, it stays closed for the rest of the browser session. A helper that
+   reopens itself on the next page is not help, it is an advert.
+
+   `data-noloc` on nothing here: the strings are ours, so they translate. What
+   does NOT translate is what it answers with — that comes back from the server
+   already in the site's own words. #}
+<div class="ask" id="ask" data-open="{{ '1' if request.endpoint == 'public.home' else '0' }}">
+  <button class="ask-tab" type="button" id="askOpen" aria-expanded="false" aria-controls="askPanel">
+    <span aria-hidden="true">?</span> Ask a question
+  </button>
+
+  <section class="ask-panel" id="askPanel" hidden aria-label="Ask a question">
+    <header class="ask-head">
+      <div>
+        <strong>Ask a question</strong>
+        <span class="tiny dim">I point you at the page that answers it.</span>
+      </div>
+      <button class="ask-x" type="button" id="askClose" aria-label="Close">×</button>
+    </header>
+
+    <div class="ask-log" id="askLog" aria-live="polite">
+      <p class="ask-msg ask-them">
+        Ask me where something is — a price, the disclaimers, how to apply, what
+        we can and cannot make. I only know what is already written on this site,
+        so if I do not have it I will say so rather than guess.
+      </p>
+    </div>
+
+    <form class="ask-form" id="askForm" method="post" action="{{ url_for('public.ask') }}">
+      {{ csrf_input() }}
+      <input type="text" name="q" id="askInput" autocomplete="off" required
+             placeholder="How do I get a price?" aria-label="Your question">
+      <button class="btn btn-primary btn-sm" type="submit">Ask</button>
+    </form>
+
+    <p class="ask-foot tiny dim">
+      Not a chatbot with a language model behind it. It searches this site and
+      links you to the page. For anything else,
+      <a class="reqlink" href="{{ url_for('public.contact') }}">a person will answer</a>.
+    </p>
+  </section>
+</div>

@@ -1,0 +1,88 @@
+{% extends "admin/_base.html" %}
+{% block title %}Reviews · {{ company }}{% endblock %}
+{% block eyebrow %}Reviews{% endblock %}
+{% block heading %}What people wrote about us{% endblock %}
+{% block content %}
+
+<p class="muted" style="max-width:66ch">
+  Nothing is on the public page until you approve it here. Declining keeps the
+  review and your reason rather than deleting it — the fact that we chose not to
+  publish something is the part worth having later.
+</p>
+
+<div class="grid grid-3" style="margin-top:1.5rem">
+  <div class="stat stat-accent"><div class="stat-label">Waiting for you</div>
+    <div class="stat-value">{{ waiting|length }}</div></div>
+  <div class="stat"><div class="stat-label">Published</div>
+    <div class="stat-value">{{ live|length }}</div>
+    <div class="stat-sub">on the public reviews page</div></div>
+  <div class="stat"><div class="stat-label">Received in total</div>
+    <div class="stat-value">{{ all_rows|length }}</div></div>
+</div>
+
+<h2 style="margin-top:2.25rem;font-size:1.05rem">Waiting for approval</h2>
+{% if waiting %}
+  <div class="stack" style="margin-top:.9rem;gap:.9rem">
+    {% for r in waiting %}
+      <article class="card card-lg">
+        <div class="row-between wrap" style="gap:1rem;align-items:flex-start">
+          <div>
+            <strong data-noloc>{{ r.author_name }}</strong>
+            <span class="tiny dim">
+              {%- if r.author_role %}<span data-noloc>{{ r.author_role }}</span> · {% endif -%}
+              {%- if r.company_name %}<span data-noloc>{{ r.company_name }}</span> · {% endif -%}
+              <span class="mono">{{ r.email }}</span></span>
+          </div>
+          <span class="tiny dim">{{ r.submitted_at|dt }}</span>
+        </div>
+        <blockquote style="margin:1rem 0 0;padding-left:.9rem;border-left:2px solid var(--rule);
+                           white-space:pre-wrap" data-noloc>{{ r.body }}</blockquote>
+        <div class="row wrap" style="gap:.6rem;margin-top:1.1rem;align-items:flex-end">
+          <form method="post" style="display:inline">{{ csrf_input() }}
+            <input type="hidden" name="action" value="approve">
+            <input type="hidden" name="testimonial_id" value="{{ r.id }}">
+            <button class="btn btn-primary btn-sm" type="submit">Publish it</button>
+          </form>
+          <form method="post" class="row" style="gap:.4rem;align-items:flex-end">{{ csrf_input() }}
+            <input type="hidden" name="action" value="decline">
+            <input type="hidden" name="testimonial_id" value="{{ r.id }}">
+            <label class="field" style="margin:0"><span class="field-label">Reason</span>
+              <input type="text" name="reason" placeholder="Why not" style="width:220px"></label>
+            <button class="btn btn-outline btn-sm" type="submit">Decline</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty" style="padding:1.75rem 1rem;margin-top:.9rem"><p>Nothing waiting.</p></div>
+{% endif %}
+
+<h2 style="margin-top:2.25rem;font-size:1.05rem">Everything received</h2>
+{% if all_rows %}
+  <div class="table-wrap" style="margin-top:.85rem"><table class="data">
+    <thead><tr><th>Who</th><th>Status</th><th>Submitted</th><th>Decided</th><th></th></tr></thead>
+    <tbody>
+      {% for r in all_rows %}
+        <tr>
+          <td><span data-noloc>{{ r.author_name }}</span>
+            {% if r.company_name %}<span class="tiny dim"><span data-noloc>{{ r.company_name }}</span></span>{% endif %}</td>
+          <td><span class="badge badge-{{ 'green' if r.status == 'APPROVED' else ('red' if r.status == 'DECLINED' else 'amber') }}">{{ r.status|title }}</span>
+            {% if r.decline_reason %}<span class="tiny dim" data-noloc>{{ r.decline_reason }}</span>{% endif %}</td>
+          <td class="tiny">{{ r.submitted_at|date }}</td>
+          <td class="tiny dim">{{ (r.decided_by or '—') }}</td>
+          <td class="right">
+            {% if r.status == 'APPROVED' %}
+              <form method="post" style="display:inline">{{ csrf_input() }}
+                <input type="hidden" name="action" value="unpublish">
+                <input type="hidden" name="testimonial_id" value="{{ r.id }}">
+                <button class="btn btn-sm btn-outline" type="submit">Take down</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "email/_layout.html" %}
+{% block content %}
+<h1 style="font-size:19px;margin:0 0 6px;color:#14211A;font-weight:600;letter-spacing:-.02em">{{ kind }}</h1>
+<p style="color:#8A958D;margin:0 0 18px;font-size:13px">Left on the site · {{ page }}</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;color:#55635B">
+  <tr><td style="padding:5px 0;color:#8A958D;width:130px">From</td><td style="color:#14211A">{{ name }}</td></tr>
+  <tr><td style="padding:5px 0;color:#8A958D">Reply to</td><td>{{ email }}</td></tr>
+</table>
+<div style="background:#F9F8F4;border:1px solid #DEDDD3;border-radius:6px;padding:14px;margin:18px 0">
+  <div style="color:#55635B;font-size:14px;white-space:pre-wrap">{{ message }}</div>
+</div>
+<p style="color:#8A958D;font-size:12px;margin:0">This is also saved in the admin portal under Feedback, so it is not
+  lost if this email is.</p>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Reviews · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(2.5rem,6vw,4.5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Reviews</span>
+    <h1 style="margin-top:1rem">What the people we make for say</h1>
+
+    {% if reviews %}
+      <div class="stack" style="margin-top:2rem;gap:1rem">
+        {% for r in reviews %}
+          <figure class="quote-card">
+            <blockquote data-noloc>{{ r.body }}</blockquote>
+            <figcaption>
+              <span data-noloc>{{ r.author_name }}</span>
+              {%- if r.author_role %}<span class="dim">, {{ r.author_role }}</span>{% endif %}
+              {%- if r.company_name %} · <span data-noloc>{{ r.company_name }}</span>{% endif %}
+            </figcaption>
+          </figure>
+        {% endfor %}
+      </div>
+    {% else %}
+      {# No seeded examples. A made-up review is a lie about a customer who does
+         not exist, and it is the §1.5 breach that feels least like one. #}
+      <div class="empty" style="padding:2.5rem 1rem;margin-top:2rem">
+        <h3>Nothing published yet</h3>
+        <p class="muted" style="max-width:52ch;margin-left:auto;margin-right:auto">
+          We would rather show you an empty page than invent one. When people we
+          make for write something, and a person here has read it, it appears here
+          with their name on it.
+        </p>
+      </div>
+    {% endif %}
+
+    <h2 style="margin-top:3rem;font-size:1.2rem">Worked with us? Write something.</h2>
+    <p class="muted" style="max-width:60ch">
+      A person reads every review before it goes up, and we email you either way.
+      We will not edit what you wrote — if we cannot publish it we tell you why.
+    </p>
+
+    <form method="post" class="card card-lg" style="margin-top:1.25rem">
+      {{ csrf_input() }}
+      <div class="grid grid-2">
+        <label class="field"><span class="field-label">Your name</span>
+          <input type="text" name="author_name" required value="{{ form.author_name or '' }}"></label>
+        <label class="field"><span class="field-label">Email</span>
+          <span class="field-hint-top">Not published. It is how we check it is you.</span>
+          <input type="email" name="email" required value="{{ form.email or '' }}"></label>
+        <label class="field"><span class="field-label">Your role</span>
+          <span class="field-hint-top">Optional.</span>
+          <input type="text" name="author_role" placeholder="Head of packaging"
+                 value="{{ form.author_role or '' }}"></label>
+        <label class="field"><span class="field-label">Company</span>
+          <span class="field-hint-top">Optional.</span>
+          <input type="text" name="company_name" value="{{ form.company_name or '' }}"></label>
+      </div>
+      <label class="field"><span class="field-label">What was it like?</span>
+        <textarea name="body" rows="5" required
+                  placeholder="What you had made, how it went, what you would tell someone else.">{{ form.body or '' }}</textarea></label>
+      <button class="btn btn-primary btn-xl btn-block" type="submit">Send my review</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

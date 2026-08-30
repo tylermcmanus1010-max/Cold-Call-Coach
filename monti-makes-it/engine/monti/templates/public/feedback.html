@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Feedback · {{ company }}{% endblock %}
+{% block body %}
+<section class="section" style="padding-top:clamp(2.5rem,6vw,4.5rem)">
+  <div class="container-narrow">
+    <span class="eyebrow-label">Feedback</span>
+    <h1 style="margin-top:1rem">Tell us what is wrong</h1>
+    <p class="section-lede">
+      Broken pages, confusing wording, a price that made no sense, something you
+      expected to find and could not. It goes to a person, and it is kept whether
+      or not our mail is working that day.
+    </p>
+
+    <form method="post" class="card card-lg" style="margin-top:2rem">
+      {{ csrf_input() }}
+      <input type="hidden" name="page" value="{{ request.referrer or '' }}">
+
+      <label class="field"><span class="field-label">What kind of thing is it?</span>
+        <select name="kind">
+          {% for value, label in kinds %}
+            <option value="{{ value }}" {{ 'selected' if form.kind == value }}>{{ label }}</option>
+          {% endfor %}
+        </select></label>
+
+      <label class="field"><span class="field-label">What happened?</span>
+        <textarea name="message" rows="6" required
+                  placeholder="The more specific, the more likely we fix it.">{{ form.message or '' }}</textarea></label>
+
+      <div class="grid grid-2">
+        <label class="field"><span class="field-label">Your name</span>
+          <span class="field-hint-top">Optional.</span>
+          <input type="text" name="name" value="{{ form.name or '' }}"></label>
+        <label class="field"><span class="field-label">Email</span>
+          <span class="field-hint-top">Optional — but we cannot reply without it.</span>
+          <input type="email" name="email" value="{{ form.email or '' }}"></label>
+      </div>
+
+      <button class="btn btn-primary btn-xl btn-block" type="submit">Send it</button>
+      <p class="tiny dim center" style="margin-top:1rem">
+        Goes to {{ cfg.SUPPORT_EMAIL }} and is recorded either way.
+      </p>
+    </form>
+  </div>
+</section>
+{% endblock %}

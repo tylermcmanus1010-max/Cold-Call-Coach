@@ -902,3 +902,46 @@ CREATE TABLE IF NOT EXISTS consult_bookings (
   created_at     TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_consult_bookings_app ON consult_bookings(application_id);
+
+-- ---------------------------------------------------------------------------
+-- Feedback and testimonials (CHG-033, CHG-034)
+-- ---------------------------------------------------------------------------
+
+-- What someone told us about the site or the service. Stored AND emailed: mail
+-- fails, and a complaint that only ever existed inside an SMTP attempt is a
+-- complaint we never received.
+CREATE TABLE IF NOT EXISTS feedback (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT,
+  email       TEXT,
+  kind        TEXT NOT NULL DEFAULT 'GENERAL',  -- GENERAL | PROBLEM | IDEA | PRAISE
+  message     TEXT NOT NULL,
+  page        TEXT,                              -- where they were when they wrote it
+  user_id     INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+  emailed_at  TEXT,                              -- null = the email did not go
+  handled_at  TEXT,
+  handled_by  TEXT,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- A review someone wrote about us. PENDING until a person approves it, and the
+-- public page reads only APPROVED rows — the moderation is a WHERE clause, not
+-- a habit. Nothing is seeded: an invented testimonial on a client-facing page is
+-- exactly what §1.5 forbids, and a fake review is worse than no reviews.
+CREATE TABLE IF NOT EXISTS testimonials (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  author_name   TEXT NOT NULL,
+  author_role   TEXT,
+  company_name  TEXT,
+  email         TEXT NOT NULL,                   -- so we can verify it is them
+  body          TEXT NOT NULL,
+  status        TEXT NOT NULL DEFAULT 'PENDING', -- PENDING | APPROVED | DECLINED
+  customer_id   INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+  submitted_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  decided_at    TEXT,
+  decided_by    TEXT,
+  decline_reason TEXT,
+  display_order INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_testimonials_status ON testimonials(status);

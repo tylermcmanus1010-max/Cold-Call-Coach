@@ -1,0 +1,52 @@
+{% extends "admin/_base.html" %}
+{% block title %}Feedback · {{ company }}{% endblock %}
+{% block eyebrow %}Feedback{% endblock %}
+{% block heading %}What people told us{% endblock %}
+{% block content %}
+
+{% if unsent %}
+  <div class="notice notice-stop">
+    <strong>{{ unsent|length }} piece{{ '' if unsent|length == 1 else 's' }} of feedback never reached the inbox.</strong>
+    They are saved below, so nothing was lost — but nobody was emailed about them.
+    Worth checking why the mail failed.
+  </div>
+{% endif %}
+
+<p class="muted" style="max-width:66ch;margin-top:1rem">
+  Everything left on the site, whether or not the email went. It is written to
+  the database before it is sent, because a complaint whose only record was a
+  failed SMTP connection is a complaint we never received.
+</p>
+
+{% if rows %}
+  <div class="stack" style="margin-top:1.5rem;gap:.75rem">
+    {% for f in rows %}
+      <article class="card {{ 'card-lg' if not f.handled_at }}"
+               style="{{ 'opacity:.6' if f.handled_at }}">
+        <div class="row-between wrap" style="gap:1rem;align-items:flex-start">
+          <div>
+            <span class="badge badge-{{ 'red' if f.kind == 'PROBLEM' else ('green' if f.kind == 'PRAISE' else 'slate') }}">{{ kinds.get(f.kind, f.kind) }}</span>
+            <span class="tiny dim" style="margin-left:.5rem">
+              {%- if f.name %}<span data-noloc>{{ f.name }}</span>{% else %}No name{% endif %}
+              {%- if f.email %} · <a class="reqlink mono" href="mailto:{{ f.email }}">{{ f.email }}</a>{% endif %}</span>
+          </div>
+          <span class="tiny dim">{{ f.created_at|dt }}
+            {%- if not f.emailed_at %} · <span style="color:var(--stop)">not emailed</span>{% endif %}</span>
+        </div>
+        <p style="margin:.8rem 0 0;white-space:pre-wrap;max-width:70ch" data-noloc>{{ f.message }}</p>
+        {% if f.page %}<p class="tiny dim" style="margin-top:.5rem">Left from <span class="mono" data-noloc>{{ f.page }}</span></p>{% endif %}
+        {% if not f.handled_at %}
+          <form method="post" style="margin-top:.9rem">{{ csrf_input() }}
+            <input type="hidden" name="feedback_id" value="{{ f.id }}">
+            <button class="btn btn-sm btn-outline" type="submit">Mark handled</button>
+          </form>
+        {% else %}
+          <p class="tiny dim" style="margin-top:.7rem">Handled by {{ f.handled_by }} · {{ f.handled_at|date }}</p>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty" style="padding:2rem 1rem;margin-top:1.5rem"><p>Nothing yet.</p></div>
+{% endif %}
+{% endblock %}

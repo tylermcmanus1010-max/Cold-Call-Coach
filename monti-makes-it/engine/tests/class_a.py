@@ -17,6 +17,7 @@ the runner verifies the tree is unchanged before it reports.
 """
 import argparse
 import hashlib
+import importlib
 import json
 import os
 import secrets
@@ -81,9 +82,24 @@ class Context:
         disk changes nothing until the module tree is dropped and rebuilt.
         Without this, every proof would report MISSED and the whole coverage
         number would be a lie in the flattering direction.
+
+        The bytecode cache has to go with them, and that is not belt and braces.
+        Python decides a .pyc is current by comparing the source's mtime AND
+        size — so an edit that changes neither is invisible. A proof that swaps
+        "desde 20,000" for "desde 20.000" changes no bytes of length, and if the
+        restore lands in the same filesystem second as the edit, the stale .pyc
+        survives the restore and every later reload loads the BROKEN version of a
+        file that is correct on disk.
+
+        That is not hypothetical: it took out two whole checks in one run and
+        left the working tree looking corrupt three separate times. Purging
+        __pycache__ costs a few milliseconds per reload and removes the class.
         """
         for name in [m for m in sys.modules if m == "monti" or m.startswith("monti.")]:
             del sys.modules[name]
+        for cache in (ENGINE / "monti").rglob("__pycache__"):
+            shutil.rmtree(cache, ignore_errors=True)
+        importlib.invalidate_caches()
         self._build()
 
     def close(self):

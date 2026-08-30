@@ -13,7 +13,8 @@ from flask import (
     render_template, request, session, url_for,
 )
 
-from .. import analytics, catalog as catalog_mod, consults, ledger, mail, membership
+from .. import analytics, catalog as catalog_mod, community, consults, ledger
+from .. import mail, membership
 from .. import decisionroom as dr
 from .. import orders as orders_mod
 from ..auth import admin_required, create_user, ensure_portal_user
@@ -591,6 +592,52 @@ def crm_detail(customer_id):
 # --------------------------------------------------------------------------
 # calendar
 # --------------------------------------------------------------------------
+@bp.route("/feedback", methods=("GET", "POST"))
+@admin_required
+def feedback_page():
+    """CHG-033 — what people told us, including anything the mail never carried.
+
+    `unsent` is its own list on purpose. Feedback that was saved and never
+    emailed looks exactly like feedback nobody left, and the difference matters
+    to whoever is wondering why the inbox is quiet.
+    """
+    if request.method == "POST":
+        community.mark_handled(to_int(request.form.get("feedback_id"), 0), g.user["email"])
+        flash("Marked as handled.", "ok")
+        return redirect(url_for("admin.feedback_page"))
+    return render_template("admin/feedback.html",
+                           rows=community.feedback_list(),
+                           unsent=community.unsent(),
+                           kinds=dict(community.KINDS))
+
+
+@bp.route("/reviews", methods=("GET", "POST"))
+@admin_required
+def reviews_page():
+    """CHG-034 — nothing is public until a person says so.
+
+    Decline keeps the row and the reason. Deleting it would lose the fact that we
+    chose not to publish something, which is the part worth keeping.
+    """
+    if request.method == "POST":
+        action = request.form.get("action")
+        tid = to_int(request.form.get("testimonial_id"), 0)
+        if action == "approve":
+            community.approve(tid, g.user["email"])
+            flash("Published.", "ok")
+        elif action == "decline":
+            community.decline(tid, g.user["email"], request.form.get("reason"))
+            flash("Declined, and kept with the reason.", "ok")
+        elif action == "unpublish":
+            community.unpublish(tid, g.user["email"])
+            flash("Taken down. It is back in the waiting list.", "ok")
+        return redirect(url_for("admin.reviews_page"))
+    return render_template("admin/reviews.html",
+                           waiting=community.awaiting(),
+                           all_rows=community.all_testimonials(),
+                           live=community.published())
+
+
 @bp.route("/consults", methods=("GET", "POST"))
 @admin_required
 def consults_page():

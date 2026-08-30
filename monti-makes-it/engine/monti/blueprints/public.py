@@ -14,7 +14,8 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from .. import catalogue, consults, disclaimers as disc, intake, mail, membership
+from .. import assistant, catalogue, community, consults, disclaimers as disc
+from .. import intake, mail, membership
 from ..auth import ensure_portal_user
 from ..db import execute, next_ref, query
 from ..utils import money, now_str, pretty_dt, to_cents, to_int
@@ -82,6 +83,81 @@ def privacy():
     version = disc.current("privacy")
     return render_template("public/disclaimers.html", disclaimers=disc.current(),
                            chosen=version, privacy_only=True)
+
+
+@bp.route("/feedback", methods=("GET", "POST"))
+def feedback():
+    """CHG-033 — tell us what is wrong. It reaches a person and it is kept.
+
+    Stored first, emailed second. A complaint whose only record was a failed SMTP
+    connection is a complaint we never received.
+    """
+    if request.method == "POST":
+        try:
+            _row, emailed = community.leave_feedback(
+                request.form.get("message"),
+                name=request.form.get("name"),
+                email=request.form.get("email"),
+                kind=request.form.get("kind") or "GENERAL",
+                page=request.form.get("page"),
+                user_id=g.user["id"] if g.user else None,
+                customer_id=g.customer["id"] if g.get("customer") else None)
+        except ValueError as exc:
+            flash(str(exc), "error")
+            return render_template("public/feedback.html", kinds=community.KINDS,
+                                   form=request.form), 400
+        flash("Thank you — that is with us." if emailed else
+              "Thank you — that is saved. Our mail is having trouble, so we will "
+              "see it in the portal rather than the inbox.", "ok")
+        return redirect(url_for("public.feedback"))
+    return render_template("public/feedback.html", kinds=community.KINDS, form={})
+
+
+@bp.route("/reviews", methods=("GET", "POST"))
+def testimonials():
+    """CHG-034 — what other people say, and a way to add to it.
+
+    Published reviews come from `community.published`, whose WHERE clause is the
+    moderation. Nothing is seeded: a made-up review is a lie about a customer who
+    does not exist, and it is the §1.5 breach people find easiest to excuse.
+    """
+    if request.method == "POST":
+        try:
+            community.submit_testimonial(
+                request.form.get("author_name"), request.form.get("email"),
+                request.form.get("body"),
+                author_role=request.form.get("author_role"),
+                company_name=request.form.get("company_name"),
+                customer_id=g.customer["id"] if g.get("customer") else None)
+        except ValueError as exc:
+            flash(str(exc), "error")
+            return render_template("public/testimonials.html",
+                                   reviews=community.published(),
+                                   form=request.form), 400
+        flash("Thank you. A person reads every review before it goes up — we will "
+              "email you either way.", "ok")
+        return redirect(url_for("public.testimonials"))
+    return render_template("public/testimonials.html",
+                           reviews=community.published(), form={})
+
+
+@bp.route("/ask", methods=("POST",))
+def ask():
+    """CHG-029 — the question box in the corner.
+
+    Answers only from text already published on this site, and returns the link
+    to the page it came from. It has no language model behind it, on purpose:
+    see the module docstring. A JSON endpoint so the widget does not reload the
+    page underneath somebody.
+    """
+    question = (request.form.get("q") or "").strip()[:400]
+    result = assistant.answer(question, faqs=FAQS)
+    return {
+        "found": result["found"],
+        "reply": result["reply"],
+        "links": [{"title": h["title"], "where": h["where"],
+                   "url": url_for(h["endpoint"])} for h in result["hits"]],
+    }
 
 
 @bp.route("/faq")

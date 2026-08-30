@@ -1000,6 +1000,15 @@ legend {
 /* `hidden` sets display:none from the UA stylesheet and any author `display`
    rule beats it, so these have to win or the dialog covers the page invisibly. */
 .iv-dialog[hidden], .iv-callouts[hidden], .iv-slide[hidden] { display: none !important; }
+
+/* The `hidden` attribute means hidden, everywhere.
+
+   `display` set by a class beats the user agent's rule for [hidden], and this
+   stylesheet sets `display: flex` on .field — so `phoneField.hidden = true`
+   changed nothing and the phone number field sat on the consultation picker
+   while "Video call" was selected. Anything the UA rule was already handling
+   keeps working; this only stops a class from silently overriding it. */
+[hidden] { display: none !important; }
 body.iv-open { overflow: hidden; }
 .iv-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   padding: .6rem max(0.35cm, .75rem); color: #fff; }
@@ -1431,3 +1440,64 @@ details.more > .more-body { padding-top: 1.5rem; }
   border-top: 1px solid var(--rule); }
 .orderprice .stat-value { font-variant-numeric: tabular-nums; }
 .orderfacts { text-align: right; line-height: 1.7; white-space: nowrap; }
+
+/* ---------- CHG-021 · the consultation picker ----------------------------
+   A month grid, and the times inside the day you pick. Days with nothing free
+   are visibly dead rather than absent: an empty Tuesday is information, and a
+   grid that silently skips it reads as a rendering fault. */
+.booker { border: 1px solid var(--rule); border-left: 2px solid var(--green-deep);
+  border-radius: var(--r); padding: 1.15rem 1.25rem 1.35rem; margin-bottom: 1.75rem;
+  background: var(--surface); }
+.booker > legend { padding: 0 .45rem; margin-left: -.45rem; }
+
+.bk-cal { margin-top: 1rem; border: 1px solid var(--rule-soft); border-radius: var(--r);
+  overflow: hidden; max-width: 380px; }
+.bk-monthbar { display: flex; align-items: center; justify-content: space-between;
+  gap: .5rem; padding: .55rem .6rem; background: var(--surface-2);
+  border-bottom: 1px solid var(--rule-soft); }
+.bk-monthbar strong { font-size: .88rem; font-weight: 600; }
+.bk-arrow { width: 28px; height: 28px; display: grid; place-items: center;
+  border: 1px solid var(--rule); background: var(--surface); border-radius: 3px;
+  color: var(--ink-2); cursor: pointer; font: inherit; line-height: 1; }
+.bk-arrow:hover:not(:disabled) { border-color: var(--green); color: var(--green-deep); }
+.bk-arrow:disabled { opacity: .35; cursor: default; }
+
+.bk-dow, .bk-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.bk-dow { padding: .45rem .35rem .2rem; }
+.bk-dow span { text-align: center; font-size: .66rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.bk-grid { gap: 2px; padding: .35rem; }
+.bk-day { aspect-ratio: 1; display: grid; place-items: center; border: 1px solid transparent;
+  background: none; border-radius: 3px; font: inherit; font-size: .82rem;
+  font-variant-numeric: tabular-nums; color: var(--muted); cursor: default;
+  position: relative; }
+.bk-day.bk-pad { visibility: hidden; }
+/* A day with times is the only thing that looks pressable, and it says so with
+   weight and a dot rather than colour alone. */
+.bk-day.has { color: var(--ink); font-weight: 600; cursor: pointer;
+  border-color: var(--rule); background: var(--surface); }
+.bk-day.has::after { content: ""; position: absolute; bottom: 4px; width: 4px; height: 4px;
+  border-radius: 50%; background: var(--green); }
+.bk-day.has:hover { border-color: var(--green); }
+.bk-day.on { background: var(--green-deep); border-color: var(--green-deep); color: #fff; }
+.bk-day.on::after { background: #fff; }
+.bk-day:disabled { cursor: default; }
+
+.bk-times { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: 1rem; align-items: center; }
+.bk-times-head { flex: 0 0 100%; font-size: .78rem; color: var(--muted);
+  letter-spacing: .02em; }
+.bk-time { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem;
+  border: 1px solid var(--rule); background: var(--surface); border-radius: 3px;
+  padding: .45rem .7rem; font: inherit; font-size: .85rem; cursor: pointer;
+  font-variant-numeric: tabular-nums; color: var(--ink); }
+.bk-time em { font-style: normal; font-size: .66rem; color: var(--muted); }
+.bk-time:hover { border-color: var(--green); }
+.bk-time.on { background: var(--green-deep); border-color: var(--green-deep); color: #fff; }
+.bk-time.on em { color: rgba(255,255,255,.75); }
+
+.bk-chosen { margin-top: 1rem; font-size: .86rem; color: var(--muted); }
+.bk-chosen.on { color: var(--green-deep); font-weight: 500; }
+
+/* The booked time on the confirmation page. Its own rule rather than a reused
+   one: it is the single fact that page exists to state. */
+.bk-confirm { font-variant-numeric: tabular-nums; color: var(--green-deep); }

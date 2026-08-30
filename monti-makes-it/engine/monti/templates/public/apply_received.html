@@ -11,9 +11,50 @@
       you waiting.
     </p>
 
+    {% if booking %}
+      {# CHG-021 — the confirmation shows the time on THEIR clock, using the zone
+         they picked. Restating it in ours would be the one detail most likely to
+         put someone on a call an hour late. #}
+      <div class="card card-lg" style="margin-top:2rem;border-left:2px solid var(--green-deep)">
+        <span class="eyebrow-label">Your consultation is booked</span>
+        <p class="bk-confirm" data-utc="{{ booking.starts_at.replace(' ', 'T') }}Z"
+           data-tz="{{ booking.guest_tz }}"
+           style="font-size:1.05rem;margin-top:.7rem;font-weight:500">
+          {{ booking.starts_at }} UTC
+        </p>
+        <p class="tiny dim" style="margin-top:.4rem">
+          {{ booking.guest_tz.replace('_', ' ') }} ·
+          {{ 'Video call' if booking.channel == 'video' else 'Phone call to ' ~ booking.phone }} ·
+          the link comes with your confirmation email.
+        </p>
+        <p class="tiny dim" style="margin-top:.7rem;max-width:60ch">
+          Need to move it? Reply to the confirmation email with
+          <span class="mono">{{ application.ref }}</span> and we will send new times.
+        </p>
+      </div>
+      <script>
+        /* The stored time is UTC. Rendering it in the zone they chose is done
+           here rather than server-side so it matches the clock they are looking
+           at, including if their machine disagrees with what they picked. */
+        (function () {
+          var el = document.querySelector(".bk-confirm");
+          if (!el) return;
+          try {
+            el.textContent = new Date(el.dataset.utc).toLocaleString(undefined, {
+              timeZone: el.dataset.tz, weekday: "long", day: "numeric",
+              month: "long", year: "numeric", hour: "numeric", minute: "2-digit" });
+          } catch (e) { /* the UTC value already on the page stands */ }
+        }());
+      </script>
+    {% endif %}
+
     <ol class="step-list" style="margin-top:2.5rem">
       <li><h3>We read it</h3><p>Usually within two business days. Every application is read by a person on our team, not filtered by a form.</p></li>
+      {% if booking %}
+        <li><h3>We meet you</h3><p>On the call you just booked. A short conversation to understand what you're building — we're deciding together whether this works.</p></li>
+      {% else %}
       <li><h3>We meet you</h3><p>A short video call to understand what you're building. This is a conversation, not an interrogation — we're deciding together whether this works.</p></li>
+      {% endif %}
       <li><h3>We decide</h3><p>Accepted members get a private portal, member pricing, and up to {{ cfg.QUOTE_LIMIT }} new quote requests every {{ cfg.QUOTE_CYCLE_DAYS }} days.</p></li>
     </ol>
 

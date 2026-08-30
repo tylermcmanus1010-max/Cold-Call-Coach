@@ -1,0 +1,178 @@
+{% extends "admin/_base.html" %}
+{% block title %}Consultation hours · {{ company }}{% endblock %}
+{% block eyebrow %}Scheduling{% endblock %}
+{% block heading %}When we take calls{% endblock %}
+{% block content %}
+
+<p class="muted" style="max-width:68ch">
+  The application form offers only the times entered here. Nothing is seeded and
+  nothing is assumed — until a window exists below, applicants see no calendar and
+  are asked to tell us when they are free instead. That is deliberate: a booking
+  page that invents a nine-to-five grid is promising hours nobody agreed to.
+</p>
+
+{% if broken %}
+  <div class="notice notice-stop" style="margin-top:1.25rem">
+    <strong>{{ broken|length }} window{{ '' if broken|length == 1 else 's' }} generate nothing.</strong>
+    Their timezone no longer resolves on this machine, so they are silently
+    producing no slots:
+    {% for w in broken %}<span class="mono">{{ w.host_tz }}</span>{{ ', ' if not loop.last }}{% endfor %}.
+  </div>
+{% endif %}
+
+<div class="grid grid-3" style="margin-top:1.5rem">
+  <div class="stat stat-accent">
+    <div class="stat-label">Slots open now</div>
+    <div class="stat-value">{{ '{:,}'.format(slot_count) }}</div>
+    <div class="stat-sub">next {{ horizon }} days, {{ lead_hours }}h notice</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Weekly windows</div>
+    <div class="stat-value">{{ windows|length }}</div>
+    <div class="stat-sub">{{ blackouts|length }} blackout{{ '' if blackouts|length == 1 else 's' }}</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Booked ahead</div>
+    <div class="stat-value">{{ bookings|length }}</div>
+    <div class="stat-sub">consultations upcoming</div>
+  </div>
+</div>
+
+<h2 style="margin-top:2.25rem;font-size:1.05rem">Weekly availability</h2>
+{% if windows %}
+  <div class="table-wrap" style="margin-top:.85rem"><table class="data">
+    <thead><tr><th>Day</th><th>Time</th><th>Timezone</th><th>Slot</th><th>In effect</th><th></th></tr></thead>
+    <tbody>
+      {% for w in windows %}
+        <tr>
+          <td><strong>{{ weekdays[w.weekday] }}</strong></td>
+          <td class="mono">{{ w.start_local }} – {{ w.end_local }}</td>
+          <td>{{ w.host_tz.replace('_', ' ') }}</td>
+          <td>{{ w.slot_minutes }} min</td>
+          <td class="tiny dim">
+            {%- if w.effective_from or w.effective_to -%}
+              {{ w.effective_from or 'any time' }} → {{ w.effective_to or 'no end' }}
+            {%- else -%}always{%- endif -%}
+          </td>
+          <td class="right">
+            <form method="post" style="display:inline">{{ csrf_input() }}
+              <input type="hidden" name="action" value="drop-window">
+              <input type="hidden" name="window_id" value="{{ w.id }}">
+              <button class="btn btn-sm btn-outline" type="submit">Stop offering</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+{% else %}
+  <div class="empty" style="padding:1.75rem 1rem;margin-top:.85rem">
+    <p>No hours published.</p>
+    <p class="tiny dim">Applicants are seeing no calendar. Add a window below and it
+      appears on the form immediately.</p>
+  </div>
+{% endif %}
+
+<form method="post" class="card card-lg" style="margin-top:1.25rem">{{ csrf_input() }}
+  <input type="hidden" name="action" value="add-window">
+  <span class="eyebrow">Add a window</span>
+  <div class="grid grid-3" style="margin-top:.9rem">
+    <label class="field"><span class="field-label">Day</span>
+      <select name="weekday">
+        {% for d in weekdays %}<option value="{{ loop.index0 }}">{{ d }}</option>{% endfor %}
+      </select></label>
+    <label class="field"><span class="field-label">From</span>
+      <input type="time" name="start_local" value="09:00" required></label>
+    <label class="field"><span class="field-label">Until</span>
+      <input type="time" name="end_local" value="12:00" required></label>
+    <label class="field"><span class="field-label">In this timezone</span>
+      <select name="host_tz">
+        {% for z in zones %}<option value="{{ z }}" {{ 'selected' if z == 'America/New_York' }}>{{ z.replace('_',' ') }}</option>{% endfor %}
+      </select>
+      <span class="field-hint">Entered as wall-clock time here, so it holds across
+        daylight saving rather than drifting an hour twice a year.</span></label>
+    <label class="field"><span class="field-label">Call length</span>
+      <select name="slot_minutes">
+        {% for m in [15, 20, 30, 45, 60] %}<option value="{{ m }}" {{ 'selected' if m == 30 }}>{{ m }} minutes</option>{% endfor %}
+      </select></label>
+    <div class="grid grid-2" style="gap:.6rem">
+      <label class="field"><span class="field-label">From date</span>
+        <input type="date" name="effective_from"></label>
+      <label class="field"><span class="field-label">Until date</span>
+        <input type="date" name="effective_to"></label>
+    </div>
+  </div>
+  <button class="btn btn-primary" type="submit">Add this window</button>
+</form>
+
+<h2 style="margin-top:2.25rem;font-size:1.05rem">Blackouts</h2>
+<p class="tiny dim" style="max-width:64ch">Holidays, travel, a factory week. A window still
+  exists; these dates are taken out of it.</p>
+{% if blackouts %}
+  <div class="table-wrap" style="margin-top:.85rem"><table class="data">
+    <thead><tr><th>From</th><th>Until</th><th>Reason</th><th></th></tr></thead>
+    <tbody>
+      {% for b in blackouts %}
+        <tr>
+          <td class="mono tiny">{{ b.starts_at[:10] }}</td>
+          <td class="mono tiny">{{ b.ends_at[:10] }}</td>
+          <td>{{ b.reason or '—' }}</td>
+          <td class="right">
+            <form method="post" style="display:inline">{{ csrf_input() }}
+              <input type="hidden" name="action" value="drop-blackout">
+              <input type="hidden" name="blackout_id" value="{{ b.id }}">
+              <button class="btn btn-sm btn-outline" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+{% endif %}
+<form method="post" class="card" style="margin-top:1rem">{{ csrf_input() }}
+  <input type="hidden" name="action" value="add-blackout">
+  <div class="grid grid-3">
+    <label class="field"><span class="field-label">From</span>
+      <input type="date" name="black_from" required></label>
+    <label class="field"><span class="field-label">Until</span>
+      <input type="date" name="black_to" required></label>
+    <label class="field"><span class="field-label">Reason</span>
+      <input type="text" name="black_reason" placeholder="Factory week"></label>
+  </div>
+  <button class="btn" type="submit">Block these dates</button>
+</form>
+
+<h2 style="margin-top:2.25rem;font-size:1.05rem">Booked consultations</h2>
+{% if bookings %}
+  <div class="table-wrap" style="margin-top:.85rem"><table class="data">
+    <thead><tr><th>When (UTC)</th><th>Who</th><th>Their timezone</th><th>Channel</th><th></th></tr></thead>
+    <tbody>
+      {% for b in bookings %}
+        <tr>
+          <td class="mono tiny">{{ b.starts_at }}</td>
+          <td>{{ b.company_name or '—' }}
+            <span class="tiny dim">{{ b.contact_name }} · <span class="mono">{{ b.application_ref }}</span></span></td>
+          <td class="tiny">{{ b.guest_tz.replace('_', ' ') }}</td>
+          <td class="tiny">{{ 'Video' if b.channel == 'video' else 'Phone ' ~ (b.phone or '') }}</td>
+          <td class="right">
+            <form method="post" style="display:inline">{{ csrf_input() }}
+              <input type="hidden" name="action" value="cancel-booking">
+              <input type="hidden" name="booking_id" value="{{ b.id }}">
+              <button class="btn btn-sm btn-outline" type="submit">Cancel</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+{% else %}
+  <div class="empty" style="padding:1.75rem 1rem;margin-top:.85rem"><p>Nothing booked yet.</p></div>
+{% endif %}
+
+{% if next_slots %}
+  <p class="tiny dim" style="margin-top:1.5rem;max-width:68ch">
+    Next few slots the form is offering, in UTC:
+    {% for s, m in next_slots %}<span class="mono">{{ s }}</span>{{ ', ' if not loop.last }}{% endfor %}.
+  </p>
+{% endif %}
+{% endblock %}

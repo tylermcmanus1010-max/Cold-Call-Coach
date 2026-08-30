@@ -844,3 +844,61 @@ CREATE TABLE IF NOT EXISTS disclaimer_acceptances (
   ip_hint      TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_disc_acc ON disclaimer_acceptances(customer_id, accepted_at);
+
+-- ---------------------------------------------------------------------------
+-- Consultation scheduling (CHG-021, CHG-022)
+--
+-- A booking calendar is the easiest place in an application to invent data. A
+-- picker that shows a 9-to-5 grid is offering times nobody agreed to, and the
+-- applicant finds out only when nobody joins the call. So no slot is generated
+-- from a constant: every one is derived from a window an admin entered, minus
+-- the blackouts they entered, minus what is already booked.
+-- ---------------------------------------------------------------------------
+
+-- A recurring weekly window of availability, in the host's own timezone.
+-- Entered, never assumed. Stored as local wall-clock time plus an IANA zone so
+-- daylight saving is resolved at generation time rather than baked into a UTC
+-- offset that goes wrong twice a year.
+CREATE TABLE IF NOT EXISTS consult_windows (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  weekday      INTEGER NOT NULL,          -- 0 = Monday .. 6 = Sunday (Python's convention)
+  start_local  TEXT NOT NULL,             -- 'HH:MM' in host_tz
+  end_local    TEXT NOT NULL,             -- 'HH:MM' in host_tz, exclusive
+  host_tz      TEXT NOT NULL,             -- IANA name, e.g. 'America/New_York'
+  slot_minutes INTEGER NOT NULL DEFAULT 30,
+  effective_from TEXT,                    -- 'YYYY-MM-DD', null = always
+  effective_to   TEXT,
+  active       INTEGER NOT NULL DEFAULT 1,
+  created_by   TEXT,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- A date range with no calls. Holidays, travel, a factory week.
+CREATE TABLE IF NOT EXISTS consult_blackouts (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  starts_at  TEXT NOT NULL,               -- UTC 'YYYY-MM-DD HH:MM:SS'
+  ends_at    TEXT NOT NULL,
+  reason     TEXT,
+  created_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- One booked consultation. `starts_at` is UNIQUE, so two people cannot take the
+-- same slot however close together they click: the second INSERT fails at the
+-- data layer rather than relying on a check the view remembers to run.
+CREATE TABLE IF NOT EXISTS consult_bookings (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  application_id INTEGER REFERENCES applications(id) ON DELETE CASCADE,
+  customer_id    INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+  starts_at      TEXT NOT NULL UNIQUE,    -- UTC
+  ends_at        TEXT NOT NULL,           -- UTC
+  guest_tz       TEXT NOT NULL,           -- the IANA zone THEY chose; what we show them
+  channel        TEXT NOT NULL DEFAULT 'video',   -- video | phone
+  phone          TEXT,                    -- required when channel = phone
+  note           TEXT,
+  status         TEXT NOT NULL DEFAULT 'BOOKED',  -- BOOKED | CANCELLED
+  cancelled_at   TEXT,
+  cancelled_by   TEXT,
+  created_at     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_consult_bookings_app ON consult_bookings(application_id);

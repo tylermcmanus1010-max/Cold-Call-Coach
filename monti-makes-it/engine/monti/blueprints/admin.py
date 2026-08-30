@@ -13,7 +13,7 @@ from flask import (
     render_template, request, session, url_for,
 )
 
-from .. import analytics, catalog as catalog_mod, ledger, mail, membership
+from .. import analytics, catalog as catalog_mod, consults, ledger, mail, membership
 from .. import decisionroom as dr
 from .. import orders as orders_mod
 from ..auth import admin_required, create_user, ensure_portal_user
@@ -399,7 +399,12 @@ def application_detail(app_id):
     return render_template("admin/application_detail.html", application=application,
                            customer=customer, quotes=quotes_rows,
                            default_link=current_app.config["INTERVIEW_LINK"],
-                           default_limit=current_app.config["QUOTE_LIMIT"])
+                           default_limit=current_app.config["QUOTE_LIMIT"],
+                           # CHG-021 — what the applicant booked themselves, if
+                           # anything. Shown beside the reviewer's own scheduling
+                           # controls rather than replacing them: an admin can
+                           # still set a time for someone who never picked one.
+                           booking=consults.booking_for(application["id"]))
 
 
 # --------------------------------------------------------------------------
@@ -586,6 +591,66 @@ def crm_detail(customer_id):
 # --------------------------------------------------------------------------
 # calendar
 # --------------------------------------------------------------------------
+@bp.route("/consults", methods=("GET", "POST"))
+@admin_required
+def consults_page():
+    """Where the hours behind the booking calendar are entered.
+
+    Nothing here is seeded. `flask launch` publishes no windows, so the
+    application form shows no times until someone sets them — which is the
+    honest empty state, because the hours Monti will take calls are Monti's to
+    decide and not this application's to invent.
+    """
+    if request.method == "POST":
+        action = request.form.get("action")
+        try:
+            if action == "add-window":
+                consults.add_window(
+                    weekday=to_int(request.form.get("weekday"), 0),
+                    start_local=request.form.get("start_local") or "09:00",
+                    end_local=request.form.get("end_local") or "17:00",
+                    host_tz=request.form.get("host_tz") or "UTC",
+                    slot_minutes=to_int(request.form.get("slot_minutes"), 30),
+                    effective_from=request.form.get("effective_from"),
+                    effective_to=request.form.get("effective_to"),
+                    created_by=g.user["email"])
+                flash("Availability added.", "ok")
+            elif action == "drop-window":
+                consults.deactivate_window(to_int(request.form.get("window_id"), 0))
+                flash("That window is no longer offered.", "ok")
+            elif action == "add-blackout":
+                start = (request.form.get("black_from") or "").strip()
+                end = (request.form.get("black_to") or "").strip()
+                if not start or not end:
+                    raise ValueError("a blackout needs a start and an end")
+                consults.add_blackout(f"{start} 00:00:00", f"{end} 23:59:59",
+                                      request.form.get("black_reason"), g.user["email"])
+                flash("Blackout added.", "ok")
+            elif action == "drop-blackout":
+                consults.remove_blackout(to_int(request.form.get("blackout_id"), 0))
+                flash("Blackout removed.", "ok")
+            elif action == "cancel-booking":
+                consults.cancel(to_int(request.form.get("booking_id"), 0), g.user["email"])
+                flash("Consultation cancelled. The slot is open again.", "ok")
+        except ValueError as exc:
+            flash(str(exc), "error")
+        return redirect(url_for("admin.consults_page"))
+
+    open_slots = consults.slots()
+    return render_template(
+        "admin/consults.html",
+        windows=consults.windows(),
+        broken=consults.broken_windows(),
+        blackouts=consults.blackouts(),
+        bookings=consults.upcoming(),
+        weekdays=consults.WEEKDAYS,
+        zones=consults.COMMON_ZONES,
+        slot_count=len(open_slots),
+        next_slots=open_slots[:8],
+        lead_hours=consults.LEAD_HOURS,
+        horizon=consults.HORIZON_DAYS)
+
+
 @bp.route("/calendar")
 def calendar_view():
     today = utcnow().date()

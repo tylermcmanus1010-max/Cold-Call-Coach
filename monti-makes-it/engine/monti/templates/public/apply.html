@@ -39,9 +39,78 @@
         <span class="field-hint-top">This is the part we read closely.</span>
         <textarea name="why" required rows="4">{{ form.why or '' }}</textarea></label>
 
-      <label class="field"><span class="field-label">When can you take a video call?</span>
-        <input type="text" name="availability" placeholder="Weekday mornings, US Eastern"
-               value="{{ form.availability or '' }}"></label>
+      {# ---- CHG-021 · pick the consultation ---------------------------------
+         Every time offered here came from a window someone entered. If nobody
+         has entered one there are no slots and this says so, rather than
+         showing a nine-to-five grid nobody agreed to be available for. The
+         free-text field stays underneath as the fallback: it is what a browser
+         with no JavaScript gets, and it is what someone whose hours do not fit
+         any published slot uses. #}
+      <fieldset class="booker" id="booker">
+        <legend class="field-label">Book your consultation</legend>
+        {% if slot_days %}
+          <p class="field-hint-top">
+            Pick a day, then a time. Times are shown on your clock —
+            <span class="mono" id="tzName">{{ default_tz }}</span> — and you can change
+            the zone below.
+          </p>
+
+          <div class="bk-cal" id="bkCal">
+            <div class="bk-monthbar">
+              <button class="bk-arrow" type="button" id="bkPrev" aria-label="Previous month">←</button>
+              <strong id="bkMonth"></strong>
+              <button class="bk-arrow" type="button" id="bkNext" aria-label="Next month">→</button>
+            </div>
+            <div class="bk-dow" aria-hidden="true">
+              {% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<span>{{ d }}</span>{% endfor %}
+            </div>
+            <div class="bk-grid" id="bkGrid" role="group" aria-label="Available dates"></div>
+          </div>
+
+          <div class="bk-times" id="bkTimes" role="group" aria-label="Available times"></div>
+
+          <div class="grid grid-2" style="margin-top:1rem">
+            <label class="field"><span class="field-label">Your timezone</span>
+              <select id="bkTz" name="consult_tz">
+                {% for z in zones %}<option value="{{ z }}" {{ 'selected' if z == default_tz }}>{{ z.replace('_',' ') }}</option>{% endfor %}
+              </select>
+              <span class="field-hint">Detected from your browser. Change it if it is wrong.</span></label>
+            <label class="field"><span class="field-label">How should we call you?</span>
+              <select id="bkChannel" name="consult_channel">
+                {% for value, label in channels %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+              </select>
+              <span class="field-hint">A video link comes with the confirmation.</span></label>
+          </div>
+
+          <label class="field" id="bkPhoneField" hidden>
+            <span class="field-label">Number to call</span>
+            <input type="tel" name="consult_phone" id="bkPhone"
+                   value="{{ form.consult_phone or '' }}"
+                   placeholder="Include the country code">
+            <span class="field-hint">Only needed because you chose a phone call.</span></label>
+
+          <label class="field"><span class="field-label">Anything we should know before the call?</span>
+            <span class="field-hint-top">Optional.</span>
+            <textarea name="consult_note" rows="2">{{ form.consult_note or '' }}</textarea></label>
+
+          <input type="hidden" name="consult_slot" id="bkSlot" value="{{ form.consult_slot or '' }}">
+          <p class="bk-chosen" id="bkChosen" aria-live="polite">No time picked yet.</p>
+
+          <script type="application/json" id="bkData">{{ slot_data|tojson }}</script>
+        {% else %}
+          <div class="notice notice-wait">
+            <strong>No call times are published right now.</strong>
+            Tell us below when you are usually free and we will come back with times.
+          </div>
+        {% endif %}
+
+        <label class="field" style="margin-top:1rem">
+          <span class="field-label">{{ 'Or tell us when you are usually free' if slot_days else 'When can you take a call?' }}</span>
+          <input type="text" name="availability" placeholder="Weekday mornings, US Eastern"
+                 value="{{ form.availability or '' }}">
+          {% if slot_days %}<span class="field-hint">Use this if none of the times above suit you.</span>{% endif %}
+        </label>
+      </fieldset>
 
       <details class="more" style="margin-bottom:2rem">
         <summary>Add more detail — optional, but it helps</summary>
@@ -84,4 +153,7 @@
     </form>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+  {% if slot_days %}<script src="{{ url_for('static', filename='js/booker.js') }}" defer></script>{% endif %}
 {% endblock %}

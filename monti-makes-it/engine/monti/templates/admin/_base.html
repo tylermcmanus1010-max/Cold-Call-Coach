@@ -24,6 +24,7 @@
     <div class="side-title">Relationships</div>
     <a class="side-link {{ 'active' if 'crm' in (request.endpoint or '') }}" href="{{ url_for('admin.crm') }}"><span class="side-icon">◎</span> CRM</a>
     <a class="side-link {{ 'active' if 'calendar' in (request.endpoint or '') }}" href="{{ url_for('admin.calendar_view') }}"><span class="side-icon">▦</span> Calendar</a>
+    <a class="side-link {{ 'active' if 'consult' in (request.endpoint or '') }}" href="{{ url_for('admin.consults_page') }}"><span class="side-icon">◷</span> Consultation hours</a>
   </div>
   <div class="side-group">
     <div class="side-title">Open a client portal</div>

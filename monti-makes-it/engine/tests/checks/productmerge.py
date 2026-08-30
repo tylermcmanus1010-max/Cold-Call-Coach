@@ -230,10 +230,16 @@ def prove(ctx):
             rows.append(_row(customer, item=None, entry=entry))''',
             lambda f: "is nowhere" in f.detail)
 
-    # 3. the old bug, put back: a missing price becomes zero.
-    attempt("a missing price rendered as zero",
-            "    return None, None, None\n\n\ndef for_member",
-            "    return 0, None, \"negotiated\"\n\n\ndef for_member",
+    # 3. the old bug, put back: every card shows zero, badged as negotiated.
+    #
+    # Injected at the top of `_price` rather than at its final fallthrough. The
+    # fallthrough version stopped reproducing once `matrix_floor` landed —
+    # matrix-priced items now return a real figure before reaching it — so the
+    # proof was breaking a line this data never executes. A proof that cannot
+    # reach the code it edits is not a proof, however well it reads.
+    attempt("every price rendered as zero, badged as negotiated",
+            '    item_id = entry["id"]',
+            '    return 0, None, "negotiated", 1\n    item_id = entry["id"]',
             lambda f: "price of zero" in f.detail or "no negotiated price" in f.detail)
 
     missed = [name for name, ok, _ in caught if not ok]

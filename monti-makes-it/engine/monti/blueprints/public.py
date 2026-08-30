@@ -14,7 +14,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from .. import catalogue, disclaimers as disc, intake, mail, membership
+from .. import catalogue, consults, disclaimers as disc, intake, mail, membership
 from ..auth import ensure_portal_user
 from ..db import execute, next_ref, query
 from ..utils import money, now_str, pretty_dt, to_cents, to_int
@@ -312,11 +312,38 @@ def _save_uploads(quote_id, files):
 # --------------------------------------------------------------------------
 # door two — apply for membership
 # --------------------------------------------------------------------------
+def _booking_context(form=None):
+    """Everything the picker needs, and nothing it could use to invent a slot.
+
+    The slots go out as UTC timestamps rather than as a pre-built calendar. Which
+    DAY a slot falls on depends on the reader's timezone — 01:30 UTC is Tuesday
+    night in London and Tuesday afternoon in Los Angeles — so grouping them into
+    days here would put them on the wrong date for anyone far from the host.
+    """
+    open_slots = consults.slots()
+    zones = list(consults.COMMON_ZONES)
+    default_tz = consults.valid_zone((form or {}).get("consult_tz")) or "UTC"
+    if default_tz not in zones:
+        zones.insert(0, default_tz)
+    return {
+        # Passed as a list, rendered with |tojson. Building the JSON here and
+        # printing it raw would need |safe, and |safe on anything that ever grows
+        # a user-supplied field is a script injection waiting to happen. |tojson
+        # escapes for a script context and cannot be got wrong later.
+        "slot_data": [{"t": s.replace(" ", "T") + "Z", "m": m} for s, m in open_slots],
+        "slot_days": bool(open_slots),
+        "zones": zones,
+        "default_tz": default_tz,
+        "channels": consults.CHANNELS,
+    }
+
+
 @bp.route("/apply", methods=("GET", "POST"))
 def apply():
     if request.method == "GET":
         return render_template("public/apply.html", form={}, categories=CATEGORIES,
-                               volumes=VOLUME_BANDS, business_types=BUSINESS_TYPES)
+                               volumes=VOLUME_BANDS, business_types=BUSINESS_TYPES,
+                               **_booking_context())
 
     form = request.form
     errors = []
@@ -338,11 +365,41 @@ def apply():
             f"You already have an application with us ({open_app['ref']}), and it's being reviewed. "
             "We'll be in touch — no need to send another.")
 
+    # CHG-021 — a posted slot is not a click. It can be edited, replayed, or sent
+    # by something that never rendered the page, so it is checked against real
+    # availability here rather than trusted because the picker produced it.
+    slot = (form.get("consult_slot") or "").strip()
+    if slot and not consults.is_open(slot):
+        errors.append("That consultation time is no longer available. Please pick another.")
+    if slot and form.get("consult_channel") == "phone" and not (form.get("consult_phone") or "").strip():
+        errors.append("A phone consultation needs a number for us to call.")
+
     if errors:
         for e in errors:
             flash(e, "error")
         return render_template("public/apply.html", form=form, categories=CATEGORIES,
-                               volumes=VOLUME_BANDS, business_types=BUSINESS_TYPES), 400
+                               volumes=VOLUME_BANDS, business_types=BUSINESS_TYPES,
+                               **_booking_context(form)), 400
 
     application, customer = membership.create_application(form)
-    return render_template("public/apply_received.html", application=application, customer=customer)
+
+    booking = None
+    if slot:
+        try:
+            booking = consults.book(
+                application, slot,
+                guest_tz=form.get("consult_tz"),
+                channel=form.get("consult_channel") or "video",
+                phone=form.get("consult_phone"),
+                note=form.get("consult_note"))
+        except (consults.SlotGone, ValueError) as exc:
+            # The application is already saved and that is deliberate: losing
+            # everything they typed because a slot went in the last two seconds
+            # would be the worse failure. They are told, and can book from the
+            # confirmation page.
+            flash(f"Your application is in — but we could not hold that time: {exc}. "
+                  "Pick another below.", "error")
+
+    return render_template("public/apply_received.html", application=application,
+                           customer=customer, booking=booking,
+                           booking_tz=consults.valid_zone(form.get("consult_tz")) or "UTC")

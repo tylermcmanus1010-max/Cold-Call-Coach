@@ -40,6 +40,16 @@
               {{ application.interview_at|dt }} UTC
               {% if application.interview_link %}· <a href="{{ application.interview_link }}" style="color:var(--green)">{{ application.interview_link }}</a>{% endif %}
             </p>
+            {% if booking %}
+              {# CHG-021 — they booked this themselves from the form. Their own
+                 timezone is shown because it is the clock they will be reading,
+                 and "they said 2pm" means nothing without it. #}
+              <p class="tiny dim" style="margin-top:.45rem">
+                Booked by them at submission · {{ booking.guest_tz.replace('_', ' ') }} ·
+                {{ 'video call' if booking.channel == 'video' else 'phone call to ' ~ booking.phone }}
+                {%- if booking.note %} · “{{ booking.note }}”{% endif %}
+              </p>
+            {% endif %}
           </div>
           {% set cd = countdown(application.interview_at) %}
           <div class="right"><div class="stat-value" style="font-size:1.2rem">{{ cd.short }}</div>

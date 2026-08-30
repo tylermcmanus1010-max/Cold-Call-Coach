@@ -1,0 +1,18 @@
+{# On every page of a demo session, both shells.
+
+   The bar is not decoration. A passwordless door into a real account is the
+   kind of thing someone turns on to look at something and forgets about, and
+   the failure is silent — everything works, which is the problem. So it says so
+   on every page, and it says which account, because "am I looking at real data"
+   is the question a person will actually have. #}
+{% if session.get('demo') and cfg.DEMO_MODE %}
+  <div class="demobar" data-noloc>
+    <div class="container">
+      <span><strong>Demo session.</strong>
+        Signed in as {{ g.user.email }}{% if g.customer %} · <span data-noloc>{{ g.customer.company_name }}</span>{% endif %}
+        with no password, because <span class="mono">DEMO_MODE</span> is on. This is
+        real data, not a sandbox.</span>
+      <a href="{{ url_for('auth.logout') }}">Sign out</a>
+    </div>
+  </div>
+{% endif %}

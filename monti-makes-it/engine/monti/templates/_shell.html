@@ -13,6 +13,7 @@
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}showroom{% endblock %}">
+{% include "_demobar.html" %}
 {% include "_flashes.html" %}
 {% if g.get('viewing_as') %}
   <div class="view-as-bar"><div class="container">

@@ -1578,3 +1578,22 @@ details.more > .more-body { padding-top: 1.5rem; }
 .quote-card blockquote { margin: 0; font-family: "Spectral", Georgia, serif;
   font-size: 1.02rem; line-height: 1.65; color: var(--ink); white-space: pre-wrap; }
 .quote-card figcaption { margin-top: .8rem; font-size: .82rem; color: var(--ink-2); }
+
+/* ---------- the demo doors, and the bar that follows them ------------------
+   Deliberately not in the brand palette. A demo session should not look like
+   the product; it should look like something switched on that ought to be
+   switched off. */
+.demo-doors { margin-top: 1.5rem; padding: .95rem 1.1rem; max-width: 620px;
+  border: 1px dashed var(--brass); border-radius: var(--r);
+  background: var(--brass-soft); }
+.demo-label { font-size: .68rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--brass); }
+.demo-doors p { margin: .4rem 0 0; color: var(--ink-2); max-width: 62ch; }
+
+.demobar { background: var(--brass); color: #fff; font-size: .82rem; }
+.demobar .container { display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .5rem 0; flex-wrap: wrap; }
+.demobar strong { font-weight: 600; }
+.demobar .mono { background: rgba(255,255,255,.18); padding: 0 .3rem; border-radius: 2px; }
+.demobar a { color: #fff; text-decoration: underline; text-underline-offset: 3px;
+  white-space: nowrap; }

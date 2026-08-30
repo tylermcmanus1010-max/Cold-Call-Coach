@@ -19,6 +19,33 @@
       <a class="btn btn-primary btn-xl" href="{{ url_for('public.quote') }}">Request a Quote</a>
       <a class="btn btn-outline btn-xl" href="{{ url_for('public.apply') }}">Apply for Membership</a>
     </div>
+
+    {# The demo doors. Rendered only when DEMO_MODE is on — and when it is off,
+       the routes behind them do not exist either, so this is not the only thing
+       keeping them shut. Kept visually separate from the real calls to action:
+       they are scaffolding for whoever is reviewing the build, not something a
+       visitor should mistake for a way in. #}
+    {% if cfg.DEMO_MODE %}
+    <div class="demo-doors">
+      <span class="demo-label">Demo mode is on</span>
+      <p class="tiny">
+        These sign you straight in with no password. The member door opens a real
+        account with real orders and real prices; the admin door reaches every
+        account there is. Turn <span class="mono">DEMO_MODE</span> off before this
+        is anywhere public.
+      </p>
+      <div class="row wrap" style="gap:.6rem;margin-top:.75rem">
+        <form method="post" action="{{ url_for('auth.demo', role='member') }}">
+          {{ csrf_input() }}
+          <button class="btn btn-sm" type="submit">Open the member portal →</button>
+        </form>
+        <form method="post" action="{{ url_for('auth.demo', role='admin') }}">
+          {{ csrf_input() }}
+          <button class="btn btn-sm" type="submit">Open the admin portal →</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
     <p class="hero-note">
       A quote is free and takes two minutes. Membership is how you buy — and not everyone is accepted.
     </p>

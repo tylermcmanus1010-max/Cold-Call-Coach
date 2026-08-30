@@ -26,6 +26,22 @@ def _int(name: str, default: int) -> int:
 class Config:
     # --- core ---
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
+
+    # --- demo doors -------------------------------------------------------
+    # Off unless something sets it, and it must stay off in production.
+    #
+    # The demo signs you straight into Boars Head's portal and into the admin
+    # portal without a password. Boars Head is a real account with real orders,
+    # real negotiated prices and a real ledger, and the admin portal reaches
+    # every account there is — so with this on, the front page is a way in for
+    # anyone who reads it.
+    #
+    # It exists because reviewing the build means clicking into both portals a
+    # hundred times, and typing a generated password each time is friction that
+    # buys nothing on a laptop. It buys a great deal on a public host, which is
+    # why the doors do not exist at all unless this is set: the routes 404 and
+    # the buttons are not rendered. A43 proves both.
+    DEMO_MODE = _bool("DEMO_MODE", False)
     DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "instance" / "monti.db"))
     UPLOAD_DIR = os.environ.get("UPLOAD_DIR", str(BASE_DIR / "monti" / "static" / "uploads"))
     MAX_CONTENT_LENGTH = _int("MAX_UPLOAD_MB", 25) * 1024 * 1024

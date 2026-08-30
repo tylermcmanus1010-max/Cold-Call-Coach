@@ -22,7 +22,7 @@
       "\u0000JINJA\u0000showroom\u0000JINJA\u0000"
     ],
     [
-      "monti/templates/_shell.html:38",
+      "monti/templates/_shell.html:39",
       "side-link \u0000JINJA\u0000"
     ],
     [
@@ -494,8 +494,8 @@
     ]
   },
   "counts": {
-    "emitted": 315,
-    "defined": 458,
+    "emitted": 318,
+    "defined": 461,
     "undefined": 0,
     "blind": 112
   }

@@ -207,6 +207,52 @@ def login():
     return render_template("auth/login.html", next=request.args.get("next", ""))
 
 
+@bp.route("/demo/<role>", methods=("POST",))
+def demo(role):
+    """Sign in as the demo member or the demo admin, without a password.
+
+    Only when DEMO_MODE is set. Off — which is the default and what production
+    gets — this route does not answer at all: a 404, not a 403, because the
+    existence of a passwordless door is itself information.
+
+    There is no separate demo dataset. The member door lands in Boars Head's
+    real portal and the admin door reaches every account, which is exactly what
+    makes this dangerous and exactly what makes it useful for reviewing. The
+    banner it turns on says so on every page, so nobody is halfway through a
+    session wondering whether what they are looking at is real.
+    """
+    if not current_app.config["DEMO_MODE"]:
+        abort(404)
+
+    if role == "admin":
+        user = query("SELECT * FROM users WHERE role = 'ADMIN' AND is_active = 1 "
+                     "ORDER BY id LIMIT 1", one=True)
+        landing = "admin.dashboard"
+    elif role == "member":
+        user = query(
+            "SELECT u.* FROM users u JOIN customers c ON c.id = u.customer_id "
+            "WHERE u.role = 'CLIENT' AND u.is_active = 1 AND c.is_fixture = 0 "
+            "ORDER BY u.id LIMIT 1", one=True)
+        landing = "portal.dashboard"
+    else:
+        abort(404)
+
+    if user is None:
+        flash("There is no account to demo yet. Run `flask launch` first.", "error")
+        return redirect(url_for("public.home"))
+
+    locale = session.get("locale")
+    session.clear()
+    if locale:
+        session["locale"] = locale
+    session["user_id"] = user["id"]
+    session["demo"] = True          # what the banner reads
+    session.permanent = True
+    current_app.logger.warning("Demo sign-in as %s (%s) — DEMO_MODE is on",
+                               user["email"], user["role"])
+    return redirect(url_for(landing))
+
+
 @bp.route("/logout")
 def logout():
     # Same on the way out: signing out should not also change the language of

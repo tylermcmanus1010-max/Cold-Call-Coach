@@ -542,7 +542,62 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
   --stop: var(--crit); --red: var(--crit);
   --wait: var(--warn); --amber: var(--warn);
   --ok: var(--good);
+
+  /* Orphaned at b708710, when adopting the new stylesheet replaced the old token
+     names and the templates kept asking for them. Fifty-one references across
+     the app resolved to nothing: an undefined custom property does not fall back
+     to the cascade, it computes to nothing at all — so borders vanished, sunken
+     surfaces drew flat, radii went square and two text colours stopped applying.
+     Aliases rather than a rename, because the templates are not wrong; they are
+     asking for something that used to exist. */
+  --text: var(--ink);              /* primary ink */
+  --text-2: var(--ink-2);          /* secondary ink — 5 uses */
+  --ink-3: var(--muted);
+  --line: var(--rule);             /* 11 uses */
+  --line-soft: var(--rule-soft);   /* 8 uses */
+  --sunk: var(--surface-2);        /* 13 uses */
+  --radius: var(--r);              /* 5 uses */
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --green-line: color-mix(in srgb, var(--green) 26%, transparent);
+  --violet: var(--s2);             /* the not-yet-overdue clock; --s2 is the blue-violet series colour */
 }
+
+/* ---------- the chart, the meter and the range control ------------------- */
+/* These rules existed until b708710 and went with the stylesheet swap, while
+   admin/revenue.html kept emitting the same class names. An SVG <rect> with no
+   fill declared paints black, a <line> with no stroke paints nothing, and a
+   <div class="meter"> with no height is zero pixels tall — which is exactly what
+   the Phase 1 evidence measured. Restored onto the current tokens. */
+.chart-wrap { position: relative; }
+.chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-grid line { stroke: var(--rule); stroke-width: 1; }
+.chart-axis text { font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px; fill: var(--muted); }
+.chart-bar { fill: var(--green); }
+.chart-bar:hover { fill: var(--green-deep); }
+.chart-line { fill: none; stroke: var(--green); stroke-width: 2;
+  stroke-linejoin: round; stroke-linecap: round; }
+.chart-area { fill: color-mix(in srgb, var(--green) 14%, transparent); }
+
+/* The share bar. The markup is <div class="meter"><span style="width:N%">, and
+   .meter had no rule — so the track had no height and the span, inline by
+   default, ignored its own width. It rendered as nothing at all. */
+.meter { display: block; height: 8px; background: var(--sunk);
+  border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--green);
+  border-radius: 0 2px 2px 0; }
+.meter-green > span { background: var(--good); }
+
+/* The period control rendered as plain text: no border, no padding, no visible
+   selected state. A control that does not look like a control. */
+.range-row { display: inline-flex; gap: 2px; border: 1px solid var(--rule);
+  border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.range-btn { padding: .4rem .7rem; font-size: .78rem; font-weight: 500;
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+  border-right: 1px solid var(--rule); transition: background .14s, color .14s; }
+.range-btn:last-child { border-right: 0; }
+.range-btn:hover { background: var(--surface-2); color: var(--ink); }
+.range-btn.active { background: var(--green-deep); color: #fff; font-weight: 600; }
 
 /* Typography and utility names our templates already use. */
 .eyebrow-label, .stat-label, .side-title, .field-label, .divider-label {

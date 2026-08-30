@@ -12,7 +12,7 @@
     <dt>Method</dt><dd>{{ (entry.method or '—')|lower }}</dd>
     <dt>Order</dt><dd class="mono">{{ entry.order_ref or '—' }}</dd>
     <dt>Amount</dt><dd class="mono tnum">{{ entry.gross_cents|money }}</dd>
-    {% if entry.note %}<dt>Note</dt><dd>{{ entry.note }}</dd>{% endif %}
+    {% if entry.note %}<dt>Note</dt><dd><span data-noloc>{{ entry.note }}</span></dd>{% endif %}
   </dl>
   {% if entry.status == 'PENDING' %}
     <div class="notice notice-wait" style="margin-top:1rem">

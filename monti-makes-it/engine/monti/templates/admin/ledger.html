@@ -19,7 +19,7 @@
     editing the ledger.
     <ul style="margin:.6rem 0 0;padding-left:1.1rem">
       {% for b in recon.breaks[:6] %}
-        <li class="tiny">{{ b.name }}{% if b.order_ref %} — order {{ b.order_ref }}{% endif %}
+        <li class="tiny"><span data-noloc>{{ b.name }}</span>{% if b.order_ref %} — order {{ b.order_ref }}{% endif %}
           {%- if b.receipt_no %} — receipt {{ b.receipt_no }}{% endif %}</li>
       {% endfor %}
     </ul>

@@ -25,7 +25,7 @@
     <tbody>{% for i in items %}
       <tr>
         <td class="mono tiny">{{ i.sku }}</td>
-        <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}">{{ i.name }}</a></td>
+        <td><a class="cell-link" href="{{ url_for('admin.catalog_detail', item_id=i.id) }}"><span data-noloc>{{ i.name }}</span></a></td>
         <td class="tag-row">{% for t in (i.tags or '').split(',') if t.strip() %}<span class="tag">{{ t.strip() }}</span>{% else %}<span class="tiny dim">untagged</span>{% endfor %}</td>
         <td class="right mono">{{ i.unit_price_cents|money }}</td>
         <td class="right mono">{{ '{:,}'.format(i.moq) }}</td>

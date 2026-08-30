@@ -187,7 +187,14 @@ def login():
         elif not user["is_active"]:
             error = "This account has been deactivated. Contact your account manager."
         if error is None:
+            # `session.clear()` is right — a fresh session on sign-in is what
+            # stops a fixated session id from surviving the login. But the
+            # language someone chose is not credentials, and clearing it meant a
+            # member picked Español, signed in, and landed in English.
+            locale = session.get("locale")
             session.clear()
+            if locale:
+                session["locale"] = locale
             session["user_id"] = user["id"]
             session.permanent = True
             execute("UPDATE users SET last_login_at = ? WHERE id = ?", (now_str(), user["id"]))
@@ -202,7 +209,12 @@ def login():
 
 @bp.route("/logout")
 def logout():
+    # Same on the way out: signing out should not also change the language of
+    # the page they land on.
+    locale = session.get("locale")
     session.clear()
+    if locale:
+        session["locale"] = locale
     flash("Signed out.", "ok")
     return redirect(url_for("public.home"))
 

@@ -29,7 +29,7 @@
   <div class="side-group">
     <div class="side-title">Open a client portal</div>
     {% for c in nav_clients %}
-      <a class="side-link" href="{{ url_for('admin.open_client', customer_id=c.id) }}"><span class="side-icon">→</span> {{ c.company_name }}</a>
+      <a class="side-link" href="{{ url_for('admin.open_client', customer_id=c.id) }}"><span class="side-icon">→</span> <span data-noloc>{{ c.company_name }}</span></a>
     {% endfor %}
   </div>
   <div class="side-group">

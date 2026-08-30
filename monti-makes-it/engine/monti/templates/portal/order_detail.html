@@ -60,7 +60,7 @@
     {% elif order.status == 'ON_HOLD' %}
       <div class="card" style="border-color:rgba(248,113,113,.4)">
         <h3 style="color:#FCA5A5">On hold</h3>
-        <p class="muted" style="margin-top:.5rem;font-size:.9rem">{{ order.review_notes or 'We paused this order during review. Our team is in touch.' }}</p>
+        <p class="muted" style="margin-top:.5rem;font-size:.9rem"><span data-noloc>{{ order.review_notes or 'We paused this order during review. Our team is in touch.' }}</span></p>
       </div>
     {% elif order.status == 'SHIPPED' %}
       <div class="card card-accent">
@@ -79,7 +79,7 @@
         <thead><tr><th>Item</th><th class="right">Unit</th><th class="right">Qty</th><th class="right">Total</th></tr></thead>
         <tbody>
         {% for i in items %}
-          <tr><td>{{ i.name }}{% if i.sku %}<div class="tiny mono dim">{{ i.sku }}</div>{% endif %}</td>
+          <tr><td><span data-noloc>{{ i.name }}</span>{% if i.sku %}<div class="tiny mono dim">{{ i.sku }}</div>{% endif %}</td>
             <td class="right mono">{{ i.unit_price_cents|money }}</td>
             <td class="right mono">{{ '{:,}'.format(i.quantity) }}</td>
             <td class="right mono">{{ i.line_total_cents|money }}</td></tr>
@@ -90,7 +90,7 @@
           {% if order.freight_waived and estimate %}
             <tr class="waived-row">
               <td colspan="3" class="right"><span class="muted">Freight &amp; customs</span>
-                <span class="free-tag">Client {{ g.customer.company_name }} marked as free in system</span></td>
+                <span class="free-tag">Client <span data-noloc>{{ g.customer.company_name }}</span> marked as free in system</span></td>
               <td class="right"><span class="struck mono tnum">{{ (order.freight_estimate_cents + order.customs_estimate_cents)|money }}</span>
                 <div class="mono tnum" style="color:var(--green);font-weight:600">$0.00</div></td>
             </tr>

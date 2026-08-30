@@ -16,7 +16,7 @@
     </div>
     <div class="table-wrap"><table class="data" style="border:1px solid var(--line);border-radius:var(--radius)">
       <tbody>{% for i in items %}
-        <tr><td>{{ i.name }} × {{ '{:,}'.format(i.quantity) }}</td><td class="right mono">{{ i.line_total_cents|money }}</td></tr>
+        <tr><td><span data-noloc>{{ i.name }}</span> × {{ '{:,}'.format(i.quantity) }}</td><td class="right mono">{{ i.line_total_cents|money }}</td></tr>
       {% endfor %}
       {% if order.shipping_cents %}<tr><td>Freight &amp; duties</td><td class="right mono">{{ order.shipping_cents|money }}</td></tr>{% endif %}
       {% if order.fee_cents %}<tr><td>{{ cfg.FEE_LABEL }} ({{ '%g'|format(cfg.PURCHASE_FEE_PERCENT) }}%)</td>

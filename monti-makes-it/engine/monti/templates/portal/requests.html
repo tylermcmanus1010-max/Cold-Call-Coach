@@ -184,7 +184,7 @@
       <tr>
         <td class="mono"><a class="cell-link"
           href="{{ url_for('portal.quote_detail', quote_id=q.id) }}">{{ q.ref }}</a></td>
-        <td>{{ q.title }}
+        <td><span data-noloc>{{ q.title }}</span>
           {% if q.priority == 'RUSH' %}<span class="badge badge-red" style="margin-left:.4rem">Rush</span>{% endif %}</td>
         <td class="mono tiny">
           {# A request from before the merge has no product behind it, and says

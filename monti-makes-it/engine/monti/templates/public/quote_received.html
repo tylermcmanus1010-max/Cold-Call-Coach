@@ -6,7 +6,7 @@
     <span class="eyebrow-label">Received</span>
     <h1 style="margin-top:1rem">It's with the floor.</h1>
     <p class="section-lede">
-      <strong style="color:var(--ink)">{{ quote.title }}</strong> is in the queue as
+      <strong style="color:var(--ink)"><span data-noloc>{{ quote.title }}</span></strong> is in the queue as
       <span class="mono" style="color:var(--green)">{{ quote.ref }}</span>. You'll have a landed
       price in your inbox by <strong style="color:var(--ink)">{{ quote.due_at|dt }} UTC</strong> —
       inside {{ sla }} hours.{% if file_count %} We got your {{ file_count }} file{{ 's' if file_count != 1 }}.{% endif %}
@@ -41,7 +41,7 @@
       <div class="stat-label">What you sent</div>
       <dl class="kv" style="margin-top:1rem">
         <dt>Reference</dt><dd class="mono">{{ quote.ref }}</dd>
-        <dt>Project</dt><dd>{{ quote.title }}</dd>
+        <dt>Project</dt><dd><span data-noloc>{{ quote.title }}</span></dd>
         {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
         {% if quote.destination_country %}<dt>Ships to</dt><dd>{{ quote.destination_country }}</dd>{% endif %}
         <dt>Price due</dt><dd>{{ quote.due_at|dt }} UTC</dd>

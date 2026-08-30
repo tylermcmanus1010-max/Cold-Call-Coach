@@ -31,7 +31,7 @@
           <thead><tr><th>Received</th><th>Type</th><th>Event id</th><th>Handled as</th></tr></thead>
           <tbody>{% for w in webhooks %}
             <tr><td class="tiny dim">{{ w.created_at|dt }}</td><td class="tiny">{{ w.event_type }}</td>
-              <td class="tiny mono dim">{{ w.event_id }}</td><td class="tiny">{{ w.note or '—' }}</td></tr>
+              <td class="tiny mono dim">{{ w.event_id }}</td><td class="tiny"><span data-noloc>{{ w.note or '—' }}</span></td></tr>
           {% endfor %}</tbody></table></div>
       {% else %}<div class="empty" style="padding:2rem 1rem">No webhooks received yet.</div>{% endif %}
     </div>

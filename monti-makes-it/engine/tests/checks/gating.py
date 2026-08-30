@@ -217,8 +217,13 @@ def prove_a08(ctx):
     src = tpl.read_text()
     name = ctx.query("SELECT company_name FROM customers LIMIT 1")
     if name:
-        tpl.write_text(src.replace("{{ item.name }}</h1>",
-                                   "{{ item.name }} — " + name[0]["company_name"] + "</h1>", 1))
+        # The anchor follows the template. `{{ item.name }}` is wrapped in a
+        # data-noloc span now (CHG-016), so the old literal no longer matched
+        # and this proof silently stopped injecting anything.
+        anchor = "</span></h1>"
+        assert anchor in src, "A08's rendered-output proof no longer matches the template"
+        tpl.write_text(src.replace(
+            anchor, " — " + name[0]["company_name"] + anchor, 1))
         try:
             findings = run_a08(ctx)
             caught.append(("rendered: owning customer printed on the public page",

@@ -16,7 +16,7 @@
         <dt>Quotes</dt>
         <dd><a class="reqlink mono" href="mailto:{{ cfg.QUOTES_EMAIL }}?subject=[{{ g.customer.ref }}]%20">{{ cfg.QUOTES_EMAIL }}</a></dd>
         <dt>Your account</dt>
-        <dd><span class="mono">{{ g.customer.ref }}</span> · {{ g.customer.company_name }}</dd>
+        <dd><span class="mono">{{ g.customer.ref }}</span> · <span data-noloc>{{ g.customer.company_name }}</span></dd>
         {% if g.customer.owner %}<dt>Account manager</dt><dd>{{ g.customer.owner }}</dd>{% endif %}
       </dl>
       <p class="tiny dim" style="margin-top:1rem;max-width:56ch">

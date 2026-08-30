@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-from flask import Flask, g, render_template
+from flask import Flask, g, redirect, render_template, request, session, url_for
 
 from .config import Config
 
@@ -26,9 +26,13 @@ def create_app(config_object=None):
     Path(app.config["UPLOAD_DIR"]).mkdir(parents=True, exist_ok=True)
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
 
-    from . import db, auth
+    from . import db, auth, i18n
     db.init_app(app)
     auth.init_app(app)
+    # CHG-016 — after_request, so it sees the finished page. The
+    # protection rules live in one place instead of in 1,113
+    # separate template decisions.
+    i18n.init_app(app)
 
     from .blueprints import public, portal, admin, webhooks
     app.register_blueprint(auth.bp)
@@ -53,6 +57,24 @@ def create_app(config_object=None):
             "countdown": utils.countdown,
             "now": utils.utcnow(),
         }
+
+    @app.route("/language/<code>", methods=("POST",))
+    def set_language(code):
+        """Switch the interface language and come straight back.
+
+        POST, not GET: a language switch changes stored state, and a GET that
+        does that gets fired by every crawler and link prefetcher that touches
+        the page.
+
+        The return address is checked rather than trusted. `next` arrives from a
+        form field, and following it anywhere would make this an open redirect —
+        a link that looks like ours and lands on someone else's login page.
+        """
+        i18n.set_locale(code)
+        target = request.form.get("next") or "/"
+        if not target.startswith("/") or target.startswith("//"):
+            target = "/"
+        return redirect(target)
 
     @app.errorhandler(400)
     def bad_request(e):

@@ -77,8 +77,8 @@
       <div class="divider-label" style="margin-top:.4rem">Images</div>
       {{ viewer(images, entry.name, 'prod-' ~ entry.id) }}
       <dl class="kv" style="margin-top:.8rem">
-        {% if entry.materials %}<dt>Materials</dt><dd>{{ entry.materials }}</dd>{% endif %}
-        {% if entry.specs %}<dt>Specification</dt><dd>{{ entry.specs }}</dd>{% endif %}
+        {% if entry.materials %}<dt>Materials</dt><dd><span data-noloc>{{ entry.materials }}</span></dd>{% endif %}
+        {% if entry.specs %}<dt>Specification</dt><dd><span data-noloc>{{ entry.specs }}</span></dd>{% endif %}
         {% if entry.category %}<dt>Category</dt><dd>{{ entry.category }}</dd>{% endif %}
       </dl>
       {% for g in genome or [] %}
@@ -87,7 +87,7 @@
           {% if g.is_unknown %}
             <p class="tiny dim">Not established yet. We would rather say so than fill it in.</p>
           {% else %}
-            <p style="margin-top:.2rem;max-width:62ch">{{ g.body }}</p>
+            <p style="margin-top:.2rem;max-width:62ch"><span data-noloc>{{ g.body }}</span></p>
           {% endif %}
         </div>
       {% endfor %}
@@ -97,7 +97,7 @@
 
 {% block title %}My products · {{ company }}{% endblock %}
 {% block eyebrow %}My products{% endblock %}
-{% block heading %}{{ row.name if row else 'My products' }}{% endblock %}
+{% block heading %}{% if row %}<span data-noloc>{{ row.name }}</span>{% else %}My products{% endif %}{% endblock %}
 {% block content %}
 
 <div class="room-shell">
@@ -122,7 +122,7 @@
       <li><a class="itembtn {{ 'on' if item and r.item and r.item.id == item.id }}"
              href="{{ url_for('portal.products', ref=r.ref) }}">
         <span class="iref mono">{{ r.ref }}</span>
-        <span class="iname {{ 'unnamed' if r.unnamed }}">{{ r.name }}</span>
+        <span class="iname {{ 'unnamed' if r.unnamed }}"><span data-noloc>{{ r.name }}</span></span>
         <em>{% if r.state == 'orderable' %}
               {%- if r.price_cents is not none -%}
                 {{ 'from ' if r.price_basis == 'matrix' }}{{ r.price_cents|money }}
@@ -175,9 +175,9 @@
        what the pane shows. #}
     <div class="card card-lg">
       <span class="eyebrow-label">Ready to order · <span class="mono">{{ row.sku }}</span></span>
-      <h2 style="margin:.5rem 0 0;font-size:1.3rem">{{ row.name }}</h2>
+      <h2 style="margin:.5rem 0 0;font-size:1.3rem"><span data-noloc>{{ row.name }}</span></h2>
       {% if entry and entry.description %}
-        <p class="muted" style="margin-top:.7rem;max-width:62ch">{{ entry.description }}</p>
+        <p class="muted" style="margin-top:.7rem;max-width:62ch"><span data-noloc>{{ entry.description }}</span></p>
       {% endif %}
       <p class="tiny dim" style="margin-top:.8rem;max-width:62ch">
         This one did not come through Describe it badly — it is on your account
@@ -202,7 +202,7 @@
        "what we still need" is a real outstanding question, not filler. #}
     <div class="card card-lg">
       <span class="eyebrow-label">Awaiting approval · <span class="mono">{{ item.ref }}</span></span>
-      <h2 style="margin-top:.6rem">{{ item.client_name or item.auto_name }}</h2>
+      <h2 style="margin-top:.6rem"><span data-noloc>{{ item.client_name or item.auto_name }}</span></h2>
       <p class="muted" style="margin-top:.7rem;max-width:62ch">
         No prices yet. A product opens its Decision Room — the three routes, the quantity
         slider and the levers — the moment a manufacturing engineer signs the specification
@@ -251,7 +251,7 @@
       {% if item.outstanding %}
         <div class="notice notice-wait" style="margin-top:1.25rem">
           <strong>What we still need</strong>
-          {{ item.outstanding }}
+          <span data-noloc>{{ item.outstanding }}</span>
         </div>
       {% endif %}
 
@@ -325,7 +325,7 @@
           <span>{{ '{:,}'.format(view.bounds.min) }}</span>
           <span>{{ '{:,}'.format(view.bounds.max) }}</span>
         </div>
-        <p class="tiny dim">Priced from {{ view.bounds.source }}.</p>
+        <p class="tiny dim">Priced from <span data-noloc>{{ view.bounds.source }}</span>.</p>
       </div>
 
       <label class="field"><span class="field-label">Target unit price</span>
@@ -384,7 +384,7 @@
         <article class="card strat {{ 'hits' if card.hits_target }}" data-slot="{{ card.slot }}">
           <header>
             <span class="tag">{{ card.label }}</span>
-            <h3>{{ card.title }}</h3>
+            <h3><span data-noloc>{{ card.title }}</span></h3>
           </header>
           <div class="strat-price">
             <span class="stat-label">Landed per unit</span>
@@ -451,7 +451,7 @@
                        {{ 'checked' if lever.kind in view.chosen_kinds }}
                        onchange="this.form.submit()">
                 <span><strong>{{ lever.label_rendered }}</strong>
-                  {% if lever.note %}<em>{{ lever.note }}</em>{% endif %}</span>
+                  {% if lever.note %}<em><span data-noloc>{{ lever.note }}</span></em>{% endif %}</span>
                 <span class="delta mono">−${{ '%.4f'|format(lever.saving / 100) }}</span>
               </label>
             {% endfor %}

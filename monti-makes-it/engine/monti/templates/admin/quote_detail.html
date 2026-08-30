@@ -1,7 +1,7 @@
 {% extends "admin/_base.html" %}
 {% block title %}{{ quote.ref }} · {{ company }}{% endblock %}
-{% block eyebrow %}<div class="eyebrow">{{ quote.ref }} · <a href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="color:var(--amber)">{{ customer.company_name }}</a></div>{% endblock %}
-{% block heading %}{{ quote.title }}{% endblock %}
+{% block eyebrow %}<div class="eyebrow">{{ quote.ref }} · <a href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="color:var(--amber)"><span data-noloc>{{ customer.company_name }}</span></a></div>{% endblock %}
+{% block heading %}<span data-noloc>{{ quote.title }}</span>{% endblock %}
 {% block head_actions %}
   {% set label, tone = status_label(quote.status, 'quote') %}
   <span class="badge badge-{{ tone }}">{{ label }}</span>
@@ -82,12 +82,12 @@
     <div class="card card-flush">
       <div class="card-head"><h3>What they submitted</h3></div>
       <div class="card-body">
-        <p style="white-space:pre-wrap;font-size:.92rem">{{ quote.description }}</p>
+        <p style="white-space:pre-wrap;font-size:.92rem"><span data-noloc>{{ quote.description }}</span></p>
         <dl class="kv" style="margin-top:1.25rem">
           {% if quote.category %}<dt>Category</dt><dd>{{ quote.category }}</dd>{% endif %}
           {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
           {% if quote.target_unit_price_cents %}<dt>Target unit price</dt><dd style="color:var(--amber)">{{ quote.target_unit_price_cents|money }}</dd>{% endif %}
-          {% if quote.materials %}<dt>Materials</dt><dd>{{ quote.materials }}</dd>{% endif %}
+          {% if quote.materials %}<dt>Materials</dt><dd><span data-noloc>{{ quote.materials }}</span></dd>{% endif %}
           {% if quote.dimensions %}<dt>Dimensions</dt><dd>{{ quote.dimensions }}</dd>{% endif %}
           {% if quote.color_finish %}<dt>Color / finish</dt><dd>{{ quote.color_finish }}</dd>{% endif %}
           {% if quote.packaging %}<dt>Packaging</dt><dd>{{ quote.packaging }}</dd>{% endif %}
@@ -115,14 +115,14 @@
   <div class="stack sticky-side">
     <div class="card">
       <div class="row" style="margin-bottom:.9rem">
-        <div class="avatar avatar-amber">{{ customer.company_name|initials }}</div>
+        <div class="avatar avatar-amber"><span data-noloc>{{ customer.company_name|initials }}</span></div>
         <div style="min-width:0">
-          <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:600">{{ customer.company_name }}</a>
+          <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:600"><span data-noloc>{{ customer.company_name }}</span></a>
           <div class="tiny dim">{{ customer.ref }}</div>
         </div>
       </div>
       <dl class="kv" style="grid-template-columns:88px minmax(0,1fr)">
-        <dt>Contact</dt><dd>{{ customer.contact_name or '—' }}</dd>
+        <dt>Contact</dt><dd><span data-noloc>{{ customer.contact_name or '—' }}</span></dd>
         <dt>Email</dt><dd><a href="mailto:{{ customer.email }}" style="color:var(--amber)">{{ customer.email }}</a></dd>
         {% if customer.phone %}<dt>Phone</dt><dd>{{ customer.phone }}</dd>{% endif %}
         <dt>Stage</dt><dd>{% set l, t = status_label(customer.stage, 'customer') %}<span class="badge badge-{{ t }}">{{ l }}</span></dd>
@@ -155,7 +155,7 @@
     {% if estimate %}
     <div class="card">
       <div class="stat-label">Turn into a catalog item</div>
-      <p class="tiny muted" style="margin-top:.4rem">Creates a private catalog item at the quoted price and assigns it to {{ customer.company_name }} so they can reorder.</p>
+      <p class="tiny muted" style="margin-top:.4rem">Creates a private catalog item at the quoted price and assigns it to <span data-noloc>{{ customer.company_name }}</span> so they can reorder.</p>
       <form method="post" action="{{ url_for('admin.quote_to_catalog', quote_id=quote.id) }}" style="margin-top:.75rem">{{ csrf_input() }}
         <input type="text" name="sku" placeholder="SKU (optional)">
         <button class="btn btn-sm btn-block" style="margin-top:.5rem" type="submit">Add to catalog</button>

@@ -21,7 +21,7 @@
         <div class="row wrap" style="gap:.75rem">
           <span class="mono tiny">{{ q.ref }}</span>
           <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}"
-             style="font-weight:500">{{ q.company_name }}</a>
+             style="font-weight:500"><span data-noloc>{{ q.company_name }}</span></a>
           {% set mlabel, mtone = membership_label.get(q.membership_status, (q.membership_status, 'slate')) %}
           <span class="badge badge-{{ mtone }}">{{ mlabel }}</span>
           {% if q.customer_quotes > 1 %}<span class="chip tiny">{{ q.customer_quotes }} requests to date</span>{% endif %}
@@ -35,13 +35,13 @@
       <div class="card-body">
         <div class="grid grid-sidebar" style="gap:1.5rem">
           <div>
-            <h3>{{ q.title }}</h3>
-            <p class="muted" style="margin-top:.6rem;font-size:.92rem;white-space:pre-wrap">{{ q.description }}</p>
+            <h3><span data-noloc>{{ q.title }}</span></h3>
+            <p class="muted" style="margin-top:.6rem;font-size:.92rem;white-space:pre-wrap"><span data-noloc>{{ q.description }}</span></p>
             <dl class="kv" style="margin-top:1.25rem;grid-template-columns:130px minmax(0,1fr);font-size:.85rem">
               {% if q.quantity %}<dt>Quantity</dt><dd class="tnum">{{ '{:,}'.format(q.quantity) }} {{ q.quantity_unit }}</dd>{% endif %}
               {% if q.target_unit_price_cents %}<dt>Target unit price</dt>
                 <dd class="mono" style="color:var(--green)">{{ q.target_unit_price_cents|money }}</dd>{% endif %}
-              {% if q.materials %}<dt>Materials</dt><dd>{{ q.materials }}</dd>{% endif %}
+              {% if q.materials %}<dt>Materials</dt><dd><span data-noloc>{{ q.materials }}</span></dd>{% endif %}
               {% if q.destination_country %}<dt>Destination</dt>
                 <dd>{{ q.destination_city }}{{ ', ' if q.destination_city }}{{ q.destination_country }} · {{ q.incoterm }}</dd>{% endif %}
               {% if q.needed_by %}<dt>Needed by</dt><dd>{{ q.needed_by|date }}</dd>{% endif %}
@@ -85,7 +85,7 @@
         {% set label, tone = status_label(q.status, 'quote') %}
         <tr>
           <td><a class="cell-link mono" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.ref }}</a></td>
-          <td>{{ q.company_name }}</td>
+          <td><span data-noloc>{{ q.company_name }}</span></td>
           <td class="muted">{{ q.title[:44] }}</td>
           <td><span class="badge badge-{{ tone }}">{{ label }}</span>
             {% if q.decline_reason %}<div class="tiny dim">{{ q.decline_reason[:60] }}</div>{% endif %}</td>

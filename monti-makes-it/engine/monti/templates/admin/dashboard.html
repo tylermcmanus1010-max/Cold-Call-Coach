@@ -46,7 +46,7 @@
             <tr>
               <td class="nowrap" style="font-weight:640;color:{{ 'var(--red)' if cd.overdue else ('var(--amber)' if cd.urgent else 'var(--text-2)') }}">{{ cd.short }}{{ ' over' if cd.overdue }}</td>
               <td class="mono tiny">{{ q.ref }}</td>
-              <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}">{{ q.company_name }}</a></td>
+              <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}"><span data-noloc>{{ q.company_name }}</span></a></td>
               <td><a class="cell-link" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.title[:44] }}</a>
                 {% if q.priority == 'RUSH' %}<span class="badge badge-red" style="margin-left:.35rem">Rush</span>{% endif %}</td>
               <td class="muted tiny">{{ '{:,}'.format(q.quantity) if q.quantity else '—' }}</td>
@@ -68,8 +68,8 @@
             {% set label, tone = application_label.get(a.status, (a.status, 'slate')) %}
             <tr>
               <td class="mono tiny">{{ a.ref }}</td>
-              <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}">{{ a.company_name }}</a></td>
-              <td class="tiny muted">{{ (a.what_they_sell or '')[:44] }}{{ '…' if (a.what_they_sell or '')|length > 44 }}</td>
+              <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}"><span data-noloc>{{ a.company_name }}</span></a></td>
+              <td class="tiny muted"><span data-noloc>{{ (a.what_they_sell or '')[:44] }}</span><span data-noloc>{{ '…' if (a.what_they_sell or '')|length > 44 }}</span></td>
               <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
               <td class="tiny dim">{{ a.created_at|relative }}</td>
               <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.application_detail', app_id=a.id) }}">Review</a></td>
@@ -91,7 +91,7 @@
             <tr>
               <td class="nowrap" style="font-weight:640;color:{{ 'var(--text-2)' if cd.overdue else 'var(--violet)' }}">{{ cd.short }}{{ ' elapsed' if cd.overdue }}</td>
               <td class="mono tiny">{{ o.ref }}</td>
-              <td>{{ o.company_name }}</td>
+              <td><span data-noloc>{{ o.company_name }}</span></td>
               <td class="right mono">{{ o.total_cents|money }}</td>
               <td class="tiny muted">{{ o.payment_method }} · {{ o.funds_confirmed_at|relative }}</td>
               <td class="right"><a class="btn btn-sm" href="{{ url_for('admin.order_detail', order_id=o.id) }}">Review</a></td>
@@ -111,7 +111,7 @@
             {% set label, tone = status_label(o.status, 'order') %}
             <tr>
               <td><a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ o.ref }}</a></td>
-              <td>{{ o.company_name }}</td>
+              <td><span data-noloc>{{ o.company_name }}</span></td>
               <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
               <td class="tiny muted">{{ o.payment_method or '—' }}</td>
               <td class="right mono">{{ o.total_cents|money }}</td>
@@ -134,8 +134,8 @@
               <span class="badge badge-plain badge-slate">{{ e.kind|title }}</span>
               <span class="tiny dim">{{ e.starts_at|dt }}</span>
             </div>
-            <div style="font-size:.86rem;font-weight:540;margin-top:.25rem">{{ e.title }}</div>
-            {% if e.company_name %}<div class="tiny dim">{{ e.company_name }}</div>{% endif %}
+            <div style="font-size:.86rem;font-weight:540;margin-top:.25rem"><span data-noloc>{{ e.title }}</span></div>
+            {% if e.company_name %}<div class="tiny dim"><span data-noloc>{{ e.company_name }}</span></div>{% endif %}
           </div>
         {% endfor %}
         </div>

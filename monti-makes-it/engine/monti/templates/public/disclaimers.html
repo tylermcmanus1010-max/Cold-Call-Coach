@@ -21,7 +21,7 @@
         <a class="tab {{ 'active' if not chosen }}" href="{{ url_for('public.disclaimers_page') }}">All</a>
         {% for d in disclaimers %}
           <a class="tab {{ 'active' if chosen and chosen.slug == d.slug }}"
-             href="{{ url_for('public.disclaimers_page', slug=d.slug) }}">{{ d.title }}</a>
+             href="{{ url_for('public.disclaimers_page', slug=d.slug) }}"><span data-noloc>{{ d.title }}</span></a>
         {% endfor %}
       </div>
     {% endif %}
@@ -31,7 +31,7 @@
       {% if d %}
         <article class="card card-lg" style="margin-top:1.25rem">
           <div class="row-between wrap" style="gap:1rem;align-items:flex-start">
-            <h2 style="margin:0;font-size:1.15rem">{{ d.title }}</h2>
+            <h2 style="margin:0;font-size:1.15rem"><span data-noloc>{{ d.title }}</span></h2>
             {# The version is shown, not hidden. Someone who accepted a disclaimer
                needs to be able to tell whether this is the text they agreed to. #}
             <span class="tiny dim mono" title="Version identity">

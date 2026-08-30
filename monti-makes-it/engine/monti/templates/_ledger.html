@@ -137,7 +137,7 @@
           <tr>
             <td class="mono tiny">{{ row.receipt_no }}</td>
             <td class="tiny">{{ row.occurred_at|dt }}</td>
-            {% if not client %}<td>{{ row.company_name }}</td>{% endif %}
+            {% if not client %}<td><span data-noloc>{{ row.company_name }}</span></td>{% endif %}
             <td class="mono tiny">{{ row.order_ref or '—' }}</td>
             <td>
               <span class="badge badge-{{ 'green' if row.status == 'SETTLED'
@@ -147,7 +147,7 @@
               {% if row.status == 'PENDING' %}
                 <div class="tiny dim">settling — not counted as revenue</div>
               {% elif row.status == 'FAILED' %}
-                <div class="tiny dim">{{ row.note or 'failed' }}</div>
+                <div class="tiny dim"><span data-noloc>{{ row.note or 'failed' }}</span></div>
               {% endif %}
             </td>
             <td class="tiny">{{ (row.method or '—')|lower }}</td>

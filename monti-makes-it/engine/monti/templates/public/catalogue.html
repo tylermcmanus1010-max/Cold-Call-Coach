@@ -37,7 +37,7 @@
             </div>
             <div class="cat-card-body">
               <div class="tiny mono dim">{{ item.category }}</div>
-              <h3 style="margin:0;font-size:1.05rem">{{ item.name }}</h3>
+              <h3 style="margin:0;font-size:1.05rem"><span data-noloc>{{ item.name }}</span></h3>
               {% set r = range_text(item) %}
               {% if r %}
                 <div class="cat-range">{{ r }} <span class="tiny dim">per unit</span></div>

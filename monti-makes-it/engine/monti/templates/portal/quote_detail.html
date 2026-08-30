@@ -1,7 +1,7 @@
 {% extends "portal/_base.html" %}
 {% block title %}{{ quote.ref }} · {{ company }}{% endblock %}
 {% block eyebrow %}<div class="eyebrow">{{ quote.ref }}</div>{% endblock %}
-{% block heading %}{{ quote.title }}{% endblock %}
+{% block heading %}<span data-noloc>{{ quote.title }}</span>{% endblock %}
 {% block head_actions %}
   {% set label, tone = status_label(quote.status, 'quote') %}
   <span class="badge badge-{{ tone }}">{{ label }}</span>
@@ -56,7 +56,7 @@
 
           {% if estimate.notes %}
             <div class="divider-label">Notes from the floor</div>
-            <p class="muted" style="font-size:.9rem;white-space:pre-wrap">{{ estimate.notes }}</p>
+            <p class="muted" style="font-size:.9rem;white-space:pre-wrap"><span data-noloc>{{ estimate.notes }}</span></p>
           {% endif %}
 
           {% if quote.status == 'ESTIMATE_SENT' and not is_member %}
@@ -105,12 +105,12 @@
     <div class="card card-flush">
       <div class="card-head"><h3>What you submitted</h3></div>
       <div class="card-body">
-        <p style="white-space:pre-wrap;font-size:.92rem">{{ quote.description }}</p>
+        <p style="white-space:pre-wrap;font-size:.92rem"><span data-noloc>{{ quote.description }}</span></p>
         <dl class="kv" style="margin-top:1.35rem">
           {% if quote.category %}<dt>Category</dt><dd>{{ quote.category }}</dd>{% endif %}
           {% if quote.quantity %}<dt>Quantity</dt><dd>{{ '{:,}'.format(quote.quantity) }} {{ quote.quantity_unit }}</dd>{% endif %}
           {% if quote.target_unit_price_cents %}<dt>Target unit price</dt><dd>{{ quote.target_unit_price_cents|money }}</dd>{% endif %}
-          {% if quote.materials %}<dt>Materials</dt><dd>{{ quote.materials }}</dd>{% endif %}
+          {% if quote.materials %}<dt>Materials</dt><dd><span data-noloc>{{ quote.materials }}</span></dd>{% endif %}
           {% if quote.dimensions %}<dt>Dimensions</dt><dd>{{ quote.dimensions }}</dd>{% endif %}
           {% if quote.color_finish %}<dt>Color / finish</dt><dd>{{ quote.color_finish }}</dd>{% endif %}
           {% if quote.packaging %}<dt>Packaging</dt><dd>{{ quote.packaging }}</dd>{% endif %}

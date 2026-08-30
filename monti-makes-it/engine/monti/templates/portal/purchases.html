@@ -54,7 +54,7 @@
           <tbody>
     {% endif %}
         <tr>
-          <td><div style="font-weight:500">{{ r.name }}</div>
+          <td><div style="font-weight:500"><span data-noloc>{{ r.name }}</span></div>
             {% if r.sku %}<div class="tiny mono dim">{{ r.sku }}</div>{% endif %}</td>
           <td class="right mono tnum">{{ r.unit_price_cents|money }}</td>
           <td class="right mono tnum">{{ '{:,}'.format(r.quantity) }}</td>

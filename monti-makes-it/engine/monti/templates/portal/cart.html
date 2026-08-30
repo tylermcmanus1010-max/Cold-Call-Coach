@@ -11,7 +11,7 @@
       <tbody>
       {% for l in lines %}
         <tr>
-          <td><div style="font-weight:560">{{ l.name }}</div><div class="tiny mono dim">{{ l.sku }} · {{ l.lead_time_days }}d lead</div></td>
+          <td><div style="font-weight:560"><span data-noloc>{{ l.name }}</span></div><div class="tiny mono dim">{{ l.sku }} · {{ l.lead_time_days }}d lead</div></td>
           <td class="right mono">{{ l.unit_price_cents|money }}</td>
           <td class="right mono">{{ '{:,}'.format(l.quantity) }}</td>
           <td class="right mono" style="font-weight:600">{{ l.line_total_cents|money }}</td>

@@ -104,7 +104,7 @@
         <thead><tr><th>Client</th><th>Share</th><th class="right">Orders</th><th class="right">Revenue</th><th></th></tr></thead>
         <tbody>{% for r in by_customer %}
           <tr>
-            <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=r.id) }}">{{ r.company_name }}</a>
+            <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=r.id) }}"><span data-noloc>{{ r.company_name }}</span></a>
               <div class="tiny mono dim">{{ r.ref }}</div></td>
             <td style="min-width:120px">
               <div class="meter"><span style="width:{{ (r.revenue / top * 100)|round|int }}%"></span></div>
@@ -126,7 +126,7 @@
         {% for c in clients %}
           <a href="{{ url_for('admin.open_client', customer_id=c.id) }}"
              style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem 1.4rem;border-bottom:1px solid var(--line-soft)">
-            <span style="font-size:.88rem">{{ c.company_name }}</span>
+            <span style="font-size:.88rem"><span data-noloc>{{ c.company_name }}</span></span>
             <span class="tiny" style="color:var(--green)">Open →</span>
           </a>
         {% else %}

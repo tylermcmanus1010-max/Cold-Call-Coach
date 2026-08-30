@@ -13,7 +13,7 @@
     reappear in another is not a member's job.
   #}
   <div class="side-group">
-    <div class="side-title">{{ g.customer.company_name if g.customer }}</div>
+    <div class="side-title"><span data-noloc>{{ g.customer.company_name if g.customer }}</span></div>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.dashboard' }}" href="{{ url_for('portal.dashboard') }}"><span class="side-icon">◈</span> Overview</a>
     <a class="side-link {{ 'active' if 'product' in (request.endpoint or '') or 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.products') }}"><span class="side-icon">◆</span> My products</a>
     <a class="side-link {{ 'active' if 'request' in (request.endpoint or '') or 'quote' in (request.endpoint or '') or 'intake' in (request.endpoint or '') }}" href="{{ url_for('portal.requests_page') }}"><span class="side-icon">+</span> Describe it badly</a>

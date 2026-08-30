@@ -7,7 +7,7 @@
 
 <div class="card card-lg" style="margin-top:1.25rem;max-width:640px">
   <dl class="kv">
-    <dt>Member</dt><dd>{{ entry.company_name }} <span class="mono dim">{{ entry.customer_ref }}</span></dd>
+    <dt>Member</dt><dd><span data-noloc>{{ entry.company_name }}</span> <span class="mono dim">{{ entry.customer_ref }}</span></dd>
     <dt>When</dt><dd>{{ entry.occurred_at|dt }} <span class="tiny dim">({{ entry.period_tz }})</span></dd>
     <dt>Event</dt><dd>{{ entry.kind|replace('_', ' ')|lower }} · {{ entry.status|lower }}</dd>
     <dt>Method</dt><dd>{{ (entry.method or '—')|lower }}</dd>
@@ -16,7 +16,7 @@
     <dt>Fee</dt><dd class="mono tnum">{{ entry.fee_cents|money }}</dd>
     <dt>Net</dt><dd class="mono tnum">{{ entry.net_cents|money }}</dd>
     {% if entry.confirmed_by %}<dt>Confirmed by</dt><dd>{{ entry.confirmed_by }}</dd>{% endif %}
-    {% if entry.note %}<dt>Note</dt><dd>{{ entry.note }}</dd>{% endif %}
+    {% if entry.note %}<dt>Note</dt><dd><span data-noloc>{{ entry.note }}</span></dd>{% endif %}
   </dl>
 </div>
 

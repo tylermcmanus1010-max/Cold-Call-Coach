@@ -1,0 +1,21 @@
+{# The language switcher.
+
+   `data-noloc` on the whole block: the option labels are the languages' own
+   names, and "English" translated into Spanish is still "English". A switcher
+   that renames its own options is a switcher nobody can find their way back
+   through.
+
+   POST rather than a link, because it changes stored state — and `next` is
+   validated server-side, so this cannot be turned into an open redirect by
+   handing someone a crafted URL. #}
+<form class="langswitch" method="post" action="{{ url_for('set_language', code='__CODE__') }}"
+      data-noloc translate="no">
+  {{ csrf_input() }}
+  <input type="hidden" name="next" value="{{ request.full_path if request.query_string else request.path }}">
+  <span class="langswitch-label">{{ 'Idioma' if locale == 'es' else 'Language' }}</span>
+  {% for code, label in locales %}
+    <button type="submit" class="langbtn {{ 'on' if code == locale }}"
+            formaction="{{ url_for('set_language', code=code) }}"
+            {{ 'aria-current=true' if code == locale }}>{{ label }}</button>
+  {% endfor %}
+</form>

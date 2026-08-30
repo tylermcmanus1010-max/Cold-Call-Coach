@@ -1,7 +1,7 @@
 {% extends "admin/_base.html" %}
 {% block title %}{{ application.ref }} · {{ company }}{% endblock %}
 {% block eyebrow %}<div class="eyebrow">Application {{ application.ref }}</div>{% endblock %}
-{% block heading %}{{ application.company_name }}{% endblock %}
+{% block heading %}<span data-noloc>{{ application.company_name }}</span>{% endblock %}
 {% block head_actions %}
   {% set label, tone = application_label.get(application.status, (application.status, 'slate')) %}
   <span class="badge badge-{{ tone }}">{{ label }}</span>
@@ -20,7 +20,7 @@
         <p class="muted" style="margin-top:.5rem;font-size:.9rem">
           Every applicant meets us before a decision. Booking it emails them the time and link, and puts
           it on your calendar.
-          {% if application.availability %}<br><strong>They said they're free:</strong> {{ application.availability }}{% endif %}
+          {% if application.availability %}<br><strong>They said they're free:</strong> <span data-noloc>{{ application.availability }}</span>{% endif %}
         </p>
         <form method="post" class="row wrap" style="gap:.6rem;align-items:flex-end;margin-top:1rem">
           {{ csrf_input() }}<input type="hidden" name="action" value="interview">
@@ -47,7 +47,7 @@
               <p class="tiny dim" style="margin-top:.45rem">
                 Booked by them at submission · {{ booking.guest_tz.replace('_', ' ') }} ·
                 {{ 'video call' if booking.channel == 'video' else 'phone call to ' ~ booking.phone }}
-                {%- if booking.note %} · “{{ booking.note }}”{% endif %}
+                {%- if booking.note %} · “<span data-noloc>{{ booking.note }}</span>”{% endif %}
               </p>
             {% endif %}
           </div>
@@ -97,15 +97,15 @@
       <div class="card-head"><h3>The application</h3><span class="tiny dim">Submitted {{ application.created_at|dt }}</span></div>
       <div class="card-body">
         <div class="stat-label">What they sell</div>
-        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.what_they_sell }}</p>
+        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap"><span data-noloc>{{ application.what_they_sell }}</span></p>
         <div class="stat-label">Why they want to work with us</div>
-        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.why }}</p>
+        <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap"><span data-noloc>{{ application.why }}</span></p>
         {% if application.goals %}
           <div class="stat-label">Where they want to be in three years</div>
-          <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap">{{ application.goals }}</p>
+          <p style="margin:.4rem 0 1.4rem;white-space:pre-wrap"><span data-noloc>{{ application.goals }}</span></p>
         {% endif %}
         <dl class="kv">
-          <dt>Contact</dt><dd>{{ application.contact_name }} · <a href="mailto:{{ application.email }}" style="color:var(--green)">{{ application.email }}</a></dd>
+          <dt>Contact</dt><dd><span data-noloc>{{ application.contact_name }}</span> · <a href="mailto:{{ application.email }}" style="color:var(--green)">{{ application.email }}</a></dd>
           {% if application.phone %}<dt>Phone</dt><dd>{{ application.phone }}</dd>{% endif %}
           {% if application.website %}<dt>Website</dt><dd><a href="{{ application.website if '//' in application.website else 'https://' + application.website }}" target="_blank" rel="noopener" style="color:var(--green)">{{ application.website }}</a></dd>{% endif %}
           {% if application.country %}<dt>Country</dt><dd>{{ application.country }}</dd>{% endif %}
@@ -113,9 +113,9 @@
           {% if application.years_trading %}<dt>Trading</dt><dd>{{ application.years_trading }}</dd>{% endif %}
           {% if application.annual_volume %}<dt>Annual spend</dt><dd>{{ application.annual_volume }}</dd>{% endif %}
           {% if application.categories %}<dt>Wants made</dt><dd>{{ application.categories }}</dd>{% endif %}
-          {% if application.current_manufacturer %}<dt>Makes with</dt><dd>{{ application.current_manufacturer }}</dd>{% endif %}
-          {% if application.availability %}<dt>Available</dt><dd>{{ application.availability }}</dd>{% endif %}
-          {% if application.referral %}<dt>Heard via</dt><dd>{{ application.referral }}</dd>{% endif %}
+          {% if application.current_manufacturer %}<dt>Makes with</dt><dd><span data-noloc>{{ application.current_manufacturer }}</span></dd>{% endif %}
+          {% if application.availability %}<dt>Available</dt><dd><span data-noloc>{{ application.availability }}</span></dd>{% endif %}
+          {% if application.referral %}<dt>Heard via</dt><dd><span data-noloc>{{ application.referral }}</span></dd>{% endif %}
         </dl>
       </div>
     </div>
@@ -140,9 +140,9 @@
     {% if customer %}
       <div class="card">
         <div class="row" style="margin-bottom:.85rem">
-          <div class="avatar avatar-accent">{{ customer.company_name|initials }}</div>
+          <div class="avatar avatar-accent"><span data-noloc>{{ customer.company_name|initials }}</span></div>
           <div style="min-width:0">
-            <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:500">{{ customer.company_name }}</a>
+            <a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=customer.id) }}" style="font-weight:500"><span data-noloc>{{ customer.company_name }}</span></a>
             <div class="tiny dim">{{ customer.ref }}</div>
           </div>
         </div>

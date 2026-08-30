@@ -24,7 +24,7 @@
       {% set label, tone = status_label(o.status, 'order') %}
       <tr>
         <td><a class="cell-link mono" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ o.ref }}</a></td>
-        <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=o.customer_id) }}">{{ o.company_name }}</a></td>
+        <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=o.customer_id) }}"><span data-noloc>{{ o.company_name }}</span></a></td>
         <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
         <td class="tiny muted">{{ o.payment_method or '—' }}{% if o.payment_status != 'UNPAID' %} · {{ o.payment_status|lower }}{% endif %}</td>
         <td class="tiny">

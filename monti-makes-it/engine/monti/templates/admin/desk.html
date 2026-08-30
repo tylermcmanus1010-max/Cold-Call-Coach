@@ -20,8 +20,8 @@
                  href="{{ url_for('admin.desk', ref=row.ref) }}">
             <span class="iref mono">{{ row.ref }}</span>
             <span class="iname {{ '' if row.client_name else 'unnamed' }}">
-              {{ row.client_name or row.auto_name }}</span>
-            <em>{{ row.company_name }}</em></a></li>
+              <span data-noloc>{{ row.client_name or row.auto_name }}</span></span>
+            <em><span data-noloc>{{ row.company_name }}</span></em></a></li>
         {% else %}<li class="emptyrow">Queue clear.</li>{% endfor %}
       </ul>
     </div>
@@ -32,8 +32,8 @@
           <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
                  href="{{ url_for('admin.desk', ref=row.ref) }}">
             <span class="iref mono">{{ row.ref }}</span>
-            <span class="iname">{{ row.client_name or row.auto_name }}</span>
-            <em>{{ row.company_name }} · live</em></a></li>
+            <span class="iname"><span data-noloc>{{ row.client_name or row.auto_name }}</span></span>
+            <em><span data-noloc>{{ row.company_name }}</span> · live</em></a></li>
         {% else %}<li class="emptyrow">Nothing published yet.</li>{% endfor %}
       </ul>
     </div>
@@ -55,10 +55,10 @@
           <span class="eyebrow-label">
             {{ 'Published' if item.published_at else 'Pricing' }} ·
             <span class="mono">{{ item.ref }}</span></span>
-          <h3 style="margin-top:.4rem">{{ item.client_name or item.auto_name }}</h3>
+          <h3 style="margin-top:.4rem"><span data-noloc>{{ item.client_name or item.auto_name }}</span></h3>
           <p class="tiny dim" style="margin-top:.3rem">
-            {{ item.company_name }} · received {{ item.received_at|date }}
-            {% if item.source %} · {{ item.source }}{% endif %}</p>
+            <span data-noloc>{{ item.company_name }}</span> · received {{ item.received_at|date }}
+            {% if item.source %} · <span data-noloc>{{ item.source }}</span>{% endif %}</p>
         </div>
         <span class="badge badge-{{ 'green' if item.published_at else 'amber' }}">
           {{ 'Live in portal' if item.published_at else 'Not yet published' }}</span>
@@ -99,7 +99,7 @@
           The slider bounds. They come from here, never from a constant — a fixed
           1,000–10,000 cannot serve a $0.14 container and a tooled assembly at once.
           {% if bounds and not item.qty_min %}
-            Currently taken from {{ bounds.source }}.
+            Currently taken from <span data-noloc>{{ bounds.source }}</span>.
           {% endif %}
         </p>
         <div class="grid grid-3">

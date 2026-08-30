@@ -15,7 +15,7 @@
       <div style="display:grid;gap:1.25rem">
         <div>
           <div class="tiny mono dim">{{ item.category }} · {{ item.sku }}</div>
-          <h1 style="margin:.5rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem)">{{ item.name }}</h1>
+          <h1 style="margin:.5rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem)"><span data-noloc>{{ item.name }}</span></h1>
         </div>
 
         {% set r = range_text(item) %}
@@ -39,7 +39,7 @@
           <span><strong>Origin</strong> China</span>
         </div>
 
-        {% if item.description %}<p style="max-width:56ch">{{ item.description }}</p>{% endif %}
+        {% if item.description %}<p style="max-width:56ch"><span data-noloc>{{ item.description }}</span></p>{% endif %}
 
         {#
           §8.5 — five viewer states, and no viewer ever sees an Order control

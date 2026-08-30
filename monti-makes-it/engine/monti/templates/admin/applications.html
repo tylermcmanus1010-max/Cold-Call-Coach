@@ -19,10 +19,10 @@
       {% set label, tone = application_label.get(a.status, (a.status, 'slate')) %}
       <tr>
         <td class="mono tiny">{{ a.ref }}</td>
-        <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}">{{ a.company_name }}</a>
+        <td><a class="cell-link" href="{{ url_for('admin.application_detail', app_id=a.id) }}"><span data-noloc>{{ a.company_name }}</span></a>
           {% if a.website %}<div class="tiny dim">{{ a.website }}</div>{% endif %}</td>
-        <td class="tiny"><div>{{ a.contact_name }}</div><div class="dim">{{ a.email }}</div></td>
-        <td class="tiny muted">{{ (a.what_they_sell or '')[:60] }}{{ '…' if (a.what_they_sell or '')|length > 60 }}</td>
+        <td class="tiny"><div><span data-noloc>{{ a.contact_name }}</span></div><div class="dim">{{ a.email }}</div></td>
+        <td class="tiny muted"><span data-noloc>{{ (a.what_they_sell or '')[:60] }}</span><span data-noloc>{{ '…' if (a.what_they_sell or '')|length > 60 }}</span></td>
         <td class="tiny muted nowrap">{{ a.annual_volume or '—' }}</td>
         <td><span class="badge badge-{{ tone }}">{{ label }}</span></td>
         <td class="tiny">{{ a.interview_at|dt if a.interview_at else '—' }}</td>

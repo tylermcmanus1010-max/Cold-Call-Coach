@@ -21,7 +21,7 @@
           {% else %}<span class="dim">done</span>{% endif %}
         </td>
         <td class="mono tiny">{{ q.ref }}</td>
-        <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}">{{ q.company_name }}</a></td>
+        <td><a class="cell-link" href="{{ url_for('admin.crm_detail', customer_id=q.customer_id) }}"><span data-noloc>{{ q.company_name }}</span></a></td>
         <td><a class="cell-link" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ q.title[:48] }}</a>
           {% if q.priority == 'RUSH' %}<span class="badge badge-red" style="margin-left:.35rem">Rush</span>{% endif %}</td>
         <td class="muted tiny">{{ '{:,}'.format(q.quantity) if q.quantity else '—' }}</td>

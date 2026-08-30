@@ -2,7 +2,7 @@
 {% from "_image_viewer.html" import viewer %}
 {% block title %}{{ item.name }} · Product Genome{% endblock %}
 {% block eyebrow %}Product Genome · <span class="mono">{{ item.sku }}</span>{% endblock %}
-{% block heading %}{{ item.name }}{% endblock %}
+{% block heading %}<span data-noloc>{{ item.name }}</span>{% endblock %}
 {% block content %}
 
 <p class="muted" style="max-width:64ch">
@@ -14,14 +14,14 @@
   <nav class="gindex" aria-label="Genome sections">
     <span class="stat-label" style="display:block;padding:0 0 .6rem .1rem">The record</span>
     {% for section in sections %}
-      <a href="#g-{{ section.key }}">{{ section.title }}</a>
+      <a href="#g-{{ section.key }}"><span data-noloc>{{ section.title }}</span></a>
     {% endfor %}
   </nav>
 
   <div class="grecord">
     {% for section in sections %}
       <article class="card card-lg gsec" id="g-{{ section.key }}">
-        <h3>{{ section.title }}</h3>
+        <h3><span data-noloc>{{ section.title }}</span></h3>
         <p class="tiny dim" style="margin-top:.3rem">{{ section.blurb }}</p>
 
         {% if section.unknown %}
@@ -35,7 +35,7 @@
             {{ section.body or 'Nothing recorded yet. Tell us and it goes on the record.' }}
           </div>
         {% elif section.body %}
-          <p style="margin-top:1rem;max-width:64ch">{{ section.body }}</p>
+          <p style="margin-top:1rem;max-width:64ch"><span data-noloc>{{ section.body }}</span></p>
         {% endif %}
 
         {# --- the structured half of each section ------------------------- #}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Privacy' if privacy_only else 'Disclaimers' }} · {{ company }}{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container container-narrow">
+    <div class="eyebrow-label">{{ 'Privacy' if privacy_only else 'Disclaimers' }}</div>
+    <h1 style="margin:.5rem 0 0">
+      {{ 'What we hold, and what we never sell' if privacy_only else 'What we say, and stand behind' }}</h1>
+    <p class="section-lede" style="max-width:60ch">
+      {% if privacy_only %}
+        Checked against the system's own data map rather than against itself. A category
+        the database holds and this page omits is a defect, not a nuance.
+      {% else %}
+        Each of these is versioned. When one changes, the old wording does not disappear —
+        anyone who accepted it keeps a record resolving to the exact text they saw.
+      {% endif %}
+    </p>
+
+    {% if not privacy_only %}
+      <div class="tabs" style="margin-top:1.75rem">
+        <a class="tab {{ 'active' if not chosen }}" href="{{ url_for('public.disclaimers_page') }}">All</a>
+        {% for d in disclaimers %}
+          <a class="tab {{ 'active' if chosen and chosen.slug == d.slug }}"
+             href="{{ url_for('public.disclaimers_page', slug=d.slug) }}">{{ d.title }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% set shown = [chosen] if chosen else disclaimers %}
+    {% for d in shown %}
+      {% if d %}
+        <article class="card card-lg" style="margin-top:1.25rem">
+          <div class="row-between wrap" style="gap:1rem;align-items:flex-start">
+            <h2 style="margin:0;font-size:1.15rem">{{ d.title }}</h2>
+            {# The version is shown, not hidden. Someone who accepted a disclaimer
+               needs to be able to tell whether this is the text they agreed to. #}
+            <span class="tiny dim mono" title="Version identity">
+              v{{ d.body_hash[:12] }} · published {{ d.published_at|date }}</span>
+          </div>
+
+          {% if 'PLACEHOLDER' in d.body %}
+            <div class="notice notice-stop" style="margin-top:1rem">
+              <strong>This is placeholder text and is not legal advice.</strong>
+              It has not been reviewed by a lawyer and must be replaced before launch.
+              The machinery around it — versioning, and the record of who accepted
+              which version — is real; the words are not.
+            </div>
+          {% endif %}
+
+          <div class="prose" style="margin-top:1rem;max-width:64ch">
+            {% for para in d.body.split('\n\n') %}
+              {% if not para.startswith('PLACEHOLDER') %}<p>{{ para }}</p>{% endif %}
+            {% endfor %}
+          </div>
+        </article>
+      {% endif %}
+    {% else %}
+      <div class="empty" style="margin-top:1.5rem">No disclaimers published yet.</div>
+    {% endfor %}
+
+    {% if not privacy_only %}
+      <p class="tiny dim" style="margin-top:1.5rem;max-width:60ch">
+        Accepting these is part of checkout, and the acceptance records which version you
+        read. Members can see their own record in
+        <a class="reqlink" href="{{ url_for('portal.membership_record') }}">their membership
+        record</a>.
+      </p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

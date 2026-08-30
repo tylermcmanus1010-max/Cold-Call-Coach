@@ -802,3 +802,45 @@ CREATE TABLE IF NOT EXISTS sample_events (
   detail      TEXT,
   recorded_by TEXT NOT NULL
 );
+
+-- ---------------------------------------------------------------------------
+-- Disclaimers, and the record that someone accepted them (CHG-024)
+--
+-- Two tables because they answer two different questions, and conflating them
+-- is how "I never agreed to that" becomes unanswerable.
+--
+-- `disclaimer_versions` is the text, versioned. Editing a disclaimer writes a
+-- new row; it never updates an old one. `body_hash` is the identity — the same
+-- text always produces the same hash, and a stored acceptance points at the
+-- hash rather than at "whatever the disclaimer says today".
+--
+-- `disclaimer_acceptances` is who agreed to what and when. It is append-only in
+-- the same sense a receipt is (SK-30): nothing in the application updates or
+-- deletes a row here, and an acceptance made two years ago still resolves to
+-- the exact words that were on screen that day.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS disclaimer_versions (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug         TEXT NOT NULL,                    -- liability | privacy | restricted
+  title        TEXT NOT NULL,
+  body         TEXT NOT NULL,
+  body_hash    TEXT NOT NULL,                    -- sha256 of body; the version's identity
+  published_at TEXT NOT NULL DEFAULT (datetime('now')),
+  published_by TEXT NOT NULL,
+  superseded_at TEXT,                            -- set when a newer version publishes
+  UNIQUE(slug, body_hash)
+);
+CREATE INDEX IF NOT EXISTS idx_disc_slug ON disclaimer_versions(slug, superseded_at);
+
+CREATE TABLE IF NOT EXISTS disclaimer_acceptances (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id  INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+  user_id      INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  actor_email  TEXT NOT NULL,                    -- kept verbatim: a user row may be deleted
+  order_ref    TEXT,                             -- what they were doing when they accepted
+  slug         TEXT NOT NULL,
+  body_hash    TEXT NOT NULL,                    -- the exact text, not a pointer to today's
+  accepted_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  ip_hint      TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_disc_acc ON disclaimer_acceptances(customer_id, accepted_at);

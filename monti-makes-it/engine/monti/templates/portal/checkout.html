@@ -134,6 +134,24 @@
           nothing added later.</span>
       </div>
 
+      {# CHG-024 — acceptance, recorded against the exact version. Unticked by
+         default: a box that arrives already ticked has not been read, and the
+         record would say otherwise. The server refuses without it, so this is
+         the affordance and not the enforcement. #}
+      {% if disclaimers %}
+        <label class="accept-line" style="margin-top:1.25rem">
+          <input type="checkbox" name="accept_disclaimers" value="1" required>
+          <span>I have read and accept the
+            {% for d in disclaimers %}<a class="reqlink" target="_blank" rel="noopener"
+              href="{{ url_for('public.disclaimers_page', slug=d.slug) }}">{{ d.title|lower }}</a>{%
+              if not loop.last %}{{ ', ' if loop.revindex > 2 else ' and ' }}{% endif %}{% endfor %}.
+            <span class="tiny dim" style="display:block;margin-top:.25rem">
+              We record which version you accepted, so this stays answerable if the
+              wording changes later.</span>
+          </span>
+        </label>
+      {% endif %}
+
       <button class="btn btn-primary btn-xl btn-block" style="margin-top:1.25rem" type="submit" id="paybtn">
         Pay {{ options[0].total|money if options }}</button>
       <p class="tiny dim center" style="margin-top:.9rem">

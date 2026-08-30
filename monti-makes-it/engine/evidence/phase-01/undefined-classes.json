@@ -1,0 +1,476 @@
+{
+  "undefined": {},
+  "blind_spots": [
+    [
+      "monti/templates/_flashes.html:5",
+      "flash flash-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/_ledger.html:24",
+      "ledger-period-btn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/_ledger.html:141",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/_shell.html:15",
+      "\u0000JINJA\u0000showroom\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:7",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:8",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:9",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:10",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:11",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:13",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:15",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:20",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:25",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:26",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:36",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:40",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/_base.html:41",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/application_detail.html:7",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/application_detail.html:123",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/application_detail.html:141",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/applications.html:6",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/applications.html:8",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/applications.html:27",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/calendar.html:16",
+      "cal-day \u0000JINJA\u0000 \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/calendar.html:19",
+      "cal-ev ev-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/calendar.html:27",
+      "cal-ev ev-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:13",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:15",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:18",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:41",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:42",
+      "tiny mono \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm.html:44",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:31",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:39",
+      "quota-dot \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:188",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:205",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:219",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/crm_detail.html:239",
+      "tl-item \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/dashboard.html:12",
+      "stat \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/dashboard.html:27",
+      "stat \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/dashboard.html:53",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/dashboard.html:73",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/dashboard.html:115",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/desk.html:19",
+      "itembtn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/desk.html:22",
+      "iname \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/desk.html:32",
+      "itembtn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/desk.html:63",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/incoming.html:19",
+      "card card-flush \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/incoming.html:26",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/incoming.html:90",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/order_detail.html:7",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/order_detail.html:23",
+      "meter \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/order_detail.html:226",
+      "tl-item \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/orders.html:6",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/orders.html:7",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/orders.html:8",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/orders.html:10",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/orders.html:28",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/quote_detail.html:7",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/quote_detail.html:18",
+      "card \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/quote_detail.html:128",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/quotes.html:7",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/quotes.html:29",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/admin/revenue.html:26",
+      "range-btn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/base.html:15",
+      "\u0000JINJA\u0000showroom\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:13",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:14",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:15",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:16",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:17",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:18",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:19",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:20",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:21",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:26",
+      "side-link \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_base.html:33",
+      "quota-dot \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_order_progress.html:6",
+      "step \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/_timeline.html:8",
+      "track-step \u0000JINJA\u0000 \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/dashboard.html:35",
+      "stat \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/dashboard.html:56",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/dashboard.html:81",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/membership.html:133",
+      "right mono tnum \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/membership.html:187",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/order_detail.html:7",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/order_detail.html:140",
+      "tl-item \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/orders.html:15",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:32",
+      "itembtn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:35",
+      "iname \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:50",
+      "itembtn \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:53",
+      "iname \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:92",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:111",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:195",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:207",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:209",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:211",
+      "\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:237",
+      "card strat \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/products.html:318",
+      "outcome \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/purchases.html:34",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/quote_detail.html:7",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/requests.html:167",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/requests.html:169",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/portal/requests.html:196",
+      "badge badge-\u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/public/disclaimers.html:21",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/public/disclaimers.html:23",
+      "tab \u0000JINJA\u0000"
+    ],
+    [
+      "monti/templates/public/quote.html:21",
+      "quota-dot \u0000JINJA\u0000"
+    ]
+  ],
+  "dynamic_families": {
+    "badge-": [
+      "monti/templates/_ledger.html:141",
+      "monti/templates/admin/application_detail.html:123",
+      "monti/templates/admin/application_detail.html:141",
+      "monti/templates/admin/application_detail.html:7",
+      "monti/templates/admin/applications.html:27",
+      "monti/templates/admin/crm.html:41",
+      "monti/templates/admin/crm.html:44",
+      "monti/templates/admin/crm_detail.html:188",
+      "monti/templates/admin/crm_detail.html:205",
+      "monti/templates/admin/crm_detail.html:219",
+      "monti/templates/admin/crm_detail.html:31",
+      "monti/templates/admin/dashboard.html:115",
+      "monti/templates/admin/dashboard.html:53",
+      "monti/templates/admin/dashboard.html:73",
+      "monti/templates/admin/desk.html:63",
+      "monti/templates/admin/incoming.html:26",
+      "monti/templates/admin/incoming.html:90",
+      "monti/templates/admin/order_detail.html:7",
+      "monti/templates/admin/orders.html:28",
+      "monti/templates/admin/quote_detail.html:128",
+      "monti/templates/admin/quote_detail.html:7",
+      "monti/templates/admin/quotes.html:29",
+      "monti/templates/portal/dashboard.html:56",
+      "monti/templates/portal/dashboard.html:81",
+      "monti/templates/portal/order_detail.html:7",
+      "monti/templates/portal/orders.html:15",
+      "monti/templates/portal/products.html:111",
+      "monti/templates/portal/purchases.html:34",
+      "monti/templates/portal/quote_detail.html:7",
+      "monti/templates/portal/requests.html:196"
+    ],
+    "ev-": [
+      "monti/templates/admin/calendar.html:19",
+      "monti/templates/admin/calendar.html:27"
+    ],
+    "flash-": [
+      "monti/templates/_flashes.html:5"
+    ]
+  },
+  "counts": {
+    "emitted": 289,
+    "defined": 422,
+    "undefined": 0,
+    "blind": 106
+  }
+}

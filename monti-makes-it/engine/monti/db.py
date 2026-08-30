@@ -117,6 +117,14 @@ def init_db():
     db.executescript(schema)
     db.commit()
     migrate()
+    # CHG-024. Checkout shows the acceptance control only when something is
+    # published, so an empty disclaimers table does not read as "no disclaimers"
+    # — it reads as a checkout that quietly stopped asking. Seeding here makes
+    # the empty state unreachable on any database that has ever been initialised.
+    # `seed_placeholders` publishes only where nothing is live, so real wording
+    # from counsel is never overwritten by the placeholder.
+    from .disclaimers import seed_placeholders
+    seed_placeholders()
 
 
 def migrate():

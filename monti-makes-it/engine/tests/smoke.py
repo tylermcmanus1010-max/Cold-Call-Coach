@@ -302,6 +302,7 @@ def main():
         post(c, "/portal/cart/add/1", {"quantity": "500"}, follow_redirects=True)
         r = post(c, "/portal/cart/checkout", {"ship_to": "1200 Industrial Way"},
                    follow_redirects=True)
+        r_checkout = r
         check("cart takes them straight to checkout", b"How would you like to pay" in r.data,
               "no checkout screen")
         check("both payment methods are offered", b"Bank transfer (ACH)" in r.data and
@@ -319,8 +320,30 @@ def main():
                   f"fee {order['fee_cents']} on {order['subtotal_cents']} + {charged}")
         oid, ref = order["id"], order["ref"]
 
+        # CHG-024 — the acceptance is a condition of paying, not decoration on
+        # the page. The refusal is checked first: a requirement that is only
+        # ever exercised on the happy path has never been shown to hold.
+        check("the checkout asks for acceptance", b"accept_disclaimers" in r_checkout.data,
+              "no acceptance control on the checkout page")
         r = post(c, f"/portal/orders/{oid}/pay", follow_redirects=True)
+        check("paying without accepting is refused",
+              b"Simulated checkout" not in r.data and b"accept the disclaimers" in r.data,
+              "payment went through without acceptance")
+
+        r = post(c, f"/portal/orders/{oid}/pay", {"accept_disclaimers": "1"},
+                 follow_redirects=True)
         check("checkout session started", b"Simulated checkout" in r.data)
+        with app.app_context():
+            from monti import disclaimers as disc
+            from monti.db import query
+            rows = query("SELECT * FROM disclaimer_acceptances WHERE order_ref = ?", (ref,))
+            check("one acceptance recorded per live disclaimer",
+                  len(rows) == len(disc.current()) and len(rows) == 3, f"{len(rows)} rows")
+            # The hash is the whole reason the record is worth keeping: it has to
+            # resolve to text, not to whatever the page says today.
+            check("each acceptance resolves to the exact text that was shown",
+                  all(disc.version_by_hash(a["slug"], a["body_hash"]) is not None
+                      for a in rows))
 
         # ACH initiated but not settled — nothing downstream may fire
         post(c, f"/portal/checkout/simulate/{ref}", {"method": "ACH", "outcome": "success"},

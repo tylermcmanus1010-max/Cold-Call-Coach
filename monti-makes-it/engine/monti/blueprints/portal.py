@@ -20,6 +20,7 @@ from flask import (
 from .. import catalog as catalog_mod
 from .. import catalogue
 from .. import decisionroom as dr
+from .. import disclaimers as disc
 from .. import genome as genome_mod
 from .. import intake as intake_mod
 from .. import ledger
@@ -517,6 +518,19 @@ def room(ref=None):
                     else url_for("portal.products"), code=301)
 
 
+@bp.route("/contact")
+@client_required
+def contact():
+    """CHG-031 — how to reach a person, from inside the portal.
+
+    The account reference is filled in for them. Asking a member to go and find
+    their own reference before they can ask a question is asking them to do our
+    filing.
+    """
+    return render_template("portal/contact.html",
+                           accepted=disc.acceptances_for(_cid()))
+
+
 @bp.route("/products")
 @bp.route("/products/<ref>")
 @client_required
@@ -661,7 +675,12 @@ def membership_record():
         capacity=genome_mod.capacity(g.customer),
         weights=genome_mod.WEIGHTS,
         rules=genome_mod.FAIRNESS_RULES,
-        boxes=genome_mod.boxes(_cid()))
+        boxes=genome_mod.boxes(_cid()),
+        # CHG-024 — the acceptance record lives with the rest of the member's
+        # record rather than on a page of its own. What a member agreed to, and
+        # to which version of it, is part of the relationship, not a support
+        # topic; the disclaimers page links here for the same reason.
+        accepted=disc.acceptances_for(_cid()))
 
 
 @bp.route("/products/<ref>/accept", methods=("POST",))
@@ -863,7 +882,8 @@ def checkout(order_id):
                            methods=payments.available_methods(),
                            options=orders_mod.quote_payment_options(net),
                            estimate=orders_mod.freight_estimate(order),
-                           freight_lines=_freight_lines(order))
+                           freight_lines=_freight_lines(order),
+                           disclaimers=disc.current())
 
 
 @bp.route("/orders/<int:order_id>/pay", methods=("POST",))
@@ -879,6 +899,23 @@ def pay(order_id):
         flash("This order can't be paid: " + ", ".join(blocked)
               + " is no longer registered to your account.", "error")
         return redirect(url_for("portal.order_detail", order_id=order_id))
+    # CHG-024 — acceptance is recorded before money moves, and it records the
+    # exact version. A boolean on the order would say a box was ticked; it would
+    # not say what the words were, and the words change. Refusing here rather
+    # than at render time means a form replayed without the field cannot pay.
+    live = disc.current()
+    if live:
+        if not request.form.get("accept_disclaimers"):
+            flash("Please read and accept the disclaimers before paying.", "error")
+            return redirect(url_for("portal.checkout", order_id=order_id))
+        disc.accept([d["slug"] for d in live],
+                    actor_email=g.user["email"],
+                    customer_id=order["customer_id"],
+                    user_id=g.user["id"],
+                    order_ref=order["ref"],
+                    ip_hint=(request.headers.get("X-Forwarded-For")
+                             or request.remote_addr or "")[:45])
+
     items = orders_mod.get_items(order_id)
     customer = query("SELECT * FROM customers WHERE id = ?", (order["customer_id"],), one=True)
     method = request.form.get("method")

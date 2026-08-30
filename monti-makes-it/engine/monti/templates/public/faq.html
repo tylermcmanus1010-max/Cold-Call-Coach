@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Questions · {{ company }}{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container container-narrow">
+    <div class="eyebrow-label">Questions</div>
+    <h1 style="margin:.5rem 0 0">Things people actually ask</h1>
+    <p class="section-lede" style="max-width:60ch">
+      Every question here is one someone asked us. None of the answers quotes a price, a
+      lead time or a capacity figure — those change, and an answer that goes stale is a
+      number nobody published. Where you need a live figure, the answer says where it is.
+    </p>
+
+    {% for section, items in faqs %}
+      <h2 style="margin:2rem 0 .75rem;font-size:1.05rem">{{ section }}</h2>
+      <div class="stack-sm">
+        {% for question, answer, source in items %}
+          <details class="faq-item">
+            <summary>{{ question }}</summary>
+            <p>{{ answer }}</p>
+          </details>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="card" style="margin-top:2rem">
+      <span class="eyebrow">Not answered here</span>
+      <p class="tiny" style="margin-top:.5rem;color:var(--ink-2)">
+        Write to <a class="reqlink" href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>
+        and a person reads it. If the answer turns out to be useful to more than one
+        person, it ends up on this page.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

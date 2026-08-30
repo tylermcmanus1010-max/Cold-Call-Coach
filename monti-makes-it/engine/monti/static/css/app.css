@@ -12,7 +12,7 @@
    left in the old one, because half a theme is worse than either. */
 :root{
   --ground:#F6F8F5; --surface:#FFFFFF; --surface-2:#F0F4EF; --sunk:#EAEFE9;
-  --ink:#101E18; --ink-2:#3A4C43; --muted:#66786E; --rule:#DAE2DA; --rule-soft:#E8EEE7;
+  --ink:#101E18; --ink-2:#33453C; --muted:#5A6C62; --rule:#DAE2DA; --rule-soft:#E8EEE7;
   --green-deep:#0B5C3F; --green:#1E8F63; --green-soft:#E4F1EA;
   --brass:#8F6B1E; --brass-soft:#F4EEDE;
   --good:#1E8F63; --warn:#B07A16; --crit:#A8342B;
@@ -560,6 +560,24 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --green-line: color-mix(in srgb, var(--green) 26%, transparent);
   --violet: var(--s2);             /* the not-yet-overdue clock; --s2 is the blue-violet series colour */
+
+  /* The second half of the b708710 recovery. The first pass aliased the nine
+     tokens a grep of the stylesheet found still referenced; these eight are the
+     ones referenced by RULES that commit deleted outright, so nothing in the
+     file pointed at them any more and the grep had nothing to find. They come
+     back with the rules, in evidence/phase-01/undefined-class-probe.py's list.
+     Values are the current palette's nearest equivalent, not the old hexes —
+     the palette itself was the part of b708710 worth keeping. */
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --quiet: var(--muted);           /* was #6E7A72; --muted is #5A6C62 */
+  --green-bright: var(--green);    /* the hover/active green */
+  --ground-2: var(--surface-2);    /* the second ground, one step off the page */
+  --good-soft: var(--green-soft);
+  --stop-soft: color-mix(in srgb, var(--crit) 9%, var(--surface));
+  --info: var(--s2);               /* the calendar's call colour */
+  --radius-sm: 2px;                /* --r is 3px; -sm was one step tighter */
+  --radius-lg: 10px;
+  --shadow-lift: var(--shadow);
 }
 
 /* ---------- the chart, the meter and the range control ------------------- */
@@ -598,6 +616,85 @@ a.reqlink{color:var(--green-deep); text-underline-offset:3px}
 .range-btn:last-child { border-right: 0; }
 .range-btn:hover { background: var(--surface-2); color: var(--ink); }
 .range-btn.active { background: var(--green-deep); color: #fff; font-weight: 600; }
+
+/* ---------- CHG-018 · type weight and legibility -------------------------
+   The review said the text "looks thin and very light". Most of that was the
+   b708710 regression — --text and --text-2 stopped resolving — but one thing was
+   genuinely too light even with the tokens restored: --muted carries real
+   content, not decoration. It is the "how this is counted" note beside a figure,
+   the provenance line under a price, the transit time under a freight option.
+   Anything a member has to read to understand a number is body text, whatever
+   size it renders at, and it was styled as a caption.
+
+   The first version of this block answered that with 420 on body and 450 on
+   secondary text. Measuring it in Chromium against a real 400/500/600/700 set
+   showed BOTH selecting the 500 face — identical rendered width to 500, and
+   distinct from 400. The stylesheet requests IBM Plex Sans at
+   wght@400;500;600;700: four static instances, no variable axis, so there is
+   nothing between the cuts to interpolate to and CSS picks a neighbour. Which
+   neighbour is not the intuitive one — 420 does not round down to 400.
+
+   So the ladder drew no distinction at all. Body and secondary text both landed
+   on 500 and ranked the same, while on the system fallback — what renders
+   whenever the font host is slow or blocked — the same two values landed on 400
+   instead. Same stylesheet, opposite outcome, decided by whether a third-party
+   font host answered. (evidence/phase-01/font-weight-matching.txt.)
+
+   Every value below is now one of the four cuts the stylesheet actually asks
+   for, so what is written is what renders on all three paths. The step that
+   carries the fix is secondary text moving 400 -> 500. Body copy stays at the
+   design weight: the answer to "light" there is the darkened --ink-2 and
+   --muted above, which is the half of this item that was ever measurable. */
+.tiny, .dim, .muted, .stat-sub, .sum-note, .note-line { font-weight: 500; }
+.eyebrow, .eyebrow-label, .stat-label, .side-title, .field-label, .divider-label {
+  font-weight: 500;
+}
+strong, b { font-weight: 600; }
+
+/* .prose — running text, several paragraphs of it.
+
+   The global reset is `p{margin:0}`, which is right everywhere else on this site
+   because almost every paragraph here is a single line inside a card. Disclaimer
+   bodies are the exception: they are the one place a member reads more than two
+   sentences in a row, and with the reset in force every paragraph break rendered
+   as an ordinary line break. Three separate clauses looked like one run-on
+   statement, which is the wrong impression to give of a legal text specifically.
+
+   This was also the b708710 shape again — a template emitting a class the
+   stylesheet never defined — so it is worth naming rather than quietly adding. */
+.prose > p + p { margin-top: .85rem; }
+.prose { line-height: 1.65; }
+
+/* ---------- FAQ disclosures (CHG-028) ---------------------------------- */
+.faq-item { border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--surface); }
+.faq-item + .faq-item { margin-top: .5rem; }
+.faq-item > summary {
+  cursor: pointer; list-style: none; padding: .85rem 1rem;
+  font-weight: 600; font-size: .92rem; display: flex; justify-content: space-between;
+  gap: 1rem; align-items: center;
+}
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary::after { content: "+"; color: var(--green-deep); font-weight: 600; }
+.faq-item[open] > summary::after { content: "\2212"; }
+.faq-item > summary:hover { background: var(--surface-2); }
+.faq-item > p { margin: 0; padding: 0 1rem 1rem; max-width: 64ch;
+  color: var(--ink-2); line-height: 1.6; }
+
+/* A link that is a button, for actions that read as links (share, copy). */
+.linkbtn { background: none; border: 0; padding: 0; cursor: pointer;
+  color: inherit; font: inherit; text-decoration: underline;
+  text-underline-offset: 3px; }
+.linkbtn:hover { color: var(--green); }
+
+/* The disclaimer acceptance at checkout (CHG-024). Given real room rather than
+   set as fine print: it is the line that makes the record mean something. */
+.accept-line { display: flex; gap: .7rem; align-items: flex-start;
+  padding: .9rem 1rem; border: 1px solid var(--rule); border-left: 2px solid var(--brass);
+  border-radius: var(--r); background: var(--surface-2); font-size: .86rem;
+  line-height: 1.55; cursor: pointer; }
+.accept-line input { margin-top: .2rem; width: 17px; height: 17px;
+  accent-color: var(--green-deep); flex: 0 0 auto; }
 
 /* Typography and utility names our templates already use. */
 .eyebrow-label, .stat-label, .side-title, .field-label, .divider-label {
@@ -1185,3 +1282,142 @@ body.iv-open { overflow: hidden; }
   font-size: .78rem; color: var(--muted); font-weight: 500; }
 @media (max-width: 600px) { .qgrid { grid-template-columns: 1fr; } }
 .weightpick { display: grid; gap: .6rem; }
+
+/* ================= b708710 recovery, second pass =========================
+   b708710 replaced this stylesheet wholesale. The first repair (74e23d9) put
+   back the chart, meter and range rules and aliased nine colour tokens, because
+   those were what a grep of the surviving file could still find referenced.
+
+   It could not find these. When a commit deletes a rule AND everything that
+   pointed at it, grep has nothing left to catch: the templates still emit the
+   class, the browser reports nothing — no console error, no failed request, no
+   404 — and the component simply renders unstyled, which looks like a design
+   decision rather than a defect. Thirty classes were in that state, including
+   `.flash`, which is every success and error message the application shows.
+   The refusal added this session ("Please read and accept the disclaimers
+   before paying") was rendering as bare unstyled text.
+
+   Found by evidence/phase-01/undefined-class-probe.py, which compares what the
+   templates emit against what the stylesheet defines. That probe is the actual
+   fix; these rules are what it found. They are recovered VERBATIM from
+   b708710^ rather than rewritten, so this is a revert of a deletion and not a
+   fresh design. The eight custom properties they depend on are aliased onto the
+   current palette at the top of this file.
+
+   Four of the thirty are not here — .eyebrow-tag, .iv, .track-body, .was never
+   existed in b708710^ either. They are later work that was never styled, and
+   are handled separately below.
+   ======================================================================= */
+.badge-plain::before { display: none; }
+details.more > summary {
+  cursor: pointer; list-style: none; font-size: .9rem; color: var(--green);
+  padding: .7rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary::after { content: "+"; font-size: 1.1rem; line-height: 1; color: var(--ink-3); }
+details.more[open] > summary::after { content: "–"; }
+details.more > summary:hover { color: var(--green-bright); }
+details.more > .more-body { padding-top: 1.5rem; }
+.flash {
+  padding: .8rem 1rem; border-radius: var(--radius-sm); font-size: .88rem;
+  border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow-lift);
+  animation: slidein .3s cubic-bezier(.2,.8,.3,1);
+}
+.flash-error { border-color: color-mix(in srgb, var(--stop) 40%, transparent); color: var(--stop); background: var(--stop-soft); }
+.flash-ok { border-color: color-mix(in srgb, var(--good) 35%, transparent); color: var(--good); background: var(--good-soft); }
+.tl-item { position: relative; padding-bottom: 1.1rem; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+  content: ""; position: absolute; left: -1.4rem; top: 7px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--ground); box-shadow: 0 0 0 1px var(--line);
+}
+.tl-item.tl-amber::before { background: var(--brass); box-shadow: 0 0 0 1px var(--brass); }
+.tl-item.tl-green::before { background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.tl-head { font-size: .88rem; font-weight: 500; }
+.tl-meta { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); margin-top: .15rem; }
+.tl-body { font-size: .86rem; color: var(--ink-2); margin-top: .28rem; }
+.steps { display: flex; gap: 0; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
+.step { flex: 1; min-width: 130px; padding: .85rem .9rem; border-top: 2px solid var(--line); }
+.step-name { font-size: .82rem; font-weight: 500; color: var(--ink-3); }
+.step-when { font-family: var(--mono); font-size: .68rem; color: var(--ink-3); margin-top: .2rem; }
+.step.done { border-top-color: var(--good); }
+.step.done .step-name { color: var(--ink); }
+.step.current { border-top-color: var(--green); }
+.step.current .step-name { color: var(--green); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); gap: 1px; }
+.cal-dow { background: var(--surface-2); padding: .55rem; font-family: var(--mono); font-size: .64rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); text-align: center; }
+.cal-day { background: var(--surface); min-height: 108px; padding: .45rem; display: flex; flex-direction: column; gap: .25rem; }
+.cal-day.out { background: var(--ground-2); }
+.cal-day.today { background: var(--green-soft); box-shadow: inset 0 0 0 1px var(--green-line); }
+.cal-num { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); }
+.cal-day.today .cal-num { color: var(--green); }
+.cal-ev {
+  font-size: .7rem; padding: .18rem .4rem; border-radius: 3px; line-height: 1.35;
+  background: var(--sunk); color: var(--ink-2); border-left: 2px solid var(--quiet);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cal-ev:hover { color: var(--ink); }
+.hero-inner { position: relative; z-index: 2; }
+.hero h1.wordmark .lede-word { display: block; }
+.gate-band {
+  border: 1px solid var(--green-line); border-radius: var(--radius-lg);
+  background: var(--green-soft); padding: clamp(2.25rem, 5vw, 3.5rem);
+}
+.door {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: clamp(1.75rem, 3vw, 2.5rem); display: flex; flex-direction: column; gap: .9rem;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.door:hover { border-color: var(--green-line); box-shadow: var(--shadow); transform: translateY(-2px); }
+.door h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -.022em; }
+.door p { color: var(--ink-2); font-size: .95rem; margin: 0; flex: 1; }
+.door .btn { align-self: flex-start; margin-top: .5rem; }
+.step-list { counter-reset: s; display: grid; gap: 0; list-style: none; margin: 0; padding: 0; }
+.step-list li {
+  counter-increment: s; position: relative; padding: 1.5rem 0 1.5rem 4rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+.step-list li:last-child { border-bottom: 0; }
+.step-list li::before {
+  content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 1.5rem;
+  font-family: var(--mono); font-size: .72rem; color: var(--brass); letter-spacing: .08em;
+}
+.step-list h3 { margin-bottom: .35rem; }
+.step-list p { color: var(--ink-2); font-size: .95rem; margin: 0; max-width: 62ch; }
+.pay-body { min-width: 0; }
+.waived-row td { vertical-align: top; }
+.sum-was { font-size: .95rem; }
+.notice-good { border-color: var(--good); background: var(--good-soft); }
+
+/* The calendar's event colours. Found by the probe's dynamic-family report
+   rather than by its undefined-class list: the template writes `ev-{{ e.kind }}`,
+   so the literal part is `ev-` and the class that carries the colour never
+   appears in the source as a whole word. Nothing at all was defined for the
+   family, so every event in the admin calendar drew the same neutral bar and
+   the legend below the grid showed six identical swatches. Recovered from
+   b708710^; INTERVIEW is kept because the kind still exists in the database
+   even though the legend does not list it. */
+.ev-CALL      { border-left-color: var(--info); }
+.ev-MEETING   { border-left-color: var(--brass); }
+.ev-INTERVIEW { border-left-color: var(--brass); background: var(--brass-soft); color: var(--brass); }
+.ev-FACTORY   { border-left-color: var(--green); }
+.ev-SHIPMENT  { border-left-color: var(--good); }
+.ev-DEADLINE  { border-left-color: var(--stop); background: var(--stop-soft); color: var(--stop); }
+.ev-FOLLOWUP  { border-left-color: var(--quiet); }
+
+/* --- the four that predate nothing: emitted by templates, never defined ---
+   Not a regression. These arrived with later work — the image viewer, the
+   order tracker, the "was" price on the home page, the eyebrow tag on the
+   checkout receipt — and no rule was ever written for them. Minimal, matching
+   the surrounding idiom rather than inventing a new one. */
+.iv { position: relative; }
+.track-body { font-size: .86rem; color: var(--ink-2); margin-top: .28rem; }
+.was { color: var(--muted); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+.eyebrow-tag { display: inline-block; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--green-deep);
+  background: var(--green-soft); border-radius: var(--radius-sm); padding: .25rem .5rem; }
+
+@keyframes slidein { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .flash { animation: none; } }

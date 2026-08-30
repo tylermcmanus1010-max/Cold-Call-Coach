@@ -1,0 +1,77 @@
+CHG-018 — what a requested font-weight actually renders as
+Measured 2026-08-30, Chromium via Playwright (/opt/pw-browsers/chromium).
+
+WHY THIS WAS MEASURED
+  The first version of the CHG-018 block set body to 420 and secondary text to
+  450, on the assumption that a weight between two cuts renders between them.
+  It does not. The site requests IBM Plex Sans at wght@400;500;600;700 — four
+  static instances, no variable axis — so every intermediate value is resolved
+  to one of the four by the CSS font-matching rules, and the report "the type is
+  heavier now" would have been a claim about a number in a file rather than
+  about anything on a screen.
+
+METHOD
+  One @font-face family, four DISTINCT font files declared at 400/500/600/700,
+  so each cut renders at a measurably different width and the match is
+  observable rather than inferred. A span of fixed text at 40px is measured with
+  getBoundingClientRect() at each weight. Same width = same face selected.
+
+  <style>
+  @font-face{font-family:WT;src:url(file:///usr/share/fonts/truetype/dejavu/DejaVuSans.ttf);font-weight:400}
+  @font-face{font-family:WT;src:url(file:///usr/share/fonts/truetype/freefont/FreeSans.ttf);font-weight:500}
+  @font-face{font-family:WT;src:url(file:///usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf);font-weight:600}
+  @font-face{font-family:WT;src:url(file:///usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf);font-weight:700}
+  span{font-family:WT;font-size:40px;white-space:nowrap}
+  </style><span id=p>Handgloves 0123456789</span>
+
+RESULT — rendered width in px
+  400 -> 502.6
+  420 -> 401.1     same as 500
+  450 -> 401.1     same as 500
+  500 -> 401.1
+  560 -> 410.0
+  600 -> 410.0
+  640 -> 410.0
+  700 -> 410.0
+
+  Groups: {400}, {420, 450, 500}, {560, 600, 640, 700}
+
+WHAT THIS ESTABLISHES
+  420 and 450 both select the 500 face. They do NOT round down to 400. So body
+  at 420 and secondary text at 450 rendered as the SAME weight, and the ladder
+  drew no distinction at all on the web font.
+
+WHAT IT DOES NOT ESTABLISH
+  The 600 and 700 cuts came out at the same width in this rig (410.0), which
+  means the two files did not render distinctly here — document.fonts reported
+  500/600/700 as "unloaded" after the paint. So this measurement separates 400
+  from 500 conclusively and says nothing conclusive about 640 vs 600 vs 700.
+  The 640 value was changed to 600 on the strength of the 400/500 result and the
+  same matching rule, not on a measurement of its own. Anyone re-running this
+  should fix the 600/700 faces before citing that half.
+
+SECOND MEASUREMENT — the fallback stack, on this machine
+  With no web font loaded (fonts.googleapis.com is unreachable from the build
+  container), the same probe against "IBM Plex Sans", sans-serif gave:
+    400 -> 1025.08   420 -> 1025.08   450 -> 1025.08   500 -> 1025.08
+    600 -> 1089.25   640 -> 1089.25   700 -> 1089.25
+  The fallback has two faces, so 420 and 450 land on 400 there.
+
+  The two measurements together are the actual finding: the SAME stylesheet
+  resolved 420 to the 500 face with the web font and to the 400 face without it.
+  A value that renders heavier or lighter depending on whether a third-party
+  font host answered is not a typography decision, it is a coin flip.
+
+WHAT WAS CHANGED
+  Every weight in the CHG-018 block is now one of the four cuts the stylesheet
+  requests: 500 for secondary text and labels, 600 for strong/b. Body copy is
+  left at the design weight; the answer to "light" there is the darkened --ink-2
+  (#3A4C43 -> #33453C) and --muted (#66786E -> #5A6C62), which is the half of
+  this item that was measurable in the first place.
+  .faq-item > summary was also on an intermediate value (560) and is now 600.
+
+CAVEAT ON EVERY SCREENSHOT IN THIS PHASE
+  The build container cannot reach fonts.googleapis.com, so every screenshot
+  taken here renders on the system fallback, not on IBM Plex Sans / Spectral.
+  Layout, colour and weight-ladder ordering are verified; the actual production
+  typeface is not.

@@ -211,4 +211,44 @@
        href="mailto:{{ cfg.SUPPORT_EMAIL }}?subject=Make%20This%20Box">Request a box</a>
   </div>
 {% endif %}
+
+{# ---- CHG-024 · what this member accepted, and which version of it ---------
+   Here rather than on a page of its own. "What have I agreed to" is a question
+   about the relationship, and this page is the record of the relationship. Each
+   row names the version, because the disclaimer that matters is the one that was
+   on the screen that day and not the one that is on it now. #}
+<h2 id="acceptances" style="margin-top:2.5rem;font-size:1.15rem">What you have accepted</h2>
+{% if accepted %}
+  <div class="card card-lg" style="margin-top:1rem">
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Disclaimer</th><th>Version</th><th>Accepted</th><th>Against</th><th></th></tr></thead>
+      <tbody>
+        {% for a in accepted %}
+          <tr>
+            <td>{{ a.title or a.slug }}</td>
+            <td class="mono tiny dim" title="The identity of the exact wording">v{{ a.body_hash[:12] }}</td>
+            <td class="tiny">{{ a.accepted_at|date }}{% if a.actor_email %}
+              <span class="dim">· {{ a.actor_email }}</span>{% endif %}</td>
+            <td class="mono tiny">{{ a.order_ref or '—' }}</td>
+            <td><a class="reqlink tiny"
+                   href="{{ url_for('public.disclaimers_page', slug=a.slug) }}">Read →</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+    <p class="tiny dim" style="margin-top:.9rem;max-width:64ch">
+      The version column is not decoration. If a disclaimer is rewritten, your
+      record keeps pointing at the wording you actually read — we do not move it,
+      and we cannot: published versions are never edited, only superseded.
+    </p>
+  </div>
+{% else %}
+  <div class="empty" style="padding:2rem 1rem;margin-top:1rem">
+    <p>Nothing accepted yet.</p>
+    <p class="tiny dim">You accept the disclaimers at checkout. The record appears here,
+      naming the exact version you read.</p>
+    <a class="btn btn-outline" style="margin-top:1rem"
+       href="{{ url_for('public.disclaimers_page') }}">Read them now</a>
+  </div>
+{% endif %}
 {% endblock %}

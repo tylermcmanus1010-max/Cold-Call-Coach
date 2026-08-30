@@ -16,6 +16,7 @@
   {% for code, label in locales %}
     <button type="submit" class="langbtn {{ 'on' if code == locale }}"
             formaction="{{ url_for('set_language', code=code) }}"
-            {{ 'aria-current=true' if code == locale }}>{{ label }}</button>
+            {{ 'aria-current=true' if code == locale }}
+            aria-label="{{ label }}">{{ code|upper if compact else label }}</button>
   {% endfor %}
 </form>

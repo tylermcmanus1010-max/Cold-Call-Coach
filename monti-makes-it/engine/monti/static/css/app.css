@@ -1513,3 +1513,15 @@ details.more > .more-body { padding-top: 1.5rem; }
   border-radius: 3px; transition: border-color .12s, color .12s; }
 .langbtn:hover { border-color: var(--green); color: var(--green-deep); }
 .langbtn.on { background: var(--green-deep); border-color: var(--green-deep); color: #fff; }
+
+/* The Home / language block at the top of the app shell. Separated from the
+   working navigation by a rule, because it is chrome rather than a place. */
+.side-top { padding-bottom: .55rem; margin-bottom: .3rem;
+  border-bottom: 1px solid var(--rule-soft); }
+.side-top .langswitch { padding: .45rem .65rem 0; gap: .3rem; }
+.side-top .langswitch-label { font-size: .66rem; }
+/* In the header the switcher sits among the nav links, so it loses its label
+   and keeps only the two codes. */
+.nav-links .langswitch { margin-left: .35rem; }
+.nav-links .langswitch .langswitch-label { display: none; }
+.nav-links a.here { color: var(--green-deep); font-weight: 600; }

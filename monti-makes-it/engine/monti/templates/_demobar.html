@@ -12,7 +12,9 @@
         Signed in as {{ g.user.email }}{% if g.customer %} · <span data-noloc>{{ g.customer.company_name }}</span>{% endif %}
         with no password, because <span class="mono">DEMO_MODE</span> is on. This is
         real data, not a sandbox.</span>
-      <a href="{{ url_for('auth.logout') }}">Sign out</a>
+      {# No Sign out here: the shell already has one, and two on a page is
+         CHG-012 reopening itself. The way out of a demo session is the way out
+         of any session. #}
     </div>
   </div>
 {% endif %}

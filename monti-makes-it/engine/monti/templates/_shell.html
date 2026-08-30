@@ -17,7 +17,7 @@
 {% include "_flashes.html" %}
 {% if g.get('viewing_as') %}
   <div class="view-as-bar"><div class="container">
-    <span>Admin view · you are looking at <span data-noloc>{{ g.customer.company_name }}</span>\'s portal</span>
+    <span>Admin view · you are looking at <span data-noloc>{{ g.customer.company_name }}</span>’s portal</span>
     <a href="{{ url_for('admin.close_client') }}">Back to the admin portal</a>
   </div></div>
 {% endif %}

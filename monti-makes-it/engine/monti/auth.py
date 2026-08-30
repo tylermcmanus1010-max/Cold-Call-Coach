@@ -74,8 +74,15 @@ def load_logged_in_user():
     if g.user["customer_id"]:
         g.customer = query("SELECT * FROM customers WHERE id = ?", (g.user["customer_id"],), one=True)
     elif g.user["role"] == "ADMIN" and session.get("view_as"):
-        # An admin opening a client's portal from the admin portal. Read-through
-        # only — every write still records the admin as the actor.
+        # An admin opening a client's portal from the admin portal.
+        #
+        # This comment used to say "read-through only — every write still records
+        # the admin as the actor". Neither half is true. Nothing below restricts
+        # an impersonating admin to reads, and no write path records who was
+        # really at the keyboard: `security_log` exists in the schema and has
+        # zero writers anywhere in the codebase. The claim is left here, stated
+        # as false, rather than deleted — a comment asserting a control that does
+        # not exist is how the control stops being built. CHG-017.
         g.customer = query("SELECT * FROM customers WHERE id = ?", (session["view_as"],), one=True)
         g.viewing_as = g.customer is not None
 

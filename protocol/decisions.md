@@ -1083,3 +1083,117 @@ and whether the triage judged them still live. AIM-00 has not written them up in
 because they are Phase-4-and-later concerns and the four causes above are what change the
 plan. Say the word and they get filed properly.
 
+---
+
+# PART 6 — THE WEBSITE UPGRADE FILING
+
+Filed 30 Aug 2026 from Tyler's website review. Eighteen items, CHG-018 to CHG-035, in
+`protocol/website-upgrade-packet.md`; the sequencing in
+`protocol/website-upgrade-execution.md`.
+
+**Both are UNSIGNED, so none of it is in scope.** `FILING STATUS: UNSIGNED`,
+`AUTHORIZATION: HOLD`, every severity still a bracketed proposal, every decision below
+still unanswered. §2.1 is unchanged: 14 in line, 1 closed.
+
+Validated against the register on 30 Aug: 18 items, **zero** ID collisions, **zero** §4.2
+violations (no item's owner is its verifier), **zero** items without a written gate.
+
+---
+
+## D-039 · Testimonials, or reviews · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** CHG-034 only.
+
+A section presented as customer reviews whose contents the seller chooses is not a review
+section, and a reader cannot tell which it is. §1.5 forbids fabricated data on a
+client-facing surface; §11.2 puts that beyond override.
+
+**(a) Selected testimonials, labelled as selected** — real quotes, real attribution,
+written permission on file, and a visible line saying Monti chooses which appear.
+**(b) Reviews, genuinely** — any verified buyer may post; Monti may remove for abuse or
+confidentiality under a stated policy, but not for being unflattering, and the removal
+count is published.
+
+**AIM-00 recommends (a)** now, (b) later if it ever matters. It will build either. It will
+not build (a) wearing (b)'s name, and CHG-034's gate is written for (a) — choosing (b)
+means rewriting that gate before the work, which §1.2 allows only before the work.
+
+---
+
+## D-040 · What the assistant may say · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** CHG-029 only.
+
+An assistant that answers "roughly what would 50,000 cost" has quoted a price, and §11.1
+requires every figure a client sees to resolve to a published admin input. One that
+paraphrases a lead time has made a commitment nobody approved.
+
+**(a) Navigation and published FAQ only**, with a hard refusal on price, lead time,
+capacity and specification, tested against indirect phrasings rather than direct ones.
+**(b) Wider scope** — needs its own filing, because the provenance problem is the design.
+
+**AIM-00 recommends (a).** CHG-029's gate is written for it.
+
+---
+
+## D-041 · What is kept about a declined applicant · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** CHG-027 only.
+
+Detecting a repeat applicant means keeping a record of people Monti declined. SK-40
+requires every stored personal field to map to a named purpose with a defined retention.
+
+**(a) A one-way hash of the contact, the decision date and the reason code, 24 months** —
+answers "have we seen this person" without keeping a file on them.
+**(b) The full record retained** — more useful to a reviewer, and SK-40's data map and the
+privacy statement (CHG-025) both change with it.
+
+**AIM-00 recommends (a).**
+
+---
+
+## D-042 · Where it runs · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** launch, and nothing else.
+
+The engine has a `Dockerfile`, a `Procfile` and a 38-variable `.env.example`, all present
+and none exercised. It has never been deployed anywhere. Host and domain are Tyler's;
+no agent should choose either.
+
+---
+
+## D-043 · The database, and a contradiction already in the record · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** SK-41, and therefore §11.
+
+Everything is SQLite at `DATABASE_PATH`. On every container host, disk is ephemeral: a
+redeploy destroys it. **D-002 accepted SK-41 as a standing go/no-go line** — *"a drill
+means an actual restore, actually timed"* — and there is nothing to restore from a disk
+that does not persist. A signed decision and the storage model contradict each other.
+
+**(a) Managed Postgres** — a real migration under SK-39, its own filing; the only option
+that makes SK-41 mean anything on a container host.
+**(b) SQLite on a mounted volume plus scheduled offsite backup** — smaller, and ties the
+choice of host to those offering volumes.
+**(c) SQLite as-is and SK-41 withdrawn** — cheapest, and it means accepting that one
+client's entire commercial history is one redeploy from gone.
+
+**AIM-00 recommends (b) to launch and (a) before the second client.** It flags that (c)
+requires reopening D-002, which Tyler signed; AIM-00 will not treat a signed decision as
+lapsed because a later constraint made it awkward.
+
+---
+
+## D-044 · Credentials · **PENDING**
+
+**Asked of:** Tyler. **Signed:** — **Blocks:** the items named against each.
+
+SMTP host/user/password — blocks CHG-021, CHG-024, CHG-026, CHG-033.
+Stripe secret and publishable keys — block real checkout.
+Stripe webhook secret — blocks settlement confirmation.
+
+**Standing rule proposed with this decision:** an item whose credential is missing is
+recorded **blocked**, not built against a stub. A checkout wired to a fake key is not a
+checkout, and a gate that passes against a fake is worse than a gate that fails — it
+produces evidence for something that was never tested.
+

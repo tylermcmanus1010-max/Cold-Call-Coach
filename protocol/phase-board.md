@@ -83,9 +83,32 @@ Open and biting before Phase 4:
 
 ---
 
+## Filed, not in scope
+
+The website upgrade filing of 30 Aug 2026 — `website-upgrade-packet.md` (18 items,
+CHG-018 to CHG-035) and `website-upgrade-execution.md` (sequencing). **Both unsigned.**
+`FILING STATUS: UNSIGNED`, `AUTHORIZATION: HOLD`, every severity a bracketed proposal.
+
+Validated 30 Aug against this register: 18 items, zero ID collisions, zero §4.2
+violations, zero items without a written gate. **§2.1 is unchanged — 14 in line, 1
+closed.** Nothing from the filing has entered it.
+
+The execution prompt proposes a 28-step sequence in place of the current 22, folding four
+items into Phases 4, 11 and 13 and adding six phases numbered from 22. **That sequence is
+proposed and not adopted.** The board still runs the protocol's own sequence, and will
+until the filing is signed.
+
+Six decisions filed PENDING with it: D-039 to D-044. Three block a single item each;
+**D-043 blocks §11 itself** — SK-41 requires a timed restore and the storage model does
+not persist across a redeploy, so a decision Tyler already signed and the way the engine
+stores data contradict each other.
+
+---
+
 ## Next
 
-Nothing opens on a passing gate. **Phase 2 opens on Tyler's word.**
+Nothing opens on a passing gate. **Phase 2 opens on Tyler's word**, and the filing enters
+scope on his signature — separately.
 
 ---
 

@@ -1421,3 +1421,13 @@ details.more > .more-body { padding-top: 1.5rem; }
 
 @keyframes slidein { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .flash { animation: none; } }
+
+/* ---------- the catalogue merge: ordering, on the product ----------------
+   My catalog and My products were two tabs for one object at two ages. The
+   ordering controls move onto the product, so this is the strip that carries
+   price, MOQ and lead time above the quantity field. */
+.orderbar { display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 1.5rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1rem;
+  border-top: 1px solid var(--rule); }
+.orderprice .stat-value { font-variant-numeric: tabular-nums; }
+.orderfacts { text-align: right; line-height: 1.7; white-space: nowrap; }

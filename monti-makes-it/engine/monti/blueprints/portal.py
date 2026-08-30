@@ -19,6 +19,7 @@ from flask import (
 
 from .. import catalog as catalog_mod
 from .. import catalogue
+from .. import products as products_mod
 from .. import decisionroom as dr
 from .. import disclaimers as disc
 from .. import genome as genome_mod
@@ -260,35 +261,32 @@ def download_file(file_id):
 @bp.route("/catalog")
 @client_required
 def catalog():
-    items = catalog_mod.items_for_customer(g.customer)
-    return render_template("portal/catalog.html", items=items,
-                           tags=catalog_mod.parse_tags(g.customer["catalog_tags"]))
+    """The tab was called My catalog. It is the same list as My products now.
+
+    A member watching an item move should not have to notice it left one tab and
+    appeared in another. Old links keep working.
+    """
+    return redirect(url_for("portal.products"), code=301)
 
 
 @bp.route("/catalog/<int:item_id>")
 @client_required
 def catalog_item(item_id):
-    match = [i for i in catalog_mod.items_for_customer(g.customer) if i["id"] == item_id]
-    if not match:
+    """The catalogue item page, folded into the product it belongs to.
+
+    Gate 1 of 3 survives the merge intact and stays here: an item this account
+    cannot see is a 404, not a redirect to a page that would then have to refuse
+    it. Existence is itself information — a redirect would confirm the id is
+    real, which is what §1.8 asks us not to leak.
+    """
+    row = None
+    for candidate in products_mod.for_member(g.customer):
+        if candidate["item_id"] == item_id:
+            row = candidate
+            break
+    if row is None:
         abort(404)   # not reachable by this account = does not exist, as far as they know
-    item = match[0]
-
-    # The genome's internal partition never leaves the admin side (GEN-07), so
-    # it is excluded in the query rather than filtered in the template — a
-    # template filter is one `{% for %}` away from being forgotten.
-    genome = query(
-        "SELECT section, body, is_unknown FROM item_genome "
-        "WHERE item_id = ? AND is_internal = 0 ORDER BY id", (item_id,))
-
-    lines = []
-    if catalogue.can_order(g.customer, item_id):
-        quantity = max(item["moq"] or 1, 1)
-        lines = tooling.lines_for(item_id, _cid(), quantity,
-                                  item["price_cents"] or 0, strategy="lowest_cost")
-
-    return render_template("portal/catalog_item.html", item=item,
-                           images=catalogue.item_images(item_id),
-                           genome=genome, tooling_lines=lines)
+    return redirect(url_for("portal.products", ref=row["ref"]), code=301)
 
 
 @bp.route("/cart/add/<int:item_id>", methods=("POST",))
@@ -501,6 +499,21 @@ def request_box():
 # the read below filters on `published_at` — so "no prices before publish" is a
 # WHERE clause, not a convention.
 # --------------------------------------------------------------------------
+def _public_genome(row):
+    """The member-visible genome for an open product, or None.
+
+    The internal partition never leaves the admin side (GEN-07), so it is
+    excluded in the query rather than filtered in the template — a template
+    filter is one `{% for %}` away from being forgotten. This is the same query
+    the catalogue item page ran; it moves here with the rest of that page.
+    """
+    if not row or not row.get("item_id"):
+        return None
+    return query(
+        "SELECT section, body, is_unknown FROM item_genome "
+        "WHERE item_id = ? AND is_internal = 0 ORDER BY id", (row["item_id"],))
+
+
 def _items_for_member():
     rows = query(
         "SELECT * FROM decision_items WHERE customer_id = ? ORDER BY received_at DESC",
@@ -536,10 +549,17 @@ def contact():
 @client_required
 def products(ref=None):
     pending, approved = _items_for_member()
-    chosen = None
-    for row in pending + approved:
-        if ref is None or row["ref"] == ref:
-            chosen = row
+
+    # One list, so `ref` resolves against all of it: a product reference for
+    # something that came through the door, or a SKU for a catalogue line
+    # registered to this account without one behind it. Resolving against the
+    # merged rows rather than against decision_items is what makes the second
+    # kind reachable at all — before the merge it lived on the other tab.
+    rows = products_mod.for_member(g.customer)
+    chosen = row = None
+    for candidate in rows:
+        if ref is None or candidate["ref"] == ref:
+            row, chosen = candidate, candidate["item"]
             break
 
     view = None
@@ -558,9 +578,22 @@ def products(ref=None):
             estimate = query("SELECT * FROM estimates WHERE quote_id = ?",
                              (quote["id"],), one=True)
 
-    return render_template("portal/products.html", pending=pending, approved=approved,
+    return render_template("portal/products.html", rows=rows, row=row,
+                           pending=pending, approved=approved,
                            item=chosen, view=view, stages=DR_STAGES,
-                           quote=quote, estimate=estimate)
+                           quote=quote, estimate=estimate,
+                           # The catalogue half of whichever product is open, so
+                           # the ordering controls live on the product rather
+                           # than on a second page about the same product.
+                           # Taken from the row, which read the visible set —
+                           # never by following catalog_item_id.
+                           entry=(row or {}).get("entry"),
+                           genome=_public_genome(row),
+                           # §0.3.8 — the viewer is a requirement on every
+                           # item in the portal, and the catalogue item page
+                           # that used to carry it is folded in here now.
+                           images=(catalogue.item_images(row["item_id"])
+                                   if row and row.get("item_id") else []))
 
 
 DR_STAGES = ["Received", "Specification in review", "Priced — awaiting release"]

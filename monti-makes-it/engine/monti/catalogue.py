@@ -186,6 +186,36 @@ def matrix_cell(matrix_id, quantity, spec_tier=None):
     return query(sql, tuple(args), one=True)
 
 
+def matrix_floor(matrix_id):
+    """The cheapest cell in the lowest priced band, or None.
+
+    A published matrix has a floor: the smallest quantity anyone entered a price
+    for. Below it there is no price, and asking `matrix_cell` for a quantity
+    under the floor correctly returns nothing.
+
+    That is right for pricing an actual order and wrong for answering "what does
+    this cost", which is what a product page is asked. Boars Head's containers
+    are priced from 20,000 units and their catalogue rows carry MOQ 1, so every
+    figure resolved to nothing and the page said "not priced yet" about an item
+    with sixteen published prices behind it.
+
+    This returns the entered cell rather than a computed number, so the figure
+    still arrives with its `input_id` and the quantity it applies at. Quoting it
+    without that quantity would be the actual dishonesty — 17c is a real price,
+    and it is a real price at twenty thousand units.
+
+    Unpublished matrices are excluded, same as `matrix_cell`.
+    """
+    matrix = query(
+        "SELECT id FROM price_matrices WHERE id = ? AND published_at IS NOT NULL",
+        (matrix_id,), one=True)
+    if matrix is None:
+        return None
+    return query(
+        "SELECT * FROM price_matrix_cells WHERE matrix_id = ? "
+        "ORDER BY quantity_min ASC, unit_price_cents ASC LIMIT 1", (matrix_id,), one=True)
+
+
 def matrix_grid(matrix_id):
     """The whole published matrix, as (tiers, quantity bands, cells) for rendering."""
     cells = query(

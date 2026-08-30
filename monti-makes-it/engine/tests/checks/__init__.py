@@ -36,9 +36,10 @@ class Check:
 def collect():
     """Every check, in id order. Imported lazily so a broken module is loud."""
     from . import (agents, brand, data, disclaimercheck, gating, ledgercheck,
-                   money, onedoor, provenance, tenancy, tooling, viewer)
+                   money, onedoor, productmerge, provenance, tenancy, tooling,
+                   viewer)
     checks = []
     for module in (tenancy, brand, gating, money, data, viewer, agents, tooling,
-                   ledgercheck, provenance, onedoor, disclaimercheck):
+                   ledgercheck, provenance, onedoor, disclaimercheck, productmerge):
         checks.extend(module.CHECKS)
     return sorted(checks, key=lambda c: c.id)

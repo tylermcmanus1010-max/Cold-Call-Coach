@@ -1,4 +1,5 @@
 {% extends "portal/_base.html" %}
+{% from "_image_viewer.html" import viewer %}
 
 {% macro name_field(item) %}
   {# E1.03 — their name, our reference. The ref never changes underneath. #}
@@ -13,9 +14,90 @@
   </form>
 {% endmacro %}
 
+{% macro order_panel(row) %}
+  {#
+    The ordering half, on the product rather than on a separate tab.
+
+    The price is whatever `products._price` decided it means, and the wording
+    follows `price_basis` rather than guessing from which key is set. The tab
+    this replaced guessed, read three keys the module does not return, and
+    rendered "$0.00" under a badge asserting it was the member's negotiated
+    price — on every card, including items priced by a published quantity
+    matrix where no single figure is the answer.
+  #}
+  <div class="orderbar">
+    <div class="orderprice">
+      {% if row.price_cents is not none %}
+        <div class="stat-value" style="font-size:1.35rem">
+          {{ 'from ' if row.price_basis == 'matrix' }}{{ row.price_cents|money }}</div>
+        <div class="tiny dim">
+          {% if row.price_basis == 'matrix' %}
+            per unit at {{ '{:,}'.format(row.price_quantity) }} — your price moves with quantity
+          {% elif row.price_basis == 'negotiated' %}per unit · your agreed price
+          {% else %}per unit · catalogue price{% endif %}
+        </div>
+      {% else %}
+        <div class="stat-value" style="font-size:1.1rem;color:var(--muted)">Not priced yet</div>
+        <div class="tiny dim">We will not show you a number we cannot stand behind.</div>
+      {% endif %}
+    </div>
+    <div class="orderfacts tiny dim">
+      {% if row.min_quantity %}<div>from {{ '{:,}'.format(row.min_quantity) }} units</div>{% endif %}
+      {% if row.lead_time_days %}<div>{{ row.lead_time_days }}d lead</div>{% endif %}
+    </div>
+  </div>
+  {% if row.orderable %}
+    <form method="post" action="{{ url_for('portal.cart_add', item_id=row.item_id) }}"
+          class="row" style="margin-top:1rem;gap:.6rem">{{ csrf_input() }}
+      <input type="hidden" name="next" value="{{ url_for('portal.products', ref=row.ref) }}">
+      <label class="field-label" for="q{{ row.item_id }}" style="align-self:center">Quantity</label>
+      <input id="q{{ row.item_id }}" type="number" name="quantity"
+             min="{{ row.min_quantity or 1 }}" value="{{ row.min_quantity or 1 }}"
+             step="1" style="width:120px">
+      <button class="btn btn-primary grow" type="submit">Add to order</button>
+    </form>
+  {% else %}
+    <p class="tiny dim" style="margin-top:1rem">
+      Not orderable from here yet. {% if row.state == 'priced' %}The routes below are
+      priced — choose one and buy it there.{% endif %}
+    </p>
+  {% endif %}
+{% endmacro %}
+
+{% macro spec_panel(entry, genome, images) %}
+  {% if entry %}
+    <div class="card card-lg" style="margin-top:1.25rem">
+      {# Not "What it is" — the genome has a section by that name and the two
+         headings collided on the page. #}
+      <span class="eyebrow">About this product</span>
+      {# §0.3.8 — every item in the portal carries a viewer or says it has no
+         images. This moved here with the rest of the catalogue item page; a
+         merge that quietly dropped it would have left a blank space that reads
+         as "no photos yet" rather than as the missing surface it is. #}
+      <div class="divider-label" style="margin-top:.4rem">Images</div>
+      {{ viewer(images, entry.name, 'prod-' ~ entry.id) }}
+      <dl class="kv" style="margin-top:.8rem">
+        {% if entry.materials %}<dt>Materials</dt><dd>{{ entry.materials }}</dd>{% endif %}
+        {% if entry.specs %}<dt>Specification</dt><dd>{{ entry.specs }}</dd>{% endif %}
+        {% if entry.category %}<dt>Category</dt><dd>{{ entry.category }}</dd>{% endif %}
+      </dl>
+      {% for g in genome or [] %}
+        <div style="margin-top:1rem">
+          <div class="field-label">{{ g.section }}</div>
+          {% if g.is_unknown %}
+            <p class="tiny dim">Not established yet. We would rather say so than fill it in.</p>
+          {% else %}
+            <p style="margin-top:.2rem;max-width:62ch">{{ g.body }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
 {% block title %}My products · {{ company }}{% endblock %}
 {% block eyebrow %}My products{% endblock %}
-{% block heading %}{{ (item.client_name or item.auto_name) if item else 'My products' }}{% endblock %}
+{% block heading %}{{ row.name if row else 'My products' }}{% endblock %}
 {% block content %}
 
 <div class="room-shell">
@@ -24,47 +106,89 @@
     expression that renders them, so they cannot disagree with what is below —
     a count and a list computed separately is how a "3" ends up over two rows.
   #}
+  {#
+    One rail (E1.01, and the catalog merge). It used to be two lists on two
+    tabs: things asked for, and things orderable. They are the same product at
+    different ages, so they are one list grouped by what you can do with it
+    right now. The counts are derived from the same expression that renders the
+    rows, so a count and a list cannot disagree.
+  #}
   <aside class="itemrail">
+    {% set orderable = rows|selectattr('state', 'equalto', 'orderable')|list %}
+    {% set priced = rows|selectattr('state', 'equalto', 'priced')|list %}
+    {% set working = rows|selectattr('state', 'equalto', 'in_progress')|list %}
+
+    {% macro rail_row(r) %}
+      <li><a class="itembtn {{ 'on' if item and r.item and r.item.id == item.id }}"
+             href="{{ url_for('portal.products', ref=r.ref) }}">
+        <span class="iref mono">{{ r.ref }}</span>
+        <span class="iname {{ 'unnamed' if r.unnamed }}">{{ r.name }}</span>
+        <em>{% if r.state == 'orderable' %}
+              {%- if r.price_cents is not none -%}
+                {{ 'from ' if r.price_basis == 'matrix' }}{{ r.price_cents|money }}
+              {%- else -%}
+                ready to order
+              {%- endif -%}
+            {% elif r.state == 'priced' %}priced {{ r.priced_at|date }}
+            {% else %}{{ r.stage_label or 'In progress' }}{% endif %}</em>
+      </a></li>
+    {% endmacro %}
+
     <div class="railgroup">
-      <span class="stat-label">Awaiting approval <b>{{ pending|length }}</b></span>
+      <span class="stat-label">Yours to order <b>{{ orderable|length }}</b></span>
       <ul class="itemlist">
-        {% for row in pending %}
-          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
-                 href="{{ url_for('portal.products', ref=row.ref) }}">
-            <span class="iref mono">{{ row.ref }}</span>
-            <span class="iname {{ '' if row.client_name else 'unnamed' }}">
-              {{ row.client_name or row.auto_name }}</span>
-            <em>{{ stages[row.stage - 1] }}</em>
-          </a></li>
-        {% else %}
+        {% for r in orderable %}{{ rail_row(r) }}{% else %}
+          <li class="emptyrow">Nothing to reorder yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% if priced %}
+      <div class="railgroup">
+        <span class="stat-label">Priced, not yet opened <b>{{ priced|length }}</b></span>
+        <ul class="itemlist">
+          {% for r in priced %}{{ rail_row(r) }}{% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="railgroup">
+      <span class="stat-label">Being worked out <b>{{ working|length }}</b></span>
+      <ul class="itemlist">
+        {% for r in working %}{{ rail_row(r) }}{% else %}
           <li class="emptyrow">Nothing waiting.
             <a class="reqlink" href="{{ url_for('portal.requests_page') }}">Send us something.</a></li>
         {% endfor %}
       </ul>
     </div>
 
-    <div class="railgroup">
-      <span class="stat-label">Approved catalogue <b>{{ approved|length }}</b></span>
-      <ul class="itemlist">
-        {% for row in approved %}
-          <li><a class="itembtn {{ 'on' if item and row.id == item.id }}"
-                 href="{{ url_for('portal.products', ref=row.ref) }}">
-            <span class="iref mono">{{ row.ref }}</span>
-            <span class="iname {{ '' if row.client_name else 'unnamed' }}">
-              {{ row.client_name or row.auto_name }}</span>
-            <em>priced {{ row.published_at|date }}</em>
-          </a></li>
-        {% else %}
-          <li class="emptyrow">No approved items yet.</li>
-        {% endfor %}
-      </ul>
-    </div>
     <p class="railnote tiny dim">Items arrive unnamed and numbered. Name yours whenever
       you like — no other member can see this list.</p>
   </aside>
 
   <div class="roompane">
-  {% if not item %}
+  {% if row and not item %}
+    {# A catalogue line registered to this account with no product behind it —
+       migrated, or opened by us directly. It has no stage and no Decision Room,
+       and inventing either would be manufacturing a history it does not have.
+       What it does have is a price and the ability to be ordered, so that is
+       what the pane shows. #}
+    <div class="card card-lg">
+      <span class="eyebrow-label">Ready to order · <span class="mono">{{ row.sku }}</span></span>
+      <h2 style="margin:.5rem 0 0;font-size:1.3rem">{{ row.name }}</h2>
+      {% if entry and entry.description %}
+        <p class="muted" style="margin-top:.7rem;max-width:62ch">{{ entry.description }}</p>
+      {% endif %}
+      <p class="tiny dim" style="margin-top:.8rem;max-width:62ch">
+        This one did not come through Describe it badly — it is on your account
+        because we already make it for you. There is no specification history to
+        show, so this page does not pretend to have one.
+      </p>
+      {{ order_panel(row) }}
+    </div>
+    {{ spec_panel(entry, genome, images) }}
+
+  {% elif not item %}
     <div class="empty" style="padding:3rem 1rem">
       <h3>Nothing here yet</h3>
       <p class="muted">Describe something badly and it appears on the left, unnamed and
@@ -151,6 +275,29 @@
 
   {% else %}
     {{ name_field(item) }}
+
+    {# The catalogue half of a priced product, when it has one. This is the
+       merge: a product that has become something we make for you is reorderable
+       from the product itself, at the price the registration says, instead of
+       from a second tab that knew nothing about the Decision Room below it.
+
+       A repeat order does not need the three routes re-argued — the route was
+       chosen when it was first bought. Members who do want to re-price it still
+       have the room, directly underneath. #}
+    {% if row and row.entry %}
+      <div class="card card-lg" style="margin-bottom:1.25rem">
+        <div class="row-between wrap" style="gap:1rem;align-items:flex-start">
+          <div>
+            <span class="eyebrow-label">Reorder · <span class="mono">{{ row.sku }}</span></span>
+            <p class="tiny dim" style="margin-top:.35rem;max-width:52ch">
+              We already make this for you. Reorder at your registered price without
+              re-quoting, or price a different run below.</p>
+          </div>
+        </div>
+        {{ order_panel(row) }}
+      </div>
+      {{ spec_panel(row.entry, genome, images) }}
+    {% endif %}
 
     {# The Decision Room is what a priced product opens into, and it is worth
        naming here: below this line the page stops describing the product and

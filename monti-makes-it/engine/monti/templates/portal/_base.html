@@ -3,17 +3,20 @@
 {% block sidebar %}
   {#
     Order follows what a member actually comes here for. My products is the
-    tab — everything they have asked us to make, priced or not — so it sits
-    directly under Overview, and the door that adds to it sits directly under
-    that. Quotes used to be its own row; it is the same list as Describe it
-    badly now, and two rows for one act is what the merge removed.
+    tab — everything they have asked us to make and everything we already make
+    for them, priced or not — so it sits directly under Overview, and the door
+    that adds to it sits directly under that.
+
+    Two merges took rows out of here. Quotes used to be its own row; it is the
+    same list as Describe it badly. My catalog used to be its own row; it is the
+    same product one stage later, and watching an item vanish from one tab and
+    reappear in another is not a member's job.
   #}
   <div class="side-group">
     <div class="side-title">{{ g.customer.company_name if g.customer }}</div>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.dashboard' }}" href="{{ url_for('portal.dashboard') }}"><span class="side-icon">◈</span> Overview</a>
-    <a class="side-link {{ 'active' if 'product' in (request.endpoint or '') }}" href="{{ url_for('portal.products') }}"><span class="side-icon">◆</span> My products</a>
+    <a class="side-link {{ 'active' if 'product' in (request.endpoint or '') or 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.products') }}"><span class="side-icon">◆</span> My products</a>
     <a class="side-link {{ 'active' if 'request' in (request.endpoint or '') or 'quote' in (request.endpoint or '') or 'intake' in (request.endpoint or '') }}" href="{{ url_for('portal.requests_page') }}"><span class="side-icon">+</span> Describe it badly</a>
-    <a class="side-link {{ 'active' if 'catalog' in (request.endpoint or '') }}" href="{{ url_for('portal.catalog') }}"><span class="side-icon">▤</span> My catalog</a>
     <a class="side-link {{ 'active' if request.endpoint == 'portal.purchases' }}" href="{{ url_for('portal.purchases') }}"><span class="side-icon">▣</span> Purchased items</a>
     <a class="side-link {{ 'active' if 'order' in (request.endpoint or '') }}" href="{{ url_for('portal.orders') }}"><span class="side-icon">◱</span> Orders</a>
     <a class="side-link {{ 'active' if 'ledger' in (request.endpoint or '') }}" href="{{ url_for('portal.ledger_view') }}"><span class="side-icon">≡</span> My ledger</a>

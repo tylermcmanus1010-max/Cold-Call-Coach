@@ -264,11 +264,22 @@ def main():
             from monti.db import query
             own_quote = query("SELECT q.id FROM quotes q JOIN customers c ON c.id = q.customer_id "
                               "WHERE c.company_name = 'Halcyon Goods' ORDER BY q.id LIMIT 1", one=True)
-        for url in ("/portal/", "/portal/requests", "/portal/products", "/portal/catalog",
+        for url in ("/portal/", "/portal/requests", "/portal/products",
                     "/portal/orders", "/portal/cart", "/portal/quotes/" + str(own_quote["id"]),
-                    "/portal/orders/1", "/portal/orders/3", "/portal/catalog/1",
+                    "/portal/orders/1", "/portal/orders/3",
                     "/portal/purchases"):
             get(c, url)
+        # My catalog was merged into My products. The old links keep working, and
+        # "keep working" means landing on the product — a 301 into a 404 would
+        # pass a status check and still be a broken link.
+        for url in ("/portal/catalog", "/portal/catalog/1"):
+            r = c.get(url)
+            check(f"{url} redirects into the merged list", r.status_code == 301,
+                  f"got {r.status_code}")
+            landed = c.get(url, follow_redirects=True)
+            check(f"{url} lands on a product page",
+                  landed.status_code == 200 and b"My products" in landed.data,
+                  f"got {landed.status_code}")
 
         # The two tabs are one now. Both old addresses still land somewhere real.
         for legacy, target in (("/portal/quotes", "/portal/requests"),
@@ -451,7 +462,7 @@ def main():
         arm(c)
         print("\n— a member buys their product —")
         login(c, "client1", "client")
-        r = c.get("/portal/catalog")
+        r = c.get("/portal/products")
         check("the account sees a product", b"edition" in r.data, f"status {r.status_code}")
         with app.app_context():
             from monti.db import query
@@ -783,12 +794,12 @@ def main():
         check("admin lands in the client's portal",
               c1["company_name"].encode() in r.data, f"status {r.status_code}")
         check("the view is clearly marked", b"Admin view" in r.data)
-        r = c.get("/portal/catalog")
+        r = c.get("/portal/products")
         check("that portal shows their product", b"edition" in r.data, f"status {r.status_code}")
         c.get("/admin/clients/" + str(c5["id"]) + "/open", follow_redirects=True)
-        r = c.get("/portal/catalog")
+        r = c.get("/portal/products")
         check("a quote-only portal shows nothing to order",
-              b"Nothing available to order yet" in r.data, f"status {r.status_code}")
+              b"Nothing to reorder yet" in r.data, f"status {r.status_code}")
         r = c.get("/admin/clients/close", follow_redirects=True)
         check("admin can step back out", r.status_code == 200)
 

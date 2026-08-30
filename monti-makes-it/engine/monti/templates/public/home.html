@@ -20,32 +20,6 @@
       <a class="btn btn-outline btn-xl" href="{{ url_for('public.apply') }}">Apply for Membership</a>
     </div>
 
-    {# The demo doors. Rendered only when DEMO_MODE is on — and when it is off,
-       the routes behind them do not exist either, so this is not the only thing
-       keeping them shut. Kept visually separate from the real calls to action:
-       they are scaffolding for whoever is reviewing the build, not something a
-       visitor should mistake for a way in. #}
-    {% if cfg.DEMO_MODE %}
-    <div class="demo-doors">
-      <span class="demo-label">Demo mode is on</span>
-      <p class="tiny">
-        These sign you straight in with no password. The member door opens a real
-        account with real orders and real prices; the admin door reaches every
-        account there is. Turn <span class="mono">DEMO_MODE</span> off before this
-        is anywhere public.
-      </p>
-      <div class="row wrap" style="gap:.6rem;margin-top:.75rem">
-        <form method="post" action="{{ url_for('auth.demo', role='member') }}">
-          {{ csrf_input() }}
-          <button class="btn btn-sm" type="submit">Open the member portal →</button>
-        </form>
-        <form method="post" action="{{ url_for('auth.demo', role='admin') }}">
-          {{ csrf_input() }}
-          <button class="btn btn-sm" type="submit">Open the admin portal →</button>
-        </form>
-      </div>
-    </div>
-    {% endif %}
     <p class="hero-note">
       A quote is free and takes two minutes. Membership is how you buy — and not everyone is accepted.
     </p>
@@ -129,6 +103,63 @@
     <div class="row" style="justify-content:center;margin-top:1.75rem;gap:1rem;flex-wrap:wrap">
       <a class="btn btn-primary btn-xl" href="{{ url_for('public.quote') }}">Request a Quote</a>
       <a class="btn btn-outline btn-xl" href="{{ url_for('public.apply') }}">Apply for Membership</a>
+    </div>
+  </div>
+</section>
+
+{# ---- the way back in, at the foot of the page -------------------------------
+   Members already know who they are, so this is the last thing on the page
+   rather than competing with the two calls to action above. It posts straight
+   to the login route with `next` set, so signing in here lands in the portal
+   instead of bouncing through a second form. #}
+<section class="section signin-band">
+  <div class="container">
+    <div class="signin-grid">
+      <form class="signin" method="post" action="{{ url_for('auth.login') }}">
+        {{ csrf_input() }}
+        <input type="hidden" name="next" value="{{ url_for('portal.dashboard') }}">
+        <span class="eyebrow-label">Already a member</span>
+        <h3>Sign in to your portal</h3>
+        <p class="tiny dim">Your products, your pricing, your orders and your ledger.</p>
+        <div class="signin-fields">
+          <label class="field"><span class="field-label">Email</span>
+            <input type="email" name="email" autocomplete="username" required></label>
+          <label class="field"><span class="field-label">Password</span>
+            <input type="password" name="password" autocomplete="current-password" required></label>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        <p class="tiny dim" style="margin-top:.7rem">
+          Not a member yet?
+          <a class="reqlink" href="{{ url_for('public.apply') }}">Apply for membership</a>.
+        </p>
+      </form>
+
+      {% if cfg.DEMO_MODE %}
+        {# Rendered only when DEMO_MODE is on, and when it is off the routes
+           behind these do not exist either — so this is not the only thing
+           keeping them shut. Dashed and brass rather than in the brand palette,
+           because a demo session should look like something switched on that
+           ought to be switched off. #}
+        <div class="demo-doors">
+          <span class="demo-label">Demo mode is on</span>
+          <h3 style="margin:.35rem 0 0;font-size:1rem">Go straight in, no password</h3>
+          <p class="tiny">
+            The member door opens a real account with real orders and real prices.
+            The admin door reaches every account there is. Turn
+            <span class="mono">DEMO_MODE</span> off before this is anywhere public.
+          </p>
+          <div class="row wrap" style="gap:.6rem;margin-top:.9rem">
+            <form method="post" action="{{ url_for('auth.demo', role='member') }}">
+              {{ csrf_input() }}
+              <button class="btn btn-sm" type="submit">Member portal →</button>
+            </form>
+            <form method="post" action="{{ url_for('auth.demo', role='admin') }}">
+              {{ csrf_input() }}
+              <button class="btn btn-sm" type="submit">Admin portal →</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
     </div>
   </div>
 </section>

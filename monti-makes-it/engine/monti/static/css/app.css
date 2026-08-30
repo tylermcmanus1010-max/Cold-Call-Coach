@@ -1597,3 +1597,20 @@ details.more > .more-body { padding-top: 1.5rem; }
 .demobar .mono { background: rgba(255,255,255,.18); padding: 0 .3rem; border-radius: 2px; }
 .demobar a { color: #fff; text-decoration: underline; text-underline-offset: 3px;
   white-space: nowrap; }
+
+/* ---------- the sign-in band at the foot of the landing page --------------
+   Two columns where there is room, stacked where there is not. The demo panel
+   sits beside the real form rather than above it, so nobody reaches for the
+   wrong one on the way past. */
+.signin-band { background: var(--surface-2); border-top: 1px solid var(--rule); }
+.signin-grid { display: grid; gap: 1.5rem; align-items: start;
+  grid-template-columns: minmax(0, 1fr); max-width: 900px; margin: 0 auto; }
+@media (min-width: 820px) {
+  .signin-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+.signin { background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--r); padding: 1.5rem 1.6rem 1.6rem; }
+.signin h3 { margin: .4rem 0 0; font-size: 1.15rem; }
+.signin > p { margin: .35rem 0 0; }
+.signin-fields { display: grid; gap: .1rem; margin: 1.1rem 0 .3rem; }
+.signin-fields .field { margin-bottom: .7rem; }

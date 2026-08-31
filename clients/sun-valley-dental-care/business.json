@@ -103,6 +103,9 @@
     "ink": "#12181c",
     "heroImage": ""
   },
+  "callNotes": [
+    "2026-08-31: WebFetch blocked in this environment (network egress), could not re-verify site directly; site listed live/rendered in prior scout. Site has a contact-us page but only a form, no published email. Checked BBB, East County Chamber, Yelp, Facebook — no email found. No email found — needs a phone call."
+  ],
   "audit": {
     "https": true,
     "mobile": true,

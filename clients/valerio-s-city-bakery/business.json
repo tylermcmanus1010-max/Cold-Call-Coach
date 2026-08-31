@@ -113,7 +113,8 @@
   "lastTried": "2026-08-27",
   "callNotes": [
     "2026-08-27: reached them, call back 9:00am Fri 28 Aug",
-    "2026-08-27: site timed twice — 19.2s and 28.7s. Quote the SLOWER-BOUND honestly: \"about twenty seconds, and it was nearly thirty the first time I checked.\""
+    "2026-08-27: site timed twice — 19.2s and 28.7s. Quote the SLOWER-BOUND honestly: \"about twenty seconds, and it was nearly thirty the first time I checked.\"",
+    "2026-08-31: WebFetch blocked in this environment (network egress), could not re-verify site directly. Found info@valeriosusa.com but that's the DIFFERENT 'Valerio's Bakeshop' chain (2720 E Plaza Blvd, valeriosusa.com) — not this business (Valerio's City Bakery, 1631 E 8th St, valerios.com) — so not used. No email found for valerios.com — needs a phone call."
   ],
   "callbackAt": "2026-08-28 09:00"
 }

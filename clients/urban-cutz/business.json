@@ -103,6 +103,9 @@
     "ink": "#12181c",
     "heroImage": ""
   },
+  "callNotes": [
+    "2026-08-31: WebFetch blocked in this environment (network egress), could not re-verify site directly. Found urbancutzsd@yahoo.com but it's published for a DIFFERENT Urban Cutz location (El Cajon Blvd, different phone) — not this Broadway/Lemon Grove location, so not used. No email found for this location — needs a phone call."
+  ],
   "audit": {
     "https": true,
     "mobile": true,

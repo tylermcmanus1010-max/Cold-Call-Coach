@@ -103,6 +103,9 @@
     "ink": "#12181c",
     "heroImage": ""
   },
+  "callNotes": [
+    "2026-08-31: WebFetch blocked in this environment (network egress), could not re-verify site directly; site listed live/rendered in prior scout. Only pattern-guessed email formats found (rocketreach), no actual published address seen. No email found — needs a phone call."
+  ],
   "audit": {
     "https": true,
     "mobile": true,

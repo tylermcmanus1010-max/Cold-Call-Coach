@@ -129,6 +129,9 @@
   },
   "emailBounced": "davidcravens@mailfence.com",
   "callNotes": [
-    "2026-08-30: davidcravens@mailfence.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only."
-  ]
+    "2026-08-30: davidcravens@mailfence.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only.",
+    "2026-08-31: hung up during the intro, 9am Mon"
+  ],
+  "attempts": 1,
+  "lastTried": "2026-08-31"
 }

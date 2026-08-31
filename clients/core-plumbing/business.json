@@ -126,5 +126,8 @@
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site returned bot-check page (sgcaptcha), could not verify content — searched web, got conflicting unverified guesses (info@/office@coreplumbingsd.com) with no source actually showing one, not usable — needs a phone call instead"
+  ]
 }

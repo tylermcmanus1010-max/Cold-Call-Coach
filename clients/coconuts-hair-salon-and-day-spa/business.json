@@ -126,5 +126,8 @@
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site returned bot-check page (sgcaptcha), could not verify content — searched web for a published email, found none, needs a phone call instead"
+  ]
 }

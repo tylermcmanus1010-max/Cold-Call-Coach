@@ -126,5 +126,8 @@
     "pageKb": 389,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site confirmed live via WebSearch (Yelp/Fresha/Instagram listings match); WebFetch itself blocked on theportalsalon.com by network egress policy so could not verify directly; no public email found (checked site, Yelp, Instagram, Fresha) — no email found, needs a phone call instead"
+  ]
 }

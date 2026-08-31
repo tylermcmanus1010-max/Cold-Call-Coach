@@ -108,6 +108,7 @@
   "attempts": 1,
   "lastTried": "2026-08-28",
   "callNotes": [
-    "2026-08-28: went to voicemail, 5pm Thu — no message left"
+    "2026-08-28: went to voicemail, 5pm Thu — no message left",
+    "2026-08-31: already flagged Do not pitch (see _verifiedByEye) so skipped sending regardless of email search; WebFetch blocked on revivelashandnail.com by network egress policy; a perfectbeautycenter8140@gmail.com surfaced in search results but could not confirm it's actually published anywhere — moot given do-not-pitch status"
   ]
 }

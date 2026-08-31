@@ -126,5 +126,8 @@
     "pageKb": 15,
     "builder": null,
     "copyrightYear": 1999
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site confirmed live via WebSearch (palmdentalgroup.com/contact-us/ indexed, matches practice run by Dr. Teresa Rabanal); WebFetch itself blocked on palmdentalgroup.com by network egress policy so could not verify directly; no public email found (checked site, Yelp, WebMD, Nextdoor, AEDIT) — no email found, needs a phone call instead"
+  ]
 }

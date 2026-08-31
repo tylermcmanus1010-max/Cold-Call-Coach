@@ -126,5 +126,8 @@
     "pageKb": 215,
     "builder": null,
     "copyrightYear": 2022
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site confirmed live via WebSearch (Yelp/Fresha/Facebook listings match); WebFetch itself blocked on lumieresalonrb.com by network egress policy so could not verify directly; no public email found for the salon (checked site, Yelp, Facebook, Fresha, Nextdoor) — no email found, needs a phone call instead"
+  ]
 }

@@ -21,6 +21,24 @@
         "social": false
       },
       "parked": false
+    },
+    {
+      "at": "2026-08-31T19:18:40.092Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 3022,
+      "kb": 22,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": true,
+        "social": false
+      },
+      "parked": false
     }
   ]
 }

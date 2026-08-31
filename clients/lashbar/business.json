@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.lashbar.com/delsur",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -21,7 +21,7 @@
   "tagline": "LashBar™ Del Sur is a luxury salon focusing on Eyelash Extensions and Keratin Eyelash Lifts. Come and experience a customer-focused salon that uses only the best quality lashes and adhesives. We raise the bar in a luxury customer experience.",
   "heroNote": "",
   "phone": "+1 858-769-9591",
-  "email": "",
+  "email": "info@lashbar.com",
   "address": {
     "street": "16445",
     "city": "San Diego",
@@ -126,5 +126,8 @@
     "pageKb": 1492,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site confirmed live via WebSearch (Yelp/Fresha listings match); WebFetch itself blocked on lashbar.com by network egress policy so could not verify directly; found info@lashbar.com published as LashBar's official contact (lashbar.com/privacy, LinkedIn) — sent pitch with rebuilt page attached"
+  ]
 }

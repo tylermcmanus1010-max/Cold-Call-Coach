@@ -125,3 +125,23 @@ business that answers the phone.
 2. `./cc sent <slug>`
 3. No reply in three days → send the follow-up text at the bottom of `pitch.md`
 4. They say yes → `DELIVERY.md`
+
+---
+
+## Never guess an email address
+
+An address that is not in `business.json` does not exist. Do not construct one,
+do not scrape one, do not try `hello@`, `info@` or `contact@`.
+
+Two guessed addresses hard-bounced on 30 Aug — `hello@saltedbarber.com` and
+`davidcravens@mailfence.com` — and one of them was retried eleven minutes after
+a `550`. A 550 is permanent. Retrying it is the exact behaviour that gets a
+personal Gmail account rate-limited or flagged as a bulk sender, and every piece
+of outreach this business does runs through that one account. The downside is
+not two lost emails; it is losing the ability to send at all.
+
+**The rule:** no `email` field, no email. Call them instead — that is what the
+phone number is for, and it is how every address we do have was obtained.
+
+Never send to an address that has bounced. Record the bounce in `callNotes` and
+clear the `email` field so nothing tries again.

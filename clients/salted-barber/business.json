@@ -126,5 +126,9 @@
     "pageKb": 12,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "emailBounced": "hello@saltedbarber.com",
+  "callNotes": [
+    "2026-08-30: hello@saltedbarber.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only."
+  ]
 }

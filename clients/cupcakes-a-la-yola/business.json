@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://cupcakesalayola.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -21,7 +21,7 @@
   "tagline": "",
   "heroNote": "",
   "phone": "+1-858-668-7234",
-  "email": "",
+  "email": "cupcakesalayola@gmail.com",
   "address": {
     "street": "13339 Poway Road",
     "city": "Poway",
@@ -126,5 +126,8 @@
     "pageKb": 235,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site (cupcakesalayola.com) still loads, but Yelp lists this Poway address (13339 Poway Rd) as CLOSED — physical location status unclear, verify before follow-up call. Found published email cupcakesalayola@gmail.com, sent pitch."
+  ]
 }

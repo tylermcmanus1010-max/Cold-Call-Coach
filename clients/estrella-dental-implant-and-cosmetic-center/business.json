@@ -6,14 +6,14 @@
   "owner": "",
   "currentSite": "https://www.hugedomains.com/domain_profile.cfm?d=estrelladental.com",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "",
   "subhead": "",
   "tagline": "Get a new domain name for your startup. Quick and professional service. Seamless domain transfers.",
   "heroNote": "",
   "phone": "+1-619-397-4111",
-  "email": "",
+  "email": "info@estrelladental.com",
   "address": {
     "street": "2452 Fenton Street",
     "city": "Chula Vista",
@@ -104,5 +104,8 @@
     "copyrightYear": 2026,
     "rendered": true,
     "hardGaps": 7
-  }
+  },
+  "callNotes": [
+    "2026-08-31: confirmed estrelladental.com still redirects to a HugeDomains for-sale/parked page, not a real site; found published email info@estrelladental.com, sent pitch"
+  ]
 }

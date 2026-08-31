@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.eichmaninsurance.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -21,7 +21,7 @@
   "tagline": "",
   "heroNote": "",
   "phone": "+1-760-230-6157",
-  "email": "",
+  "email": "eichmaninsurance@gmail.com",
   "address": {
     "street": "16236 San Dieguito Road",
     "city": "Rancho Santa Fe",
@@ -126,5 +126,8 @@
     "pageKb": 536,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site still live, same business; found published email eichmaninsurance@gmail.com, sent pitch"
+  ]
 }

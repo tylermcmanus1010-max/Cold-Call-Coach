@@ -126,5 +126,8 @@
     "pageKb": 28,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site still live, same business; sent pitch to davidcravens@mailfence.com but it hard-bounced (550, address not found) on two attempts — that address is invalid, no working email found yet, needs re-research"
+  ]
 }

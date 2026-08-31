@@ -13,7 +13,7 @@
   "tagline": "Florist in San Diego, CA. Call (619) 237-8842.",
   "heroNote": "",
   "phone": "(619) 237-8842",
-  "email": "",
+  "email": "deluxeflorist@hotmail.com",
   "address": {
     "street": "6602 Mission Gorge Road",
     "city": "San Diego",
@@ -109,6 +109,7 @@
   "attempts": 1,
   "lastTried": "2026-08-26",
   "callNotes": [
-    "2026-08-26: no answer, after hours"
+    "2026-08-26: no answer, after hours",
+    "2026-08-31: DID NOT SEND — currentSite (deluxeflorist.com/san-diego-florist-flower-delivery) is not a blank/parked page, it is a full branded site (gallery, wedding packages, city SEO pages) whose address (6602 Mission Gorge Road) and phone ((619) 237-8842) match House of Stemms exactly — looks like their real operating site under the DeluxeFlorist/BloomNation platform name, not a hostile third party. The pre-written email's premise (\"your domain shows a blank hosting placeholder page\") appears false, so sending it as-is would be factually wrong. Found contact email deluxeflorist@hotmail.com but held it — Tyler should confirm on a call or rewrite the pitch before this goes out."
   ]
 }

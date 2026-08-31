@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.darshanbakery.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -21,7 +21,7 @@
   "tagline": "",
   "heroNote": "",
   "phone": "",
-  "email": "",
+  "email": "info@darshanbakery.com",
   "address": {
     "street": "915 Camino del Mar",
     "city": "Del Mar",
@@ -126,5 +126,8 @@
     "pageKb": 226,
     "builder": null,
     "copyrightYear": null
-  }
+  },
+  "callNotes": [
+    "2026-08-31: site still live, same business; found published email info@darshanbakery.com, sent pitch"
+  ]
 }

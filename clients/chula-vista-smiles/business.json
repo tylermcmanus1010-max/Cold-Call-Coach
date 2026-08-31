@@ -3,10 +3,10 @@
   "slug": "chula-vista-smiles",
   "name": "Chula Vista Smiles",
   "category": "dentist",
-  "owner": "",
+  "owner": "Dr. Ilse Savelli-Castillo DDS",
   "currentSite": "https://chulavista-smiles.com/",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -126,5 +126,9 @@
     "pageKb": 47,
     "builder": null,
     "copyrightYear": 2021
-  }
+  },
+  "_status": "NOT a lead. Site is maintained by WEO Media (Dental Marketing / Touchpoint Communications), copyright runs to 2026 and the page was dated 8/23/2026 — actively maintained by a paid agency. The site has patient reviews with names, doctor bios, office hours, address, booking CTA, social links, video and an accessibility widget. Only measured failure is a 9s load, largely from YouTube embeds. Nothing honest to sell.",
+  "callNotes": [
+    "2026-08-31: dropped — WEO Media dental marketing agency maintains it, updated 8/23/2026. Reviews, hours, doctor bios, booking, socials all present. Only gap is a 9s load from video embeds. Their URL was correct in our data for once."
+  ]
 }

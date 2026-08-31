@@ -1,0 +1,26 @@
+{
+  "slug": "rt-roofing-specialist-inc",
+  "name": "RT Roofing Specialist",
+  "url": "https://www.rtroofingspecialist.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:22.168Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 2869,
+      "kb": 245,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": true,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

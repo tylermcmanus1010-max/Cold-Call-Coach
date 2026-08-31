@@ -1,0 +1,26 @@
+{
+  "slug": "house-of-stemms",
+  "name": "House of Stemms",
+  "url": "https://deluxeflorist.com/san-diego-florist-flower-delivery",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:00.325Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "parked or placeholder page",
+      "ms": 1115,
+      "kb": 0,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": true
+    }
+  ]
+}

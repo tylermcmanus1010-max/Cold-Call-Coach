@@ -1,0 +1,26 @@
+{
+  "slug": "alexander-s-upholstering",
+  "name": "Alexander's Upholstering",
+  "url": "https://alexandersupholstering.com/lander",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:27.024Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 1999",
+      "ms": 14158,
+      "kb": 25,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

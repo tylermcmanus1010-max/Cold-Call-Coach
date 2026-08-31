@@ -1,0 +1,26 @@
+{
+  "slug": "el-cajon-family-dental",
+  "name": "El Cajon Family Dental",
+  "url": "http://elcajonfamilydental.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:39.712Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 3429,
+      "kb": 22,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": true,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "who-s-next-barbershop",
+  "name": "Who's Next Barbershop",
+  "url": "https://whosnextlajolla.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:04:02.510Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 14566,
+      "kb": 164,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": true,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

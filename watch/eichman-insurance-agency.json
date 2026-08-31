@@ -1,0 +1,26 @@
+{
+  "slug": "eichman-insurance-agency",
+  "name": "Eichman Insurance Agency",
+  "url": "https://www.eichmaninsurance.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:36.132Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 15217,
+      "kb": 536,
+      "checks": {
+        "mobile": false,
+        "https": true,
+        "speed": false,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

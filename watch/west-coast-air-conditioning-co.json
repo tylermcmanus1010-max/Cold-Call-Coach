@@ -1,0 +1,26 @@
+{
+  "slug": "west-coast-air-conditioning-co",
+  "name": "West Coast Air Conditioning Co",
+  "url": "https://www.wcac.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:47.813Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 1775,
+      "kb": 204,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": true,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

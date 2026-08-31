@@ -1,0 +1,26 @@
+{
+  "slug": "san-diego-training-systems",
+  "name": "San Diego Training Systems",
+  "url": "https://sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878190.028",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:23.075Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

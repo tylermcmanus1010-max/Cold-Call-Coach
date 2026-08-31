@@ -1,0 +1,26 @@
+{
+  "slug": "sun-valley-dental-care",
+  "name": "Sun Valley Dental Care",
+  "url": "https://sunvalleydentalcare.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:35.397Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 7667,
+      "kb": 300,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": true,
+        "seo": true,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

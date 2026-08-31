@@ -1,0 +1,26 @@
+{
+  "slug": "love-and-bake",
+  "name": "Love & Bake",
+  "url": "https://loveandbake.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:25.110Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 4412,
+      "kb": 173,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

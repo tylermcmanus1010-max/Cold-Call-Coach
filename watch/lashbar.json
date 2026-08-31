@@ -1,0 +1,26 @@
+{
+  "slug": "lashbar",
+  "name": "Lashbar",
+  "url": "https://www.lashbar.com/delsur",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:18.328Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 15291,
+      "kb": 1492,
+      "checks": {
+        "mobile": false,
+        "https": true,
+        "speed": false,
+        "phoneTap": true,
+        "seo": false,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

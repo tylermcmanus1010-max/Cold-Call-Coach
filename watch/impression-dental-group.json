@@ -1,0 +1,26 @@
+{
+  "slug": "impression-dental-group",
+  "name": "Impression Dental Group",
+  "url": "https://www.impressiondentalgroup.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:02.858Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 2012",
+      "ms": 2389,
+      "kb": 8,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

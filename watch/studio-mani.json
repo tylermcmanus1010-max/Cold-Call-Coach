@@ -1,0 +1,26 @@
+{
+  "slug": "studio-mani",
+  "name": "Studio Mani",
+  "url": "https://www.studiomanipoway.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:27.542Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 4315,
+      "kb": 194,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": true,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

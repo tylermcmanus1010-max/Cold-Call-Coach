@@ -1,0 +1,26 @@
+{
+  "slug": "darshan",
+  "name": "Darshan",
+  "url": "https://www.darshanbakery.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:15.221Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 4831,
+      "kb": 231,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

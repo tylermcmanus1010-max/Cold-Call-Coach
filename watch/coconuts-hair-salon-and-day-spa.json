@@ -1,0 +1,26 @@
+{
+  "slug": "coconuts-hair-salon-and-day-spa",
+  "name": "Coconuts Hair Salon & Day Spa",
+  "url": "https://coconutssalon.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878263.845",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:54.916Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

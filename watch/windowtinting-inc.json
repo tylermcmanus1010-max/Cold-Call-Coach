@@ -1,0 +1,26 @@
+{
+  "slug": "windowtinting-inc",
+  "name": "Windowtinting, Inc",
+  "url": "https://www.windowtinting.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878446.404",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:04:02.828Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "le-parfait-paris",
+  "name": "Le Parfait Paris",
+  "url": "http://www.leparfaitparis.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:20.554Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 2075,
+      "kb": 5,
+      "checks": {
+        "mobile": true,
+        "https": false,
+        "speed": true,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

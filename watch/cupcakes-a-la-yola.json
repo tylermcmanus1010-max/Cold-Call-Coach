@@ -1,0 +1,26 @@
+{
+  "slug": "cupcakes-a-la-yola",
+  "name": "cupCAKES a la Yola",
+  "url": "https://cupcakesalayola.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:10.227Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 14604,
+      "kb": 235,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

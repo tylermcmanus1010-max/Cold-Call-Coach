@@ -1,0 +1,26 @@
+{
+  "slug": "urban-cutz",
+  "name": "Urban Cutz",
+  "url": "https://placejuice.com/urban-cutz-barber-shop-pcrpmtq",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:40.328Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 4730,
+      "kb": 116,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

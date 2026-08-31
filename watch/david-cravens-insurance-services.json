@@ -1,0 +1,26 @@
+{
+  "slug": "david-cravens-insurance-services",
+  "name": "David Cravens Insurance Services",
+  "url": "https://davidcravens.myhomehq.biz/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:20.773Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 5389,
+      "kb": 28,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

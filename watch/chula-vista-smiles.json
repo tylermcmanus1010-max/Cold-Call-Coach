@@ -1,0 +1,26 @@
+{
+  "slug": "chula-vista-smiles",
+  "name": "Chula Vista Smiles",
+  "url": "https://chulavista-smiles.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:54.374Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 2021",
+      "ms": 6215,
+      "kb": 47,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": true,
+        "seo": false,
+        "meta": true,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

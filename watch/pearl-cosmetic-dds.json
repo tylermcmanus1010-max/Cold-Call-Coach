@@ -1,0 +1,26 @@
+{
+  "slug": "pearl-cosmetic-dds",
+  "name": "Pearl Cosmetic & Family Dentistry",
+  "url": "https://pearlcosmeticdds.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:59.904Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 14580,
+      "kb": 97,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "because-we-care-dog-and-cat-grooming",
+  "name": "Because We Care Dog and Cat Grooming",
+  "url": "https://www.becausewecarepetgrooming.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:46.776Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 4815,
+      "kb": 217,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "palm-dental-group",
+  "name": "Palm Dental Group",
+  "url": "https://www.palmdentalgroup.com/lander",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:02:45.165Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 1999",
+      "ms": 13989,
+      "kb": 15,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "helix-mechanical-inc",
+  "name": "Helix Mechanical, Inc.",
+  "url": "https://helixmechanical.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:59.080Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 1527,
+      "kb": 80,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

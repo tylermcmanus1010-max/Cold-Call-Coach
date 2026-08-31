@@ -1,0 +1,26 @@
+{
+  "slug": "salted-barber",
+  "name": "Salted Barber",
+  "url": "https://www.saltedbarber.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878432.840",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:22.721Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "revive-lash-and-nail",
+  "name": "Revive Lash & Nail",
+  "url": "https://revivelashandnail.com/lander",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:19.164Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 1999",
+      "ms": 13956,
+      "kb": 25,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

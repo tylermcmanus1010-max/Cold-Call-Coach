@@ -1,0 +1,26 @@
+{
+  "slug": "eversun",
+  "name": "EverSun",
+  "url": "https://eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&y=ipr:20.118.214.98:1787878245.533",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:43.302Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

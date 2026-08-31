@@ -1,0 +1,26 @@
+{
+  "slug": "all-american-plumbing",
+  "name": "All American Plumbing",
+  "url": "https://plumbing-sandiego.net/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878468.404",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:27.623Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

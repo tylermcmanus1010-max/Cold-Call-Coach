@@ -1,0 +1,26 @@
+{
+  "slug": "portal-salon",
+  "name": "Portal Salon",
+  "url": "https://theportalsalon.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:05.041Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 5000,
+      "kb": 390,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

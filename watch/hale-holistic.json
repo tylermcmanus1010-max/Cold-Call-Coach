@@ -1,0 +1,26 @@
+{
+  "slug": "hale-holistic",
+  "name": "Hale Holistic",
+  "url": "https://www.haleholistic.com/lander",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:01:57.420Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": "© 1999",
+      "ms": 13978,
+      "kb": 15,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

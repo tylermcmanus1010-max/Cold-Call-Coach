@@ -1,0 +1,26 @@
+{
+  "slug": "valerio-s-city-bakery",
+  "name": "Valerio's City Bakery",
+  "url": "https://valerios.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:03:45.878Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 5395,
+      "kb": 148,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

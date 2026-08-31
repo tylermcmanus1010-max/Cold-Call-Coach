@@ -1,0 +1,26 @@
+{
+  "slug": "balboa-florist",
+  "name": "Balboa Florist",
+  "url": "https://balboaflorist.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-08-31T02:00:41.793Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 14024,
+      "kb": 55,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": true,
+        "social": false
+      },
+      "parked": false
+    }
+  ]
+}

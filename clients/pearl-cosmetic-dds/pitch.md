@@ -34,7 +34,7 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 **Subject:** The laser is the best thing you have and nobody can find it
 
-Hi Dr. Mojaver,
+Hi Dr. Nasrin Mojaver,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
 
@@ -60,7 +60,7 @@ tylermcmanus1010@gmail.com
 
 ## Follow-up text (day 3, if no reply)
 
-> Hi Dr. Mojaver, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
+> Hi Dr. Nasrin Mojaver, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
 
 ## If they ask "why so cheap / what's the catch"
 

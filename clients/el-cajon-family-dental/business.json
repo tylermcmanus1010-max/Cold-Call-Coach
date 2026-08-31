@@ -166,6 +166,9 @@
   },
   "reviewsHeading": "What patients say",
   "sentOn": "2026-08-25",
-  "attempts": 5,
-  "lastTried": "2026-08-26"
+  "attempts": 6,
+  "lastTried": "2026-08-31",
+  "callNotes": [
+    "2026-08-31: receptionist — Dr Mechael not in, \"probably isn't interested\". That is a gatekeeper guessing, not the dentist deciding. Attempt 6."
+  ]
 }

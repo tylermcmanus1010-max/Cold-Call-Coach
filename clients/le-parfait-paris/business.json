@@ -3,7 +3,7 @@
   "slug": "le-parfait-paris",
   "name": "Le Parfait Paris",
   "category": "French bakery & patisserie",
-  "owner": "",
+  "owner": "Leon",
   "currentSite": "http://www.leparfaitparis.com/",
   "liveUrl": "",
   "status": "sent",
@@ -105,10 +105,12 @@
     "builder": null,
     "copyrightYear": null
   },
-  "attempts": 4,
-  "lastTried": "2026-08-26",
+  "attempts": 5,
+  "lastTried": "2026-08-31",
   "callNotes": [
-    "2026-08-25: spoke to staff, would not give email"
+    "2026-08-25: spoke to staff, would not give email",
+    "2026-08-31: manager is Leon. Call back 3:00pm today."
   ],
-  "sentOn": "2026-08-25"
+  "sentOn": "2026-08-25",
+  "callbackAt": "2026-08-31 15:00"
 }

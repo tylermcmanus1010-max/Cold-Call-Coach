@@ -3,7 +3,7 @@
   "slug": "impression-dental-group",
   "name": "Impression Dental Group",
   "category": "Dental practice",
-  "owner": "",
+  "owner": "Dr. Vincent",
   "currentSite": "https://www.impressiondentalgroup.com/",
   "liveUrl": "",
   "status": "sent",
@@ -13,7 +13,7 @@
   "tagline": "Dental practice in San Diego, CA. Call (858) 578-4677.",
   "heroNote": "",
   "phone": "(858) 578-4677",
-  "email": "",
+  "email": "Impressionsentalgroup@yahoo.com",
   "address": {
     "street": "8270 Mira Mesa Boulevard",
     "city": "San Diego",
@@ -106,9 +106,11 @@
     "copyrightYear": 2012
   },
   "sentOn": "2026-08-26",
-  "attempts": 1,
-  "lastTried": "2026-08-26",
+  "attempts": 2,
+  "lastTried": "2026-08-31",
   "callNotes": [
-    "2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply."
-  ]
+    "2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply.",
+    "2026-08-31: spoke to them — decision maker is Dr Vincent. Email given as Impressionsentalgroup@yahoo.com. CHECK THAT SPELLING before sending: \"impressionsental\" has an s where a d belongs, and impressiondentalgroup@yahoo.com is the obvious reading. Do not send until confirmed — three hard bounces in the last day already."
+  ],
+  "emailUnverified": true
 }

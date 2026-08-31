@@ -4,7 +4,7 @@
   "name": "Palm Dental Group",
   "category": "dentist",
   "owner": "",
-  "currentSite": "https://www.palmdentalgroup.com/lander",
+  "currentSite": "https://palmdentalgroup.net/",
   "liveUrl": "",
   "status": "new",
   "tier": "onepage",
@@ -104,8 +104,8 @@
     "heroImage": ""
   },
   "audit": {
-    "https": true,
-    "mobile": true,
+    "https": false,
+    "mobile": false,
     "speed": false,
     "phoneTap": false,
     "hours": false,
@@ -118,13 +118,11 @@
     "social": false
   },
   "_scout": {
-    "score": 85,
-    "gaps": 10,
-    "rendered": true,
-    "currentSiteStatus": "© 1999",
-    "loadMs": 14113,
-    "pageKb": 15,
-    "builder": null,
-    "copyrightYear": 1999
-  }
+    "currentSiteStatus": "awaiting re-audit of the correct domain (.net)",
+    "rendered": false
+  },
+  "_status": "NOT a rebuild lead. Their real site is palmdentalgroup.net — live, hours, map, review CTA, \"Powered by Doctible\" (a managed dental platform, so somebody is already paid to look after it). We audited palmdentalgroup.COM, which is a parked /lander page, and every finding described that. Cleared. The genuine thing worth telling them: they do not control the .com, and anyone who guesses it lands on a placeholder instead of the practice.",
+  "callNotes": [
+    "2026-08-31: their real site is palmdentalgroup.NET, on Doctible. We had the .com, which is parked. Findings reset — everything measured described a page that is not theirs. Sixth wrong URL this week."
+  ]
 }

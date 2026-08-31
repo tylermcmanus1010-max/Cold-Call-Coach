@@ -19,6 +19,7 @@
 //   ./cc list               show the pipeline
 //   ./cc next [N]           who to call right now, in order, with the reason
 //   ./cc sheet              rebuild the call sheet dashboard from clients/
+//   ./cc watch [slug]       check watched sites and report only what CHANGED
 //   ./cc host <slug>        check a client is really ready, then write
 //                           sites/<slug>/ for the host to serve
 //
@@ -340,6 +341,43 @@ function cmdList() {
   console.log(`\n${rows.length} total · ${open.length} still open · ${rows.filter((r) => r.status === 'won').length} won\n`);
 }
 
+async function cmdWatch(args) {
+  const only = args.find((a) => !a.startsWith('--'));
+  const run = require('./tools/watch');
+  console.log('\nChecking watched sites for what CHANGED since last time.\n');
+  const { events, checked } = await run({ only });
+
+  if (!checked) return console.log('  Nothing is being watched yet.\n');
+
+  const crit = events.filter((e) => e.critical);
+  const rest = events.filter((e) => !e.critical && e.kind !== 'improved');
+  const better = events.filter((e) => e.kind === 'improved');
+
+  if (!events.length) {
+    console.log(`  ${checked} sites checked. Nothing changed.\n`);
+    return;
+  }
+  if (crit.length) {
+    console.log(`  🔴 ${crit.length} need attention now\n`);
+    for (const e of crit) {
+      console.log(`     ${e.site.name}${e.site.paying ? '  [PAYING CLIENT]' : ''}`);
+      console.log(`     ${e.text}`);
+      console.log(`     ${e.site.url}${e.site.phone ? '  ·  ' + e.site.phone : ''}\n`);
+    }
+  }
+  if (rest.length) {
+    console.log(`  ⚠️  ${rest.length} worth knowing`);
+    rest.forEach((e) => console.log(`     ${e.site.name} — ${e.text}`));
+    console.log();
+  }
+  if (better.length) {
+    console.log(`  ✅ ${better.length} improved — a prospect who fixed their own site is a lead to drop`);
+    better.forEach((e) => console.log(`     ${e.site.name} — ${e.text}`));
+    console.log();
+  }
+  console.log(`  ${checked} sites checked.\n`);
+}
+
 async function cmdHarvest(slug) {
   if (!slug) die('Usage: ./cc harvest <slug>   — read their own site before building');
   const harvest = require('./tools/harvest');
@@ -500,6 +538,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;
     case 'harvest': await cmdHarvest(args[0]); break;
+    case 'watch': await cmdWatch(args); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {
         if (!line.startsWith('//')) break;

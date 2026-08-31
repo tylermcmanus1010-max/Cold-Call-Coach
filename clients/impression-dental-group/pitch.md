@@ -32,9 +32,9 @@ _Not claimed, because a page scan cannot prove them — check yourself if you wa
 
 ## Email to send
 
-**Subject:** Rebuilt your website — take a look before you say no
+**Subject:** Your site is fine — your phone number is the problem
 
-Hi there,
+Hi Dr. Vincent,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
 
@@ -60,7 +60,7 @@ tylermcmanus1010@gmail.com
 
 ## Follow-up text (day 3, if no reply)
 
-> Hi there, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
+> Hi Dr. Vincent, Tyler McManus here — I sent over a rebuilt version of your website earlier this week. Did it come through? Happy to walk you through it in 10 minutes. No cost to look.
 
 ## If they ask "why so cheap / what's the catch"
 

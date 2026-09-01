@@ -15,22 +15,64 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const STORE = path.join(ROOT, 'trading', 'bars');
 
-async function assertOnline() {
-  const probe = 'https://stooq.com/q/d/l/?s=spy.us&i=d';
-  let res;
-  try {
-    res = await fetch(probe, { redirect: 'follow' });
-  } catch (e) {
-    throw new Error(
-      `cannot reach the open internet (${e.cause?.code || e.message}).\n` +
-      '  Run this on GitHub Actions instead: Actions → Market watch → Run workflow.');
+// Two sources, because one of them will be refusing us on any given day.
+// Stooq is plain CSV and needs no key; Yahoo's chart endpoint is JSON and also
+// needs no key. Neither is a contract, so the code says which one answered.
+const SOURCES = [
+  {
+    name: 'stooq',
+    url: (s) => `https://stooq.com/q/d/l/?s=${s}.us&i=d`,
+    parse: (text) => parseCsv(text),
+  },
+  {
+    name: 'yahoo',
+    url: (s) => `https://query1.finance.yahoo.com/v8/finance/chart/${s.toUpperCase()}?range=2y&interval=1d`,
+    parse: (text) => {
+      let j;
+      try { j = JSON.parse(text); } catch { return null; }
+      const r = j?.chart?.result?.[0];
+      const q = r?.indicators?.quote?.[0];
+      if (!r?.timestamp || !q) return null;
+      return r.timestamp.map((t, i) => ({
+        date: new Date(t * 1000).toISOString().slice(0, 10),
+        open: q.open[i], high: q.high[i], low: q.low[i], close: q.close[i], volume: q.volume[i],
+      })).filter((b) => Number.isFinite(b.close));
+    },
+  },
+];
+
+// Which source is actually answering today. Chosen once per run against a
+// ticker that certainly exists, so that a later empty response means "no such
+// symbol" rather than "we are being filtered" — the distinction that matters,
+// and the one a 403-answering proxy erases.
+let CHOSEN = null;
+
+async function assertOnline({ log = () => {} } = {}) {
+  const failures = [];
+  for (const src of SOURCES) {
+    try {
+      const res = await fetch(src.url('spy'), {
+        redirect: 'follow',
+        headers: { 'user-agent': 'cold-call-coach/1.0 (paper-trading journal)' },
+      });
+      const body = await res.text();
+      const rows = res.ok ? src.parse(body) : null;
+      if (rows && rows.length > 100) {
+        CHOSEN = src;
+        log(`  prices from ${src.name}`);
+        return src;
+      }
+      const snippet = body.replace(/\s+/g, ' ').trim().slice(0, 120);
+      failures.push(`${src.name}: HTTP ${res.status}${snippet ? ` — "${snippet}"` : ' — empty body'}`);
+    } catch (e) {
+      failures.push(`${src.name}: ${e.cause?.code || e.message}`);
+    }
   }
-  const body = await res.text();
-  if (!res.ok || !/^Date,Open,High,Low,Close/i.test(body.trim())) {
-    throw new Error(
-      `the network answered ${res.status} for a known-good ticker, so it is filtering us,\n` +
-      '  not telling us the ticker does not exist. Run it on GitHub Actions instead.');
-  }
+  throw new Error(
+    'no price source would answer with real data for SPY, which certainly exists.\n  ' +
+    failures.join('\n  ') +
+    '\n\n  That means we are being filtered, not that the tickers are wrong — so nothing\n' +
+    '  has been written. Locally this is expected: run it on GitHub Actions instead.');
 }
 
 function parseCsv(text) {
@@ -42,18 +84,22 @@ function parseCsv(text) {
   }).filter((b) => Number.isFinite(b.close));
 }
 
-async function bars(symbol) {
+async function bars(symbol, src = CHOSEN) {
+  if (!src) src = await assertOnline();
   const s = String(symbol).toLowerCase().replace(/[^a-z0-9.\-]/g, '');
   if (!s) throw new Error('no symbol given');
-  const url = `https://stooq.com/q/d/l/?s=${s}.us&i=d`;
-  const res = await fetch(url, { redirect: 'follow' });
+  const res = await fetch(src.url(s), {
+    redirect: 'follow',
+    headers: { 'user-agent': 'cold-call-coach/1.0 (paper-trading journal)' },
+  });
   const text = await res.text();
-  const rows = parseCsv(text);
-  // Stooq answers 200 with the word "Exceeded" or an empty body for an unknown
-  // ticker. That is a real answer — "no such symbol" — not a network problem,
-  // and the online guard above has already ruled out the network.
-  if (!rows || !rows.length) return { symbol: s.toUpperCase(), rows: [], note: text.trim().slice(0, 80) || 'no data returned' };
-  return { symbol: s.toUpperCase(), rows };
+  const rows = res.ok ? src.parse(text) : null;
+  // The source has already proved it answers properly for SPY, so an empty
+  // response here is a real answer: no such symbol.
+  if (!rows || !rows.length) {
+    return { symbol: s.toUpperCase(), rows: [], note: `${src.name} has no data for this symbol` };
+  }
+  return { symbol: s.toUpperCase(), rows, source: src.name };
 }
 
 // Plain descriptive statistics. Nothing here predicts anything; it says what
@@ -98,12 +144,12 @@ function describe(rows, lookback = 60) {
 }
 
 async function snapshot(symbols, { log = console.log } = {}) {
-  await assertOnline();
+  const src = await assertOnline({ log });
   fs.mkdirSync(STORE, { recursive: true });
   const out = [];
   for (const sym of symbols) {
     try {
-      const b = await bars(sym);
+      const b = await bars(sym, src);
       if (!b.rows.length) { log(`  ? ${b.symbol} — ${b.note}`); out.push({ symbol: b.symbol, error: b.note }); continue; }
       fs.writeFileSync(path.join(STORE, `${b.symbol}.json`),
         JSON.stringify({ symbol: b.symbol, fetchedAt: new Date().toISOString(), rows: b.rows.slice(-400) }, null, 2));

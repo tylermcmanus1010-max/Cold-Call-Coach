@@ -129,7 +129,7 @@ function describe(rows, lookback = 60) {
   const sd = Math.sqrt(rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length);
 
   return {
-    last,
+    last: +last.toFixed(2),
     asOf: r[r.length - 1].date,
     days: r.length,
     high: hi,

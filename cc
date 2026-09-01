@@ -77,6 +77,15 @@ async function cmdScout(argv) {
   const o = flags(argv);
   const source = o.source || 'osm';
 
+  // --region retargets the search without touching config/scout.json, so the
+  // San Diego default and everything already collected stay put.
+  const regionKey = o.region || 'san-diego';
+  const { regions } = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/regions.json'), 'utf8'));
+  const region = regions[regionKey];
+  if (!region) die(`unknown region "${regionKey}". Known: ${Object.keys(regions).join(', ')}`);
+  cfg.area = { ...cfg.area, ...region };
+  console.log(`Region: ${region.name}`);
+
   if (source === 'places' && !process.env.GOOGLE_MAPS_API_KEY)
     die('--source places needs a key:  export GOOGLE_MAPS_API_KEY=…\n  Get one at https://console.cloud.google.com → Places API (New).\n  Or just use the default: ./cc scout');
   if (source === 'file' && !o.file) die('--source file needs --file <path>');
@@ -88,10 +97,18 @@ async function cmdScout(argv) {
 
   if (!leads.length) return console.log('\nNo leads cleared the filters. Loosen config/scout.json → filters.');
 
-  fs.mkdirSync(LEADS, { recursive: true });
-  fs.writeFileSync(path.join(LEADS, 'leads.csv'), toCsv(leads));
-  fs.writeFileSync(path.join(LEADS, 'leads.json'), JSON.stringify(leads, null, 2) + '\n');
-  fs.writeFileSync(path.join(LEADS, 'leads.md'), toMarkdown(leads, cfg.area.name) + '\n');
+  const outDir = path.join(LEADS, regionKey);
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, 'leads.csv'), toCsv(leads));
+  fs.writeFileSync(path.join(outDir, 'leads.json'), JSON.stringify(leads, null, 2) + '\n');
+  fs.writeFileSync(path.join(outDir, 'leads.md'), toMarkdown(leads, cfg.area.name) + '\n');
+  // San Diego keeps writing to leads/ as well, so nothing that reads the old
+  // paths breaks.
+  if (regionKey === 'san-diego') {
+    fs.writeFileSync(path.join(LEADS, 'leads.csv'), toCsv(leads));
+    fs.writeFileSync(path.join(LEADS, 'leads.json'), JSON.stringify(leads, null, 2) + '\n');
+    fs.writeFileSync(path.join(LEADS, 'leads.md'), toMarkdown(leads, cfg.area.name) + '\n');
+  }
 
   const w = Math.min(34, Math.max(12, ...leads.slice(0, 25).map((l) => (l.name || '').length)));
   console.log(`\n   #  ${'BUSINESS'.padEnd(w)}  GAPS  ★ / REVIEWS   CURRENT SITE`);

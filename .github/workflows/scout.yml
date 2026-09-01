@@ -11,6 +11,12 @@ on:
         description: 'How many websites to audit (blank = all of them)'
         required: false
         default: '100'
+      region:
+        description: 'Which area to search (see config/regions.json)'
+        required: true
+        default: 'san-diego'
+        type: choice
+        options: [san-diego, delaware, national]
       source:
         description: 'Where to pull businesses from'
         required: true
@@ -58,7 +64,7 @@ jobs:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           set -o pipefail
-          ARGS="--source ${{ inputs.source }}"
+          ARGS="--source ${{ inputs.source }} --region ${{ inputs.region }}"
           [ -n "${{ inputs.limit }}" ] && ARGS="$ARGS --limit ${{ inputs.limit }}"
           [ "${{ inputs.make }}" != "0" ] && ARGS="$ARGS --make ${{ inputs.make }} --refresh"
           echo "Running: ./cc scout $ARGS"
@@ -67,8 +73,9 @@ jobs:
       - name: Put the list in the run summary
         if: always()
         run: |
-          if [ -f leads/leads.md ]; then
-            cat leads/leads.md >> $GITHUB_STEP_SUMMARY
+          MD="leads/${{ inputs.region }}/leads.md"
+          if [ -f "$MD" ]; then
+            cat "$MD" >> $GITHUB_STEP_SUMMARY
           else
             {
               echo "## Scout failed"
@@ -85,19 +92,22 @@ jobs:
         with:
           name: leads
           path: |
-            leads/leads.csv
-            leads/leads.json
-            leads/leads.md
+            leads/**/leads.csv
+            leads/**/leads.json
+            leads/**/leads.md
           if-no-files-found: ignore
 
-      - name: Commit any scaffolded clients
-        if: inputs.make != '0'
+      # The lead list is committed even when nothing is scaffolded — the
+      # dashboard reads leads/<region>/leads.json, and a run whose results only
+      # existed as a downloadable artifact was a run we had to do twice.
+      - name: Commit the lead list
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add clients/ leads/ || true
           git diff --cached --quiet && echo "nothing new to commit" && exit 0
-          git commit -m "Scaffold top ${{ inputs.make }} leads from scout run"
+          git commit -m "Scout: ${{ inputs.region }} lead list"
           for i in 1 2 3 4 5; do
             git push && break
             echo "push rejected — another run got there first, rebasing"

@@ -1,0 +1,37 @@
+{
+  "_howto": "Named search areas for ./cc scout --region <key>. Each region replaces area.name / area.bboxes / area.centers in config/scout.json, and sets the state written onto every lead it finds. bbox order is [south, west, north, east]. Add a region rather than editing scout.json, so San Diego stays the default and nothing already collected is disturbed.",
+  "regions": {
+    "san-diego": {
+      "name": "San Diego, CA",
+      "state": "CA",
+      "bboxes": [[32.53, -117.28, 33.05, -116.88]]
+    },
+    "delaware": {
+      "name": "Wilmington & central Kent County, DE",
+      "state": "DE",
+      "_note": "Felton itself has roughly 1,300 people, so a bbox drawn around the town alone returns almost nothing. The second box is the Felton–Camden–Dover–Harrington corridor it actually trades in; the third reaches Milford. Wilmington is the first and by far the largest.",
+      "bboxes": [
+        [39.68, -75.62, 39.81, -75.44],
+        [38.95, -75.70, 39.25, -75.42],
+        [38.86, -75.50, 39.00, -75.35]
+      ]
+    },
+    "national": {
+      "name": "National sample — 10 metros outside California",
+      "state": "",
+      "_note": "Deliberately spread across time zones so there is always somewhere open. State comes off each listing's own address tags, not from here.",
+      "bboxes": [
+        [36.06, -86.90, 36.25, -86.65],
+        [35.15, -80.90, 35.32, -80.72],
+        [39.68, -86.25, 39.85, -86.05],
+        [43.00, -87.99, 43.14, -87.85],
+        [35.42, -97.60, 35.58, -97.42],
+        [39.68, -105.05, 39.80, -104.90],
+        [33.39, -112.15, 33.55, -111.95],
+        [47.55, -122.38, 47.68, -122.25],
+        [30.20, -81.75, 30.38, -81.55],
+        [41.44, -81.75, 41.55, -81.60]
+      ]
+    }
+  }
+}

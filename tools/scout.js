@@ -117,17 +117,20 @@ async function pool(items, limit, fn, onTick) {
 }
 
 async function fromOsm(cfg) {
-  const [s, w, n, e] = cfg.area.bbox;
-  const bbox = `(${s},${w},${n},${e})`;
-  const clause = (k, vals) => `  nwr["${k}"~"^(${vals.join('|')})$"]${bbox};`;
+  // A region can be several boxes — Felton and Wilmington are 70 miles apart,
+  // and one box drawn round both of them is mostly farmland.
+  const boxes = cfg.area.bboxes || [cfg.area.bbox];
+  const state = cfg.area.state || '';
+  const bbox = boxes.map(([s, w, n, e]) => `(${s},${w},${n},${e})`);
+  const clause = (k, vals) => bbox.map((b) => `  nwr["${k}"~"^(${vals.join('|')})$"]${b};`).join('\n');
   const wrap = (body, secs) => `[out:json][timeout:${secs}];\n(\n${body}\n);\nout tags center;`;
 
   const categories = Object.entries(cfg.osmTags);
-  const combined = wrap(categories.map(([k, v]) => clause(k, v)).join('\n'), 90);
+  const combined = wrap(categories.map(([k, v]) => clause(k, v)).join('\n'), 180);
 
   // One request for everything is fastest when it works.
   try {
-    return toLeads(await overpassQuery(combined, 'all trades'));
+    return toLeads(await overpassQuery(combined, 'all trades'), state);
   } catch (bigErr) {
     process.stderr.write('  combined query failed — retrying one trade group at a time…\n');
 
@@ -137,7 +140,7 @@ async function fromOsm(cfg) {
     const failed = [];
     for (const [k, vals] of categories) {
       try {
-        const els = await overpassQuery(wrap(clause(k, vals), 60), k);
+        const els = await overpassQuery(wrap(clause(k, vals), 120), k);
         collected.push(...els);
         process.stderr.write(`  ${k}: ${els.length}\n`);
       } catch (e) {
@@ -147,7 +150,7 @@ async function fromOsm(cfg) {
 
     if (collected.length) {
       if (failed.length) process.stderr.write(`  note: no results for ${failed.length} of ${categories.length} trade groups\n`);
-      return toLeads(collected);
+      return toLeads(collected, state);
     }
 
     throw new Error(
@@ -160,7 +163,7 @@ async function fromOsm(cfg) {
   }
 }
 
-function toLeads(elements) {
+function toLeads(elements, defaultState = 'CA') {
   const seen = new Set();
   return elements.map((el) => {
     const t = el.tags || {};
@@ -175,7 +178,7 @@ function toLeads(elements) {
       facebook: t['contact:facebook'] || '',
       address: {
         street: [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' '),
-        city: t['addr:city'] || '', state: t['addr:state'] || 'CA', zip: t['addr:postcode'] || '',
+        city: t['addr:city'] || '', state: t['addr:state'] || defaultState, zip: t['addr:postcode'] || '',
       },
       rating: null, reviewCount: null,
     };
@@ -446,7 +449,7 @@ function toBusinessJson(lead, tplPath) {
     category: lead.category,
     currentSite: lead.website ? (a.finalUrl || 'https://' + a.url) : '',
     phone: lead.phone || info.ldPhone || info.phone || '',
-    address: { street: addr?.street || '', city: addr?.city || 'San Diego', state: addr?.state || 'CA', zip: addr?.zip || '' },
+    address: { street: addr?.street || '', city: addr?.city || '', state: addr?.state || lead.address?.state || '', zip: addr?.zip || '' },
     tagline: info.description || '',
     rating: lead.rating
       ? { value: String(lead.rating), count: String(lead.reviewCount ?? ''), source: 'Google' }

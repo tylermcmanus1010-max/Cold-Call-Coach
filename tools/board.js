@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const checks = require('./checks');
+const stateFromPhone = require('./area-codes');
 
 const ROOT = path.join(__dirname, '..');
 const HARD = checks.filter((c) => !c.soft);
@@ -64,6 +65,16 @@ function parkedOf(row) {
 // telling a plumber his phone number is untappable when what we measured was
 // a CAPTCHA.
 const CHALLENGE = /\/\.well-known\/sgcaptcha|cdn-cgi\/challenge|__cf_chl|incapsula|distil_r_captcha|_Incapsula_Resource/i;
+
+// Institutions have no owner who can buy a website: a campus clinic answers to
+// a university, a city facility to a council. Their .edu and .gov domains are
+// the reliable tell.
+const INSTITUTION = /(^|\.)(edu|gov|mil)$|\b(university|college|campus|school district|municipal|county of|city of)\b/i;
+
+// A failed navigation leaves the browser's own error page in finalUrl.
+// chrome-error://chromewebdata is not a website, and every check run against
+// it describes Chrome.
+const NOT_A_PAGE = /^(chrome-error|about|data|chrome|edge):/i;
 
 // Generic words shared by half the businesses in any town. A domain matching
 // only on these tells us nothing about whether the site is theirs.
@@ -125,11 +136,21 @@ function disqualify(r) {
   const notes = (r.notes || []).join(' ') + ' ' + (r.statusNote || '');
   if (r.status === 'dead') return 'closed out';
   if (CHALLENGE.test(r.site || '')) return 'behind a bot check — we measured a CAPTCHA, not their site';
+  if (NOT_A_PAGE.test(r.site || '')) return 'the page never loaded — we measured a browser error';
+  let siteHost = '';
+  try { siteHost = new URL(r.site).hostname; } catch { /* no usable URL */ }
+  if (INSTITUTION.test(r.name || '')) return 'an institution, not an owner-run business';
+  // A barber shop listed against bcb.az.gov is not a government body; the
+  // directory simply gave us somebody else's domain.
+  if (INSTITUTION.test(siteHost)) return 'the listed domain belongs to a school or government body';
   if (/Doctible|WEO Media|Vagaro|Booksy|Squarespace|Wix|Shopify|managed platform|agency/i.test(notes))
     return 'has an agency';
   if (r.phone && TOLL_FREE.test(digits(r.phone))) return 'toll-free — call centre';
   if (r.namesBusiness === false) return 'URL may not be theirs';
   if (r.attempts >= 4) return `${r.attempts} attempts — past the four-strike rule`;
+  // No number and no address is not a lead, it is a name. The listing has to
+  // carry a way to reach them, because we do not invent one.
+  if (!r.phone && !r.email) return 'no number in the listing — Google them to recover it';
   return null;
 }
 
@@ -234,12 +255,18 @@ function build() {
     seen.add(byName);
     if (host) seen.add(host);
 
+    // A national list without a state is not usable; the area code is on the
+    // number he is about to dial. Marked derived so it is never mistaken for
+    // something the listing said.
+    const derivedState = !r.state ? stateFromPhone(r.phone) : '';
     const sc = scoreOf(r.audit);
     const parked = parkedOf(r);
     const flaw = biggestFlaw(r.audit, parked);
     rows.push({
       ...r,
       phone: prettyPhone(r.phone),
+      state: r.state || derivedState,
+      stateDerived: Boolean(derivedState),
       parked,
       passed: parked ? 0 : sc.passed,   // a placeholder passes nothing on their behalf
       of: sc.of,

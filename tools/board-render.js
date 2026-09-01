@@ -11,6 +11,14 @@ const { HARD, SOFT, esc, digits } = require('./board');
 const FONTS = 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap';
 
 function lamps(row) {
+  // A parked domain's checks describe the placeholder, not the business. Two
+  // of Alexander's lamps lit green beside a score of 0/7 — the checks had
+  // passed on a registrar's holding page. Nothing about their site was
+  // measured, so nothing is claimed.
+  if (row.parked) {
+    return HARD.map((c) =>
+      `<i class="lamp na" title="${esc(c.label)}: not measured — the domain is parked"></i>`).join('');
+  }
   return HARD.map((c) => {
     const ok = row.audit && row.audit[c.key] === true;
     return `<i class="lamp ${ok ? 'on' : 'off'}" title="${esc(c.label)}: ${ok ? 'passes' : 'fails'}"></i>`;
@@ -36,7 +44,7 @@ function contact(row) {
 
 function rowHtml(row, i) {
   const flaw = row.flaw;
-  const where = [row.city, row.state].filter(Boolean).join(', ');
+  const where = [row.city, row.state + (row.stateDerived ? '*' : '')].filter(Boolean).join(', ');
   const site = row.site
     ? `<a class="site" href="${esc(row.site)}" target="_blank" rel="noopener noreferrer">${esc(row.site.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))}</a>`
     : '<span class="none">no website found</span>';
@@ -59,7 +67,7 @@ function rowHtml(row, i) {
   </div>
   <div class="score">
     <div class="lampstrip">${lamps(row)}</div>
-    <span class="num">${row.passed}<span class="of">/${row.of}</span></span>
+    <span class="num">${row.parked ? '<span class="of">no site</span>' : row.passed + `<span class="of">/${row.of}</span>`}</span>
   </div>
   <div class="flaw">
     ${flaw
@@ -120,6 +128,7 @@ module.exports = function render(rows, meta) {
   header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;padding-bottom:18px;border-bottom:2px solid var(--ink)}
   h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.02em;margin:0;text-wrap:balance}
   .sub{color:var(--muted);font-size:14px;margin:4px 0 0;max-width:62ch}
+  .sub code{font-family:var(--mono);font-size:12px}
   .stamp{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
 
   .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0 22px}
@@ -127,6 +136,9 @@ module.exports = function render(rows, meta) {
   .tile b{display:block;font-family:var(--mono);font-size:26px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .tile span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px}
   .tile.hero{background:var(--accent-soft);border-color:var(--accent)}
+  .tiles.states{grid-template-columns:repeat(auto-fit,minmax(72px,1fr));margin:-12px 0 22px}
+  .tiles.states .tile{padding:8px 10px;background:var(--sunk)}
+  .tiles.states b{font-size:18px}
   .tile.hero b{color:var(--accent)}
 
   .controls{position:sticky;top:0;z-index:5;background:var(--ground);padding:10px 0 12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -155,6 +167,7 @@ module.exports = function render(rows, meta) {
   .lampstrip{display:flex;gap:3px}
   .lamp{width:11px;height:11px;border-radius:2px;background:var(--lamp-off);display:block}
   .lamp.on{background:var(--good)}
+  .lamp.na{background:transparent;border:1px dashed var(--line)}
   .score .num{font-family:var(--mono);font-size:15px;font-weight:500;display:block;margin-top:5px;font-variant-numeric:tabular-nums}
   .score .of{color:var(--muted);font-size:12px}
 
@@ -191,7 +204,7 @@ module.exports = function render(rows, meta) {
   <header class="top">
     <div>
       <h1>Call Board</h1>
-      <p class="sub">Every business we have measured, ranked by how much there is to honestly say. Seven lamps = the seven checks that can be proved in a browser and repeated to an owner.</p>
+      <p class="sub">Every business we have measured, ranked by how much there is to honestly say. Seven lamps = the seven checks that can be proved in a browser and repeated to an owner. A state marked <code>*</code> was read off the area code, not the listing.</p>
     </div>
     <div class="stamp">${esc(meta.builtAt)}<br>McManus Web Co.</div>
   </header>
@@ -201,6 +214,8 @@ module.exports = function render(rows, meta) {
     <div class="tile"><b>${all.total}</b><span>measured</span></div>
     <div class="tile"><b>${all.phones}</b><span>have a number</span></div>
     <div class="tile"><b>${all.emails}</b><span>have an email</span></div>
+  </div>
+  <div class="tiles states">
     ${byState.map(([s, n]) => `<div class="tile"><b>${n}</b><span>${esc(s)}</span></div>`).join('')}
   </div>
 

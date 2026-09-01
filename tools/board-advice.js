@@ -16,6 +16,8 @@ module.exports = function advice(rows) {
   const zero = callable.filter((r) => r.passed === 0);
   const nearlyFine = callable.filter((r) => r.passed >= 5);
   const parked = callable.filter((r) => r.parked);
+  const noNumber = rows.filter((r) => /no number in the listing/.test(r.blocked || ''));
+  const derived = rows.filter((r) => r.stateDerived);
 
   // Which trades actually have broken sites, so effort goes where the gaps are.
   const byTrade = {};
@@ -72,6 +74,12 @@ ${parked.length ? `<h3>${parked.length} have no website at all — start here</h
 ${trades.length ? `<h3>Where the gaps actually are</h3>
 <ul>${trades.map(([k, n, g]) => `<li><strong>${esc(k)}</strong> — ${n} callable, ${g} of 7 checks failing on average</li>`).join('')}</ul>
 <p>Weight your day toward the top of that list. Businesses whose whole product is how things look — salons, florists, boutiques — usually already have someone doing their website, and the hit rate there has been poor.</p>` : ''}
+
+${noNumber.length ? `<h3>${noNumber.length} are filtered out only for a missing number — they are not dead</h3>
+<p>OpenStreetMap simply has no phone tag for them. Everything else about them stands, including the audit. One Google search recovers the number, and several of them score badly enough to be worth that search. Treat that group as a reserve list for a day when the main list runs dry, not as rejects.</p>` : ''}
+
+${derived.length ? `<h3>${derived.length} states were read off the area code</h3>
+<p>Those rows show the state with an asterisk. The listing did not say where they were, so it came from the first three digits of the number — reliable, but not the same as the listing telling us. Numbers do follow people who move, so if a call opens with confusion about the city, that is why.</p>` : ''}
 
 <h3>Delaware is thin, and you should plan around that</h3>
 <p>The Delaware sweep covered Wilmington, the Felton–Camden–Dover corridor and Milford, and returned barely a dozen usable businesses. That is not a bug in the search — <strong>Felton has about 1,300 people</strong>, and OpenStreetMap's coverage of small-town Delaware is far patchier than its coverage of San Diego. Two consequences: do not build a calling day around Delaware, and if you want real depth there, the listings have to come from Google Places rather than OSM, which costs a little and needs an API key.</p>

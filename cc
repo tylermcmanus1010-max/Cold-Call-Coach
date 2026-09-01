@@ -4,6 +4,7 @@
 //   ./cc scout              build the lead list: pull businesses, audit every site
 //   ./cc board              one page of every business we have measured, ranked
 //   ./cc brief              the morning call plan, ordered by who can answer
+//   ./cc trade              paper-trading journal: size, open, close, stats, watch
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc harvest <slug>     read THEIR site first — services, hours, real reviews
@@ -101,6 +102,77 @@ function cmdBrief(argv) {
   const out = path.join(ROOT, 'brief', 'index.html');
   fs.writeFileSync(out, html);
   console.log(`\n  ${hours} hours from ${start.toISOString()}\n  ${out}\n`);
+}
+
+async function cmdTrade(args) {
+  const paper = require('./tools/paper');
+  const o = flags(args.slice(1));
+  const sub = args[0] || 'stats';
+  const c = paper.cfg();
+
+  const money = (n) => (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2);
+
+  if (sub === 'size') {
+    const st = paper.stats();
+    const r = paper.size(st.equity, Number(o.entry), Number(o.stop), Number(o.risk || c.risk.maxRiskPctPerTrade));
+    if (r.error) die(r.error);
+    console.log(`\n  account ${money(st.equity)} · risking ${o.risk || c.risk.maxRiskPctPerTrade}% = ${money(r.riskDollars)}`);
+    console.log(`  ${money(r.perShare)} per share between entry and stop`);
+    console.log(`\n  ${r.shares} shares · ${money(r.cost)} committed · ${money(r.actualRisk)} actually at risk\n`);
+    return;
+  }
+
+  if (sub === 'open') {
+    const r = paper.open({
+      symbol: o.symbol, entry: o.entry, stop: o.stop, target: o.target,
+      direction: o.short ? 'short' : 'long', thesis: o.thesis,
+    });
+    if (r.error) die(r.error);
+    const t = r.trade;
+    console.log(`\n  ${t.id}`);
+    console.log(`  ${t.direction} ${t.shares} ${t.symbol} at ${t.entry}, stop ${t.stop}${t.target ? `, target ${t.target}` : ''}`);
+    console.log(`  ${money(t.actualRisk)} at risk — that is your 1R for this trade\n`);
+    return;
+  }
+
+  if (sub === 'close') {
+    const r = paper.close(args[1], o.exit, o.review);
+    if (r.error) die(r.error);
+    const t = r.trade;
+    console.log(`\n  ${t.id} closed at ${t.exit}`);
+    console.log(`  ${money(t.pnl)}  ·  ${t.rMultiple > 0 ? '+' : ''}${t.rMultiple}R\n`);
+    if (!t.review) console.log('  No review written. Add one — the record is worth little without it.\n');
+    return;
+  }
+
+  if (sub === 'watch') {
+    const { snapshot } = require('./tools/market');
+    const syms = (o.symbols ? String(o.symbols).split(',') : c.watchlist).map((x) => x.trim()).filter(Boolean);
+    if (!syms.length) die('nothing on the watchlist — add symbols to config/trading.json, or pass --symbols AAPL,MSFT');
+    console.log('');
+    await snapshot(syms);
+    console.log('');
+    return;
+  }
+
+  // stats
+  const st = paper.stats();
+  console.log(`\n  PAPER ACCOUNT  ${money(st.equity)}   (started ${money(c.account.paperStart)}, ${st.pnl >= 0 ? '+' : ''}${money(st.pnl)})`);
+  console.log(`  ${st.closed} closed · ${st.wins}W ${st.losses}L${st.winRate != null ? ` · ${st.winRate}% win rate` : ''}`);
+  console.log(`  expectancy ${st.expectancy >= 0 ? '+' : ''}${st.expectancy}R per trade · worst drawdown ${st.maxDrawdownPct}%`);
+
+  if (st.open.length) {
+    console.log(`\n  OPEN (${st.open.length})`);
+    for (const t of st.open) {
+      console.log(`    ${t.symbol.padEnd(6)} ${t.shares} @ ${t.entry}  stop ${t.stop}  risking ${money(t.actualRisk)}`);
+    }
+  }
+
+  console.log('\n  BEFORE ANY REAL MONEY');
+  for (const ch of st.checks) console.log(`    ${ch.ok ? '\u2713' : '\u00b7'} ${ch.name.padEnd(34)} ${ch.have}`);
+  console.log(st.readyForRealMoney
+    ? '\n  Every gate is met. That is evidence, not permission — read the numbers yourself.\n'
+    : '\n  Not there yet. Paper only.\n');
 }
 
 function cmdBoard() {
@@ -615,6 +687,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'sheet': cmdSheet(); break;
     case 'board': cmdBoard(); break;
     case 'brief': cmdBrief(args); break;
+    case 'trade': await cmdTrade(args); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;

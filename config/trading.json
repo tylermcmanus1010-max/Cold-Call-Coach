@@ -1,0 +1,36 @@
+{
+  "_howto": "Rules the paper-trading tools enforce. They are deliberately hard to change casually: every number here exists because breaking it is how accounts die.",
+
+  "account": {
+    "_note": "The size you are TESTING with on paper. Not your savings. Keep it at what you would actually be willing to lose, because the point of the exercise is to find out whether you would have.",
+    "paperStart": 5000,
+    "currency": "USD"
+  },
+
+  "risk": {
+    "_note": "Position sizing is the only part of this that is not opinion. A trader who is right 40% of the time survives at 1% risk and is wiped out at 10%.",
+    "maxRiskPctPerTrade": 1.0,
+    "maxOpenPositions": 5,
+    "maxRiskPctTotal": 5.0,
+    "requireStop": true,
+    "minRewardToRisk": 1.5
+  },
+
+  "gate": {
+    "_note": "What has to be true before a single real dollar is involved. These are not arbitrary: a positive result over fewer than fifty trades is indistinguishable from luck.",
+    "minTrades": 50,
+    "minWeeks": 12,
+    "minExpectancyR": 0.1,
+    "maxDrawdownPct": 20
+  },
+
+  "watchlist": [],
+
+  "neverDo": [
+    "Place a real order. These tools do not connect to a broker and never will.",
+    "Hold brokerage credentials, API keys or account numbers in this repo.",
+    "Log a trade after knowing the outcome. The thesis is written before, or it is worthless.",
+    "Average down into a losing position.",
+    "Trade money that is needed within five years."
+  ]
+}

@@ -3,3 +3,4 @@ leads/leads.json
 node_modules/
 .DS_Store
 send/
+trading/bars/

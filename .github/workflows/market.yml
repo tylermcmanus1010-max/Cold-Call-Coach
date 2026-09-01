@@ -1,0 +1,69 @@
+# Prices for the paper-trading record. Local egress is blocked, so this runs
+# here, like the scout and the site watch.
+#
+# It fetches and reports. It cannot place an order, and there is no credential
+# in this workflow to place one with.
+
+name: Market watch
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: 'Comma-separated tickers (blank = the watchlist in config/trading.json)'
+        required: false
+        default: ''
+  schedule:
+    # 21:15 UTC — after the US close, so the day's bar is final.
+    - cron: '15 21 * * 1-5'
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Fetch
+        id: fetch
+        run: |
+          set -o pipefail
+          ARGS=""
+          [ -n "${{ inputs.symbols }}" ] && ARGS="--symbols ${{ inputs.symbols }}"
+          ./cc trade watch $ARGS 2>&1 | tee watch.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Market watch"
+            echo ""
+            echo '```'
+            cat watch.log 2>/dev/null || echo "no output"
+            echo '```'
+            echo ""
+            echo "### Paper record"
+            echo '```'
+            ./cc trade stats 2>&1 || true
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit the bars
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add trading/ || true
+          git diff --cached --quiet && echo "nothing new" && exit 0
+          git commit -m "Market watch $(date -u +%Y-%m-%d)"
+          for i in 1 2 3 4 5; do
+            git push && break
+            git pull --rebase --autostash origin main || exit 1
+            sleep $((i * 3))
+          done

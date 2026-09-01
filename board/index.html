@@ -1,0 +1,2027 @@
+<title>Call Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ground:#F4F6F6; --surface:#FFFFFF; --sunk:#EAEEEE;
+    --ink:#10181B; --ink-2:#3C4A4F; --muted:#68787D; --line:#D6DEDF;
+    --accent:#0B5E6B; --accent-soft:#E2EFF1; --on-accent:#FFFFFF;
+    --bad:#B3261E; --warn:#8A5A0B; --good:#1F6B3F;
+    --lamp-off:#CFD8D9;
+    --radius:8px;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    --ui:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0D1315; --surface:#151F22; --sunk:#101A1C;
+      --ink:#E7EEEF; --ink-2:#B4C3C6; --muted:#86989C; --line:#27383C;
+      --accent:#5FB9C9; --accent-soft:#122E34; --on-accent:#08191C;
+      --bad:#F1867C; --warn:#E0B056; --good:#67C08C;
+      --lamp-off:#2C3E42;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1315; --surface:#151F22; --sunk:#101A1C;
+    --ink:#E7EEEF; --ink-2:#B4C3C6; --muted:#86989C; --line:#27383C;
+    --accent:#5FB9C9; --accent-soft:#122E34; --on-accent:#08191C;
+    --bad:#F1867C; --warn:#E0B056; --good:#67C08C;
+    --lamp-off:#2C3E42;
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--ui);line-height:1.45;margin:0;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 80px}
+
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;padding-bottom:18px;border-bottom:2px solid var(--ink)}
+  h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.02em;margin:0;text-wrap:balance}
+  .sub{color:var(--muted);font-size:14px;margin:4px 0 0;max-width:62ch}
+  .stamp{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0 22px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+  .tile b{display:block;font-family:var(--mono);font-size:26px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px}
+  .tile.hero{background:var(--accent-soft);border-color:var(--accent)}
+  .tile.hero b{color:var(--accent)}
+
+  .controls{position:sticky;top:0;z-index:5;background:var(--ground);padding:10px 0 12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  input[type=search]{flex:1 1 220px;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink)}
+  .chip{font:inherit;font-size:13px;font-weight:500;padding:8px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink-2);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .chip:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
+
+  h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:30px 0 10px;font-weight:600}
+
+  .row{display:grid;grid-template-columns:34px minmax(180px,1.5fr) 118px minmax(190px,1.4fr) minmax(190px,1.2fr);gap:14px;align-items:start;
+       background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--radius);padding:12px 14px;margin-bottom:7px}
+  .row.is-blocked{border-left-color:var(--lamp-off);opacity:.62}
+  .idx{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px;font-variant-numeric:tabular-nums}
+  .who h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+  .meta{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+  .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .tag{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:4px;background:var(--sunk);color:var(--muted)}
+  .tag.stop{background:var(--bad);color:var(--surface)}
+  .tag.ok{background:var(--good);color:var(--surface)}
+  .tag.hot{background:var(--accent);color:var(--on-accent)}
+  .tag.warn{background:var(--warn);color:var(--surface)}
+  .tag.st-sent,.tag.st-replied{background:var(--warn);color:var(--surface)}
+
+  .lampstrip{display:flex;gap:3px}
+  .lamp{width:11px;height:11px;border-radius:2px;background:var(--lamp-off);display:block}
+  .lamp.on{background:var(--good)}
+  .score .num{font-family:var(--mono);font-size:15px;font-weight:500;display:block;margin-top:5px;font-variant-numeric:tabular-nums}
+  .score .of{color:var(--muted);font-size:12px}
+
+  .flabel{font-size:14px;font-weight:600;margin:0;color:var(--bad)}
+  .flabel.none{color:var(--good)}
+  .fwhy{font-size:12.5px;color:var(--ink-2);margin:3px 0 0}
+
+  .reach{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+  .btn{font-family:var(--mono);font-size:13px;text-decoration:none;padding:5px 9px;border-radius:6px;border:1px solid var(--line);color:var(--ink);background:var(--sunk);display:inline-block}
+  .btn.call{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+  .site{font-size:12px;color:var(--accent);word-break:break-all}
+  .none{font-size:12px;color:var(--muted);font-style:italic}
+
+  .advice{margin-top:44px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+  .advice h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+  .advice h3{font-size:14px;margin:20px 0 4px;color:var(--accent);letter-spacing:.01em}
+  .advice p,.advice li{font-size:14px;color:var(--ink-2);max-width:68ch}
+  .advice li{margin-bottom:6px}
+  .advice strong{color:var(--ink)}
+
+  @media (max-width:860px){
+    .row{grid-template-columns:26px 1fr;gap:8px 10px}
+    .idx{grid-row:1}
+    .who{grid-column:2}
+    .score,.flaw,.reach{grid-column:2}
+    .score{display:flex;align-items:center;gap:10px}
+    .score .num{margin:0}
+    .reach{flex-direction:row;flex-wrap:wrap;align-items:center}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Call Board</h1>
+      <p class="sub">Every business we have measured, ranked by how much there is to honestly say. Seven lamps = the seven checks that can be proved in a browser and repeated to an owner.</p>
+    </div>
+    <div class="stamp">2026-09-01<br>McManus Web Co.</div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile hero"><b>51</b><span>worth calling</span></div>
+    <div class="tile"><b>112</b><span>measured</span></div>
+    <div class="tile"><b>96</b><span>have a number</span></div>
+    <div class="tile"><b>6</b><span>have an email</span></div>
+    <div class="tile"><b>100</b><span>CA</span></div><div class="tile"><b>10</b><span>DE</span></div><div class="tile"><b>1</b><span>NE</span></div><div class="tile"><b>1</b><span>NJ</span></div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search name, trade or town…" aria-label="Search the board">
+    <button class="chip" id="onlyCallable" aria-pressed="true">Callable only</button>
+    <button class="chip st" data-st="CA" aria-pressed="false">CA</button><button class="chip st" data-st="DE" aria-pressed="false">DE</button><button class="chip st" data-st="NE" aria-pressed="false">NE</button><button class="chip st" data-st="NJ" aria-pressed="false">NJ</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <h2 class="sec">Ranked — most broken first</h2>
+  <div id="list">
+
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="0" data-name="alexander's upholstering upholsterer san diego, ca">
+  <div class="idx">1</div>
+  <div class="who">
+    <h3>Alexander's Upholstering</h3>
+    <p class="meta">upholsterer · San Diego, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain sits on a registrar placeholder</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192221345">(619) 222-1345</a><span class="none">no email — ask on the call</span><a class="site" href="https://alexandersupholstering.com/lander" target="_blank" rel="noopener noreferrer">alexandersupholstering.com/lander</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="0" data-name="estrella dental implant &amp; cosmetic center dentist chula vista, ca">
+  <div class="idx">2</div>
+  <div class="who">
+    <h3>Estrella Dental Implant &amp; Cosmetic Center</h3>
+    <p class="meta">dentist · Chula Vista, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain is for sale on a marketplace</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193974111">(619) 397-4111</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.hugedomains.com/domain_profile.cfm?d=estrelladental.com" target="_blank" rel="noopener noreferrer">hugedomains.com/domain_profile.cfm?d=estrelladental.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="0" data-name="house of stemms florist san diego, ca">
+  <div class="idx">3</div>
+  <div class="who">
+    <h3>House of Stemms</h3>
+    <p class="meta">Florist · San Diego, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192378842">(619) 237-8842</a><span class="none">no email — ask on the call</span><a class="site" href="https://deluxeflorist.com/san-diego-florist-flower-delivery" target="_blank" rel="noopener noreferrer">deluxeflorist.com/san-diego-florist-flower-delivery</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="0" data-name="revive lash &amp; nail lash &amp; nail studio san diego, ca">
+  <div class="idx">4</div>
+  <div class="who">
+    <h3>Revive Lash &amp; Nail</h3>
+    <p class="meta">Lash &amp; nail studio · San Diego, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain sits on a registrar placeholder</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194666854">(619) 466-6854</a><span class="none">no email — ask on the call</span><a class="site" href="https://revivelashandnail.com/lander" target="_blank" rel="noopener noreferrer">revivelashandnail.com/lander</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="0" data-name="ace contractors plumbing, heating, and air plumber san diego, ca">
+  <div class="idx">5</div>
+  <div class="who">
+    <h3>Ace Contractors Plumbing, Heating, And Air</h3>
+    <p class="meta">plumber · San Diego, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain sits on a registrar placeholder</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584806618">(858) 480-6618</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.plumbing-heating-air-experts.com/lander" target="_blank" rel="noopener noreferrer">plumbing-heating-air-experts.com/lander</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="0" data-name="hale holistic fitness centre san diego, ca">
+  <div class="idx">6</div>
+  <div class="who">
+    <h3>Hale Holistic</h3>
+    <p class="meta">fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain sits on a registrar placeholder</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.haleholistic.com/lander" target="_blank" rel="noopener noreferrer">haleholistic.com/lander</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="1" data-name="1401 hair designs &amp; massage therapy beauty wilmington, de">
+  <div class="idx">7</div>
+  <div class="who">
+    <h3>1401 Hair Designs &amp; Massage Therapy</h3>
+    <p class="meta">beauty · Wilmington, DE</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">1<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13026551401">(302) 655-1401</a><span class="none">no email — ask on the call</span><a class="site" href="http://1401bell.com/" target="_blank" rel="noopener noreferrer">1401bell.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="1" data-name="world transmissions car care center car repair dover, de">
+  <div class="idx">8</div>
+  <div class="who">
+    <h3>World Transmissions Car Care Center</h3>
+    <p class="meta">car repair · Dover, DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">1<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="http://www.worldtransmissions.pro/" target="_blank" rel="noopener noreferrer">worldtransmissions.pro</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="2" data-name="le parfait paris french bakery &amp; patisserie san diego, ca">
+  <div class="idx">9</div>
+  <div class="who">
+    <h3>Le Parfait Paris</h3>
+    <p class="meta">French bakery &amp; patisserie · San Diego, CA · Leon</p>
+    <div class="tags"><span class="tag st-sent">sent</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Not secure — no HTTPS</p><p class="fwhy">Chrome shows visitors a &quot;Not secure&quot; warning before they read a word.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192454457">(619) 245-4457</a><a class="btn mail" href="mailto:Downtown@leparfaitparis.com">Downtown@leparfaitparis.com</a><a class="site" href="http://www.leparfaitparis.com/" target="_blank" rel="noopener noreferrer">leparfaitparis.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="2" data-name="valerio's city bakery bakery national city, ca">
+  <div class="idx">10</div>
+  <div class="who">
+    <h3>Valerio's City Bakery</h3>
+    <p class="meta">bakery · National City, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194778588">(619) 477-8588</a><span class="none">no email — ask on the call</span><a class="site" href="https://valerios.com/" target="_blank" rel="noopener noreferrer">valerios.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="2" data-name="coastal car wash car wash dover, de">
+  <div class="idx">11</div>
+  <div class="who">
+    <h3>Coastal Car Wash</h3>
+    <p class="meta">car wash · Dover, DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Not secure — no HTTPS</p><p class="fwhy">Chrome shows visitors a &quot;Not secure&quot; warning before they read a word.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13028833554">(302) 883-3554</a><span class="none">no email — ask on the call</span><a class="site" href="http://www.coastalcarwash.com/" target="_blank" rel="noopener noreferrer">coastalcarwash.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="2" data-name="brandywine auto body car repair talleyville, de">
+  <div class="idx">12</div>
+  <div class="who">
+    <h3>Brandywine Auto Body</h3>
+    <p class="meta">car repair · Talleyville, DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13024781120">(302) 478-1120</a><span class="none">no email — ask on the call</span><a class="site" href="https://brandywineautobody.com/" target="_blank" rel="noopener noreferrer">brandywineautobody.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="2" data-name="kids hair salon hairdresser la mesa, ca">
+  <div class="idx">13</div>
+  <div class="who">
+    <h3>Kids Hair Salon</h3>
+    <p class="meta">hairdresser · La Mesa, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194644466">(619) 464-4466</a><span class="none">no email — ask on the call</span><a class="site" href="https://kidshairsalon.net/" target="_blank" rel="noopener noreferrer">kidshairsalon.net</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="cupcakes a la yola bakery poway, ca">
+  <div class="idx">14</div>
+  <div class="who">
+    <h3>cupCAKES a la Yola</h3>
+    <p class="meta">bakery · Poway, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18586687234">(858) 668-7234</a><span class="none">no email — ask on the call</span><a class="site" href="https://cupcakesalayola.com/" target="_blank" rel="noopener noreferrer">cupcakesalayola.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="david cravens insurance services insurance san diego, ca">
+  <div class="idx">15</div>
+  <div class="who">
+    <h3>David Cravens Insurance Services</h3>
+    <p class="meta">insurance · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582774878">(858) 277-4878</a><span class="none">no email — ask on the call</span><a class="site" href="https://davidcravens.myhomehq.biz/" target="_blank" rel="noopener noreferrer">davidcravens.myhomehq.biz</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="el cajon family dental dental practice el cajon, ca">
+  <div class="idx">16</div>
+  <div class="who">
+    <h3>El Cajon Family Dental</h3>
+    <p class="meta">Dental practice · El Cajon, CA · Dr. Mechael</p>
+    <div class="tags"><span class="tag st-sent">sent</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194661292">(619) 466-1292</a><span class="none">no email — ask on the call</span><a class="site" href="http://elcajonfamilydental.com/" target="_blank" rel="noopener noreferrer">elcajonfamilydental.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="love &amp; bake bakery san diego, ca">
+  <div class="idx">17</div>
+  <div class="who">
+    <h3>Love &amp; Bake</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194154259">(619) 415-4259</a><span class="none">no email — ask on the call</span><a class="site" href="https://loveandbake.com/" target="_blank" rel="noopener noreferrer">loveandbake.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="lumiere salon hairdresser san diego, ca">
+  <div class="idx">18</div>
+  <div class="who">
+    <h3>Lumiere Salon</h3>
+    <p class="meta">hairdresser · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585246132">(858) 524-6132</a><span class="none">no email — ask on the call</span><a class="site" href="https://lumieresalonrb.com/" target="_blank" rel="noopener noreferrer">lumieresalonrb.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="pearl cosmetic &amp; family dentistry cosmetic and family dentistry san diego, ca">
+  <div class="idx">19</div>
+  <div class="who">
+    <h3>Pearl Cosmetic &amp; Family Dentistry</h3>
+    <p class="meta">Cosmetic and family dentistry · San Diego, CA · Dr. Nasrin Mojaver</p>
+    <div class="tags"><span class="tag st-sent">sent</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585131747">(858) 513-1747</a><a class="btn mail" href="mailto:CS@PearlCosmeticDDS.com">CS@PearlCosmeticDDS.com</a><a class="site" href="https://pearlcosmeticdds.com/" target="_blank" rel="noopener noreferrer">pearlcosmeticdds.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="portal salon hairdresser san diego, ca">
+  <div class="idx">20</div>
+  <div class="who">
+    <h3>Portal Salon</h3>
+    <p class="meta">hairdresser · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193545411">(619) 354-5411</a><span class="none">no email — ask on the call</span><a class="site" href="https://theportalsalon.com/" target="_blank" rel="noopener noreferrer">theportalsalon.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="urban cutz hairdresser san diego, ca">
+  <div class="idx">21</div>
+  <div class="who">
+    <h3>Urban Cutz</h3>
+    <p class="meta">hairdresser · San Diego, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16198668710">(619) 866-8710</a><span class="none">no email — ask on the call</span><a class="site" href="https://placejuice.com/urban-cutz-barber-shop-pcrpmtq" target="_blank" rel="noopener noreferrer">placejuice.com/urban-cutz-barber-shop-pcrpmtq</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="3" data-name="trendz salon and color bar hairdresser dover, de">
+  <div class="idx">22</div>
+  <div class="who">
+    <h3>Trendz Salon and Color Bar</h3>
+    <p class="meta">hairdresser · Dover, DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13027245444">(302) 724-5444</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.trendzscb.com/" target="_blank" rel="noopener noreferrer">trendzscb.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="3" data-name="fairfax valet cleaners dry cleaning de">
+  <div class="idx">23</div>
+  <div class="who">
+    <h3>Fairfax Valet Cleaners</h3>
+    <p class="meta">dry cleaning · DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13026526725">(302) 652-6725</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.fairfaxvalet.com/" target="_blank" rel="noopener noreferrer">fairfaxvalet.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="3" data-name="darshan bakery del mar, ca">
+  <div class="idx">24</div>
+  <div class="who">
+    <h3>Darshan</h3>
+    <p class="meta">bakery · Del Mar, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.darshanbakery.com/" target="_blank" rel="noopener noreferrer">darshanbakery.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="3" data-name="sports car service car repair wilmington, de">
+  <div class="idx">25</div>
+  <div class="who">
+    <h3>Sports Car Service</h3>
+    <p class="meta">car repair · Wilmington, DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://sportscarservice.com/" target="_blank" rel="noopener noreferrer">sportscarservice.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="balboa florist florist san diego, ca">
+  <div class="idx">26</div>
+  <div class="who">
+    <h3>Balboa Florist</h3>
+    <p class="meta">florist · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584298558">(858) 429-8558</a><span class="none">no email — ask on the call</span><a class="site" href="https://balboaflorist.com/" target="_blank" rel="noopener noreferrer">balboaflorist.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="because we care dog and cat grooming pet grooming san diego, ca">
+  <div class="idx">27</div>
+  <div class="who">
+    <h3>Because We Care Dog and Cat Grooming</h3>
+    <p class="meta">pet grooming · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585381015">(858) 538-1015</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.becausewecarepetgrooming.com/" target="_blank" rel="noopener noreferrer">becausewecarepetgrooming.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="eichman insurance agency insurance rancho santa fe, ca">
+  <div class="idx">28</div>
+  <div class="who">
+    <h3>Eichman Insurance Agency</h3>
+    <p class="meta">insurance · Rancho Santa Fe, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+17602306157">(760) 230-6157</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.eichmaninsurance.com/" target="_blank" rel="noopener noreferrer">eichmaninsurance.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="helix mechanical, inc. hvac, plumbing &amp; general contracting el cajon, ca">
+  <div class="idx">29</div>
+  <div class="who">
+    <h3>Helix Mechanical, Inc.</h3>
+    <p class="meta">HVAC, plumbing &amp; general contracting · El Cajon, CA</p>
+    <div class="tags"><span class="tag st-sent">sent</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No preview when shared</p><p class="fwhy">Text your link to someone and it arrives as a bare grey box.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194476675">(619) 447-6675</a><a class="btn mail" href="mailto:service@helixmechanical.com">service@helixmechanical.com</a><a class="site" href="https://helixmechanical.com/" target="_blank" rel="noopener noreferrer">helixmechanical.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="lashbar beauty san diego, ca">
+  <div class="idx">30</div>
+  <div class="who">
+    <h3>Lashbar</h3>
+    <p class="meta">beauty · San Diego, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18587699591">(858) 769-9591</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.lashbar.com/delsur" target="_blank" rel="noopener noreferrer">lashbar.com/delsur</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="studio mani beauty poway, ca">
+  <div class="idx">31</div>
+  <div class="who">
+    <h3>Studio Mani</h3>
+    <p class="meta">beauty · Poway, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585133655">(858) 513-3655</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.studiomanipoway.com/" target="_blank" rel="noopener noreferrer">studiomanipoway.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="sun valley dental care dentist el cajon, ca">
+  <div class="idx">32</div>
+  <div class="who">
+    <h3>Sun Valley Dental Care</h3>
+    <p class="meta">dentist · El Cajon, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194131121">(619) 413-1121</a><span class="none">no email — ask on the call</span><a class="site" href="https://sunvalleydentalcare.com/" target="_blank" rel="noopener noreferrer">sunvalleydentalcare.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="west coast air conditioning co hvac el cajon, ca">
+  <div class="idx">33</div>
+  <div class="who">
+    <h3>West Coast Air Conditioning Co</h3>
+    <p class="meta">hvac · El Cajon, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16195618000">(619) 561-8000</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.wcac.com/" target="_blank" rel="noopener noreferrer">wcac.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="4" data-name="who's next barbershop hairdresser la jolla, ca">
+  <div class="idx">34</div>
+  <div class="who">
+    <h3>Who's Next Barbershop</h3>
+    <p class="meta">hairdresser · La Jolla, CA</p>
+    <div class="tags"><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585877979">(858) 587-7979</a><span class="none">no email — ask on the call</span><a class="site" href="https://whosnextlajolla.com/" target="_blank" rel="noopener noreferrer">whosnextlajolla.com</a></div>
+</article>
+<article class="row" data-state="NJ" data-src="delaware" data-blocked="0" data-score="4" data-name="monticolo insurance agency insurance carneys point, nj">
+  <div class="idx">35</div>
+  <div class="who">
+    <h3>Monticolo Insurance Agency</h3>
+    <p class="meta">insurance · Carneys Point, NJ</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18562999016">(856) 299-9016</a><span class="none">no email — ask on the call</span><a class="site" href="https://monticoloinsurance.com/" target="_blank" rel="noopener noreferrer">monticoloinsurance.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="4" data-name="fairfax hardware hardware de">
+  <div class="idx">36</div>
+  <div class="who">
+    <h3>Fairfax Hardware</h3>
+    <p class="meta">hardware · DE</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+13026562139">(302) 656-2139</a><span class="none">no email — ask on the call</span><a class="site" href="https://fairfaxhardwarede.com/" target="_blank" rel="noopener noreferrer">fairfaxhardwarede.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="feldman feldman &amp; associates pc lawyer san diego, ca">
+  <div class="idx">37</div>
+  <div class="who">
+    <h3>Feldman Feldman &amp; Associates PC</h3>
+    <p class="meta">lawyer · San Diego, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193739350">(619) 373-9350</a><span class="none">no email — ask on the call</span><a class="site" href="https://immigrateme.com/" target="_blank" rel="noopener noreferrer">immigrateme.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="jerome's furniture furniture ca">
+  <div class="idx">38</div>
+  <div class="who">
+    <h3>Jerome's Furniture</h3>
+    <p class="meta">furniture · CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18589241871">(858) 924-1871</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.jeromes.com/stores/san-diego" target="_blank" rel="noopener noreferrer">jeromes.com/stores/san-diego</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="flower cart florist florist el cajon, ca">
+  <div class="idx">39</div>
+  <div class="who">
+    <h3>Flower Cart Florist</h3>
+    <p class="meta">florist · El Cajon, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194611661">(619) 461-1661</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.flowershopnetwork.com/florists/USA/CA/El-Cajon" target="_blank" rel="noopener noreferrer">flowershopnetwork.com/florists/USA/CA/El-Cajon</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="hunter's nursery garden centre lemon grove, ca">
+  <div class="idx">40</div>
+  <div class="who">
+    <h3>Hunter's Nursery</h3>
+    <p class="meta">garden centre · Lemon Grove, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194639341">(619) 463-9341</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.huntersnursery.com/" target="_blank" rel="noopener noreferrer">huntersnursery.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="the dental orchid dentist san diego, ca">
+  <div class="idx">41</div>
+  <div class="who">
+    <h3>The Dental Orchid</h3>
+    <p class="meta">dentist · San Diego, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585385280">(858) 538-5280</a><span class="none">no email — ask on the call</span><a class="site" href="https://mypqdentist.com/" target="_blank" rel="noopener noreferrer">mypqdentist.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="fade&amp;cut hairdresser ca">
+  <div class="idx">42</div>
+  <div class="who">
+    <h3>Fade&amp;cut</h3>
+    <p class="meta">hairdresser · CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16195366920">(619) 536-6920</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.fadeandcut.com/" target="_blank" rel="noopener noreferrer">fadeandcut.com</a></div>
+</article>
+<article class="row" data-state="DE" data-src="delaware" data-blocked="0" data-score="4" data-name="afr furniture clearance center furniture new castle, de">
+  <div class="idx">43</div>
+  <div class="who">
+    <h3>AFR Furniture Clearance Center</h3>
+    <p class="meta">furniture · New Castle, DE</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.afrcc.com/" target="_blank" rel="noopener noreferrer">afrcc.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="milwaukee factory service center hardware san diego, ca">
+  <div class="idx">44</div>
+  <div class="who">
+    <h3>Milwaukee Factory Service Center</h3>
+    <p class="meta">hardware · San Diego, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://service.milwaukeetool.com/support/find-service-center" target="_blank" rel="noopener noreferrer">service.milwaukeetool.com/support/find-service-center</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="kindley | hamparyan attorneys at law lawyer ca">
+  <div class="idx">45</div>
+  <div class="who">
+    <h3>Kindley | Hamparyan attorneys at law</h3>
+    <p class="meta">lawyer · CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.kindleylawyers.com/" target="_blank" rel="noopener noreferrer">kindleylawyers.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="aqua tots swim schools fitness centre ca">
+  <div class="idx">46</div>
+  <div class="who">
+    <h3>Aqua Tots Swim Schools</h3>
+    <p class="meta">fitness centre · CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.aqua-tots.com/" target="_blank" rel="noopener noreferrer">aqua-tots.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="the honey baked ham co. butcher chula vista, ca">
+  <div class="idx">47</div>
+  <div class="who">
+    <h3>The Honey Baked Ham Co.</h3>
+    <p class="meta">butcher · Chula Vista, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.honeybaked.com/home" target="_blank" rel="noopener noreferrer">honeybaked.com/home</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="swagyu chop shop butcher ca">
+  <div class="idx">48</div>
+  <div class="who">
+    <h3>Swagyu Chop Shop</h3>
+    <p class="meta">butcher · CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.taylormustangs.org/#poway" target="_blank" rel="noopener noreferrer">taylormustangs.org/#poway</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="con pane rustic breads and cafe bakery san diego, ca">
+  <div class="idx">49</div>
+  <div class="who">
+    <h3>Con Pane Rustic Breads and Cafe</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag warn">open this first — the domain may not be theirs</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.facebook.com/114406658603804/" target="_blank" rel="noopener noreferrer">facebook.com/114406658603804</a></div>
+</article>
+<article class="row" data-state="CA" data-src="san-diego" data-blocked="0" data-score="4" data-name="susiecakes bakery san diego, ca">
+  <div class="idx">50</div>
+  <div class="who">
+    <h3>SusieCakes</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://susiecakes.com/" target="_blank" rel="noopener noreferrer">susiecakes.com</a></div>
+</article>
+<article class="row" data-state="CA" data-src="pipeline" data-blocked="0" data-score="6" data-name="rt roofing specialist roofing contractor poway, ca">
+  <div class="idx">51</div>
+  <div class="who">
+    <h3>RT Roofing Specialist</h3>
+    <p class="meta">Roofing contractor · Poway, CA</p>
+    <div class="tags"><span class="tag st-replied">replied</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584864977">(858) 486-4977</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.rtroofingspecialist.com/" target="_blank" rel="noopener noreferrer">rtroofingspecialist.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="0" data-name="ducky's barbershop barber shop el cajon, ca">
+  <div class="idx">52</div>
+  <div class="who">
+    <h3>Ducky's Barbershop</h3>
+    <p class="meta">Barber shop · El Cajon, CA</p>
+    <div class="tags"><span class="tag hot">no website — domain parked</span><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No real website — the domain sits on a registrar placeholder</p><p class="fwhy">Anyone who Googles you lands on a page selling your own name back to you.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194563232">(619) 456-3232</a><span class="none">no email — ask on the call</span><a class="site" href="https://duckysbarbershop.com/lander" target="_blank" rel="noopener noreferrer">duckysbarbershop.com/lander</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="0" data-name="point loma village florist florist san diego, ca">
+  <div class="idx">53</div>
+  <div class="who">
+    <h3>Point Loma Village Florist</h3>
+    <p class="meta">Florist · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192227646">(619) 222-7646</a><span class="none">no email — ask on the call</span><a class="site" href="https://pointlomaflorist.com/" target="_blank" rel="noopener noreferrer">pointlomaflorist.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="0" data-name="superior smog &amp; tune smog check &amp; auto repair lemon grove, ca">
+  <div class="idx">54</div>
+  <div class="who">
+    <h3>Superior Smog &amp; Tune</h3>
+    <p class="meta">Smog check &amp; auto repair · Lemon Grove, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194692112">(619) 469-2112</a><span class="none">no email — ask on the call</span><a class="site" href="http://superiorsmog.com/" target="_blank" rel="noopener noreferrer">superiorsmog.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="1" data-name="convoy dental dental practice san diego, ca">
+  <div class="idx">55</div>
+  <div class="who">
+    <h3>Convoy Dental</h3>
+    <p class="meta">Dental practice · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">1<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582239632">(858) 223-9632</a><span class="none">no email — ask on the call</span><a class="site" href="http://www.convoydental.com/" target="_blank" rel="noopener noreferrer">convoydental.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="1" data-name="jamul flowers florist spring valley, ca">
+  <div class="idx">56</div>
+  <div class="who">
+    <h3>Jamul Flowers</h3>
+    <p class="meta">Florist · Spring Valley, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">1<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Not secure — no HTTPS</p><p class="fwhy">Chrome shows visitors a &quot;Not secure&quot; warning before they read a word.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196690662">(619) 669-0662</a><span class="none">no email — ask on the call</span><a class="site" href="http://www.jamulflowers.com/" target="_blank" rel="noopener noreferrer">jamulflowers.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="2" data-name="big kahuna's caterer imperial beach, ca">
+  <div class="idx">57</div>
+  <div class="who">
+    <h3>Big Kahuna's</h3>
+    <p class="meta">caterer · Imperial Beach, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194295224">(619) 429-5224</a><span class="none">no email — ask on the call</span><a class="site" href="https://bigkahunasib.com/" target="_blank" rel="noopener noreferrer">bigkahunasib.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="2" data-name="la jolla independent bmw service independent bmw specialist la jolla, ca">
+  <div class="idx">58</div>
+  <div class="who">
+    <h3>La Jolla Independent BMW Service</h3>
+    <p class="meta">Independent BMW specialist · La Jolla, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">2<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584881555">(858) 488-1555</a><span class="none">no email — ask on the call</span><a class="site" href="http://www.bimmerdoc.com/" target="_blank" rel="noopener noreferrer">bimmerdoc.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="all american plumbing plumber san diego, ca">
+  <div class="idx">59</div>
+  <div class="who">
+    <h3>All American Plumbing</h3>
+    <p class="meta">plumber · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18588427876">(858) 842-7876</a><span class="none">no email — ask on the call</span><a class="site" href="https://plumbing-sandiego.net/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878468.404" target="_blank" rel="noopener noreferrer">plumbing-sandiego.net/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878468.404</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="apollo spa massage el cajon, ca">
+  <div class="idx">60</div>
+  <div class="who">
+    <h3>Apollo Spa</h3>
+    <p class="meta">Massage · El Cajon, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193897773">(619) 389-7773</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.google.com/?zx=1787878215012" target="_blank" rel="noopener noreferrer">google.com/?zx=1787878215012</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="b wood insurance insurance san diego, ca">
+  <div class="idx">61</div>
+  <div class="who">
+    <h3>B Wood Insurance</h3>
+    <p class="meta">insurance · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192987361">(619) 298-7361</a><span class="none">no email — ask on the call</span><a class="site" href="https://c3insurance.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878201.579" target="_blank" rel="noopener noreferrer">c3insurance.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878201.579</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="champagne french bakery cafe bakery san diego, ca">
+  <div class="idx">62</div>
+  <div class="who">
+    <h3>Champagne French Bakery Cafe</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18586137767">(858) 613-7767</a><span class="none">no email — ask on the call</span><a class="site" href="https://champagnebakery.com/" target="_blank" rel="noopener noreferrer">champagnebakery.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="coconuts hair salon &amp; day spa hairdresser la mesa, ca">
+  <div class="idx">63</div>
+  <div class="who">
+    <h3>Coconuts Hair Salon &amp; Day Spa</h3>
+    <p class="meta">hairdresser · La Mesa, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196976166">(619) 697-6166</a><span class="none">no email — ask on the call</span><a class="site" href="https://coconutssalon.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878263.845" target="_blank" rel="noopener noreferrer">coconutssalon.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878263.845</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="core plumbing plumber lakeside, ca">
+  <div class="idx">64</div>
+  <div class="who">
+    <h3>Core Plumbing</h3>
+    <p class="meta">plumber · Lakeside, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196332140">(619) 633-2140</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.coreplumbingsd.com/.well-known/sgcaptcha/?r=%2Flakeside&amp;y=ipr:20.118.214.98:1787878400.142" target="_blank" rel="noopener noreferrer">coreplumbingsd.com/.well-known/sgcaptcha/?r=%2Flakeside&amp;y=ipr:20.118.214.98:1787878400.142</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="de santis law center lawyer chula vista, ca">
+  <div class="idx">65</div>
+  <div class="who">
+    <h3>De Santis Law Center</h3>
+    <p class="meta">lawyer · Chula Vista, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194252020">(619) 425-2020</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.desantislawcenter.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878165.368" target="_blank" rel="noopener noreferrer">desantislawcenter.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878165.368</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="emerald sportswear custom apparel &amp; alterations spring valley, ca">
+  <div class="idx">66</div>
+  <div class="who">
+    <h3>Emerald Sportswear</h3>
+    <p class="meta">Custom apparel &amp; alterations · Spring Valley, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16197417335">(619) 741-7335</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.companycasuals.com/emsports/start.jsp" target="_blank" rel="noopener noreferrer">companycasuals.com/emsports/start.jsp</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="eversun beauty san diego, ca">
+  <div class="idx">67</div>
+  <div class="who">
+    <h3>EverSun</h3>
+    <p class="meta">beauty · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584510588">(858) 451-0588</a><span class="none">no email — ask on the call</span><a class="site" href="https://eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&amp;y=ipr:20.118.214.98:1787878245.533" target="_blank" rel="noopener noreferrer">eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&amp;y=ipr:20.118.214.98:1787878245.533</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="family interiors floorer el cajon, ca">
+  <div class="idx">68</div>
+  <div class="who">
+    <h3>Family Interiors</h3>
+    <p class="meta">floorer · El Cajon, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196975969">(619) 697-5969</a><span class="none">no email — ask on the call</span><a class="site" href="https://familyinteriors.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878036.450" target="_blank" rel="noopener noreferrer">familyinteriors.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878036.450</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="fs cut &amp; color hair salon san diego, ca">
+  <div class="idx">69</div>
+  <div class="who">
+    <h3>FS Cut &amp; Color</h3>
+    <p class="meta">Hair salon · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585309005">(858) 530-9005</a><span class="none">no email — ask on the call</span><a class="site" href="https://fsmiramesa.com/" target="_blank" rel="noopener noreferrer">fsmiramesa.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="hue salon hair salon san diego, ca">
+  <div class="idx">70</div>
+  <div class="who">
+    <h3>Hue Salon</h3>
+    <p class="meta">Hair salon · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16195207077">(619) 520-7077</a><span class="none">no email — ask on the call</span><a class="site" href="http://www.huesalonsandiego.com/" target="_blank" rel="noopener noreferrer">huesalonsandiego.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="impression dental group dental practice san diego, ca">
+  <div class="idx">71</div>
+  <div class="who">
+    <h3>Impression Dental Group</h3>
+    <p class="meta">Dental practice · San Diego, CA · Dr. Vincent</p>
+    <div class="tags"><span class="tag stop">4 attempts — past the four-strike rule</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585784677">(858) 578-4677</a><a class="btn mail" href="mailto:Impressiondentalgroup@yahoo.com">Impressiondentalgroup@yahoo.com</a><a class="site" href="https://www.impressiondentalgroup.com/" target="_blank" rel="noopener noreferrer">impressiondentalgroup.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="kingston and kingston attorneys san diego, ca">
+  <div class="idx">72</div>
+  <div class="who">
+    <h3>Kingston and Kingston</h3>
+    <p class="meta">Attorneys · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194211133">(619) 421-1133</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.kingstonandkingston.com/" target="_blank" rel="noopener noreferrer">kingstonandkingston.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="la jolla colony dental dental practice san diego, ca">
+  <div class="idx">73</div>
+  <div class="who">
+    <h3>La Jolla Colony Dental</h3>
+    <p class="meta">Dental practice · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585468600">(858) 546-8600</a><span class="none">no email — ask on the call</span><a class="site" href="https://lajollacolonydental.com/" target="_blank" rel="noopener noreferrer">lajollacolonydental.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="la-z-boy furniture san diego, ca">
+  <div class="idx">74</div>
+  <div class="who">
+    <h3>La-Z-Boy</h3>
+    <p class="meta">furniture · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582587017">(858) 258-7017</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.la-z-boy.com/store/02565979/san-diego-ca" target="_blank" rel="noopener noreferrer">la-z-boy.com/store/02565979/san-diego-ca</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="mesa rim climbing &amp; fitness center • mission valley climbing &amp; fitness centre san diego, ca">
+  <div class="idx">75</div>
+  <div class="who">
+    <h3>Mesa Rim Climbing &amp; Fitness Center • Mission Valley</h3>
+    <p class="meta">Climbing &amp; fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16199081911">(619) 908-1911</a><span class="none">no email — ask on the call</span><a class="site" href="https://mesarim.com/" target="_blank" rel="noopener noreferrer">mesarim.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="municipal gymnasium fitness centre san diego, ca">
+  <div class="idx">76</div>
+  <div class="who">
+    <h3>Municipal Gymnasium</h3>
+    <p class="meta">fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16195258262">(619) 525-8262</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.sandiego.gov/park-and-recreation/centers/recctr/munigym" target="_blank" rel="noopener noreferrer">sandiego.gov/park-and-recreation/centers/recctr/munigym</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="paradise nails and spa nail salon &amp; spa la mesa, ca">
+  <div class="idx">77</div>
+  <div class="who">
+    <h3>Paradise Nails and Spa</h3>
+    <p class="meta">Nail salon &amp; spa · La Mesa, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Not secure — no HTTPS</p><p class="fwhy">Chrome shows visitors a &quot;Not secure&quot; warning before they read a word.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194698899">(619) 469-8899</a><a class="btn mail" href="mailto:contact@paradisenails.com">contact@paradisenails.com</a><a class="site" href="http://www.paradisenails.com/" target="_blank" rel="noopener noreferrer">paradisenails.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="pilgrimage of the heart yoga fitness centre san diego, ca">
+  <div class="idx">78</div>
+  <div class="who">
+    <h3>Pilgrimage of the Heart Yoga</h3>
+    <p class="meta">fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196404438">(619) 640-4438</a><span class="none">no email — ask on the call</span><a class="site" href="https://pilgrimageyoga.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878047.460" target="_blank" rel="noopener noreferrer">pilgrimageyoga.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878047.460</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="right lawyers lawyer san diego, ca">
+  <div class="idx">79</div>
+  <div class="who">
+    <h3>Right Lawyers</h3>
+    <p class="meta">lawyer · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193309334">(619) 330-9334</a><span class="none">no email — ask on the call</span><a class="site" href="https://rightlawyers.com/sandiego" target="_blank" rel="noopener noreferrer">rightlawyers.com/sandiego</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="san diego training systems fitness centre san diego, ca">
+  <div class="idx">80</div>
+  <div class="who">
+    <h3>San Diego Training Systems</h3>
+    <p class="meta">fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18589453695">(858) 945-3695</a><span class="none">no email — ask on the call</span><a class="site" href="https://sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878190.028" target="_blank" rel="noopener noreferrer">sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878190.028</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="sharkey's cuts for kids hairdresser poway, ca">
+  <div class="idx">81</div>
+  <div class="who">
+    <h3>Sharkey's Cuts for Kids</h3>
+    <p class="meta">hairdresser · Poway, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18588834413">(858) 883-4413</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.sharkeyssandiego.com/poway" target="_blank" rel="noopener noreferrer">sharkeyssandiego.com/poway</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="student health services doctors san diego, ca">
+  <div class="idx">82</div>
+  <div class="who">
+    <h3>Student Health Services</h3>
+    <p class="meta">doctors · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16195944325">(619) 594-4325</a><span class="none">no email — ask on the call</span><a class="site" href="https://sacd.sdsu.edu/student-health-services" target="_blank" rel="noopener noreferrer">sacd.sdsu.edu/student-health-services</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="true line auto body &amp; repair el cajon, ca">
+  <div class="idx">83</div>
+  <div class="who">
+    <h3>True Line</h3>
+    <p class="meta">Auto body &amp; repair · El Cajon, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192581800">(619) 258-1800</a><span class="none">no email — ask on the call</span><a class="site" href="https://truelinewheel.com/" target="_blank" rel="noopener noreferrer">truelinewheel.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="uncle tetsu's cheesecake bakery san diego, ca">
+  <div class="idx">84</div>
+  <div class="who">
+    <h3>Uncle Tetsu's Cheesecake</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582926638">(858) 292-6638</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.uncletetsu-us.com/" target="_blank" rel="noopener noreferrer">uncletetsu-us.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="walmart garden center garden centre san diego, ca">
+  <div class="idx">85</div>
+  <div class="who">
+    <h3>Walmart Garden Center</h3>
+    <p class="meta">garden centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16198580071">(619) 858-0071</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.walmart.com/blocked?url=L3N0b3JlLzI0Nzkvc2FuLWRpZWdvLWNh&amp;uuid=8e5314a4-a0bb-11f1-90bd-d295e57f72c4&amp;vid=&amp;g=b" target="_blank" rel="noopener noreferrer">walmart.com/blocked?url=L3N0b3JlLzI0Nzkvc2FuLWRpZWdvLWNh&amp;uuid=8e5314a4-a0bb-11f1-90bd-d295e57f72c4&amp;vid=&amp;g=b</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="windowtinting, inc window construction el cajon, ca">
+  <div class="idx">86</div>
+  <div class="who">
+    <h3>Windowtinting, Inc</h3>
+    <p class="meta">window construction · El Cajon, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18005807953">(800) 580-7953</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.windowtinting.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878446.404" target="_blank" rel="noopener noreferrer">windowtinting.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878446.404</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="black market bakery bakery san diego, ca">
+  <div class="idx">87</div>
+  <div class="who">
+    <h3>Black Market Bakery</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.blackmarketbakery.com/.well-known/sgcaptcha/?r=%2Flocation%2Fblackmarket-bakery-san-diego-east-village-california&amp;y=ipr:20.118.214.98:1787878235.656" target="_blank" rel="noopener noreferrer">blackmarketbakery.com/.well-known/sgcaptcha/?r=%2Flocation%2Fblackmarket-bakery-san-diego-east-village-california&amp;y=ipr:20.118.214.98:1787878235.656</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="salted barber hairdresser san diego, ca">
+  <div class="idx">88</div>
+  <div class="who">
+    <h3>Salted Barber</h3>
+    <p class="meta">hairdresser · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">behind a bot check — we measured a CAPTCHA, not their site</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://www.saltedbarber.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878432.840" target="_blank" rel="noopener noreferrer">saltedbarber.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878432.840</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="3" data-name="spa hans massage san diego, ca">
+  <div class="idx">89</div>
+  <div class="who">
+    <h3>Spa Hans</h3>
+    <p class="meta">massage · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">3<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://spahans.online/" target="_blank" rel="noopener noreferrer">spahans.online</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="chula vista smiles dentist chula vista, ca">
+  <div class="idx">90</div>
+  <div class="who">
+    <h3>Chula Vista Smiles</h3>
+    <p class="meta">dentist · Chula Vista, CA · Dr. Ilse Savelli-Castillo DDS</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194271315">(619) 427-1315</a><span class="none">no email — ask on the call</span><a class="site" href="https://chulavista-smiles.com/" target="_blank" rel="noopener noreferrer">chulavista-smiles.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="crow salon hairdresser la mesa, ca">
+  <div class="idx">91</div>
+  <div class="who">
+    <h3>Crow Salon</h3>
+    <p class="meta">hairdresser · La Mesa, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194600364">(619) 460-0364</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.crowsalon.com/" target="_blank" rel="noopener noreferrer">crowsalon.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="del mar endodontics dentist san diego, ca">
+  <div class="idx">92</div>
+  <div class="who">
+    <h3>Del Mar Endodontics</h3>
+    <p class="meta">dentist · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18587928201">(858) 792-8201</a><span class="none">no email — ask on the call</span><a class="site" href="https://forsale.godaddy.com/forsale/delmarendo.com?utm_source=TDFS_BINNS&amp;utm_medium=parkedpages&amp;utm_campaign=x_corp_tdfs-binns_base&amp;traffic_type=TDFS_BINNS&amp;traffic_id=binns&amp;" target="_blank" rel="noopener noreferrer">forsale.godaddy.com/forsale/delmarendo.com?utm_source=TDFS_BINNS&amp;utm_medium=parkedpages&amp;utm_campaign=x_corp_tdfs-binns_base&amp;traffic_type=TDFS_BINNS&amp;traffic_id=binns&amp;</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="eyeglass world optician santee, ca">
+  <div class="idx">93</div>
+  <div class="who">
+    <h3>Eyeglass World</h3>
+    <p class="meta">optician · Santee, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192193727">(619) 219-3727</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.eyeglassworld.com/location/" target="_blank" rel="noopener noreferrer">eyeglassworld.com/location</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="gracie jui jitsu fitness centre san diego, ca">
+  <div class="idx">94</div>
+  <div class="who">
+    <h3>Gracie Jui Jitsu</h3>
+    <p class="meta">fitness centre · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585059917">(858) 505-9917</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.thegraciesandiego.com/" target="_blank" rel="noopener noreferrer">thegraciesandiego.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="new york furniture outlets furniture san diego, ca">
+  <div class="idx">95</div>
+  <div class="who">
+    <h3>New York Furniture Outlets</h3>
+    <p class="meta">furniture · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18773901797">(877) 390-1797</a><span class="none">no email — ask on the call</span><a class="site" href="https://nyfurnitureoutlets.com/" target="_blank" rel="noopener noreferrer">nyfurnitureoutlets.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="royal flowers &amp; events florist &amp; event styling san diego, ca">
+  <div class="idx">96</div>
+  <div class="who">
+    <h3>Royal Flowers &amp; Events</h3>
+    <p class="meta">Florist &amp; event styling · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No preview when shared</p><p class="fwhy">Text your link to someone and it arrives as a bare grey box.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18586687068">(858) 668-7068</a><span class="none">no email — ask on the call</span><a class="site" href="https://royalflowersandevents.com/" target="_blank" rel="noopener noreferrer">royalflowersandevents.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="student health center doctors san diego, ca">
+  <div class="idx">97</div>
+  <div class="who">
+    <h3>Student Health Center</h3>
+    <p class="meta">doctors · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192604595">(619) 260-4595</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.sandiego.edu/health-center/" target="_blank" rel="noopener noreferrer">sandiego.edu/health-center</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="sweet revenge bakery san diego, ca">
+  <div class="idx">98</div>
+  <div class="who">
+    <h3>Sweet Revenge</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196210668">(619) 621-0668</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.sweetrevengesd.com/" target="_blank" rel="noopener noreferrer">sweetrevengesd.com</a></div>
+</article>
+<article class="row is-blocked" data-state="DE" data-src="delaware" data-blocked="1" data-score="4" data-name="fidelity investments financial advisor greenville, de">
+  <div class="idx">99</div>
+  <div class="who">
+    <h3>Fidelity Investments</h3>
+    <p class="meta">financial advisor · Greenville, DE</p>
+    <div class="tags"><span class="tag stop">toll-free — call centre</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18002015380">(800) 201-5380</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.fidelity.com/branches/investor-center-wilmington-greenville-delaware-19807" target="_blank" rel="noopener noreferrer">fidelity.com/branches/investor-center-wilmington-greenville-delaware-19807</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="4" data-name="boudin bakery san diego, ca">
+  <div class="idx">100</div>
+  <div class="who">
+    <h3>Boudin</h3>
+    <p class="meta">bakery · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">4<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><span class="none">no number</span><span class="none">no email — ask on the call</span><a class="site" href="https://boudinbakery.com/" target="_blank" rel="noopener noreferrer">boudinbakery.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="5" data-name="same day flower delivery san diego ca - send flowers florist san diego, ca">
+  <div class="idx">101</div>
+  <div class="who">
+    <h3>Same Day Flower Delivery San Diego CA - Send Flowers</h3>
+    <p class="meta">florist · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">5<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16193245940">(619) 324-5940</a><span class="none">no email — ask on the call</span><a class="site" href="https://flowerdeliverysandiegoca.com/" target="_blank" rel="noopener noreferrer">flowerdeliverysandiegoca.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="5" data-name="san diego hardware hardware san diego, ca">
+  <div class="idx">102</div>
+  <div class="who">
+    <h3>San Diego Hardware</h3>
+    <p class="meta">hardware · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">5<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Very slow to load</p><p class="fwhy">Someone with an emergency does not wait. They tap the next name down.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18585761892">(858) 576-1892</a><span class="none">no email — ask on the call</span><a class="site" href="https://sandiegohardware.com/" target="_blank" rel="noopener noreferrer">sandiegohardware.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="5" data-name="tierramesa veterinary clinic veterinary san diego, ca">
+  <div class="idx">103</div>
+  <div class="who">
+    <h3>Tierramesa Veterinary Clinic</h3>
+    <p class="meta">veterinary · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">5<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582680044">(858) 268-0044</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.tierramesavet.com/" target="_blank" rel="noopener noreferrer">tierramesavet.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="5" data-name="woolley's gutter experts gutters &amp; roofing lemon grove, ca">
+  <div class="idx">104</div>
+  <div class="who">
+    <h3>Woolley's Gutter Experts</h3>
+    <p class="meta">Gutters &amp; roofing · Lemon Grove, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">5<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16192484811">(619) 248-4811</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.woolleysgutterexperts.com/" target="_blank" rel="noopener noreferrer">woolleysgutterexperts.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="6" data-name="o'reilly auto parts car parts lemon grove, ca">
+  <div class="idx">105</div>
+  <div class="who">
+    <h3>O'Reilly Auto Parts</h3>
+    <p class="meta">car parts · Lemon Grove, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No preview when shared</p><p class="fwhy">Text your link to someone and it arrives as a bare grey box.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16196972467">(619) 697-2467</a><span class="none">no email — ask on the call</span><a class="site" href="https://locations.oreillyauto.com/en-us/ca/lemongrove/autoparts-2668.html" target="_blank" rel="noopener noreferrer">locations.oreillyauto.com/en-us/ca/lemongrove/autoparts-2668.html</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="6" data-name="omnitek dental ceramics dentist chula vista, ca">
+  <div class="idx">106</div>
+  <div class="who">
+    <h3>Omnitek Dental Ceramics</h3>
+    <p class="meta">dentist · Chula Vista, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194200323">(619) 420-0323</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.omnitekdental.com/" target="_blank" rel="noopener noreferrer">omnitekdental.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="6" data-name="orton endodontics endodontist — root canal specialist san diego, ca">
+  <div class="idx">107</div>
+  <div class="who">
+    <h3>Orton Endodontics</h3>
+    <p class="meta">Endodontist — root canal specialist · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">No Google business markup</p><p class="fwhy">Google has nothing structured to read, so your listing is thinner than it should be.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18584857668">(858) 485-7668</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.ortonendo.com/" target="_blank" rel="noopener noreferrer">ortonendo.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="6" data-name="re modern furniture san diego, ca">
+  <div class="idx">108</div>
+  <div class="who">
+    <h3>RE Modern</h3>
+    <p class="meta">furniture · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Number is not tappable</p><p class="fwhy">On a phone your number is text, not a button. They have to memorise it.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18582424030">(858) 242-4030</a><span class="none">no email — ask on the call</span><a class="site" href="https://remodernliving.com/" target="_blank" rel="noopener noreferrer">remodernliving.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="6" data-name="vinya yoga and wine bar bar san diego, ca">
+  <div class="idx">109</div>
+  <div class="who">
+    <h3>Vinya Yoga and Wine Bar</h3>
+    <p class="meta">bar · San Diego, CA</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">6<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+18587038101">(858) 703-8101</a><span class="none">no email — ask on the call</span><a class="site" href="https://www.vinyasd.com/" target="_blank" rel="noopener noreferrer">vinyasd.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="7" data-name="korel family dentistry family dentistry el cajon, ca">
+  <div class="idx">110</div>
+  <div class="who">
+    <h3>Korel Family Dentistry</h3>
+    <p class="meta">Family dentistry · El Cajon, CA · there</p>
+    <div class="tags"><span class="tag stop">closed out</span><span class="tag warn">open this first — the domain may not be theirs</span><span class="tag st-dead">dead</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp on" title="Works on a phone: passes"></i><i class="lamp on" title="Secure (HTTPS): passes"></i><i class="lamp on" title="Loads in under 2 seconds: passes"></i><i class="lamp on" title="Tap-to-call phone number: passes"></i><i class="lamp on" title="Google business markup: passes"></i><i class="lamp on" title="Title + description: passes"></i><i class="lamp on" title="Shareable link preview: passes"></i></div>
+    <span class="num">7<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel none">Nothing provable to sell</p><p class="fwhy">All seven checks pass. Do not pitch a rebuild.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194443393">(619) 444-3393</a><span class="none">no email — ask on the call</span><a class="site" href="https://dentistelcajon.com/" target="_blank" rel="noopener noreferrer">dentistelcajon.com</a></div>
+</article>
+<article class="row is-blocked" data-state="CA" data-src="pipeline" data-blocked="1" data-score="0" data-name="palm dental group dentist lemon grove, ca">
+  <div class="idx">111</div>
+  <div class="who">
+    <h3>Palm Dental Group</h3>
+    <p class="meta">dentist · Lemon Grove, CA</p>
+    <div class="tags"><span class="tag stop">has an agency</span><span class="tag soft">not browser-measured</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+16194601991">(619) 460-1991</a><span class="none">no email — ask on the call</span><a class="site" href="https://palmdentalgroup.net/" target="_blank" rel="noopener noreferrer">palmdentalgroup.net</a></div>
+</article>
+<article class="row is-blocked" data-state="NE" data-src="pipeline" data-blocked="1" data-score="0" data-name="swinley spa services hot tub and pool service omaha, ne">
+  <div class="idx">112</div>
+  <div class="who">
+    <h3>Swinley Spa Services</h3>
+    <p class="meta">Hot tub and pool service · Omaha, NE · Seth Wright</p>
+    <div class="tags"><span class="tag stop">4 attempts — past the four-strike rule</span><span class="tag soft">not browser-measured</span><span class="tag st-spec">spec</span><span class="tag ok">page built</span></div>
+  </div>
+  <div class="score">
+    <div class="lampstrip"><i class="lamp off" title="Works on a phone: fails"></i><i class="lamp off" title="Secure (HTTPS): fails"></i><i class="lamp off" title="Loads in under 2 seconds: fails"></i><i class="lamp off" title="Tap-to-call phone number: fails"></i><i class="lamp off" title="Google business markup: fails"></i><i class="lamp off" title="Title + description: fails"></i><i class="lamp off" title="Shareable link preview: fails"></i></div>
+    <span class="num">0<span class="of">/7</span></span>
+  </div>
+  <div class="flaw">
+    <p class="flabel">Breaks on a phone</p><p class="fwhy">Pull it up on your own phone — that is what your customers see.</p>
+  </div>
+  <div class="reach"><a class="btn call" href="tel:+14022015518">(402) 201-5518</a><a class="btn mail" href="mailto:seth@swinleyspaservices.com">seth@swinleyspaservices.com</a><span class="none">no website found</span></div>
+</article>
+  </div>
+
+  <section class="advice">
+    <h2>What the numbers are actually telling you</h2>
+    
+<p>Everything below is recomputed from this build. Nothing here is a rule of thumb — if the numbers change, the advice changes with them.</p>
+
+<h3>Only 51 of 112 are worth dialling</h3>
+<p>The rest are filtered out for a reason printed on their row. That is the single most valuable thing this board does: <strong>a bad lead costs a real phone call, and some of them cost your reputation.</strong> The commonest disqualifiers here are an agency already being paid, a toll-free number that reaches a call centre, and a URL that may not belong to the business at all.</p>
+
+<h3>1 already have an agency — and they cluster</h3>
+<p>Doctible, WEO Media and the like. Someone is being paid to maintain those sites and updated them recently. Dental in particular is one of the most heavily farmed verticals in local marketing; agencies have been calling those practices for years. If the next few dentists also come back agency-run, the answer is not to call more dentists — it is to weight the scout toward trades, where nobody is farming them.</p>
+
+<h3>106 of 112 have no email address, and that is correct</h3>
+<p>An address that is not in the record does not exist. Two guessed addresses hard-bounced on 30 August, and one was retried eleven minutes after a permanent <code>550</code> — the exact behaviour that gets a personal Gmail account flagged as a bulk sender. Every piece of outreach you do runs through that one account, so the downside is not two lost emails, it is losing the ability to send at all. <strong>Get the address on the call.</strong> That is what the number is for, and it is how every address you do have was obtained.</p>
+
+<h3>10 rows are flagged "open this first"</h3>
+<p>The domain shares no distinctive word with the business name — which usually means the directory gave us a stale domain, a reseller's placeholder, or a competitor's page. It is a rough signal and it does over-flag acronym domains, so it warns rather than drops the lead. Six wrong URLs turned up in a single week — Estrella, House of Stemms, Big Kahuna's, RT Roofing, Right Lawyers, Palm Dental — and <em>every one was caught by you opening the site on your phone before pitching.</em> That habit is doing more for lead quality than any code in this repo.</p>
+
+<h3>8 are behind a bot check and were dropped</h3>
+<p>Their URL is a CAPTCHA interstitial — <code>/.well-known/sgcaptcha/</code> and the like. Those answer 200 and render like a page, so every check ran against the challenge rather than the site. Left in, this board would have had you tell six plumbers and salons their phone number was untappable when what we measured was a robot test. A site behind a firewall usually has someone maintaining it anyway.</p>
+
+<h3>2 were not measured in a real browser</h3>
+<p>Findings read off raw HTML cannot see hours, phone links or layout that JavaScript builds after load. Those rows are fine for deciding who to ring, but <strong>do not read their findings out to an owner</strong> until a browser run confirms them.</p>
+
+<h3>5 have no website at all — start here</h3>
+<p>Their domain resolves to a registrar placeholder or a marketplace listing: a <code>/lander</code> page, or HugeDomains offering the name for sale. These are the easiest calls on the board, because you are not criticising anyone's work — <strong>you are telling them something they almost certainly do not know.</strong> "I typed your name into Google and the page that came up is selling your own domain back to you" gets a reaction every time. It is also the one finding you can verify together, out loud, in ten seconds.</p>
+
+<h3>The seven lamps are the only things you may say out loud</h3>
+<p>Works on a phone · secure · load speed · tap-to-call · Google markup · title and description · shareable preview. Those seven can be demonstrated to an owner while they hold their own phone. The other five we track — hours, address, services, reviews, call-to-action — are recorded but <strong>never claimed</strong>, because a page scan cannot prove them. We once told a florist she had no hours while she was looking at her hours.</p>
+
+<h3>6 score zero, 1 score five or better — treat them oppositely</h3>
+<p>A <strong>0/7</strong> is the easy call: nothing works, and you can prove it in ten seconds while they hold the phone. A <strong>5/7 or better is not a rebuild.</strong> RT Roofing passes six of seven; the honest sale there was $450 to fix the load time, not $750 to replace a site that works. Quoting a rebuild to someone whose site is fine is how you become the guy who calls.</p>
+
+<h3>Where the gaps actually are</h3>
+<ul><li><strong>auto</strong> — 4 callable, 5.0 of 7 checks failing on average</li><li><strong>dental</strong> — 5 callable, 4.2 of 7 checks failing on average</li><li><strong>beauty</strong> — 11 callable, 4.2 of 7 checks failing on average</li><li><strong>other</strong> — 22 callable, 3.9 of 7 checks failing on average</li><li><strong>trades</strong> — 4 callable, 3.5 of 7 checks failing on average</li><li><strong>professional</strong> — 5 callable, 3.2 of 7 checks failing on average</li></ul>
+<p>Weight your day toward the top of that list. Businesses whose whole product is how things look — salons, florists, boutiques — usually already have someone doing their website, and the hit rate there has been poor.</p>
+
+<h3>Call when they can actually talk</h3>
+<p>Clinics answer <strong>9–11am</strong>, before the room fills. Trades answer <strong>7–8am and after 4pm</strong>, from the van. Restaurants are unreachable 11:30–2 and after 5. Three of the calls logged at 5pm last week went to voicemail, all of them to businesses that answer in the morning. The board does not know the time; you do.</p>
+
+<h3>Four strikes and stop</h3>
+<p>El Cajon has had six attempts. After four, a lead is not shy, it is a no — close it out or walk in. The pipeline is worth more when it is honest about what is dead.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  var rows = [].slice.call(document.querySelectorAll('.row'));
+  var q = document.getElementById('q');
+  var only = document.getElementById('onlyCallable');
+  var count = document.getElementById('count');
+  var stateBtns = [].slice.call(document.querySelectorAll('.chip.st'));
+  var active = {};
+
+  try {
+    var saved = JSON.parse(localStorage.getItem('board.filters') || '{}');
+    if (saved.only === false) only.setAttribute('aria-pressed','false');
+    if (saved.q) q.value = saved.q;
+    if (saved.states) { active = saved.states; stateBtns.forEach(function(b){
+      if (active[b.dataset.st]) b.setAttribute('aria-pressed','true'); }); }
+  } catch (e) {}
+
+  function save(){
+    try {
+      localStorage.setItem('board.filters', JSON.stringify({
+        only: only.getAttribute('aria-pressed') === 'true', q: q.value, states: active }));
+    } catch (e) {}
+  }
+
+  function apply(){
+    var term = q.value.trim().toLowerCase();
+    var callableOnly = only.getAttribute('aria-pressed') === 'true';
+    var picked = Object.keys(active).filter(function(k){ return active[k]; });
+    var shown = 0;
+    rows.forEach(function(r){
+      var ok = true;
+      if (callableOnly && r.dataset.blocked === '1') ok = false;
+      if (ok && term && r.dataset.name.indexOf(term) === -1) ok = false;
+      if (ok && picked.length && picked.indexOf(r.dataset.state) === -1) ok = false;
+      r.hidden = !ok;
+      if (ok) shown++;
+    });
+    count.textContent = shown + ' of ' + rows.length;
+    save();
+  }
+
+  q.addEventListener('input', apply);
+  only.addEventListener('click', function(){
+    only.setAttribute('aria-pressed', only.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    apply();
+  });
+  stateBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      active[b.dataset.st] = on;
+      apply();
+    });
+  });
+
+  apply();
+})();
+</script>

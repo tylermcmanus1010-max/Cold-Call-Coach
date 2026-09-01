@@ -2,6 +2,7 @@
 // Cold Call Coach — find a site, rebuild it, send it with a price. Repeat.
 //
 //   ./cc scout              build the lead list: pull businesses, audit every site
+//   ./cc board              one page of every business we have measured, ranked
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc harvest <slug>     read THEIR site first — services, hours, real reviews
@@ -69,6 +70,36 @@ function flags(argv) {
     o[k] = v;
   }
   return o;
+}
+
+function cmdBoard() {
+  const { build } = require('./tools/board');
+  const render = require('./tools/board-render');
+  const advice = require('./tools/board-advice');
+
+  const rows = build();
+  if (!rows.length) die('nothing to show — run ./cc scout first');
+
+  const html = render(rows, {
+    builtAt: new Date().toISOString().slice(0, 10),
+    advice: advice(rows),
+  });
+
+  // The page carries its own behaviour; a script that will not parse is a
+  // board that silently stops filtering, which is worse than one that fails.
+  for (const [, js] of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
+    if (!js.trim()) continue;
+    try { new Function(js); }
+    catch (e) { die(`the board's own script will not parse — ${e.message}`); }
+  }
+
+  fs.mkdirSync(path.join(ROOT, 'board'), { recursive: true });
+  const out = path.join(ROOT, 'board', 'index.html');
+  fs.writeFileSync(out, html);
+
+  const callable = rows.filter((r) => !r.blocked).length;
+  console.log(`\n  ${rows.length} businesses · ${callable} worth calling`);
+  console.log(`  ${out}\n`);
 }
 
 async function cmdScout(argv) {
@@ -551,6 +582,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;
+    case 'board': cmdBoard(); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;

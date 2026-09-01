@@ -1,0 +1,519 @@
+<title>Morning Call Plan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{--ground:#F4F6F6;--surface:#fff;--sunk:#EAEEEE;--ink:#10181B;--ink2:#3C4A4F;--muted:#68787D;
+        --line:#D6DEDF;--accent:#0B5E6B;--accent-soft:#E2EFF1;--on-accent:#fff;--bad:#B3261E;
+        --mono:"IBM Plex Mono",ui-monospace,monospace;--ui:"Archivo",system-ui,sans-serif}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0D1315;--surface:#151F22;--sunk:#101A1C;--ink:#E7EEEF;--ink2:#B4C3C6;--muted:#86989C;
+    --line:#27383C;--accent:#5FB9C9;--accent-soft:#122E34;--on-accent:#08191C;--bad:#F1867C}}
+  :root[data-theme="dark"]{
+    --ground:#0D1315;--surface:#151F22;--sunk:#101A1C;--ink:#E7EEEF;--ink2:#B4C3C6;--muted:#86989C;
+    --line:#27383C;--accent:#5FB9C9;--accent-soft:#122E34;--on-accent:#08191C;--bad:#F1867C}
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--ui);margin:0;line-height:1.45}
+  .w{max-width:760px;margin:0 auto;padding:26px 16px 70px}
+  h1{font-size:clamp(26px,6vw,36px);margin:0;letter-spacing:-.02em;text-wrap:balance}
+  .lede{color:var(--muted);font-size:14.5px;margin:6px 0 0;max-width:60ch}
+  .hour{margin:30px 0 0;display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+  .hour h2{font-size:22px;margin:0;font-family:var(--mono);font-weight:500;letter-spacing:-.02em}
+  .hour span{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  ul{list-style:none;padding:0;margin:10px 0 0}
+  li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+     border-left:3px solid var(--accent);border-radius:8px;padding:11px 13px;margin-bottom:6px}
+  .tel{font-family:var(--mono);font-size:14px;font-weight:500;text-decoration:none;background:var(--accent);
+       color:var(--on-accent);padding:7px 10px;border-radius:6px;white-space:nowrap}
+  .b{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .b strong{font-size:15px;font-weight:600}
+  .m{font-size:12.5px;color:var(--muted)}
+  .m b{color:var(--ink2);font-family:var(--mono);font-weight:500}
+  .f{font-size:13px;color:var(--bad);font-weight:500}
+  .sc{font-family:var(--mono);color:var(--muted);font-weight:500}
+  .hot{color:var(--accent);font-weight:700}
+  .none{color:var(--muted);font-style:italic;font-size:14px;padding:10px 2px}
+  .note{background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:14px 16px;margin:22px 0 0}
+  .note p{margin:0 0 8px;font-size:14px;color:var(--ink2)}
+  .note p:last-child{margin:0}
+  .note strong{color:var(--ink)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media (max-width:420px){ li{flex-direction:column;gap:8px} .tel{align-self:flex-start} }
+</style>
+<div class="w">
+  <h1>Morning Call Plan</h1>
+  <p class="lede">Tuesday, September 1, from 5 AM Pacific.
+  Ordered by whose phone can be answered, not by whose website is worst — 108 businesses, each shown in <em>their</em> local time.</p>
+
+  <div class="note">
+    <p><strong>Why 5am is worth setting an alarm for.</strong> At 5:00 here it is 8:00 in Wilmington and 7:00 in Milwaukee and Nashville. That is the hour a tradesman answers — in the van, before the first job — and it is an hour you have never used, because until today every lead you had was in California.</p>
+    <p>Say the town out loud early. Someone in Delaware answering a 619 number needs to know in the first sentence why San Diego is calling.</p>
+  </div>
+
+
+  <div class="hour"><h2>5 AM</h2><span>5 new · 5 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+13028833554">(302) 883-3554</a>
+  <div class="b">
+    <strong>Coastal Car Wash</strong>
+    <span class="m">car wash · Dover, DE · <b>08:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Not secure — no HTTPS</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+13024781120">(302) 478-1120</a>
+  <div class="b">
+    <strong>Brandywine Auto Body</strong>
+    <span class="m">car repair · Talleyville, DE · <b>08:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12162601666">(216) 260-1666</a>
+  <div class="b">
+    <strong>Leavened</strong>
+    <span class="m">bakery · Cleveland, OH · <b>08:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16156784592">(615) 678-4592</a>
+  <div class="b">
+    <strong>Yeast Nashville</strong>
+    <span class="m">bakery · Nashville, TN · <b>07:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14143507777">(414) 350-7777</a>
+  <div class="b">
+    <strong>Brew City Locksmith</strong>
+    <span class="m">locksmith · WI · <b>07:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Number is not tappable</span>
+  </div>
+</li></ul>
+  <div class="hour"><h2>6 AM</h2><span>19 new · 24 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+16192454457">(619) 245-4457</a>
+  <div class="b">
+    <strong>Le Parfait Paris</strong>
+    <span class="m">French bakery &amp; patisserie · San Diego, CA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Not secure — no HTTPS</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16194778588">(619) 477-8588</a>
+  <div class="b">
+    <strong>Valerio's City Bakery</strong>
+    <span class="m">bakery · National City, CA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142982068">(414) 298-2068</a>
+  <div class="b">
+    <strong>Bennett Coachworks</strong>
+    <span class="m">car repair · Milwaukee, WI · <b>08:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18586687234">(858) 668-7234</a>
+  <div class="b">
+    <strong>cupCAKES a la Yola</strong>
+    <span class="m">bakery · Poway, CA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16194154259">(619) 415-4259</a>
+  <div class="b">
+    <strong>Love &amp; Bake</strong>
+    <span class="m">bakery · San Diego, CA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+13026526725">(302) 652-6725</a>
+  <div class="b">
+    <strong>Fairfax Valet Cleaners</strong>
+    <span class="m">dry cleaning · DE · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+17045317715">(704) 531-7715</a>
+  <div class="b">
+    <strong>SLC Services, Inc.</strong>
+    <span class="m">accountant · Charlotte, NC · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+19043743795">(904) 374-3795</a>
+  <div class="b">
+    <strong>Florida First Insurance Group</strong>
+    <span class="m">insurance · Jacksonville, FL · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+13177401657">(317) 740-1657</a>
+  <div class="b">
+    <strong>Great Jones</strong>
+    <span class="m">estate agent · Indianapolis, IN · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12064484032">(206) 448-4032</a>
+  <div class="b">
+    <strong>Macrina Bakery - Belltown</strong>
+    <span class="m">bakery · Seattle, WA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12066218772">(206) 621-8772</a>
+  <div class="b">
+    <strong>Salumi Artisan Cured Meats</strong>
+    <span class="m">butcher · Seattle, WA · <b>06:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18562999016">(856) 299-9016</a>
+  <div class="b">
+    <strong>Monticolo Insurance Agency</strong>
+    <span class="m">insurance · Carneys Point, NJ · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li></ul>
+  <div class="hour"><h2>7 AM</h2><span>18 new · 38 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+18584806618">(858) 480-6618</a>
+  <div class="b">
+    <strong>Ace Contractors Plumbing, Heating, And Air</strong>
+    <span class="m">plumber · San Diego, CA · <b>07:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain sits on a registrar placeholder</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+13026551401">(302) 655-1401</a>
+  <div class="b">
+    <strong>1401 Hair Designs &amp; Massage Therapy</strong>
+    <span class="m">beauty · Wilmington, DE · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">1/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142233111">(414) 223-3111</a>
+  <div class="b">
+    <strong>UniPrice Cleaners</strong>
+    <span class="m">dry cleaning · Milwaukee, WI · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">1/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+13027245444">(302) 724-5444</a>
+  <div class="b">
+    <strong>Trendz Salon and Color Bar</strong>
+    <span class="m">hairdresser · Dover, DE · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142723636">(414) 272-3636</a>
+  <div class="b">
+    <strong>McCormick Law Office</strong>
+    <span class="m">lawyer · WI · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14147369272">(414) 736-9272</a>
+  <div class="b">
+    <strong>Futen Dojo</strong>
+    <span class="m">dojo · Milwaukee, WI · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+17049981961">(704) 998-1961</a>
+  <div class="b">
+    <strong>Top Tiger Team Boxing</strong>
+    <span class="m">fitness centre · Charlotte, NC · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12064364444">(206) 436-4444</a>
+  <div class="b">
+    <strong>North Coast Electric</strong>
+    <span class="m">electrician · Seattle, WA · <b>07:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16194476675">(619) 447-6675</a>
+  <div class="b">
+    <strong>Helix Mechanical, Inc.</strong>
+    <span class="m">HVAC, plumbing &amp; general contracting · El Cajon, CA · <b>07:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — No preview when shared</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16195618000">(619) 561-8000</a>
+  <div class="b">
+    <strong>West Coast Air Conditioning Co</strong>
+    <span class="m">hvac · El Cajon, CA · <b>07:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16154695555">(615) 469-5555</a>
+  <div class="b">
+    <strong>East Nashville Family Medicine</strong>
+    <span class="m">doctors · Nashville, TN · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14143727374">(414) 372-7374</a>
+  <div class="b">
+    <strong>The Centre For Exceptional Dentistry</strong>
+    <span class="m">dentist · Milwaukee, WI · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li></ul>
+  <div class="hour"><h2>8 AM</h2><span>18 new · 54 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+16152698029">(615) 269-8029</a>
+  <div class="b">
+    <strong>TRIM</strong>
+    <span class="m">hairdresser · Nashville, TN · <b>10:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain sits on a registrar placeholder</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14144363296">(414) 436-3296</a>
+  <div class="b">
+    <strong>Soul Collective MKE, LP</strong>
+    <span class="m">fitness centre · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain sits on a registrar placeholder</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142731741">(414) 273-1741</a>
+  <div class="b">
+    <strong>Gloss Nail Spa</strong>
+    <span class="m">beauty · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Not secure — no HTTPS</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142719447">(414) 271-9447</a>
+  <div class="b">
+    <strong>Tess Hair &amp; Wig Boutique</strong>
+    <span class="m">beauty · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Not secure — no HTTPS</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14148006033">(414) 800-6033</a>
+  <div class="b">
+    <strong>Vitality</strong>
+    <span class="m">fitness centre · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142247870">(414) 224-7870</a>
+  <div class="b">
+    <strong>Ellipse Fitness</strong>
+    <span class="m">fitness centre · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142241474">(414) 224-1474</a>
+  <div class="b">
+    <strong>The Shoppe</strong>
+    <span class="m">hairdresser · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14144395561">(414) 439-5561</a>
+  <div class="b">
+    <strong>Chic Nails</strong>
+    <span class="m">beauty · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12067893700">(206) 789-3700</a>
+  <div class="b">
+    <strong>Brown Bear Car Wash</strong>
+    <span class="m">car wash · Seattle, WA · <b>08:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142647674">(414) 264-7674</a>
+  <div class="b">
+    <strong>La Posh Salon</strong>
+    <span class="m">hairdresser · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14148376380">(414) 837-6380</a>
+  <div class="b">
+    <strong>Shred415</strong>
+    <span class="m">fitness centre · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+14142655606">(414) 265-5606</a>
+  <div class="b">
+    <strong>Invivo Wellness</strong>
+    <span class="m">fitness centre · Milwaukee, WI · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li></ul>
+  <div class="hour"><h2>9 AM</h2><span>23 new · 60 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+16192221345">(619) 222-1345</a>
+  <div class="b">
+    <strong>Alexander's Upholstering</strong>
+    <span class="m">upholsterer · San Diego, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain sits on a registrar placeholder</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16193974111">(619) 397-4111</a>
+  <div class="b">
+    <strong>Estrella Dental Implant &amp; Cosmetic Center</strong>
+    <span class="m">dentist · Chula Vista, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain is for sale on a marketplace</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16192378842">(619) 237-8842</a>
+  <div class="b">
+    <strong>House of Stemms</strong>
+    <span class="m">Florist · San Diego, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">0/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12066328686">(206) 632-8686</a>
+  <div class="b">
+    <strong>Dave Page Cobbler</strong>
+    <span class="m">shoe repair · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">1/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12066227002">(206) 622-7002</a>
+  <div class="b">
+    <strong>Globe Optical</strong>
+    <span class="m">optician · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18582774878">(858) 277-4878</a>
+  <div class="b">
+    <strong>David Cravens Insurance Services</strong>
+    <span class="m">insurance · San Diego, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16194661292">(619) 466-1292</a>
+  <div class="b">
+    <strong>El Cajon Family Dental</strong>
+    <span class="m">Dental practice · El Cajon, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18585131747">(858) 513-1747</a>
+  <div class="b">
+    <strong>Pearl Cosmetic &amp; Family Dentistry</strong>
+    <span class="m">Cosmetic and family dentistry · San Diego, CA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12069630760">(206) 963-0760</a>
+  <div class="b">
+    <strong>Miller Law Group</strong>
+    <span class="m">lawyer · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12062574887">(206) 257-4887</a>
+  <div class="b">
+    <strong>Posh Paws</strong>
+    <span class="m">pet grooming · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12066320675">(206) 632-0675</a>
+  <div class="b">
+    <strong>D. Andrew Lewis, DDS</strong>
+    <span class="m">dentist · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12063574218">(206) 357-4218</a>
+  <div class="b">
+    <strong>Gairson Law</strong>
+    <span class="m">lawyer · Seattle, WA · <b>09:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Number is not tappable</span>
+  </div>
+</li></ul>
+  <div class="hour"><h2>10 AM</h2><span>25 new · 57 reachable</span></div>
+  <ul><li>
+  <a class="tel" href="tel:+16194666854">(619) 466-6854</a>
+  <div class="b">
+    <strong>Revive Lash &amp; Nail</strong>
+    <span class="m">Lash &amp; nail studio · San Diego, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="hot">no website at all</span> — No real website — the domain sits on a registrar placeholder</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12065456905">(206) 545-6905</a>
+  <div class="b">
+    <strong>Salon Metro</strong>
+    <span class="m">hairdresser · Seattle, WA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12069199079">(206) 919-9079</a>
+  <div class="b">
+    <strong>Strive &amp; Uplift</strong>
+    <span class="m">fitness centre · Seattle, WA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16194644466">(619) 464-4466</a>
+  <div class="b">
+    <strong>Kids Hair Salon</strong>
+    <span class="m">hairdresser · La Mesa, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">2/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18585246132">(858) 524-6132</a>
+  <div class="b">
+    <strong>Lumiere Salon</strong>
+    <span class="m">hairdresser · San Diego, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16193545411">(619) 354-5411</a>
+  <div class="b">
+    <strong>Portal Salon</strong>
+    <span class="m">hairdresser · San Diego, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+16198668710">(619) 866-8710</a>
+  <div class="b">
+    <strong>Urban Cutz</strong>
+    <span class="m">hairdresser · San Diego, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12066590092">(206) 659-0092</a>
+  <div class="b">
+    <strong>Breathe Hot Yoga</strong>
+    <span class="m">fitness centre · Seattle, WA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12069923403">(206) 992-3403</a>
+  <div class="b">
+    <strong>14th Avenue Hair</strong>
+    <span class="m">hairdresser · Seattle, WA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+12062560155">(206) 256-0155</a>
+  <div class="b">
+    <strong>Salon Divas</strong>
+    <span class="m">hairdresser · Seattle, WA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">3/7</span> — Very slow to load</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18587699591">(858) 769-9591</a>
+  <div class="b">
+    <strong>Lashbar</strong>
+    <span class="m">beauty · San Diego, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Breaks on a phone</span>
+  </div>
+</li><li>
+  <a class="tel" href="tel:+18585133655">(858) 513-3655</a>
+  <div class="b">
+    <strong>Studio Mani</strong>
+    <span class="m">beauty · Poway, CA · <b>10:00 their time</b></span>
+    <span class="f"><span class="sc">4/7</span> — Very slow to load</span>
+  </div>
+</li></ul>
+</div>

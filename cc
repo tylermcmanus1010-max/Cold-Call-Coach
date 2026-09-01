@@ -3,6 +3,7 @@
 //
 //   ./cc scout              build the lead list: pull businesses, audit every site
 //   ./cc board              one page of every business we have measured, ranked
+//   ./cc brief              the morning call plan, ordered by who can answer
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc harvest <slug>     read THEIR site first — services, hours, real reviews
@@ -70,6 +71,36 @@ function flags(argv) {
     o[k] = v;
   }
   return o;
+}
+
+function cmdBrief(argv) {
+  const o = flags(argv);
+  const render = require('./tools/brief-render');
+
+  // Default to 5am Pacific tomorrow — the hour worth setting an alarm for now
+  // that the list is national.
+  let start;
+  if (o.at) {
+    start = new Date(o.at);
+    if (isNaN(start)) die(`--at "${o.at}" is not a date I can read. Try --at 2026-09-02T12:00:00Z`);
+  } else {
+    // The next 5am Pacific, which is usually today — he is going to bed at 1am,
+    // not waiting a whole day.
+    const now = new Date();
+    start = new Date(now);
+    start.setUTCHours(12, 0, 0, 0);              // 05:00 Pacific while DST is in effect
+    if (start <= now) start = new Date(start.getTime() + 24 * 3600e3);
+  }
+
+  const hours = Number(o.hours || 6);
+  const html = render(start, hours);
+  for (const [, js] of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
+    if (js.trim()) { try { new Function(js); } catch (e) { die(`brief script will not parse — ${e.message}`); } }
+  }
+  fs.mkdirSync(path.join(ROOT, 'brief'), { recursive: true });
+  const out = path.join(ROOT, 'brief', 'index.html');
+  fs.writeFileSync(out, html);
+  console.log(`\n  ${hours} hours from ${start.toISOString()}\n  ${out}\n`);
 }
 
 function cmdBoard() {
@@ -583,6 +614,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;
     case 'board': cmdBoard(); break;
+    case 'brief': cmdBrief(args); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;

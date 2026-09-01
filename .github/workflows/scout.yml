@@ -16,7 +16,7 @@ on:
         required: true
         default: 'san-diego'
         type: choice
-        options: [san-diego, delaware, national]
+        options: [san-diego, delaware, national-east, national-west, national]
       source:
         description: 'Where to pull businesses from'
         required: true

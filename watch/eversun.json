@@ -57,6 +57,24 @@
         "social": false
       },
       "parked": false
+    },
+    {
+      "at": "2026-09-02T16:55:26.488Z",
+      "reachable": null,
+      "blocked": true,
+      "reason": "bot check stood in front of the site, so we never saw it",
+      "ms": null,
+      "kb": null,
+      "checks": {
+        "mobile": false,
+        "https": false,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
     }
   ]
 }

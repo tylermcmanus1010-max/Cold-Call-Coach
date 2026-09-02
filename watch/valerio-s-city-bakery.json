@@ -57,6 +57,24 @@
         "social": false
       },
       "parked": false
+    },
+    {
+      "at": "2026-09-02T16:57:28.495Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 8977,
+      "kb": 148,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
     }
   ]
 }

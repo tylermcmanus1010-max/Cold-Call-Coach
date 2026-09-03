@@ -4,6 +4,8 @@
 //   ./cc scout              build the lead list: pull businesses, audit every site
 //   ./cc board              one page of every business we have measured, ranked
 //   ./cc brief              the morning call plan, ordered by who can answer
+//   ./cc forms              find the contact form on each lead's own site
+//   ./cc outreach           build the send-at-work queue from those forms
 //   ./cc trade              paper-trading journal: size, open, close, stats, watch
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
@@ -173,6 +175,53 @@ async function cmdTrade(args) {
   console.log(st.readyForRealMoney
     ? '\n  Every gate is met. That is evidence, not permission — read the numbers yourself.\n'
     : '\n  Not there yet. Paper only.\n');
+}
+
+async function cmdForms(args) {
+  const o = flags(args);
+  const { build } = require('./tools/board');
+  const run = require('./tools/forms');
+
+  // Only leads we would actually call, that have a site to hold a form, and
+  // whose URL we are confident about.
+  let rows = build().filter((r) => !r.blocked && r.site && !r.parked && !r.checkUrl);
+  if (o.limit) rows = rows.slice(0, Number(o.limit));
+  if (!rows.length) die('no leads with a confirmed website to check');
+
+  console.log(`\n  checking ${rows.length} sites for a contact form\n`);
+  const out = await run(rows);
+  const found = out.filter((f) => f.form && !f.noSolicit).length;
+  console.log(`\n  ${found} of ${out.length} have a usable contact form\n`);
+}
+
+function cmdOutreach(args) {
+  const o = flags(args);
+  const { build } = require('./tools/board');
+  const { build: buildQueue } = require('./tools/outreach');
+  const render = require('./tools/outreach-render');
+
+  const f = path.join(ROOT, 'outreach', 'forms.json');
+  if (!fs.existsSync(f)) die('no forms found yet — run the "Find contact forms" workflow first');
+  const forms = JSON.parse(fs.readFileSync(f, 'utf8')).sites || [];
+
+  const rows = build().filter((r) => !r.blocked);
+  const { queue, skipped } = buildQueue(rows, forms);
+  if (!queue.length) die('nothing to send — every form was skipped, see outreach/forms.json');
+
+  const limit = Number(o.limit || 15);
+  const batch = queue.slice(0, limit);
+
+  fs.writeFileSync(path.join(ROOT, 'outreach', 'queue.json'),
+    JSON.stringify({ builtAt: new Date().toISOString(), batch, skipped }, null, 2));
+
+  const html = render(batch, skipped, queue.length);
+  for (const [, js] of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
+    if (js.trim()) { try { new Function(js); } catch (e) { die(`queue script will not parse — ${e.message}`); } }
+  }
+  fs.writeFileSync(path.join(ROOT, 'outreach', 'index.html'), html);
+
+  console.log(`\n  ${batch.length} ready to send (of ${queue.length} possible) · ${skipped.length} skipped`);
+  console.log(`  ${path.join(ROOT, 'outreach', 'index.html')}\n`);
 }
 
 function cmdBoard() {
@@ -687,6 +736,8 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'sheet': cmdSheet(); break;
     case 'board': cmdBoard(); break;
     case 'brief': cmdBrief(args); break;
+    case 'forms': await cmdForms(args); break;
+    case 'outreach': cmdOutreach(args); break;
     case 'trade': await cmdTrade(args); break;
     case 'host': cmdHost(args[0], args.slice(1)); break;
     case 'reaudit': await cmdReaudit(args); break;

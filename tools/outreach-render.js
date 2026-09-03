@@ -17,8 +17,19 @@ function card(q, i) {
       <td class="fval">${f.value === '{{MESSAGE}}' ? '<em>the message below</em>' : esc(f.value)}</td>
     </tr>`).join('');
 
+  const tel = q.phone ? q.phone.replace(/[^0-9]/g, '') : '';
+  const has = [];
+  if (q.sms && tel) has.push('text');
+  if (q.published.length) has.push('email');
+  if (q.usableForm) has.push('form');
+
+  const subject = 'Your website — one thing I noticed';
+  const mailto = q.published.length
+    ? `mailto:${encodeURIComponent(q.published[0])}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(q.message)}`
+    : null;
+
   return `
-<article class="card" data-name="${esc((q.name + ' ' + q.where + ' ' + q.category).toLowerCase())}" data-captcha="${q.captcha ? '1' : '0'}">
+<article class="card" data-name="${esc((q.name + ' ' + q.where + ' ' + q.category).toLowerCase())}" data-ch="${has.join(' ')}">
   <header>
     <span class="n">${i + 1}</span>
     <div>
@@ -29,25 +40,27 @@ function card(q, i) {
   </header>
 
   <div class="acts">
-    <a class="btn go" href="${esc(q.formUrl)}" target="_blank" rel="noopener noreferrer">Open their form ↗</a>
-    <button class="btn copy" type="button">Copy the message</button>
-    ${q.phone ? `<a class="btn tel" href="tel:+1${esc(q.phone.replace(/[^0-9]/g, ''))}">${esc(q.phone)}</a>` : ''}
+    ${q.sms && tel ? `<a class="btn sms" href="sms:+1${esc(tel)}&body=${encodeURIComponent(q.sms)}">Text — 10 seconds</a>` : ''}
+    ${mailto ? `<a class="btn mail" href="${esc(mailto)}">Email ${esc(q.published[0])}</a>` : ''}
+    ${q.usableForm ? `<a class="btn go" href="${esc(q.formUrl)}" target="_blank" rel="noopener noreferrer">Their form ↗${q.captcha ? ' (CAPTCHA)' : ''}</a>` : ''}
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    ${q.phone ? `<a class="btn tel" href="tel:+1${esc(tel)}">${esc(q.phone)}</a>` : ''}
   </div>
 
-  ${q.captcha ? '<p class="warn">This form has a CAPTCHA. It has to be finished by hand — that is the site asking not to be automated, and we take it at its word.</p>' : ''}
-  ${q.published.length ? `<p class="pub">They print <b>${q.published.map(esc).join(', ')}</b> on their own contact page. Not a guessed address — but emailing it directly instead of using the form is your call.</p>` : ''}
+  ${q.published.length ? `<p class="pub"><b>${q.published.map(esc).join(', ')}</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>` : ''}
+  ${q.captcha && q.usableForm ? '<p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>' : ''}
   ${q.booker.length ? '<p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>' : ''}
 
-  <details>
-    <summary>Their form (${q.fields.length} fields, found on the ${esc(q.foundOn)})</summary>
-    <table>${fields}</table>
-  </details>
-
-  <pre class="msg">${esc(q.message)}</pre>
+  ${q.sms ? `<details open><summary>The text (${q.sms.length} characters)</summary><pre class="msg sms-msg">${esc(q.sms)}</pre></details>` : ''}
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">${esc(q.message)}</pre></details>
+  ${q.usableForm ? `<details><summary>Their form: ${q.fields.length} fields, found on the ${esc(q.foundOn)}</summary><table>${fields}</table></details>` : ''}
 </article>`;
 }
 
 module.exports = function render(batch, skipped, total) {
+  const withEmail = batch.filter((q) => q.published.length).length;
+  const withForm = batch.filter((q) => q.usableForm).length;
+  const withCaptcha = batch.filter((q) => q.usableForm && q.captcha).length;
   return `<title>Send Queue</title>
 <link rel="stylesheet" href="${FONTS}">
 <style>
@@ -89,6 +102,12 @@ module.exports = function render(batch, skipped, total) {
   .btn.go{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
   .btn.copy.ok{background:var(--good);border-color:var(--good);color:var(--surface)}
   .btn.tel{font-family:var(--mono)}
+  .btn.sms{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+  .btn.mail{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .chip{font:inherit;font-size:13px;font-weight:500;padding:8px 11px;border:1px solid var(--line);border-radius:8px;
+        background:var(--surface);color:var(--ink2);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .sms-msg{font-family:var(--mono);font-size:12.5px}
   .warn{font-size:13px;color:var(--warn);margin:10px 0 0;font-weight:500}
   .pub{font-size:12.5px;color:var(--ink2);margin:8px 0 0;background:var(--sunk);padding:8px 10px;border-radius:6px}
   details{margin:10px 0 0}
@@ -108,17 +127,20 @@ module.exports = function render(batch, skipped, total) {
 </style>
 <div class="w">
   <h1>Send Queue</h1>
-  <p class="lede">${batch.length} businesses you can contact from a desk, without saying a word out loud. Each one links to <em>their own</em> contact form — the inbox they publish for exactly this — so no address has to be guessed.</p>
+  <p class="lede">${batch.length} businesses you can reach from a desk without saying a word out loud. Sorted by the channel that actually gets read, and every address here was published by the business itself — nothing is guessed.</p>
 
   <div class="rules">
-    <p><b>One message per business, ever.</b> If there is no reply, that is the answer. A second one is what turns outreach into spam, and it is the thing that gets a small sender blocked everywhere at once.</p>
-    <p><b>Read each one before it goes.</b> The name, the town and the finding are filled in from our data, and our data has been wrong about a URL six times in one week. On the phone you can correct that mid-sentence; in writing it is permanent.</p>
-    <p><b>A CAPTCHA means no.</b> Where a form has one it is marked, and it gets finished by hand or not at all.</p>
-    <p><b>Ten a day, not a hundred.</b> This works because each message names something true about that specific business. Volume is what breaks it.</p>
+    <p><b>Text first.</b> It takes ten seconds, nobody at work looks up, and it reaches the owner rather than an inbox somebody checks on Fridays. Most trades would rather be texted than called. Each one names the finding and offers a way out; send one, and if they ask you not to again, that is the end of it.</p>
+    <p><b>Then the addresses they print themselves.</b> ${withEmail} of these publish an email on their own contact page. That is not a guessed address and it will not bounce — which matters, because two guessed ones hard-bounced on 30 August and every email this business sends goes through one personal account.</p>
+    <p><b>Forms last, and expect to do them by hand.</b> ${withForm} have a usable contact form and ${withCaptcha} of those sit behind a CAPTCHA. A CAPTCHA is the site asking not to be automated, and it is taken at its word.</p>
+    <p><b>One message per business, ever. Ten a day, not a hundred.</b> No reply is a reply. This works because each message names something true about that specific business; volume is the thing that breaks it. And read each one before it goes — our data has been wrong about a URL six times in one week, and in writing that is permanent.</p>
   </div>
 
   <div class="bar">
     <input type="search" id="q" placeholder="Search name, trade or town…" aria-label="Search the queue">
+    <button class="chip" data-ch="text" type="button" aria-pressed="false">Text</button>
+    <button class="chip" data-ch="email" type="button" aria-pressed="false">Email</button>
+    <button class="chip" data-ch="form" type="button" aria-pressed="false">Form</button>
     <span class="count" id="count"></span>
   </div>
 
@@ -155,10 +177,11 @@ module.exports = function render(batch, skipped, total) {
     });
 
     var btn = c.querySelector('.copy');
-    var msg = c.querySelector('.msg').textContent;
+    var longEl = c.querySelector('.long-msg');
+    var msg = longEl ? longEl.textContent : '';
     btn.addEventListener('click', function(){
       function ok(){ btn.textContent = 'Copied'; btn.classList.add('ok');
-        setTimeout(function(){ btn.textContent = 'Copy the message'; btn.classList.remove('ok'); }, 1600); }
+        setTimeout(function(){ btn.textContent = 'Copy the long version'; btn.classList.remove('ok'); }, 1600); }
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(msg).then(ok, fallback);
       } else { fallback(); }
@@ -174,11 +197,25 @@ module.exports = function render(batch, skipped, total) {
     });
   });
 
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  chips.forEach(function(b){
+    b.addEventListener('click', function(){
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      apply();
+    });
+  });
+
   function apply(){
     var term = q.value.trim().toLowerCase();
+    var want = chips.filter(function(b){ return b.getAttribute('aria-pressed') === 'true'; })
+                    .map(function(b){ return b.dataset.ch; });
     var shown = 0, sent = 0;
     cards.forEach(function(c){
       var ok = !term || c.dataset.name.indexOf(term) !== -1;
+      if (ok && want.length) {
+        var mine = (c.dataset.ch || '').split(' ');
+        ok = want.some(function(w){ return mine.indexOf(w) !== -1; });
+      }
       c.hidden = !ok;
       if (ok) shown++;
       if (c.classList.contains('is-done')) sent++;

@@ -1,0 +1,1810 @@
+{
+  "builtAt": "2026-09-03T05:03:49.232Z",
+  "batch": [
+    {
+      "name": "UniPrice Cleaners",
+      "phone": "(414) 223-3111",
+      "where": "Milwaukee, WI",
+      "category": "dry cleaning",
+      "site": "http://uniprice-cleaners.com/brady.htm",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 1,
+      "flaw": "Breaks on a phone",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for dry cleaners. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\nI opened uniprice-cleaners.com/brady.htm on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Dave Page Cobbler",
+      "phone": "(206) 632-8686",
+      "where": "Seattle, WA",
+      "category": "shoe repair",
+      "site": "https://davepagecobbler.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 1,
+      "flaw": "Breaks on a phone",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for cobblers. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nI opened davepagecobbler.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Le Parfait Paris",
+      "phone": "(619) 245-4457",
+      "where": "San Diego, CA",
+      "category": "French bakery & patisserie",
+      "site": "http://www.leparfaitparis.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 2,
+      "flaw": "Not secure — no HTTPS",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.\n\nleparfaitparis.com isn't on HTTPS, so Chrome and Safari show visitors a \"Not secure\" warning before they read a word of it.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a \"Not secure\" warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Valerio's City Bakery",
+      "phone": "(619) 477-8588",
+      "where": "National City, CA",
+      "category": "bakery",
+      "site": "https://valerios.com/",
+      "formUrl": "https://valerios.com/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 2,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][0]",
+          "label": "Name",
+          "required": true,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "wpforms[fields][1]",
+          "label": "Email",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][3]",
+          "label": "Subject",
+          "required": true,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "wpforms[fields][4]",
+          "label": "Location",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "wpforms[fields][2]",
+          "label": "Message",
+          "required": true,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[hp]",
+          "label": "Email",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        }
+      ],
+      "submitText": "wpforms-submit",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.\n\nvalerios.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Coastal Car Wash",
+      "phone": "(302) 883-3554",
+      "where": "Dover, DE",
+      "category": "car wash",
+      "site": "http://www.coastalcarwash.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 2,
+      "flaw": "Not secure — no HTTPS",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for car washes. I'm in San Diego, so this is a cold one — Dover came up in a check I run. If this isn't the right person, please pass it along.\n\ncoastalcarwash.com isn't on HTTPS, so Chrome and Safari show visitors a \"Not secure\" warning before they read a word of it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a \"Not secure\" warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Brandywine Auto Body",
+      "phone": "(302) 478-1120",
+      "where": "Talleyville, DE",
+      "category": "car repair",
+      "site": "https://brandywineautobody.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "info@brandywineautobody.com"
+      ],
+      "booker": [],
+      "score": 2,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for auto shops. I'm in San Diego, so this is a cold one — Talleyville came up in a check I run. If this isn't the right person, please pass it along.\n\nbrandywineautobody.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Gloss Nail Spa",
+      "phone": "(414) 273-1741",
+      "where": "Milwaukee, WI",
+      "category": "beauty",
+      "site": "http://www.glossnailspa.net/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "glossmke1545@gmail.com"
+      ],
+      "booker": [],
+      "score": 2,
+      "flaw": "Not secure — no HTTPS",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\nglossnailspa.net isn't on HTTPS, so Chrome and Safari show visitors a \"Not secure\" warning before they read a word of it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a \"Not secure\" warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Globe Optical",
+      "phone": "(206) 622-7002",
+      "where": "Seattle, WA",
+      "category": "optician",
+      "site": "http://globeoptical.qwestoffice.net/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 2,
+      "flaw": "Breaks on a phone",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for opticians. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nI opened globeoptical.qwestoffice.net on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Salon Metro",
+      "phone": "(206) 545-6905",
+      "where": "Seattle, WA",
+      "category": "hairdresser",
+      "site": "https://www.salonmetroseattle.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "cindyfrank@salonmetroseattle.com"
+      ],
+      "booker": [],
+      "score": 2,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nsalonmetroseattle.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Strive & Uplift",
+      "phone": "(206) 919-9079",
+      "where": "Seattle, WA",
+      "category": "fitness centre",
+      "site": "https://www.striveanduplift.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "striveanduplift@gmail.com"
+      ],
+      "booker": [],
+      "score": 2,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nstriveanduplift.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Kids Hair Salon",
+      "phone": "(619) 464-4466",
+      "where": "La Mesa, CA",
+      "category": "hairdresser",
+      "site": "https://kidshairsalon.net/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [
+        "https://www.vagaro.com//Users/BusinessWidget.aspx?enc=MMLjhIwJMcwFQhXLL7ifVNdJCz+O+mMYicoAoV9dbTMsScHZewPFcglTbNM5r5HOE3SufuKrm4oYed+e17YdnqYba9l3rdkYpyEMwnVOil8DhivJtmskNO+ps9setviW1Vm36VFov2nIOSAOT7AECmVT1Zk1cYfvJ8bbB8C8mAEcYd4xhkFGmLUcjGR5GmD3cybXjWolckRK/HYr+RUGmlYRtvGMF433y8JdYUB6VG+o1PlZjC7B5LbGFwuTt4CnF2pNq1O74t2lqk61vuYTVTDgNk6PBRX0Mg6hVPmXf9+KHsT7LoOynUJrfx0lzsYHSE2m2ls7jOFZ6gmrWN5DDg=="
+      ],
+      "score": 2,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.\n\nkidshairsalon.net took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "cupCAKES a la Yola",
+      "phone": "(858) 668-7234",
+      "where": "Poway, CA",
+      "category": "bakery",
+      "site": "https://cupcakesalayola.com/",
+      "formUrl": "https://cupcakesalayola.com/contact",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "cupcakesalayola@gmail.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "_app_id",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "input4",
+          "label": "Name*",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "input5",
+          "label": "Email*",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "input6",
+          "label": "Phone*",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "",
+          "label": "Subject",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "",
+          "label": "Your Message",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "SEND",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.\n\ncupcakesalayola.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "David Cravens Insurance Services",
+      "phone": "(858) 277-4878",
+      "where": "San Diego, CA",
+      "category": "insurance",
+      "site": "https://davidcravens.myhomehq.biz/",
+      "formUrl": "https://davidcravens.myhomehq.biz/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "david.cravens@sbcglobal.net"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "email-verify-oek-740",
+          "label": "",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "email",
+          "label": "your@email-here.com",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "g-recaptcha-response",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Subscribe",
+      "message": "Hi — I'm Tyler. I build one-page websites for insurance offices here in San Diego. If this isn't the right person, please pass it along.\n\ndavidcravens.myhomehq.biz took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "El Cajon Family Dental",
+      "phone": "(619) 466-1292",
+      "where": "El Cajon, CA",
+      "category": "Dental practice",
+      "site": "http://elcajonfamilydental.com/",
+      "formUrl": "http://elcajonfamilydental.com/appointment",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Breaks on a phone",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "submitted[name]",
+          "label": "Name *",
+          "required": true,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "",
+          "label": "Select a date",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "submitted[date][month]",
+          "label": "Month",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "submitted[date][day]",
+          "label": "Day",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "submitted[date][year]",
+          "label": "Year",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "image",
+          "name": "dp1788411435017",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "submitted[preferred_time]",
+          "label": "Preferred Time",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "submitted[telephone]",
+          "label": "Telephone Number *",
+          "required": true,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "submitted[email_address]",
+          "label": "Email Address",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "submitted[message]",
+          "label": "Message",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "website_url",
+          "label": "Leave this field blank",
+          "required": false,
+          "value": null
+        }
+      ],
+      "submitText": "Submit",
+      "message": "Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.\n\nI opened elcajonfamilydental.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Love & Bake",
+      "phone": "(619) 415-4259",
+      "where": "San Diego, CA",
+      "category": "bakery",
+      "site": "https://loveandbake.com/",
+      "formUrl": "https://loveandbake.com/contact/",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "amaya@loveandbake.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[name]",
+          "label": "John Doe",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "form_fields[email]",
+          "label": "example@gmail.com",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[field_03c70b0]",
+          "label": "Your Subject Here",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "form_fields[message]",
+          "label": "Put your message here",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "g-recaptcha-response",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Send Message",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.\n\nloveandbake.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Lumiere Salon",
+      "phone": "(858) 524-6132",
+      "where": "San Diego, CA",
+      "category": "hairdresser",
+      "site": "https://lumieresalonrb.com/",
+      "formUrl": "https://lumieresalonrb.com/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "team@lumieresalonrb.com",
+        "lumieresalonrb@gmail.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-name",
+          "label": "Name",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "your-email",
+          "label": "Email Address",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "tel",
+          "name": "tel-767",
+          "label": "Phone Number",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "salon-location",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "book-date",
+          "label": "Day of Week Requested",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "salon-time",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "your-message",
+          "label": "Message",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Submit",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.\n\nlumieresalonrb.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Pearl Cosmetic & Family Dentistry",
+      "phone": "(858) 513-1747",
+      "where": "San Diego, CA",
+      "category": "Cosmetic and family dentistry",
+      "site": "https://pearlcosmeticdds.com/",
+      "formUrl": "https://pearlcosmeticdds.com/contact-us/",
+      "foundOn": "contact page",
+      "captcha": false,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-name",
+          "label": "",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "your-email",
+          "label": "",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-subject",
+          "label": "",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "your-message",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Send",
+      "message": "Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.\n\npearlcosmeticdds.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Portal Salon",
+      "phone": "(619) 354-5411",
+      "where": "San Diego, CA",
+      "category": "hairdresser",
+      "site": "https://theportalsalon.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "hello@theportalsalon.com"
+      ],
+      "booker": [
+        "https://app.squareup.com/gift/MLA2DJ9WWDEAE/order"
+      ],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.\n\ntheportalsalon.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Trendz Salon and Color Bar",
+      "phone": "(302) 724-5444",
+      "where": "Dover, DE",
+      "category": "hairdresser",
+      "site": "https://www.trendzscb.com/",
+      "formUrl": "https://www.trendzscb.com/get-in-touch/",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-name",
+          "label": "Name:",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "email",
+          "label": "Email:",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "phone",
+          "label": "Phone number:",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "textarea-836",
+          "label": "Message:",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "g-recaptcha-response",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Send Your Message",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Dover came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on trendzscb.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Fairfax Valet Cleaners",
+      "phone": "(302) 652-6725",
+      "where": "DE",
+      "category": "dry cleaning",
+      "site": "https://www.fairfaxvalet.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for dry cleaners. I'm in San Diego, so this is a cold one — your town came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on fairfaxvalet.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "SLC Services, Inc.",
+      "phone": "(704) 531-7715",
+      "where": "Charlotte, NC",
+      "category": "accountant",
+      "site": "https://slcservices.biz/",
+      "formUrl": "https://slcservices.biz/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "contact@slcservices.biz"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[name]",
+          "label": "Name",
+          "required": true,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[field_a95a3f9]",
+          "label": "Last Name",
+          "required": true,
+          "value": "McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "form_fields[email]",
+          "label": "Email",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[b26ecb6]",
+          "label": "Phone",
+          "required": true,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "form_fields[message]",
+          "label": "What do you need help with?",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "g-recaptcha-response",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "name": "form_fields[field_9f6bd18]",
+          "label": "By checking this box, I consent to receive text Messages rel",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "SEND MESSAGE",
+      "message": "Hi — I'm Tyler. I build one-page websites for accountants. I'm in San Diego, so this is a cold one — Charlotte came up in a check I run. If this isn't the right person, please pass it along.\n\nslcservices.biz took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "McCormick Law Office",
+      "phone": "(414) 272-3636",
+      "where": "WI",
+      "category": "lawyer",
+      "site": "https://danmccormicklaw.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — your town came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on danmccormicklaw.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Leavened",
+      "phone": "(216) 260-1666",
+      "where": "Cleveland, OH",
+      "category": "bakery",
+      "site": "https://leavenedcle.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "info@leavenedcle.com"
+      ],
+      "booker": [
+        "https://squareup.com/gift/MLBT5GXEZQZZN/order"
+      ],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries. I'm in San Diego, so this is a cold one — Cleveland came up in a check I run. If this isn't the right person, please pass it along.\n\nleavenedcle.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Ellipse Fitness",
+      "phone": "(414) 224-7870",
+      "where": "Milwaukee, WI",
+      "category": "fitness centre",
+      "site": "https://www.ellipsefitness.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\nellipsefitness.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "The Shoppe",
+      "phone": "(414) 224-1474",
+      "where": "Milwaukee, WI",
+      "category": "hairdresser",
+      "site": "https://www.theshoppemke.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "traecg@gmail.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\ntheshoppemke.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Futen Dojo",
+      "phone": "(414) 736-9272",
+      "where": "Milwaukee, WI",
+      "category": "dojo",
+      "site": "https://www.futendojo.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "futendojo1@gmail.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\nfutendojo.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Chic Nails",
+      "phone": "(414) 439-5561",
+      "where": "Milwaukee, WI",
+      "category": "beauty",
+      "site": "https://chicnailsmke.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on chicnailsmke.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Top Tiger Team Boxing",
+      "phone": "(704) 998-1961",
+      "where": "Charlotte, NC",
+      "category": "fitness centre",
+      "site": "https://toptigerteamboxing.com/",
+      "formUrl": "https://toptigerteamboxing.com/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "data[2f33f03][name]",
+          "label": "Name",
+          "required": true,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "data[2f33f03][email]",
+          "label": "Email",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "data[2f33f03][phone]",
+          "label": "Phone",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "data[2f33f03][message]",
+          "label": "Message",
+          "required": true,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "submit-contact-2f33f03",
+      "message": "Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Charlotte came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on toptigerteamboxing.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Macrina Bakery - Belltown",
+      "phone": "(206) 448-4032",
+      "where": "Seattle, WA",
+      "category": "bakery",
+      "site": "https://macrinabakery.com/",
+      "formUrl": "https://macrinabakery.com/contact-us",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "contactus@macrinabakery.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Breaks on a phone",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "fname",
+          "label": "First Name (required)",
+          "required": false,
+          "value": "Tyler"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "lname",
+          "label": "Last Name (required)",
+          "required": false,
+          "value": "McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "email-yui_3_17_2_1_1633562459783_4398-field",
+          "label": "Email (required)",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "text-yui_3_17_2_1_1633562459783_4399-field",
+          "label": "Subject (required)",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "textarea-yui_3_17_2_1_1633562459783_4400-field",
+          "label": "Message (required)",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "message-yui_63977251-523c-4cbf-a1df-8320b99111c6-field",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "SUBMIT",
+      "message": "Hi — I'm Tyler. I build one-page websites for bakeries. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nI opened macrinabakery.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Miller Law Group",
+      "phone": "(206) 963-0760",
+      "where": "Seattle, WA",
+      "category": "lawyer",
+      "site": "https://legalbymiller.com/",
+      "formUrl": "https://legalbymiller.com/contact-us/",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Breaks on a phone",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-name",
+          "label": "",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "your-email",
+          "label": "",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "tel",
+          "name": "tel-585",
+          "label": "",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "your-subject",
+          "label": "",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "your-message",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Send",
+      "message": "Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nI opened legalbymiller.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Breathe Hot Yoga",
+      "phone": "(206) 659-0092",
+      "where": "Seattle, WA",
+      "category": "fitness centre",
+      "site": "https://breathehotyoga.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nbreathehotyoga.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Posh Paws",
+      "phone": "(206) 257-4887",
+      "where": "Seattle, WA",
+      "category": "pet grooming",
+      "site": "https://poshpawsseattle.com/",
+      "formUrl": "https://poshpawsseattle.com/contact.html",
+      "foundOn": "contact page",
+      "captcha": false,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "federica@poshpawsseattle.com"
+      ],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "name",
+          "label": "",
+          "required": false,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "email",
+          "label": "",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "subject",
+          "label": "",
+          "required": false,
+          "value": "Your website — one thing I noticed"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "comments",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Send Message",
+      "message": "Hi — I'm Tyler. I build one-page websites for pet groomers. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on poshpawsseattle.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "D. Andrew Lewis, DDS",
+      "phone": "(206) 632-0675",
+      "where": "Seattle, WA",
+      "category": "dentist",
+      "site": "https://drlewisdds.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for dental practices. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\ndrlewisdds.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Brown Bear Car Wash",
+      "phone": "(206) 789-3700",
+      "where": "Seattle, WA",
+      "category": "car wash",
+      "site": "https://brownbear.com/",
+      "formUrl": "https://brownbear.com/support/contact-us/",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][1][first]",
+          "label": "First",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][1][last]",
+          "label": "Last",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "tel",
+          "name": "wpf-temp-wpforms[fields][2]",
+          "label": "(201) 555-0123",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "wpforms[fields][3]",
+          "label": "Email *",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][9]",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "wpforms[fields][5]",
+          "label": "What can we help you with? *",
+          "required": true,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "wpforms[fields][4]",
+          "label": "* * *",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "wpforms[fields][6]",
+          "label": "Which location?",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "wpforms[fields][8]",
+          "label": "Message *",
+          "required": true,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "g-recaptcha-hidden",
+          "label": "",
+          "required": false,
+          "value": null
+        }
+      ],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for car washes. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nbrownbear.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Salon Divas",
+      "phone": "(206) 256-0155",
+      "where": "Seattle, WA",
+      "category": "hairdresser",
+      "site": "https://www.salondivas.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [
+        "https://squareup.com/gift/J4CP48NM0AYK8/order"
+      ],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nsalondivas.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "North Coast Electric",
+      "phone": "(206) 436-4444",
+      "where": "Seattle, WA",
+      "category": "electrician",
+      "site": "https://www.northcoast.com/",
+      "formUrl": null,
+      "foundOn": "homepage (no message box)",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [
+        "https://www.northcoast.com/product/category/US_301300000000/square-boxes-covers",
+        "https://www.northcoast.com/product/category/US_301303000000/4-square-boxes",
+        "https://www.northcoast.com/product/category/US_301304000000/4-square-surface-covers"
+      ],
+      "score": 3,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for electricians. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nnorthcoast.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Gairson Law",
+      "phone": "(206) 357-4218",
+      "where": "Seattle, WA",
+      "category": "lawyer",
+      "site": "https://gairson.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 3,
+      "flaw": "Number is not tappable",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.\n\nOn a phone, your number on gairson.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Balboa Florist",
+      "phone": "(858) 429-8558",
+      "where": "San Diego, CA",
+      "category": "florist",
+      "site": "https://balboaflorist.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Number is not tappable",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for florists here in San Diego. If this isn't the right person, please pass it along.\n\nOn a phone, your number on balboaflorist.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Because We Care Dog and Cat Grooming",
+      "phone": "(858) 538-1015",
+      "where": "San Diego, CA",
+      "category": "pet grooming",
+      "site": "https://www.becausewecarepetgrooming.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for pet groomers here in San Diego. If this isn't the right person, please pass it along.\n\nbecausewecarepetgrooming.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Eichman Insurance Agency",
+      "phone": "(760) 230-6157",
+      "where": "Rancho Santa Fe, CA",
+      "category": "insurance",
+      "site": "https://www.eichmaninsurance.com/",
+      "formUrl": "https://www.eichmaninsurance.com/",
+      "foundOn": "homepage",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [
+        "suellen@eichmaninsurance.com"
+      ],
+      "booker": [],
+      "score": 4,
+      "flaw": "Breaks on a phone",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "name",
+          "label": "Name",
+          "required": true,
+          "value": "Tyler McManus"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "email",
+          "label": "Email",
+          "required": true,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "tel",
+          "name": "phone",
+          "label": "Phone",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "textarea_comp-jxbrypu7",
+          "label": "Type your message here...",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Submit",
+      "message": "Hi — I'm Tyler. I build one-page websites for insurance offices here in San Diego. If this isn't the right person, please pass it along.\n\nI opened eichmaninsurance.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Helix Mechanical, Inc.",
+      "phone": "(619) 447-6675",
+      "where": "El Cajon, CA",
+      "category": "HVAC, plumbing & general contracting",
+      "site": "https://helixmechanical.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": false,
+      "usableForm": false,
+      "channel": "text",
+      "published": [
+        "service@helixmechanical.com"
+      ],
+      "booker": [],
+      "score": 4,
+      "flaw": "No preview when shared",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for plumbers here in San Diego. If this isn't the right person, please pass it along.\n\nWhen someone texts a link to helixmechanical.com, it arrives as a plain grey box with no name or picture on it.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). When someone texts your link it arrives as a blank grey box. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Lashbar",
+      "phone": "(858) 769-9591",
+      "where": "San Diego, CA",
+      "category": "beauty",
+      "site": "https://www.lashbar.com/delsur",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Breaks on a phone",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for salons here in San Diego. If this isn't the right person, please pass it along.\n\nI opened lashbar.com/delsur on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Studio Mani",
+      "phone": "(858) 513-3655",
+      "where": "Poway, CA",
+      "category": "beauty",
+      "site": "https://www.studiomanipoway.com/",
+      "formUrl": "https://www.studiomanipoway.com/",
+      "foundOn": "homepage",
+      "captcha": false,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "select",
+          "type": "select-one",
+          "name": "txt_select_beautician",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "satisfaction-value",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "rating-consumer",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "txt_comment",
+          "label": "",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        },
+        {
+          "tag": "input",
+          "type": "file",
+          "name": "myfile[]",
+          "label": "",
+          "required": false,
+          "value": null
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "email",
+          "label": "Mobile number or Email",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "first_name",
+          "label": "First name",
+          "required": false,
+          "value": "Tyler"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "last_name",
+          "label": "Last name",
+          "required": false,
+          "value": "McManus"
+        }
+      ],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for salons here in San Diego. If this isn't the right person, please pass it along.\n\nstudiomanipoway.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Sun Valley Dental Care",
+      "phone": "(619) 413-1121",
+      "where": "El Cajon, CA",
+      "category": "dentist",
+      "site": "https://sunvalleydentalcare.com/",
+      "formUrl": "https://sunvalleydentalcare.com/contact-us/",
+      "foundOn": "contact page",
+      "captcha": true,
+      "usableForm": true,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Very slow to load",
+      "fields": [
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "FullName",
+          "label": "First & Last Name (Required)",
+          "required": false,
+          "value": "McManus"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "PhoneNumber",
+          "label": "Phone Number (Required)",
+          "required": false,
+          "value": "302-649-6600"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "EmailAddress",
+          "label": "Email (Required)",
+          "required": false,
+          "value": "tylermcmanus1010@gmail.com"
+        },
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "name": "Comments",
+          "label": "How can we help you?",
+          "required": false,
+          "value": "{{MESSAGE}}"
+        }
+      ],
+      "submitText": "Submit",
+      "message": "Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.\n\nsunvalleydentalcare.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    },
+    {
+      "name": "Who's Next Barbershop",
+      "phone": "(858) 587-7979",
+      "where": "La Jolla, CA",
+      "category": "hairdresser",
+      "site": "https://whosnextlajolla.com/",
+      "formUrl": null,
+      "foundOn": "none found",
+      "captcha": true,
+      "usableForm": false,
+      "channel": "text",
+      "published": [],
+      "booker": [],
+      "score": 4,
+      "flaw": "Very slow to load",
+      "fields": [],
+      "submitText": "",
+      "message": "Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.\n\nwhosnextlajolla.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.\n\nI build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
+      "sms": "Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again."
+    }
+  ],
+  "skipped": []
+}

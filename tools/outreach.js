@@ -121,6 +121,34 @@ function message(row) {
   ].join('\n');
 }
 
+// A text is the best channel a desk job allows: it takes ten seconds, nobody
+// looks up, and most tradesmen would rather be texted than called. It has to
+// be short enough to read in the notification, so it carries the finding and
+// nothing else.
+//
+// This is a business-to-business message to a number the business publishes,
+// sent once, identifying who is sending it — which is the line that separates
+// it from the kind of texting that is illegal as well as rude. One message. If
+// anyone asks not to be texted again, that is the end of it.
+function sms(row) {
+  const f = smsFinding(row);
+  if (!f) return null;
+  const body = `Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). ${f} I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.`;
+  return body.length > 480 ? body.slice(0, 477) + '...' : body;
+}
+
+function smsFinding(row) {
+  if (row.parked) return `Your domain lands on a for-sale placeholder rather than a website, so anyone Googling you sees that.`;
+  const a = row.audit || {};
+  if (a.mobile === false) return `Your site's layout breaks on a phone — worth pulling up on yours.`;
+  if (a.https === false) return `Your site isn't on HTTPS, so phones show a "Not secure" warning first.`;
+  if (a.speed === false) return `Your site is slow to load on mobile data — worth timing on your own phone.`;
+  if (a.phoneTap === false) return `Your number on the site isn't tappable on a phone, so people have to memorise it.`;
+  if (a.social === false) return `When someone texts your link it arrives as a blank grey box.`;
+  if (a.meta === false) return `Your site has no title set, so Google is guessing what to show under your name.`;
+  return null;
+}
+
 // Which of our details goes in which of their boxes.
 function mapFields(form) {
   if (!form) return [];
@@ -156,10 +184,23 @@ function build(rows, forms) {
     if (r.checkUrl) { skipped.push({ name: r.name, why: 'the domain may not be theirs — confirm by phone first' }); continue; }
     if (f.noSolicit) { skipped.push({ name: r.name, why: 'their page asks for no soliciting' }); continue; }
     if (f.error) { skipped.push({ name: r.name, why: f.error }); continue; }
-    if (!f.form) { skipped.push({ name: r.name, why: 'no contact form found — phone only' }); continue; }
-
     const body = message(r);
     if (!body) { skipped.push({ name: r.name, why: 'nothing provable to say' }); continue; }
+
+    const text = r.phone ? sms(r) : null;
+    const published = f.published || [];
+    const usableForm = Boolean(f.form && f.form.hasTextarea);
+
+    if (!usableForm && !published.length && !text) {
+      skipped.push({ name: r.name, why: 'no form, no published address and no number — nothing to send to' });
+      continue;
+    }
+
+    // Best channel first, judged by what actually gets read. A text reaches
+    // the owner; a published address reaches a real inbox; a form reaches
+    // whoever checks the form, and 14 of the first 17 we found sat behind a
+    // CAPTCHA, so it is the fallback rather than the plan.
+    const channel = text ? 'text' : published.length ? 'email' : 'form';
 
     queue.push({
       name: r.name,
@@ -167,23 +208,27 @@ function build(rows, forms) {
       where: [r.city, r.state].filter(Boolean).join(', '),
       category: r.category,
       site: r.site,
-      formUrl: f.url,
+      formUrl: usableForm ? f.url : null,
       foundOn: f.foundOn,
       captcha: f.captcha,
-      published: f.published || [],
+      usableForm,
+      channel,
+      published,
       booker: f.booker || [],
       score: r.parked ? null : r.passed,
       flaw: r.flaw ? r.flaw.label : null,
-      fields: mapFields(f.form),
-      submitText: f.form.submitText,
+      fields: usableForm ? mapFields(f.form) : [],
+      submitText: usableForm ? f.form.submitText : '',
       message: body,
+      sms: text,
     });
   }
 
   // A form that needs a CAPTCHA needs him present, so put the ones that do not
   // at the top — those are the ones that can be worked through in one sitting.
-  queue.sort((a, b) => (a.captcha ? 1 : 0) - (b.captcha ? 1 : 0) || (a.score ?? -1) - (b.score ?? -1));
+  const RANK = { text: 0, email: 1, form: 2 };
+  queue.sort((a, b) => RANK[a.channel] - RANK[b.channel] || (a.score ?? -1) - (b.score ?? -1));
   return { queue, skipped };
 }
 
-module.exports = { build, message, finding, mapFields, ME };
+module.exports = { build, message, sms, finding, mapFields, tradeNoun, ME };

@@ -1,0 +1,1992 @@
+<title>Send Queue</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{--ground:#F4F6F6;--surface:#fff;--sunk:#EAEEEE;--ink:#10181B;--ink2:#3C4A4F;--muted:#68787D;
+        --line:#D6DEDF;--accent:#0B5E6B;--accent-soft:#E2EFF1;--on-accent:#fff;--warn:#8A5A0B;--good:#1F6B3F;
+        --mono:"IBM Plex Mono",ui-monospace,monospace;--ui:"Archivo",system-ui,sans-serif}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0D1315;--surface:#151F22;--sunk:#101A1C;--ink:#E7EEEF;--ink2:#B4C3C6;--muted:#86989C;
+    --line:#27383C;--accent:#5FB9C9;--accent-soft:#122E34;--on-accent:#08191C;--warn:#E0B056;--good:#67C08C}}
+  :root[data-theme="dark"]{
+    --ground:#0D1315;--surface:#151F22;--sunk:#101A1C;--ink:#E7EEEF;--ink2:#B4C3C6;--muted:#86989C;
+    --line:#27383C;--accent:#5FB9C9;--accent-soft:#122E34;--on-accent:#08191C;--warn:#E0B056;--good:#67C08C}
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--ui);margin:0;line-height:1.45}
+  .w{max-width:820px;margin:0 auto;padding:26px 16px 80px}
+  h1{font-size:clamp(26px,6vw,36px);margin:0;letter-spacing:-.02em}
+  .lede{color:var(--muted);font-size:14.5px;margin:6px 0 0;max-width:62ch}
+  .rules{background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:14px 16px;margin:20px 0 0}
+  .rules p{margin:0 0 8px;font-size:13.5px;color:var(--ink2)}
+  .rules p:last-child{margin:0}
+  .rules b{color:var(--ink)}
+  .bar{position:sticky;top:0;z-index:5;background:var(--ground);padding:12px 0;border-bottom:1px solid var(--line);
+       display:flex;gap:8px;align-items:center;margin-top:22px}
+  input[type=search]{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);
+                     border-radius:8px;background:var(--surface);color:var(--ink)}
+  .count{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+  .card{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+        border-radius:8px;padding:14px 16px;margin:10px 0}
+  .card.is-done{opacity:.45}
+  .card header{display:flex;gap:12px;align-items:flex-start}
+  .n{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:4px}
+  .card h2{font-size:17px;margin:0;letter-spacing:-.01em}
+  .meta{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+  .hot{color:var(--accent)}
+  .done{margin-left:auto;font-size:12px;color:var(--muted);display:flex;gap:5px;align-items:center;white-space:nowrap;cursor:pointer}
+  .acts{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
+  .btn{font:inherit;font-size:13px;font-weight:500;text-decoration:none;padding:7px 11px;border-radius:6px;
+       border:1px solid var(--line);background:var(--sunk);color:var(--ink);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .btn.go{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .btn.copy.ok{background:var(--good);border-color:var(--good);color:var(--surface)}
+  .btn.tel{font-family:var(--mono)}
+  .btn.sms{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+  .btn.mail{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .chip{font:inherit;font-size:13px;font-weight:500;padding:8px 11px;border:1px solid var(--line);border-radius:8px;
+        background:var(--surface);color:var(--ink2);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .sms-msg{font-family:var(--mono);font-size:12.5px}
+  .warn{font-size:13px;color:var(--warn);margin:10px 0 0;font-weight:500}
+  .pub{font-size:12.5px;color:var(--ink2);margin:8px 0 0;background:var(--sunk);padding:8px 10px;border-radius:6px}
+  details{margin:10px 0 0}
+  summary{font-size:12.5px;color:var(--muted);cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12.5px}
+  td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .fname{color:var(--muted);width:42%}
+  .fval{font-family:var(--mono);word-break:break-word}
+  .req{color:var(--warn)}
+  .msg{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:12px;margin:11px 0 0;
+       font-family:var(--ui);font-size:13.5px;white-space:pre-wrap;word-wrap:break-word;color:var(--ink2)}
+  .skips{margin-top:34px;border-top:1px solid var(--line);padding-top:16px}
+  .skips h3{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 8px}
+  .skips li{font-size:13px;color:var(--ink2);margin-bottom:4px}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="w">
+  <h1>Send Queue</h1>
+  <p class="lede">45 businesses you can reach from a desk without saying a word out loud. Sorted by the channel that actually gets read, and every address here was published by the business itself — nothing is guessed.</p>
+
+  <div class="rules">
+    <p><b>Text first.</b> It takes ten seconds, nobody at work looks up, and it reaches the owner rather than an inbox somebody checks on Fridays. Most trades would rather be texted than called. Each one names the finding and offers a way out; send one, and if they ask you not to again, that is the end of it.</p>
+    <p><b>Then the addresses they print themselves.</b> 17 of these publish an email on their own contact page. That is not a guessed address and it will not bounce — which matters, because two guessed ones hard-bounced on 30 August and every email this business sends goes through one personal account.</p>
+    <p><b>Forms last, and expect to do them by hand.</b> 17 have a usable contact form and 14 of those sit behind a CAPTCHA. A CAPTCHA is the site asking not to be automated, and it is taken at its word.</p>
+    <p><b>One message per business, ever. Ten a day, not a hundred.</b> No reply is a reply. This works because each message names something true about that specific business; volume is the thing that breaks it. And read each one before it goes — our data has been wrong about a URL six times in one week, and in writing that is permanent.</p>
+  </div>
+
+  <div class="bar">
+    <input type="search" id="q" placeholder="Search name, trade or town…" aria-label="Search the queue">
+    <button class="chip" data-ch="text" type="button" aria-pressed="false">Text</button>
+    <button class="chip" data-ch="email" type="button" aria-pressed="false">Email</button>
+    <button class="chip" data-ch="form" type="button" aria-pressed="false">Form</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  
+<article class="card" data-name="uniprice cleaners milwaukee, wi dry cleaning" data-ch="text">
+  <header>
+    <span class="n">1</span>
+    <div>
+      <h2>UniPrice Cleaners</h2>
+      <p class="meta">dry cleaning · Milwaukee, WI · 1/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="UniPrice Cleaners"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14142233111&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14142233111">(414) 223-3111</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dry cleaners. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+I opened uniprice-cleaners.com/brady.htm on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="dave page cobbler seattle, wa shoe repair" data-ch="text">
+  <header>
+    <span class="n">2</span>
+    <div>
+      <h2>Dave Page Cobbler</h2>
+      <p class="meta">shoe repair · Seattle, WA · 1/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Dave Page Cobbler"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12066328686&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12066328686">(206) 632-8686</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for cobblers. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+I opened davepagecobbler.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="le parfait paris san diego, ca french bakery &amp; patisserie" data-ch="text">
+  <header>
+    <span class="n">3</span>
+    <div>
+      <h2>Le Parfait Paris</h2>
+      <p class="meta">French bakery &amp; patisserie · San Diego, CA · 2/7 · Not secure — no HTTPS</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Le Parfait Paris"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16192454457&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20isn't%20on%20HTTPS%2C%20so%20phones%20show%20a%20%22Not%20secure%22%20warning%20first.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16192454457">(619) 245-4457</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (276 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a &quot;Not secure&quot; warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.
+
+leparfaitparis.com isn't on HTTPS, so Chrome and Safari show visitors a &quot;Not secure&quot; warning before they read a word of it.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="valerio's city bakery national city, ca bakery" data-ch="text form">
+  <header>
+    <span class="n">4</span>
+    <div>
+      <h2>Valerio's City Bakery</h2>
+      <p class="meta">bakery · National City, CA · 2/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Valerio's City Bakery"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194778588&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://valerios.com/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194778588">(619) 477-8588</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.
+
+valerios.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 6 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">Name <span class="req">*</span></td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Subject <span class="req">*</span></td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">Message <span class="req">*</span></td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">Email</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="coastal car wash dover, de car wash" data-ch="text">
+  <header>
+    <span class="n">5</span>
+    <div>
+      <h2>Coastal Car Wash</h2>
+      <p class="meta">car wash · Dover, DE · 2/7 · Not secure — no HTTPS</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Coastal Car Wash"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+13028833554&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20isn't%20on%20HTTPS%2C%20so%20phones%20show%20a%20%22Not%20secure%22%20warning%20first.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+13028833554">(302) 883-3554</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (276 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a &quot;Not secure&quot; warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for car washes. I'm in San Diego, so this is a cold one — Dover came up in a check I run. If this isn't the right person, please pass it along.
+
+coastalcarwash.com isn't on HTTPS, so Chrome and Safari show visitors a &quot;Not secure&quot; warning before they read a word of it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="brandywine auto body talleyville, de car repair" data-ch="text email">
+  <header>
+    <span class="n">6</span>
+    <div>
+      <h2>Brandywine Auto Body</h2>
+      <p class="meta">car repair · Talleyville, DE · 2/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Brandywine Auto Body"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+13024781120&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:info%40brandywineautobody.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20auto%20shops.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Talleyville%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Abrandywineautobody.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email info@brandywineautobody.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+13024781120">(302) 478-1120</a>
+  </div>
+
+  <p class="pub"><b>info@brandywineautobody.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for auto shops. I'm in San Diego, so this is a cold one — Talleyville came up in a check I run. If this isn't the right person, please pass it along.
+
+brandywineautobody.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="gloss nail spa milwaukee, wi beauty" data-ch="text email">
+  <header>
+    <span class="n">7</span>
+    <div>
+      <h2>Gloss Nail Spa</h2>
+      <p class="meta">beauty · Milwaukee, WI · 2/7 · Not secure — no HTTPS</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Gloss Nail Spa"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14142731741&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20isn't%20on%20HTTPS%2C%20so%20phones%20show%20a%20%22Not%20secure%22%20warning%20first.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:glossmke1545%40gmail.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20salons.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Milwaukee%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Aglossnailspa.net%20isn't%20on%20HTTPS%2C%20so%20Chrome%20and%20Safari%20show%20visitors%20a%20%22Not%20secure%22%20warning%20before%20they%20read%20a%20word%20of%20it.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email glossmke1545@gmail.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14142731741">(414) 273-1741</a>
+  </div>
+
+  <p class="pub"><b>glossmke1545@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (276 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site isn't on HTTPS, so phones show a &quot;Not secure&quot; warning first. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+glossnailspa.net isn't on HTTPS, so Chrome and Safari show visitors a &quot;Not secure&quot; warning before they read a word of it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="globe optical seattle, wa optician" data-ch="text">
+  <header>
+    <span class="n">8</span>
+    <div>
+      <h2>Globe Optical</h2>
+      <p class="meta">optician · Seattle, WA · 2/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Globe Optical"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12066227002&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12066227002">(206) 622-7002</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for opticians. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+I opened globeoptical.qwestoffice.net on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="salon metro seattle, wa hairdresser" data-ch="text email">
+  <header>
+    <span class="n">9</span>
+    <div>
+      <h2>Salon Metro</h2>
+      <p class="meta">hairdresser · Seattle, WA · 2/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Salon Metro"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12065456905&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:cindyfrank%40salonmetroseattle.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20barbers%20and%20salons.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Seattle%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Asalonmetroseattle.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email cindyfrank@salonmetroseattle.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12065456905">(206) 545-6905</a>
+  </div>
+
+  <p class="pub"><b>cindyfrank@salonmetroseattle.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+salonmetroseattle.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="strive &amp; uplift seattle, wa fitness centre" data-ch="text email">
+  <header>
+    <span class="n">10</span>
+    <div>
+      <h2>Strive &amp; Uplift</h2>
+      <p class="meta">fitness centre · Seattle, WA · 2/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Strive &amp; Uplift"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12069199079&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:striveanduplift%40gmail.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20gyms%20and%20studios.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Seattle%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Astriveanduplift.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email striveanduplift@gmail.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12069199079">(206) 919-9079</a>
+  </div>
+
+  <p class="pub"><b>striveanduplift@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+striveanduplift.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="kids hair salon la mesa, ca hairdresser" data-ch="text">
+  <header>
+    <span class="n">11</span>
+    <div>
+      <h2>Kids Hair Salon</h2>
+      <p class="meta">hairdresser · La Mesa, CA · 2/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Kids Hair Salon"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194644466&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194644466">(619) 464-4466</a>
+  </div>
+
+  
+  
+  <p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.
+
+kidshairsalon.net took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="cupcakes a la yola poway, ca bakery" data-ch="text email form">
+  <header>
+    <span class="n">12</span>
+    <div>
+      <h2>cupCAKES a la Yola</h2>
+      <p class="meta">bakery · Poway, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="cupCAKES a la Yola"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18586687234&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:cupcakesalayola%40gmail.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20bakeries%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Acupcakesalayola.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email cupcakesalayola@gmail.com</a>
+    <a class="btn go" href="https://cupcakesalayola.com/contact" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18586687234">(858) 668-7234</a>
+  </div>
+
+  <p class="pub"><b>cupcakesalayola@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.
+
+cupcakesalayola.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 6 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">Name*</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email*</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone*</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Subject</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">Your Message</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="david cravens insurance services san diego, ca insurance" data-ch="text email form">
+  <header>
+    <span class="n">13</span>
+    <div>
+      <h2>David Cravens Insurance Services</h2>
+      <p class="meta">insurance · San Diego, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="David Cravens Insurance Services"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18582774878&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:david.cravens%40sbcglobal.net?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20insurance%20offices%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Adavidcravens.myhomehq.biz%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email david.cravens@sbcglobal.net</a>
+    <a class="btn go" href="https://davidcravens.myhomehq.biz/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18582774878">(858) 277-4878</a>
+  </div>
+
+  <p class="pub"><b>david.cravens@sbcglobal.net</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for insurance offices here in San Diego. If this isn't the right person, please pass it along.
+
+davidcravens.myhomehq.biz took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 3 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">email-verify-oek-740</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">your@email-here.com <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">g-recaptcha-response</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="el cajon family dental el cajon, ca dental practice" data-ch="text form">
+  <header>
+    <span class="n">14</span>
+    <div>
+      <h2>El Cajon Family Dental</h2>
+      <p class="meta">Dental practice · El Cajon, CA · 3/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="El Cajon Family Dental"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194661292&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="http://elcajonfamilydental.com/appointment" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194661292">(619) 466-1292</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.
+
+I opened elcajonfamilydental.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 11 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">Name * <span class="req">*</span></td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Telephone Number * <span class="req">*</span></td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Email Address</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Message</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="love &amp; bake san diego, ca bakery" data-ch="text email form">
+  <header>
+    <span class="n">15</span>
+    <div>
+      <h2>Love &amp; Bake</h2>
+      <p class="meta">bakery · San Diego, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Love &amp; Bake"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194154259&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:amaya%40loveandbake.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20bakeries%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Aloveandbake.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email amaya@loveandbake.com</a>
+    <a class="btn go" href="https://loveandbake.com/contact/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194154259">(619) 415-4259</a>
+  </div>
+
+  <p class="pub"><b>amaya@loveandbake.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries here in San Diego. If this isn't the right person, please pass it along.
+
+loveandbake.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 5 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">John Doe</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">example@gmail.com <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Your Subject Here</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">Put your message here</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">g-recaptcha-response</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="lumiere salon san diego, ca hairdresser" data-ch="text email form">
+  <header>
+    <span class="n">16</span>
+    <div>
+      <h2>Lumiere Salon</h2>
+      <p class="meta">hairdresser · San Diego, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Lumiere Salon"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18585246132&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:team%40lumieresalonrb.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20barbers%20and%20salons%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Alumieresalonrb.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email team@lumieresalonrb.com</a>
+    <a class="btn go" href="https://lumieresalonrb.com/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18585246132">(858) 524-6132</a>
+  </div>
+
+  <p class="pub"><b>team@lumieresalonrb.com, lumieresalonrb@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.
+
+lumieresalonrb.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 7 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">Name</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email Address</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone Number</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Message</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="pearl cosmetic &amp; family dentistry san diego, ca cosmetic and family dentistry" data-ch="text form">
+  <header>
+    <span class="n">17</span>
+    <div>
+      <h2>Pearl Cosmetic &amp; Family Dentistry</h2>
+      <p class="meta">Cosmetic and family dentistry · San Diego, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Pearl Cosmetic &amp; Family Dentistry"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18585131747&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://pearlcosmeticdds.com/contact-us/" target="_blank" rel="noopener noreferrer">Their form ↗</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18585131747">(858) 513-1747</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.
+
+pearlcosmeticdds.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 4 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">your-name</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">your-email</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">your-subject</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">your-message</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="portal salon san diego, ca hairdresser" data-ch="text email">
+  <header>
+    <span class="n">18</span>
+    <div>
+      <h2>Portal Salon</h2>
+      <p class="meta">hairdresser · San Diego, CA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Portal Salon"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16193545411&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:hello%40theportalsalon.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20barbers%20and%20salons%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Atheportalsalon.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email hello@theportalsalon.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16193545411">(619) 354-5411</a>
+  </div>
+
+  <p class="pub"><b>hello@theportalsalon.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  <p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.
+
+theportalsalon.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="trendz salon and color bar dover, de hairdresser" data-ch="text form">
+  <header>
+    <span class="n">19</span>
+    <div>
+      <h2>Trendz Salon and Color Bar</h2>
+      <p class="meta">hairdresser · Dover, DE · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Trendz Salon and Color Bar"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+13027245444&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://www.trendzscb.com/get-in-touch/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+13027245444">(302) 724-5444</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Dover came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on trendzscb.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 5 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">Name:</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email:</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone number:</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Message:</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">g-recaptcha-response</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="fairfax valet cleaners de dry cleaning" data-ch="text">
+  <header>
+    <span class="n">20</span>
+    <div>
+      <h2>Fairfax Valet Cleaners</h2>
+      <p class="meta">dry cleaning · DE · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Fairfax Valet Cleaners"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+13026526725&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+13026526725">(302) 652-6725</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dry cleaners. I'm in San Diego, so this is a cold one — your town came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on fairfaxvalet.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="slc services, inc. charlotte, nc accountant" data-ch="text email form">
+  <header>
+    <span class="n">21</span>
+    <div>
+      <h2>SLC Services, Inc.</h2>
+      <p class="meta">accountant · Charlotte, NC · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="SLC Services, Inc."> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+17045317715&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:contact%40slcservices.biz?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20accountants.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Charlotte%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Aslcservices.biz%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email contact@slcservices.biz</a>
+    <a class="btn go" href="https://slcservices.biz/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+17045317715">(704) 531-7715</a>
+  </div>
+
+  <p class="pub"><b>contact@slcservices.biz</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for accountants. I'm in San Diego, so this is a cold one — Charlotte came up in a check I run. If this isn't the right person, please pass it along.
+
+slcservices.biz took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 7 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">Name <span class="req">*</span></td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Last Name <span class="req">*</span></td>
+      <td class="fval">McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone <span class="req">*</span></td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">What do you need help with?</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">g-recaptcha-response</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">By checking this box, I consent to receive text Messages rel</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="mccormick law office wi lawyer" data-ch="text">
+  <header>
+    <span class="n">22</span>
+    <div>
+      <h2>McCormick Law Office</h2>
+      <p class="meta">lawyer · WI · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="McCormick Law Office"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14142723636&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14142723636">(414) 272-3636</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — your town came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on danmccormicklaw.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="leavened cleveland, oh bakery" data-ch="text email">
+  <header>
+    <span class="n">23</span>
+    <div>
+      <h2>Leavened</h2>
+      <p class="meta">bakery · Cleveland, OH · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Leavened"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12162601666&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:info%40leavenedcle.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20bakeries.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Cleveland%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Aleavenedcle.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email info@leavenedcle.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12162601666">(216) 260-1666</a>
+  </div>
+
+  <p class="pub"><b>info@leavenedcle.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  <p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries. I'm in San Diego, so this is a cold one — Cleveland came up in a check I run. If this isn't the right person, please pass it along.
+
+leavenedcle.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="ellipse fitness milwaukee, wi fitness centre" data-ch="text">
+  <header>
+    <span class="n">24</span>
+    <div>
+      <h2>Ellipse Fitness</h2>
+      <p class="meta">fitness centre · Milwaukee, WI · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Ellipse Fitness"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14142247870&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14142247870">(414) 224-7870</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+ellipsefitness.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="the shoppe milwaukee, wi hairdresser" data-ch="text email">
+  <header>
+    <span class="n">25</span>
+    <div>
+      <h2>The Shoppe</h2>
+      <p class="meta">hairdresser · Milwaukee, WI · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="The Shoppe"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14142241474&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:traecg%40gmail.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20barbers%20and%20salons.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Milwaukee%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Atheshoppemke.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email traecg@gmail.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14142241474">(414) 224-1474</a>
+  </div>
+
+  <p class="pub"><b>traecg@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+theshoppemke.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="futen dojo milwaukee, wi dojo" data-ch="text email">
+  <header>
+    <span class="n">26</span>
+    <div>
+      <h2>Futen Dojo</h2>
+      <p class="meta">dojo · Milwaukee, WI · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Futen Dojo"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14147369272&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:futendojo1%40gmail.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20gyms%20and%20studios.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Milwaukee%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0Afutendojo.com%20took%20a%20long%20time%20to%20load%20on%20a%20phone%20on%20mobile%20data.%20Time%20it%20yourself%20%E2%80%94%20most%20people%20give%20a%20site%20a%20couple%20of%20seconds%20before%20going%20back%20to%20the%20search%20results.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email futendojo1@gmail.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14147369272">(414) 736-9272</a>
+  </div>
+
+  <p class="pub"><b>futendojo1@gmail.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+futendojo.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="chic nails milwaukee, wi beauty" data-ch="text">
+  <header>
+    <span class="n">27</span>
+    <div>
+      <h2>Chic Nails</h2>
+      <p class="meta">beauty · Milwaukee, WI · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Chic Nails"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+14144395561&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+14144395561">(414) 439-5561</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for salons. I'm in San Diego, so this is a cold one — Milwaukee came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on chicnailsmke.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="top tiger team boxing charlotte, nc fitness centre" data-ch="text form">
+  <header>
+    <span class="n">28</span>
+    <div>
+      <h2>Top Tiger Team Boxing</h2>
+      <p class="meta">fitness centre · Charlotte, NC · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Top Tiger Team Boxing"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+17049981961&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://toptigerteamboxing.com/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+17049981961">(704) 998-1961</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Charlotte came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on toptigerteamboxing.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 4 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">Name <span class="req">*</span></td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Message <span class="req">*</span></td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="macrina bakery - belltown seattle, wa bakery" data-ch="text email form">
+  <header>
+    <span class="n">29</span>
+    <div>
+      <h2>Macrina Bakery - Belltown</h2>
+      <p class="meta">bakery · Seattle, WA · 3/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Macrina Bakery - Belltown"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12064484032&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:contactus%40macrinabakery.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20bakeries.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Seattle%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0AI%20opened%20macrinabakery.com%20on%20a%20phone%20and%20the%20layout%20breaks%20%E2%80%94%20text%20runs%20off%20the%20side%20and%20you%20have%20to%20pinch%20to%20read%20it.%20Worth%20trying%20on%20your%20own%20phone.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email contactus@macrinabakery.com</a>
+    <a class="btn go" href="https://macrinabakery.com/contact-us" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12064484032">(206) 448-4032</a>
+  </div>
+
+  <p class="pub"><b>contactus@macrinabakery.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for bakeries. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+I opened macrinabakery.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 6 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">First Name (required)</td>
+      <td class="fval">Tyler</td>
+    </tr>
+    <tr>
+      <td class="fname">Last Name (required)</td>
+      <td class="fval">McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email (required)</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Subject (required)</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">Message (required)</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">message-yui_63977251-523c-4cbf-a1df-8320b99111c6-field</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="miller law group seattle, wa lawyer" data-ch="text form">
+  <header>
+    <span class="n">30</span>
+    <div>
+      <h2>Miller Law Group</h2>
+      <p class="meta">lawyer · Seattle, WA · 3/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Miller Law Group"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12069630760&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://legalbymiller.com/contact-us/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12069630760">(206) 963-0760</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+I opened legalbymiller.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 5 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">your-name</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">your-email</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">tel-585</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">your-subject</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">your-message</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="breathe hot yoga seattle, wa fitness centre" data-ch="text">
+  <header>
+    <span class="n">31</span>
+    <div>
+      <h2>Breathe Hot Yoga</h2>
+      <p class="meta">fitness centre · Seattle, WA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Breathe Hot Yoga"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12066590092&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12066590092">(206) 659-0092</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for gyms and studios. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+breathehotyoga.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="posh paws seattle, wa pet grooming" data-ch="text email form">
+  <header>
+    <span class="n">32</span>
+    <div>
+      <h2>Posh Paws</h2>
+      <p class="meta">pet grooming · Seattle, WA · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Posh Paws"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12062574887&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:federica%40poshpawsseattle.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20pet%20groomers.%20I'm%20in%20San%20Diego%2C%20so%20this%20is%20a%20cold%20one%20%E2%80%94%20Seattle%20came%20up%20in%20a%20check%20I%20run.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0AOn%20a%20phone%2C%20your%20number%20on%20poshpawsseattle.com%20is%20text%20rather%20than%20a%20button%20%E2%80%94%20someone%20has%20to%20memorise%20it%20and%20switch%20apps%20instead%20of%20just%20tapping%20it.%0A%0AI%20build%20one%20sample%20page%20a%20week%20for%20a%20business%20I've%20looked%20at%2C%20free%2C%20and%20yours%20is%20on%20my%20list.%20A%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button%2C%20nothing%20owed%20either%20way.%20Want%20me%20to%20do%20it%20and%20send%20it%20over%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email federica@poshpawsseattle.com</a>
+    <a class="btn go" href="https://poshpawsseattle.com/contact.html" target="_blank" rel="noopener noreferrer">Their form ↗</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12062574887">(206) 257-4887</a>
+  </div>
+
+  <p class="pub"><b>federica@poshpawsseattle.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for pet groomers. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on poshpawsseattle.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 4 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">name</td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">email</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">subject</td>
+      <td class="fval">Your website — one thing I noticed</td>
+    </tr>
+    <tr>
+      <td class="fname">comments</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="d. andrew lewis, dds seattle, wa dentist" data-ch="text">
+  <header>
+    <span class="n">33</span>
+    <div>
+      <h2>D. Andrew Lewis, DDS</h2>
+      <p class="meta">dentist · Seattle, WA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="D. Andrew Lewis, DDS"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12066320675&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12066320675">(206) 632-0675</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dental practices. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+drlewisdds.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="brown bear car wash seattle, wa car wash" data-ch="text form">
+  <header>
+    <span class="n">34</span>
+    <div>
+      <h2>Brown Bear Car Wash</h2>
+      <p class="meta">car wash · Seattle, WA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Brown Bear Car Wash"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12067893700&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://brownbear.com/support/contact-us/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12067893700">(206) 789-3700</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for car washes. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+brownbear.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 10 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">Email * <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Message * <span class="req">*</span></td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="salon divas seattle, wa hairdresser" data-ch="text">
+  <header>
+    <span class="n">35</span>
+    <div>
+      <h2>Salon Divas</h2>
+      <p class="meta">hairdresser · Seattle, WA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Salon Divas"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12062560155&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12062560155">(206) 256-0155</a>
+  </div>
+
+  
+  
+  <p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+salondivas.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="north coast electric seattle, wa electrician" data-ch="text">
+  <header>
+    <span class="n">36</span>
+    <div>
+      <h2>North Coast Electric</h2>
+      <p class="meta">electrician · Seattle, WA · 3/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="North Coast Electric"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12064364444&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12064364444">(206) 436-4444</a>
+  </div>
+
+  
+  
+  <p class="pub">They already pay for a booking tool, so somebody is selling them software. Expect a shorter conversation.</p>
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for electricians. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+northcoast.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="gairson law seattle, wa lawyer" data-ch="text">
+  <header>
+    <span class="n">37</span>
+    <div>
+      <h2>Gairson Law</h2>
+      <p class="meta">lawyer · Seattle, WA · 3/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Gairson Law"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+12063574218&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+12063574218">(206) 357-4218</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for law firms. I'm in San Diego, so this is a cold one — Seattle came up in a check I run. If this isn't the right person, please pass it along.
+
+On a phone, your number on gairson.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week for a business I've looked at, free, and yours is on my list. A single fast page with your services and a tap-to-call button, nothing owed either way. Want me to do it and send it over?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="balboa florist san diego, ca florist" data-ch="text">
+  <header>
+    <span class="n">38</span>
+    <div>
+      <h2>Balboa Florist</h2>
+      <p class="meta">florist · San Diego, CA · 4/7 · Number is not tappable</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Balboa Florist"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18584298558&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20number%20on%20the%20site%20isn't%20tappable%20on%20a%20phone%2C%20so%20people%20have%20to%20memorise%20it.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18584298558">(858) 429-8558</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (287 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your number on the site isn't tappable on a phone, so people have to memorise it. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for florists here in San Diego. If this isn't the right person, please pass it along.
+
+On a phone, your number on balboaflorist.com is text rather than a button — someone has to memorise it and switch apps instead of just tapping it.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="because we care dog and cat grooming san diego, ca pet grooming" data-ch="text">
+  <header>
+    <span class="n">39</span>
+    <div>
+      <h2>Because We Care Dog and Cat Grooming</h2>
+      <p class="meta">pet grooming · San Diego, CA · 4/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Because We Care Dog and Cat Grooming"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18585381015&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18585381015">(858) 538-1015</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for pet groomers here in San Diego. If this isn't the right person, please pass it along.
+
+becausewecarepetgrooming.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="eichman insurance agency rancho santa fe, ca insurance" data-ch="text email form">
+  <header>
+    <span class="n">40</span>
+    <div>
+      <h2>Eichman Insurance Agency</h2>
+      <p class="meta">insurance · Rancho Santa Fe, CA · 4/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Eichman Insurance Agency"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+17602306157&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:suellen%40eichmaninsurance.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20insurance%20offices%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0AI%20opened%20eichmaninsurance.com%20on%20a%20phone%20and%20the%20layout%20breaks%20%E2%80%94%20text%20runs%20off%20the%20side%20and%20you%20have%20to%20pinch%20to%20read%20it.%20Worth%20trying%20on%20your%20own%20phone.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email suellen@eichmaninsurance.com</a>
+    <a class="btn go" href="https://www.eichmaninsurance.com/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+17602306157">(760) 230-6157</a>
+  </div>
+
+  <p class="pub"><b>suellen@eichmaninsurance.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for insurance offices here in San Diego. If this isn't the right person, please pass it along.
+
+I opened eichmaninsurance.com on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 4 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">Name <span class="req">*</span></td>
+      <td class="fval">Tyler McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Email <span class="req">*</span></td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Type your message here...</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="helix mechanical, inc. el cajon, ca hvac, plumbing &amp; general contracting" data-ch="text email">
+  <header>
+    <span class="n">41</span>
+    <div>
+      <h2>Helix Mechanical, Inc.</h2>
+      <p class="meta">HVAC, plumbing &amp; general contracting · El Cajon, CA · 4/7 · No preview when shared</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Helix Mechanical, Inc."> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194476675&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20When%20someone%20texts%20your%20link%20it%20arrives%20as%20a%20blank%20grey%20box.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    <a class="btn mail" href="mailto:service%40helixmechanical.com?subject=Your%20website%20%E2%80%94%20one%20thing%20I%20noticed&amp;body=Hi%20%E2%80%94%20I'm%20Tyler.%20I%20build%20one-page%20websites%20for%20plumbers%20here%20in%20San%20Diego.%20If%20this%20isn't%20the%20right%20person%2C%20please%20pass%20it%20along.%0A%0AWhen%20someone%20texts%20a%20link%20to%20helixmechanical.com%2C%20it%20arrives%20as%20a%20plain%20grey%20box%20with%20no%20name%20or%20picture%20on%20it.%0A%0AI%20build%20one%20sample%20page%20a%20week%20and%20I've%20already%20done%20yours%20%E2%80%94%20a%20single%20fast%20page%20with%20your%20services%20and%20a%20tap-to-call%20button.%20There's%20no%20charge%20for%20looking%20at%20it%20and%20nothing%20owed%20either%20way.%20Can%20I%20send%20it%20over%20so%20you%20can%20see%20it%20on%20your%20phone%3F%0A%0ATyler%20McManus%0AMcManus%20Web%20Co.%0A302-649-6600">Email service@helixmechanical.com</a>
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194476675">(619) 447-6675</a>
+  </div>
+
+  <p class="pub"><b>service@helixmechanical.com</b> — printed on their own contact page, not guessed. It will not bounce, but whether you use it instead of the form is your call.</p>
+  
+  
+
+  <details open><summary>The text (266 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). When someone texts your link it arrives as a blank grey box. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for plumbers here in San Diego. If this isn't the right person, please pass it along.
+
+When someone texts a link to helixmechanical.com, it arrives as a plain grey box with no name or picture on it.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="lashbar san diego, ca beauty" data-ch="text">
+  <header>
+    <span class="n">42</span>
+    <div>
+      <h2>Lashbar</h2>
+      <p class="meta">beauty · San Diego, CA · 4/7 · Breaks on a phone</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Lashbar"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18587699591&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site's%20layout%20breaks%20on%20a%20phone%20%E2%80%94%20worth%20pulling%20up%20on%20yours.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18587699591">(858) 769-9591</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (271 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site's layout breaks on a phone — worth pulling up on yours. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for salons here in San Diego. If this isn't the right person, please pass it along.
+
+I opened lashbar.com/delsur on a phone and the layout breaks — text runs off the side and you have to pinch to read it. Worth trying on your own phone.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+<article class="card" data-name="studio mani poway, ca beauty" data-ch="text form">
+  <header>
+    <span class="n">43</span>
+    <div>
+      <h2>Studio Mani</h2>
+      <p class="meta">beauty · Poway, CA · 4/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Studio Mani"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18585133655&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://www.studiomanipoway.com/" target="_blank" rel="noopener noreferrer">Their form ↗</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18585133655">(858) 513-3655</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for salons here in San Diego. If this isn't the right person, please pass it along.
+
+studiomanipoway.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 14 fields, found on the homepage</summary><table>
+    <tr>
+      <td class="fname">txt_comment</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr>
+    <tr>
+      <td class="fname">Mobile number or Email</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">First name</td>
+      <td class="fval">Tyler</td>
+    </tr>
+    <tr>
+      <td class="fname">Last name</td>
+      <td class="fval">McManus</td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="sun valley dental care el cajon, ca dentist" data-ch="text form">
+  <header>
+    <span class="n">44</span>
+    <div>
+      <h2>Sun Valley Dental Care</h2>
+      <p class="meta">dentist · El Cajon, CA · 4/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Sun Valley Dental Care"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+16194131121&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    <a class="btn go" href="https://sunvalleydentalcare.com/contact-us/" target="_blank" rel="noopener noreferrer">Their form ↗ (CAPTCHA)</a>
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+16194131121">(619) 413-1121</a>
+  </div>
+
+  
+  <p class="warn">That form has a CAPTCHA — it is the site asking not to be automated. Finish it by hand or use another channel.</p>
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for dental practices here in San Diego. If this isn't the right person, please pass it along.
+
+sunvalleydentalcare.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  <details><summary>Their form: 4 fields, found on the contact page</summary><table>
+    <tr>
+      <td class="fname">First &amp; Last Name (Required)</td>
+      <td class="fval">McManus</td>
+    </tr>
+    <tr>
+      <td class="fname">Phone Number (Required)</td>
+      <td class="fval">302-649-6600</td>
+    </tr>
+    <tr>
+      <td class="fname">Email (Required)</td>
+      <td class="fval">tylermcmanus1010@gmail.com</td>
+    </tr>
+    <tr>
+      <td class="fname">How can we help you?</td>
+      <td class="fval"><em>the message below</em></td>
+    </tr></table></details>
+</article>
+<article class="card" data-name="who's next barbershop la jolla, ca hairdresser" data-ch="text">
+  <header>
+    <span class="n">45</span>
+    <div>
+      <h2>Who's Next Barbershop</h2>
+      <p class="meta">hairdresser · La Jolla, CA · 4/7 · Very slow to load</p>
+    </div>
+    <label class="done"><input type="checkbox" data-id="Who's Next Barbershop"> sent</label>
+  </header>
+
+  <div class="acts">
+    <a class="btn sms" href="sms:+18585877979&body=Hi%2C%20this%20is%20Tyler%20McManus%20%E2%80%94%20I%20build%20one-page%20websites%20(McManus%20Web%20Co%2C%20San%20Diego).%20Your%20site%20is%20slow%20to%20load%20on%20mobile%20data%20%E2%80%94%20worth%20timing%20on%20your%20own%20phone.%20I%20do%20one%20free%20sample%20a%20week%20and%20can%20do%20yours%2C%20nothing%20owed%20either%20way.%20Worth%20a%20look%3F%20Reply%20STOP%20and%20I%20won't%20message%20again.">Text — 10 seconds</a>
+    
+    
+    <button class="btn copy" type="button" data-what="long">Copy the long version</button>
+    <a class="btn tel" href="tel:+18585877979">(858) 587-7979</a>
+  </div>
+
+  
+  
+  
+
+  <details open><summary>The text (280 characters)</summary><pre class="msg sms-msg">Hi, this is Tyler McManus — I build one-page websites (McManus Web Co, San Diego). Your site is slow to load on mobile data — worth timing on your own phone. I do one free sample a week and can do yours, nothing owed either way. Worth a look? Reply STOP and I won't message again.</pre></details>
+  <details><summary>The long version, for a form or an email</summary><pre class="msg long-msg">Hi — I'm Tyler. I build one-page websites for barbers and salons here in San Diego. If this isn't the right person, please pass it along.
+
+whosnextlajolla.com took a long time to load on a phone on mobile data. Time it yourself — most people give a site a couple of seconds before going back to the search results.
+
+I build one sample page a week and I've already done yours — a single fast page with your services and a tap-to-call button. There's no charge for looking at it and nothing owed either way. Can I send it over so you can see it on your phone?
+
+Tyler McManus
+McManus Web Co.
+302-649-6600</pre></details>
+  
+</article>
+
+  
+  <p class="lede" style="margin-top:22px">45 businesses have a usable form in total; this batch is the 45 with the most to say.</p>
+</div>
+
+<script>
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var q = document.getElementById('q');
+  var count = document.getElementById('count');
+
+  // Which ones have gone, kept in this browser only. It never leaves the
+  // device and nothing else reads it.
+  var done = {};
+  try { done = JSON.parse(localStorage.getItem('outreach.sent') || '{}'); } catch (e) {}
+
+  cards.forEach(function(c){
+    var box = c.querySelector('input[type=checkbox]');
+    var id = box.dataset.id;
+    if (done[id]) { box.checked = true; c.classList.add('is-done'); }
+    box.addEventListener('change', function(){
+      if (box.checked) { done[id] = new Date().toISOString().slice(0,10); }
+      else { delete done[id]; }
+      c.classList.toggle('is-done', box.checked);
+      try { localStorage.setItem('outreach.sent', JSON.stringify(done)); } catch (e) {}
+      apply();
+    });
+
+    var btn = c.querySelector('.copy');
+    var longEl = c.querySelector('.long-msg');
+    var msg = longEl ? longEl.textContent : '';
+    btn.addEventListener('click', function(){
+      function ok(){ btn.textContent = 'Copied'; btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent = 'Copy the long version'; btn.classList.remove('ok'); }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(ok, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = msg; ta.setAttribute('readonly','');
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); ok(); }
+        catch (e) { btn.textContent = 'Select it below and copy'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  chips.forEach(function(b){
+    b.addEventListener('click', function(){
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      apply();
+    });
+  });
+
+  function apply(){
+    var term = q.value.trim().toLowerCase();
+    var want = chips.filter(function(b){ return b.getAttribute('aria-pressed') === 'true'; })
+                    .map(function(b){ return b.dataset.ch; });
+    var shown = 0, sent = 0;
+    cards.forEach(function(c){
+      var ok = !term || c.dataset.name.indexOf(term) !== -1;
+      if (ok && want.length) {
+        var mine = (c.dataset.ch || '').split(' ');
+        ok = want.some(function(w){ return mine.indexOf(w) !== -1; });
+      }
+      c.hidden = !ok;
+      if (ok) shown++;
+      if (c.classList.contains('is-done')) sent++;
+    });
+    count.textContent = sent + ' sent · ' + shown + ' shown';
+  }
+  q.addEventListener('input', apply);
+  apply();
+})();
+</script>

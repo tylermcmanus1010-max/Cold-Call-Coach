@@ -93,6 +93,24 @@
         "social": false
       },
       "parked": false
+    },
+    {
+      "at": "2026-09-04T16:40:33.636Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 5970,
+      "kb": 1259,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": true,
+        "seo": false,
+        "meta": false,
+        "social": false
+      },
+      "parked": false
     }
   ]
 }

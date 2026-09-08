@@ -14,13 +14,19 @@ const ROOT = path.join(__dirname, '..');
 // write to. A pitch that lands in webmaster@ or noreply@ never gets read.
 const BAD_LOCAL = /^(noreply|no-reply|donotreply|do-not-reply|webmaster|postmaster|abuse|privacy|legal|unsubscribe|mailer-daemon|test|example)$/i;
 const BAD_DOMAIN = /wixpress\.com$|sentry\.io$|godaddy\.com$|schema\.org$|w3\.org$|example\.(com|org)$/i;
+// "wcac_logo@2x.png" fits an email-shaped regex perfectly — @2x is a
+// standard retina-image filename suffix, and "png" is 3 letters like a real
+// TLD. Reject anything whose "domain" ends in a file extension rather than
+// risk mailing an asset filename.
+const FILE_EXT = /\.(png|jpe?g|gif|svg|webp|avif|ico|bmp|css|js|mjs|json|pdf|woff2?|ttf|eot|otf|mp4|webm|mov)$/i;
 
 function bestEmail(emails, businessDomain) {
   const clean = (emails || [])
     .map((e) => String(e).trim().toLowerCase())
     .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
     .filter((e) => !BAD_LOCAL.test(e.split('@')[0]))
-    .filter((e) => !BAD_DOMAIN.test(e.split('@')[1] || ''));
+    .filter((e) => !BAD_DOMAIN.test(e.split('@')[1] || ''))
+    .filter((e) => !FILE_EXT.test(e));
   if (!clean.length) return null;
   // An address on their own domain is a real inbox someone at the business
   // reads; a gmail/yahoo catch-all scraped off a page is worth less but

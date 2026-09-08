@@ -37,7 +37,7 @@ Hi there,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for La Jolla businesses.
 
-I looked at your website and rebuilt it. It's attached — open it on your phone.
+I looked at your website and rebuilt it. Take a look: https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/who-s-next-barbershop/index.html
 
 What I changed:
 - Single self-contained file, no trackers, loads instantly

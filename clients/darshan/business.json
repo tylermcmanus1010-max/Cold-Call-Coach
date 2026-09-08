@@ -5,7 +5,7 @@
   "category": "bakery",
   "owner": "",
   "currentSite": "https://www.darshanbakery.com/",
-  "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/darshan/index.html",
+  "liveUrl": "https://cold-call-coachv3.buildscope-ai.workers.dev/darshan/",
   "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",

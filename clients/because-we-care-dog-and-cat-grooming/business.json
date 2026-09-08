@@ -5,7 +5,7 @@
   "category": "pet grooming",
   "owner": "",
   "currentSite": "https://www.becausewecarepetgrooming.com/",
-  "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/because-we-care-dog-and-cat-grooming/index.html",
+  "liveUrl": "https://cold-call-coachv3.buildscope-ai.workers.dev/because-we-care-dog-and-cat-grooming/",
   "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",

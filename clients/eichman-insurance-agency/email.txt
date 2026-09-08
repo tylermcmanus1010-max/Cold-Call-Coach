@@ -4,7 +4,7 @@ Hi there,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for Rancho Santa Fe businesses.
 
-I looked at your website and rebuilt it. Take a look: https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/eichman-insurance-agency/index.html
+I looked at your website and rebuilt it. Take a look: https://cold-call-coachv3.buildscope-ai.workers.dev/eichman-insurance-agency/
 
 What I changed:
 - Rebuilt mobile-first; tested down to a 320px screen

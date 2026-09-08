@@ -159,6 +159,25 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
+
+  /* A real photo of the actual business, not a texture — this is the
+     difference between a page that looks like a template and one that
+     looks like theirs. Stacked by default (photo reads as evidence right
+     under the pitch); side-by-side on wide screens for the voices where a
+     strong image belongs beside the headline, not under it. */
+  .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
+    aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
+  .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  @media (min-width:900px){
+    .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
+    .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+      grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+    .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+      margin-top:0;aspect-ratio:1/1}
+  }
+  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
   .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
@@ -382,6 +401,7 @@
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-grid">
     <div class="hero-inner">
     
     <div class="eyebrow rise" style="--i:0">Cosmetic and family dentistry · San Diego, CA</div>
@@ -392,6 +412,8 @@
       <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=13522%20Sabre%20Springs%20Pkwy%2C%20Suite%20201%2C%20San%20Diego%2C%20CA%2C%2092128" target="_blank" rel="noopener">Get directions</a>
     </div>
     <div class="hero-note rise" style="--i:4">New patients welcome · No insurance? Membership from $399 a year</div>
+    </div>
+    
     </div>
     <div class="trust rise" style="--i:5"><div><b>No drill</b><span>Laser fillings, no needle</span></div><div><b>One visit</b><span>Crowns start to finish</span></div><div><b>249</b><span>Google reviews</span></div><div><b>$399/yr</b><span>Membership, no insurance needed</span></div></div>
   </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="v-trade">
+<html lang="en" class="v-professional">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,15 +49,15 @@
     --line:#e3e8ea;
     --bg:#fff;
     --soft:#f6f8f8;
-    --radius:6px;
+    --radius:3px;
     --wrap:1080px;
-    --display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --display-weight:800;
-    --tracking:-.035em;
+    --display:Georgia,"Times New Roman",Times,serif;
+    --display-weight:700;
+    --tracking:-.01em;
     --label-case:uppercase;
-    --label-track:.16em;
-    --hero-size:clamp(36px,7vw,66px);
-    --rule:3px;
+    --label-track:.12em;
+    --hero-size:clamp(32px,5vw,50px);
+    --rule:1px;
     --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
@@ -121,6 +121,7 @@
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
     background:
+      
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
       linear-gradient(180deg, var(--soft), #fff);
   }

@@ -157,6 +157,7 @@
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
     background:
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 5%, transparent) 0 2px, transparent 2px 22px),
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
       linear-gradient(180deg, var(--soft), #fff);
   }
@@ -617,7 +618,7 @@
       <a class="big-phone" href="tel:8584864977" style="color:var(--accent)">(858) 486-4977</a>
       <div class="actions">
         <a class="btn btn-primary" href="tel:8584864977">Call now</a>
-        <a class="btn btn-ghost" href="mailto:rt@rtroofingspecial.com">Email us</a>
+        
         <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=12528%20Kirkham%20Court%2C%20Poway%2C%20CA%2C%2092064" target="_blank" rel="noopener">Directions</a>
       </div>
     </div>
@@ -679,7 +680,7 @@
   if (basket) {
     var picked = [];
     var TEL = "8584864977";
-    var MAIL = "rt@rtroofingspecial.com";
+    var MAIL = "";
     var BOOKURL = "";
     var BIZ = "RT Roofing Specialist";
     // A quote trade is not a booking trade. Nobody books a re-roof; they ask

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="v-food">
+<html lang="en" class="v-fitness">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,15 +46,15 @@
     --line:#e3e8ea;
     --bg:#fff;
     --soft:#f6f8f8;
-    --radius:20px;
+    --radius:4px;
     --wrap:1080px;
     --display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --display-weight:750;
-    --tracking:-.03em;
+    --display-weight:850;
+    --tracking:-.04em;
     --label-case:uppercase;
-    --label-track:.1em;
-    --hero-size:clamp(35px,6.4vw,60px);
-    --rule:2px;
+    --label-track:.18em;
+    --hero-size:clamp(38px,7.4vw,72px);
+    --rule:4px;
     --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
@@ -118,6 +118,7 @@
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
     background:
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 5%, transparent) 0 2px, transparent 2px 22px),
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
       linear-gradient(180deg, var(--soft), #fff);
   }

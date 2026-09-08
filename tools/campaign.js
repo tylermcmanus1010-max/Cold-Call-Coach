@@ -95,7 +95,7 @@ async function prepare({ need = 10, log = console.log } = {}) {
 
     if (!b.email && b.currentSite) {
       try {
-        const found = await findEmail(b.currentSite);
+        const found = await findEmail(b.currentSite, b.name);
         if (found) { b.email = found; saveClient(slug, b); }
       } catch (e) {
         skipped.push({ slug, why: 'contact lookup failed: ' + e.message.split('\n')[0] });

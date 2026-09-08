@@ -20,7 +20,30 @@ const BAD_DOMAIN = /wixpress\.com$|sentry\.io$|godaddy\.com$|schema\.org$|w3\.or
 // risk mailing an asset filename.
 const FILE_EXT = /\.(png|jpe?g|gif|svg|webp|avif|ico|bmp|css|js|mjs|json|pdf|woff2?|ttf|eot|otf|mp4|webm|mov)$/i;
 
-function bestEmail(emails, businessDomain) {
+// A small local business very often runs its inbox on generic webmail
+// rather than its own domain — real and common, trust it, but ONLY when the
+// address itself reads as theirs. A generic-webmail address found on a page
+// is otherwise no safer a guess than any other off-domain one: caught for
+// real, "sudtipos@sudtipos.com" (a type foundry, not the cupcake shop it
+// was found on) led straight to "impallari@gmail.com" (a font designer) the
+// moment webmail alone was trusted — same wrong-recipient bug, new address.
+const GENERIC_WEBMAIL = /^(gmail|yahoo|hotmail|outlook|icloud|aol|msn|live|proton(mail)?|mail)\.com$/i;
+const GENERIC = new Set(['the', 'and', 'inc', 'llc', 'ltd', 'co', 'company', 'group', 'shop', 'store']);
+
+// Does this local-part actually read as the business's own name? Same idea
+// as browser-audit.js's namesBusiness() — a directory-scraped domain is
+// wrong often enough that "found near their name" beats "found on their
+// page" as a trust signal.
+function localPartMatchesBusiness(localPart, businessName) {
+  const flat = String(localPart || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const words = String(businessName || '').toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
+    .filter((w) => w.length >= 3 && !GENERIC.has(w));
+  if (!words.length || !flat) return false;
+  return words.some((w) => flat.includes(w)) || flat.length >= 4 && businessName && String(businessName).toLowerCase().replace(/[^a-z0-9]/g, '').includes(flat);
+}
+
+function bestEmail(emails, businessDomain, businessName) {
   const clean = (emails || [])
     .map((e) => String(e).trim().toLowerCase())
     .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
@@ -28,11 +51,17 @@ function bestEmail(emails, businessDomain) {
     .filter((e) => !BAD_DOMAIN.test(e.split('@')[1] || ''))
     .filter((e) => !FILE_EXT.test(e));
   if (!clean.length) return null;
-  // An address on their own domain is a real inbox someone at the business
-  // reads; a gmail/yahoo catch-all scraped off a page is worth less but
-  // still better than nothing.
+
   const onDomain = businessDomain && clean.find((e) => e.endsWith('@' + businessDomain));
-  return onDomain || clean[0];
+  if (onDomain) return onDomain;
+  // No match on their own domain: only trust a generic-webmail address
+  // whose local-part actually reads as this business's name. Anything else
+  // found on the page is more likely to belong to whoever built or hosts
+  // the site than to the business itself — skip rather than guess.
+  return clean.find((e) => {
+    const [local, domain] = e.split('@');
+    return GENERIC_WEBMAIL.test(domain || '') && localPartMatchesBusiness(local, businessName);
+  }) || null;
 }
 
 // Applies harvest.json -> business.json for one client. Returns what changed

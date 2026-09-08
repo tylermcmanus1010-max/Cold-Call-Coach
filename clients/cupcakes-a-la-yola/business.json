@@ -5,7 +5,6 @@
   "category": "bakery",
   "owner": "",
   "currentSite": "https://cupcakesalayola.com/",
-  "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/cupcakes-a-la-yola/index.html",
   "status": "new",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
@@ -21,7 +20,7 @@
   "tagline": "bakery in Poway.",
   "heroNote": "",
   "phone": "+1-858-668-7234",
-  "email": "sudtipos@sudtipos.com",
+  "email": "",
   "address": {
     "street": "13339 Poway Road",
     "city": "Poway",

@@ -32,7 +32,7 @@ function emailsIn(html) {
   return [...mailto, ...loose];
 }
 
-async function findEmail(rawUrl) {
+async function findEmail(rawUrl, businessName) {
   const start = /^https?:\/\//i.test(rawUrl) ? rawUrl : 'https://' + rawUrl;
   let domain;
   try { domain = new URL(start).hostname.replace(/^www\./, ''); } catch { return null; }
@@ -44,7 +44,7 @@ async function findEmail(rawUrl) {
     tried.push(url);
     try {
       const html = await fetchText(url);
-      const found = bestEmail(emailsIn(html), domain);
+      const found = bestEmail(emailsIn(html), domain, businessName);
       if (found) return found;
     } catch { /* try the next path */ }
   }

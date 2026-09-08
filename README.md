@@ -190,6 +190,14 @@ button sends people there instead.
 Resized to 1400px and embedded as data URIs, so the page still opens with no
 internet and still arrives as one file. A 4MB phone photo lands around 400KB.
 
+Each photo also carries a **`kind`** — `work`, `place`, `team`, `product` or
+`other` — and the page places it by that. Only `work` (a finished cut, a cake,
+a re-roofed house, a client in the chair) may sit under "Recent work"; the
+storefront and the interior go under "Around <name>". A photo with no `kind`
+has not been looked at yet and never sits under "Recent work". `./cc shot
+<slug>` writes every photo to `shots/<slug>/photos/` so you can look; the
+harvest guesses from the site's own alt text and headings where it can.
+
 This matters more than it sounds. A nail salon, a bakery or a barber is selling
 something visual, and a text-only page cannot compete with a booking platform
 that has a gallery — Revive Lash & Nail is on Bukkii with a photo grid, a priced

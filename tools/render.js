@@ -171,6 +171,20 @@ function render(b) {
   const reviews = real(b.reviews, ['text']);
   const highlights = real(b.highlights, ['value', 'label']);
   const photos = (b.photos || []).filter((p) => (typeof p === 'string' ? p : p?.src));
+  // What a photo is OF decides where it may go (tools/photo-kind.js). Only
+  // `work` — a finished cut, a cake, a client in the chair — may sit under
+  // "Recent work"; that heading is a claim about the picture beneath it, and
+  // Portal Salon shipped with the sink wall there. Untagged means nobody has
+  // looked yet, so it is treated as not-work. The hero and the print beside
+  // the ask both prefer work; a real photo of their place is honest anywhere
+  // the page makes no claim about it, so both fall back to whatever leads.
+  const kindOf = (p) => (p && typeof p === 'object' && p.kind) || '';
+  const isWork = (p) => kindOf(p) === 'work';
+  const heroPhoto = photos.find(isWork) || photos[0];
+  const otherPhotos = photos.filter((p) => p !== heroPhoto);
+  const workShots = otherPhotos.filter(isWork);
+  const placeShots = otherPhotos.filter((p) => !isWork(p));
+  const askPhoto = otherPhotos.find(isWork) || otherPhotos[0];
   const hours = realHours(b.hours);
 
   // A menu earns its layout only when there is something to choose between.
@@ -228,7 +242,7 @@ function render(b) {
 
   const nav = [
     services.length && ['Services', '#services'],
-    photos.length > 1 && ['Work', '#work'],
+    workShots.length ? ['Work', '#work'] : placeShots.length && ['Photos', '#place'],
     team.length && ['Team', '#team'],
     b.about && ['About', '#about'],
     reviews.length && ['Reviews', '#reviews'],
@@ -755,7 +769,7 @@ ${jsonld(b)}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
     </div>
-    ${photos.length ? `<div class="hero-shot photo-in" style="--i:2"><img src="${esc(typeof photos[0] === 'string' ? photos[0] : photos[0].src)}" alt="${esc(typeof photos[0] === 'object' && photos[0].alt || b.name)}" loading="eager"></div>` : ''}
+    ${heroPhoto ? `<div class="hero-shot photo-in" style="--i:2"><img src="${esc(typeof heroPhoto === 'string' ? heroPhoto : heroPhoto.src)}" alt="${esc(typeof heroPhoto === 'object' && heroPhoto.alt || b.name)}" loading="eager"></div>` : ''}
     </div>
     ${highlights.length ? `<div class="trust rise" style="--i:5">${highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
@@ -809,20 +823,30 @@ ${team.length ? `
 </section>` : ''}
 
 ${(() => {
-  // photos[0] already leads the hero — repeating it here would read as
-  // padding, not more evidence. Only worth a section when there's more.
-  const rest = photos.slice(1);
-  return rest.length ? `
+  // The hero photo already leads — repeating it here would read as padding,
+  // not more evidence. Two galleries, each only when there is something for
+  // it: the work under "Recent work", and everything else — the storefront,
+  // the chairs, the team — under the place's own name, which claims nothing.
+  const prints = (list, offset) => list.map((p, i) =>
+    `<figure><div class="ph"><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + offset))}" loading="lazy"></div><figcaption>${esc(caption(p, i))}</figcaption></figure>`).join('');
+  const work = workShots.length ? `
 <section id="work">
   <div class="wrap">
     <div class="eyebrow sec"><span class="n">${num()}</span><span>${esc(b.galleryEyebrow || 'Our work')}</span></div>
     <h2>${esc(b.galleryHeading || 'Recent work')}</h2>
     ${b.galleryLede ? `<p class="lede">${esc(b.galleryLede)}</p>` : ''}
-    <div class="shots">
-      ${rest.map((p, i) => `<figure><div class="ph"><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 2))}" loading="lazy"></div><figcaption>${esc(caption(p, i))}</figcaption></figure>`).join('')}
-    </div>
+    <div class="shots">${prints(workShots, 2)}</div>
   </div>
 </section>` : '';
+  const around = placeShots.length ? `
+<section id="place">
+  <div class="wrap">
+    <div class="eyebrow sec"><span class="n">${num()}</span><span>${esc(b.placeEyebrow || 'The place')}</span></div>
+    <h2>${esc(b.placeHeading || 'Around ' + (b.shortName || b.name))}</h2>
+    <div class="shots">${prints(placeShots, 2 + workShots.length)}</div>
+  </div>
+</section>` : '';
+  return work + around;
 })()}
 
 ${b.about ? `
@@ -874,9 +898,9 @@ ${(() => {
   return `
 <section id="contact" class="contact">
   <div class="wrap">
-    <div class="ask brk${photos[1] ? ' has-shot' : ''}">
+    <div class="ask brk${askPhoto ? ' has-shot' : ''}">
       <div class="ask-tag"><span class="eyebrow">${num()} / Contact${place ? ' / ' + esc(place) : ''}</span></div>
-      ${photos[1] ? `<figure class="cta-shot"><div class="ph"><img src="${esc((photos[1].src || photos[1]))}" alt="" loading="lazy"></div></figure>` : ''}
+      ${askPhoto ? `<figure class="cta-shot"><div class="ph"><img src="${esc((askPhoto.src || askPhoto))}" alt="" loading="lazy"></div></figure>` : ''}
       <div class="cta-box">
         <h2>${esc(b.ctaHeading || 'Ready when you are')}</h2>
         <p class="lede">${esc(b.ctaLede || 'Call and talk to a real person.')}</p>

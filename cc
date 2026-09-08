@@ -472,7 +472,10 @@ async function cmdShot(target, outDir) {
   if (r.overflow320 > 0) console.log(`  ⚠️  scrolls sideways at 320px by ${r.overflow320}px`);
   if (!r.overflow390 && !r.overflow320) console.log('  no horizontal overflow at 320 or 390');
   for (const f of r.files) console.log('  ' + path.relative(ROOT, f));
+  if (r.photos?.length) console.log(`  ${r.photos.length} photo(s) → ${path.relative(ROOT, path.dirname(r.photos[0]))}/  (photos.txt says what each is tagged as)`);
   console.log('\n  Open them next to design/reference/ and ask: does this belong there?');
+  if (r.photos?.length && /^\d+  kind=—/m.test(fs.readFileSync(path.join(path.dirname(r.photos[0]), 'photos.txt'), 'utf8')))
+    console.log('  Some photos have no kind yet. Look at each and set it in business.json before "Recent work" can show any of them.');
 }
 
 // We sell a twelve-point audit. Shipping a page that fails it is indefensible.

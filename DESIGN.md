@@ -102,7 +102,10 @@ tempts you to break them:
 5. **Nothing invented about the business.** Design is yours to invent —
    layouts, textures, labels, rhythm, decorative captions, the lot; be bold.
    *Facts* are not: reviews, hours, prices, services, licences, years, a
-   caption that makes a claim. A polaroid of *their* shop, or no polaroid.
+   caption that makes a claim. A polaroid of *their* shop, or no polaroid —
+   and a heading is a claim about the photo under it: "Recent work" over a
+   picture of the wall is an invented fact. Every photo is looked at and
+   tagged (`kind`) before it can sit under that heading.
 
 ## How to check
 

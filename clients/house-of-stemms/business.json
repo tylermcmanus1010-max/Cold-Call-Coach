@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://deluxeflorist.com/san-diego-florist-flower-delivery",
   "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/house-of-stemms/index.html",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "headline": "Flowers with some thought behind them.",
   "subhead": "On Mission Gorge Road. Arranged to order, not pulled from a bucket.",
@@ -110,5 +110,6 @@
   "lastTried": "2026-08-26",
   "callNotes": [
     "2026-08-26: no answer, after hours"
-  ]
+  ],
+  "sentOn": "2026-09-08"
 }

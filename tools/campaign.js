@@ -128,7 +128,9 @@ async function prepare({ need = 10, log = console.log } = {}) {
     if (!b.tagline) {
       const where = b.address?.city || 'San Diego';
       const what = (b.category || '').trim();
-      b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
+      // Sentence-case the category for the <h1>; a lowercase acronym would come out as "Hvac".
+      const shown = !what ? '' : /^(hvac|ac|dds|dmd|cpa|llc|rv|atv|ev|it)$/i.test(what) ? what.toUpperCase() : what[0].toUpperCase() + what.slice(1);
+      b.tagline = what ? `${shown} in ${where}.` : `Serving ${where}.`;
     }
     b.liveUrl = liveUrlFor(slug);   // pitch.js adds "you can also see it here: {liveUrl}" once this is set
     saveClient(slug, b);

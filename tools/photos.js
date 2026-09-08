@@ -8,6 +8,7 @@
 
 const path = require('path');
 const { embed } = require('./embed-photo');
+const { keepDistinct } = require('./dedupe-images');
 
 const TIMEOUT = 10000;
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
@@ -53,26 +54,32 @@ async function findPhotoUrls(siteUrl, max = 4) {
 // Skips any single image that fails to fetch or decode rather than aborting
 // the whole batch — one broken URL on their page shouldn't cost the rest.
 async function embedFromSite(siteUrl, max = 4) {
-  const urls = await findPhotoUrls(siteUrl, max);
+  // A wider pool than needed — dedup below picks the max distinct ones
+  // rather than trusting whichever `max` happened to appear first.
+  const urls = await findPhotoUrls(siteUrl, max * 3);
   if (!urls.length) return [];
 
   const tmp = require('os').tmpdir();
   const fs = require('fs');
-  const files = [];
+  const downloaded = [];
   for (const [i, url] of urls.entries()) {
     try {
       const buf = await fetchBuffer(url);
       if (buf.length < 4000) continue;   // smaller than any real photo — a 1x1 tracker or a broken placeholder
       const ext = (url.match(/\.(jpe?g|png|webp)(\?|$)/i) || [, 'jpg'])[1].toLowerCase();
+      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
       const f = path.join(tmp, `photo-${Date.now()}-${i}.${ext}`);
       fs.writeFileSync(f, buf);
-      files.push(f);
+      downloaded.push({ file: f, buf, mime });
     } catch { /* skip this one, keep going */ }
   }
-  if (!files.length) return [];
+  if (!downloaded.length) return [];
+
+  const distinctIdx = await keepDistinct(downloaded.map((d) => ({ buf: d.buf, mime: d.mime })));
+  const files = distinctIdx.slice(0, max).map((i) => downloaded[i].file);
 
   const embedded = await embed(files);
-  files.forEach((f) => { try { fs.unlinkSync(f); } catch {} });
+  downloaded.forEach((d) => { try { fs.unlinkSync(d.file); } catch {} });
   return embedded.map((e) => ({ src: e.src }));
 }
 

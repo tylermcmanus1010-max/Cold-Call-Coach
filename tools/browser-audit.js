@@ -231,7 +231,7 @@ async function auditRendered(rawUrl, { timeout = 25000, browser, expectName } = 
     const checks = {
       https,
       mobile:   p.viewportMeta && !p.overflows,
-      speed:    ms < 6000,
+      speed:    ms < 2000,
       phoneTap: p.telLinks > 0,
       hours:    p.hasHours,
       address:  p.hasAddress || p.mapLinks > 0,

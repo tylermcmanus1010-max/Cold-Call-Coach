@@ -314,6 +314,14 @@ ${jsonld(b)}
   .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
     aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
   .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  /* On a phone — where this actually gets read — a photo boxed inside the
+     page margins reads as a thumbnail. Bleeding it to the screen edges,
+     taller, is what makes it feel like the front of the business rather
+     than an attachment. */
+  @media (max-width:760px){
+    .hero-shot{margin:28px -22px 0;border-radius:0;border-left:0;border-right:0;
+      aspect-ratio:1/1}
+  }
   @media (min-width:900px){
     .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
     .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
@@ -324,6 +332,13 @@ ${jsonld(b)}
       margin-top:0;aspect-ratio:1/1}
   }
   .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
+
+  /* A second photo, cropped round, doing one job: proof this page was
+     built from their real place, sitting right where the ask is made. */
+  .cta-shot{width:104px;height:104px;border-radius:50%;overflow:hidden;
+    margin:0 auto 20px;border:3px solid var(--bg);
+    box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(16,32,40,.35)}
+  .cta-shot img{width:100%;height:100%;object-fit:cover;display:block}
   .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
@@ -514,6 +529,11 @@ ${jsonld(b)}
     .js .in .rise,.js .rise.in{opacity:1;transform:none;
       transition:opacity .62s var(--ease),transform .62s var(--ease)}
     .js .hero .rise{transition-delay:calc(var(--i,0) * 90ms)}
+    /* A photo arriving reads better as a soft settle than a slide — closer
+       to how an actual gallery feels loading in, not text sliding up. */
+    .js .photo-in{opacity:0;transform:scale(1.045)}
+    .js .in .photo-in,.js .photo-in.in{opacity:1;transform:none;
+      transition:opacity .8s var(--ease),transform 1s var(--ease)}
     .card{transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease)}
     .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
       box-shadow:0 10px 24px -14px rgba(16,32,40,.35)}
@@ -526,7 +546,7 @@ ${jsonld(b)}
     .tel-pulse{position:relative}
   }
   @media (prefers-reduced-motion:reduce){
-    .rise,.js .rise{opacity:1;transform:none}
+    .rise,.js .rise,.photo-in,.js .photo-in{opacity:1;transform:none}
     .callbar,.js .callbar{transform:none}
   }
 
@@ -563,7 +583,7 @@ ${jsonld(b)}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
     </div>
-    ${photos.length ? `<div class="hero-shot rise" style="--i:2"><img src="${esc(typeof photos[0] === 'string' ? photos[0] : photos[0].src)}" alt="${esc(typeof photos[0] === 'object' && photos[0].alt || b.name)}" loading="eager"></div>` : ''}
+    ${photos.length ? `<div class="hero-shot photo-in" style="--i:2"><img src="${esc(typeof photos[0] === 'string' ? photos[0] : photos[0].src)}" alt="${esc(typeof photos[0] === 'object' && photos[0].alt || b.name)}" loading="eager"></div>` : ''}
     </div>
     ${highlights.length ? `<div class="trust rise" style="--i:5">${highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
@@ -672,6 +692,7 @@ ${reviews.length ? `
 <section id="contact" class="contact">
   <div class="wrap">
     <div class="cta-box">
+      ${photos[1] ? `<div class="cta-shot"><img src="${esc((photos[1].src || photos[1]))}" alt="" loading="lazy"></div>` : ''}
       <h2>${esc(b.ctaHeading || 'Ready when you are')}</h2>
       <p class="lede" style="margin:0 auto">${esc(b.ctaLede || 'Call and talk to a real person.')}</p>
       ${b.phone ? `<a class="big-phone" href="tel:${esc(tel)}" style="color:var(--accent)">${esc(b.phone)}</a>` : ''}
@@ -712,12 +733,17 @@ ${b.phone ? `<div class="callbar">
   // Motion is a preference. Booking is a function. Reducing one must never
   // remove the other — an early return here once disabled the whole menu.
   if (reduce) {
-    document.querySelectorAll('.rise').forEach(function(el){ el.classList.add('in'); });
+    document.querySelectorAll('.rise, .photo-in').forEach(function(el){ el.classList.add('in'); });
   } else {
     requestAnimationFrame(function(){ hero && hero.classList.add('in'); });
 
     var targets = document.querySelectorAll('section .eyebrow, section h2, section .lede, .card, .quote, .panel, .cta-box, ul.ticks li');
     targets.forEach(function(el){ el.classList.add('rise'); });
+    // Photos settle rather than slide — .shots figure and .cta-shot get the
+    // scale-fade defined for .photo-in instead of the text .rise.
+    var photoTargets = document.querySelectorAll('.shots figure, .cta-shot');
+    photoTargets.forEach(function(el){ el.classList.add('photo-in'); });
+    var allTargets = [].concat([].slice.call(targets), [].slice.call(photoTargets));
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries){
         entries.forEach(function(e){
@@ -726,9 +752,9 @@ ${b.phone ? `<div class="callbar">
           io.unobserve(e.target);
         });
       }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-      targets.forEach(function(el){ io.observe(el); });
+      allTargets.forEach(function(el){ io.observe(el); });
     } else {
-      targets.forEach(function(el){ el.classList.add('in'); });
+      allTargets.forEach(function(el){ el.classList.add('in'); });
     }
   }
 

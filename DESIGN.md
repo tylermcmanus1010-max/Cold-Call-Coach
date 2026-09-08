@@ -99,7 +99,10 @@ tempts you to break them:
 2. **Phone first.** Judged at 390px, survives 320px, never scrolls sideways.
 3. **Works with JavaScript off.** Nothing important hidden behind a reveal.
 4. **Reduced motion removes motion, not content.**
-5. **Nothing invented.** A polaroid of *their* shop, or no polaroid.
+5. **Nothing invented about the business.** Design is yours to invent —
+   layouts, textures, labels, rhythm, decorative captions, the lot; be bold.
+   *Facts* are not: reviews, hours, prices, services, licences, years, a
+   caption that makes a claim. A polaroid of *their* shop, or no polaroid.
 
 ## How to check
 

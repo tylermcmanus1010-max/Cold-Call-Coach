@@ -40,7 +40,11 @@ than any design win.
    system and silently removed it.
 5. **Nothing invented about a real business.** No fabricated reviews, services,
    hours or prices. Ever. If it is not in `business.json` or their harvest, it
-   does not go on the page.
+   does not go on the page. This is about *facts*, not design: invent layouts,
+   textures, section labels, a numbered rhythm, decorative captions that are
+   plainly decorative ("Poway, CA" under a photo, yes; "our 2019 re-roof on
+   Espola Rd", no) as freely as the bar demands. A spec-table row with nothing
+   real behind it is a fabricated claim by implication — leave it out.
 
 ## How to actually work
 

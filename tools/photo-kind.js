@@ -7,7 +7,9 @@
 //   place    the storefront, the interior, the chairs, the truck, the sign.
 //   team     the people who work there.
 //   product  something they sell, on a shelf.
-//   other    real, theirs, but none of the above.
+//   other    off their site, but not evidence of anything: stock, a
+//            Pinterest inspo shot, a generic smile. Kept on file, never
+//            shown — under "Around <name>" it implies their premises.
 //
 // Untagged means nobody has looked yet. Render treats that as "not work":
 // it may lead the hero (a real photo of their place is honest anywhere the

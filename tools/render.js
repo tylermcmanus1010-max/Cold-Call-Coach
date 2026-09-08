@@ -38,7 +38,7 @@ function jsonld(b) {
     '@context': 'https://schema.org',
     '@type': b.schemaType || 'LocalBusiness',
     name: b.name,
-    description: b.tagline,
+    description: b.description || b.tagline,
     telephone: b.phone,
     url: b.liveUrl || b.newUrl || undefined,
     address: a.street ? {
@@ -178,10 +178,17 @@ function render(b) {
   // looked yet, so it is treated as not-work. The hero and the print beside
   // the ask both prefer work; a real photo of their place is honest anywhere
   // the page makes no claim about it, so both fall back to whatever leads.
+  //
+  // `other` is kept on file and never shown. It is what a stock photo off
+  // their site becomes once someone has looked: a piggyback in a field, a
+  // toothbrush on a leaf, Pinterest nails. Under "Around Palm Dental" it
+  // implies their premises; leading the hero it is fake evidence. Nothing
+  // real, nothing shown — the page adapts, as it does for a missing section.
   const kindOf = (p) => (p && typeof p === 'object' && p.kind) || '';
   const isWork = (p) => kindOf(p) === 'work';
-  const heroPhoto = photos.find(isWork) || photos[0];
-  const otherPhotos = photos.filter((p) => p !== heroPhoto);
+  const shown = photos.filter((p) => kindOf(p) !== 'other');
+  const heroPhoto = shown.find(isWork) || shown[0];
+  const otherPhotos = shown.filter((p) => p !== heroPhoto);
   const workShots = otherPhotos.filter(isWork);
   const placeShots = otherPhotos.filter((p) => !isWork(p));
   const askPhoto = otherPhotos.find(isWork) || otherPhotos[0];
@@ -255,12 +262,12 @@ function render(b) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(b.name)}${b.category ? ' — ' + esc(b.category) : ''}${a.city ? ' in ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</title>
-<meta name="description" content="${esc(b.tagline)}${b.phone ? ' Call ' + esc(b.phone) + '.' : ''}">
+<meta name="description" content="${esc(b.description || b.tagline)}${b.phone ? ' Call ' + esc(b.phone) + '.' : ''}">
 <meta property="og:type" content="website">${b.liveUrl ? `
 <link rel="canonical" href="${esc(b.liveUrl)}">
 <meta property="og:url" content="${esc(b.liveUrl)}">` : ''}
 <meta property="og:title" content="${esc(b.name)}">
-<meta property="og:description" content="${esc(b.tagline)}">
+<meta property="og:description" content="${esc(b.description || b.tagline)}">
 <meta name="twitter:card" content="summary_large_image">${b.logo ? `
 <meta property="og:image" content="${esc(b.logo)}">` : ''}
 <meta name="theme-color" content="${esc(accent)}">

@@ -193,7 +193,8 @@ internet and still arrives as one file. A 4MB phone photo lands around 400KB.
 Each photo also carries a **`kind`** — `work`, `place`, `team`, `product` or
 `other` — and the page places it by that. Only `work` (a finished cut, a cake,
 a re-roofed house, a client in the chair) may sit under "Recent work"; the
-storefront and the interior go under "Around <name>". A photo with no `kind`
+storefront and the interior go under "Around <name>"; `other` (stock, once
+someone has looked) is kept but never shown. A photo with no `kind`
 has not been looked at yet and never sits under "Recent work". `./cc shot
 <slug>` writes every photo to `shots/<slug>/photos/` so you can look; the
 harvest guesses from the site's own alt text and headings where it can.

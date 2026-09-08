@@ -84,10 +84,12 @@ any photo was *of*.
 
 So every photo carries a `kind` in `business.json` — `work`, `place`,
 `team`, `product`, `other` (see `tools/photo-kind.js`) — and `render.js`
-places it by that: only `work` goes under "Recent work"; `place` and `team`
-go under "Around <name>"; the hero and the print beside the ask prefer
-`work`. Untagged means nobody has looked, and an untagged photo never sits
-under "Recent work".
+places it by that: only `work` goes under "Recent work"; `place`, `team`
+and `product` go under "Around <name>"; the hero and the print beside the
+ask prefer `work`. `other` — stock, once you have looked and said so — is
+kept on file and never shown: under "Around <name>" it implies their
+premises, and in the hero it is fake evidence. Untagged means nobody has
+looked, and an untagged photo never sits under "Recent work".
 
 The harvester guesses a kind from the site's own alt text and the heading
 the image sat under, and says nothing when unsure. **You settle the rest by

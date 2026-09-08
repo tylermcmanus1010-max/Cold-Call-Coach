@@ -48,6 +48,11 @@ const CLIENTS = path.join(ROOT, 'clients');
 const LEADS = path.join(ROOT, 'leads');
 const TPL = path.join(ROOT, 'tools/business.template.json');
 const render = require('./tools/render');
+
+// A tagline is the <h1> when there is no headline, so it has to read as one:
+// short, and about the business rather than about the domain it sits on.
+const JUNK_TAGLINE = /domain|website builder|coming soon|under construction|lorem|godaddy|wix\.com|squarespace|for sale|parked|click here|default description/i;
+const usableTagline = (t) => !!t && String(t).trim().length <= 90 && !JUNK_TAGLINE.test(t);
 const pitch = require('./tools/pitch');
 const checks = require('./tools/checks');
 const pricing = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/pricing.json'), 'utf8'));
@@ -383,11 +388,17 @@ function cmdBuild(slug) {
     // leads with no page and nothing to call about. Derive a plain, true one
     // from what we already know and note it, rather than refusing to work.
     // Nothing here is a claim about the business — only what it is and where.
-    if (!b.tagline) {
+    // A meta description is not a headline. Scout puts the site's own
+    // description in tagline; when that is a paragraph, or a parked domain's
+    // "get a new domain name" blurb, it must not become the <h1>. The real,
+    // merely long, ones are kept as `description` for the page's meta tags.
+    if (!usableTagline(b.tagline)) {
+      if (b.tagline && !JUNK_TAGLINE.test(b.tagline) && !b.description) b.description = b.tagline;
       const where = b.address?.city || 'San Diego';
       const what = (b.category || '').trim();
       // Sentence-case the category for the <h1>; a lowercase acronym would come out as "Hvac".
-      const shown = !what ? '' : /^(hvac|ac|dds|dmd|cpa|llc|rv|atv|ev|it)$/i.test(what) ? what.toUpperCase() : what[0].toUpperCase() + what.slice(1);
+      const NOUN = { beauty: 'Beauty salon', 'fitness centre': 'Fitness center' };   // OSM tags that are not business nouns
+      const shown = !what ? '' : NOUN[what.toLowerCase()] || (/^(hvac|ac|dds|dmd|cpa|llc|rv|atv|ev|it)$/i.test(what) ? what.toUpperCase() : what[0].toUpperCase() + what.slice(1));
       b.tagline = what ? `${shown} in ${where}.` : `Serving ${where}.`;
       generic.push(s);
     }

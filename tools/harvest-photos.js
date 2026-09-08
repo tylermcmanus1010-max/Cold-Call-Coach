@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const { chromium, EXEC } = require('./browser-audit');
 const { embed } = require('./embed-photo');
+const { keepDistinct } = require('./dedupe-images');
 
 const ROOT = path.join(__dirname, '..');
 const CLIENTS = path.join(ROOT, 'clients');
@@ -62,7 +63,10 @@ async function harvestOne(slug, { max = 4, browser, log = console.log } = {}) {
     await page.goto(b.currentSite, { waitUntil: 'domcontentloaded', timeout: 25000 });
     await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(500);   // last beat for anything that hydrates just after networkidle
-    urls = await realImageUrls(page, max);
+    // Pull a wider pool than we need — a gallery slider showing the same
+    // haircut three frames apart looks like variety in the DOM and isn't.
+    // Dedup below picks the max distinct ones out of this pool instead.
+    urls = await realImageUrls(page, max * 3);
   } catch (e) {
     log(`  ! ${slug}: ${e.message.split('\n')[0]}`);
     return { slug, added: 0 };
@@ -72,21 +76,28 @@ async function harvestOne(slug, { max = 4, browser, log = console.log } = {}) {
   if (!urls.length) { log(`  - ${slug}: no real photos found`); return { slug, added: 0 }; }
 
   const tmp = require('os').tmpdir();
-  const files = [];
+  const downloaded = [];   // { file, buf, mime }
   for (const [i, url] of urls.entries()) {
     try {
       const buf = await fetchBuffer(url);
       if (buf.length < 4000) continue;
       const ext = (url.match(/\.(jpe?g|png|webp)(\?|$)/i) || [, 'jpg'])[1].toLowerCase();
+      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
       const f = path.join(tmp, `harvest-${slug}-${i}.${ext}`);
       fs.writeFileSync(f, buf);
-      files.push(f);
+      downloaded.push({ file: f, buf, mime });
     } catch { /* skip this one */ }
   }
-  if (!files.length) { log(`  - ${slug}: found image URLs but none downloaded cleanly`); return { slug, added: 0 }; }
+  if (!downloaded.length) { log(`  - ${slug}: found image URLs but none downloaded cleanly`); return { slug, added: 0 }; }
+
+  const distinctIdx = await keepDistinct(downloaded.map((d) => ({ buf: d.buf, mime: d.mime })), { browser });
+  const files = distinctIdx.slice(0, max).map((i) => downloaded[i].file);
+  if (distinctIdx.length < downloaded.length) {
+    log(`  · ${slug}: dropped ${downloaded.length - distinctIdx.length} near-duplicate photo(s)`);
+  }
 
   const embedded = await embed(files);
-  files.forEach((f) => { try { fs.unlinkSync(f); } catch {} });
+  downloaded.forEach((d) => { try { fs.unlinkSync(d.file); } catch {} });
 
   b.photos = embedded.map((e, i) => ({ src: e.src, alt: `${b.name} — photo ${i + 1}` }));
   fs.writeFileSync(bFile, JSON.stringify(b, null, 2) + '\n');

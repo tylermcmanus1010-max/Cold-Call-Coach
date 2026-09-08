@@ -19,6 +19,14 @@ function emailBody(ctx) {
     ? `I'm ${from.name}, I run ${String(from.businessName).replace(/\.$/, '')}.`
     : `I'm ${from.name}.`;
 
+  // A link costs nothing to get wrong; a claimed attachment that isn't there
+  // gets noticed the moment they look for it. liveUrl set means this pitch
+  // is going out link-first (the autonomous send path); unset means a human
+  // is about to attach the file by hand, same as this repo has always done.
+  const seeIt = b.liveUrl
+    ? `Take a look: ${b.liveUrl}`
+    : `It's attached — open it on your phone.`;
+
   return `Hi ${owner},
 
 ${intro} I build websites for ${b.address?.city || 'local'} businesses.
@@ -26,16 +34,16 @@ ${intro} I build websites for ${b.address?.city || 'local'} businesses.
 ${b.pitchOpener
   ? `${b.pitchOpener}
 
-It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+${seeIt}
 
 What's on it:`
   : noSite
   ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
-So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+So I built you one. ${seeIt}
 
 What's on it:`
-  : `I looked at your website and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
+  : `I looked at your website and rebuilt it. ${seeIt}
 
 What I changed:`}
 ${emailFixes}
@@ -72,8 +80,6 @@ module.exports = function pitch(b, pricing) {
   const from = pricing.from;
   const care = pricing.tiers.care;
   const owner = b.owner || 'there';
-  // "McManus Web Co." already ends in a period; let it serve as the sentence's.
-  const fromBiz = (from.businessName || '').replace(/\.\s*$/, '');
 
   // "I rebuilt your website" is the wrong opening line for someone who does not
   // have one. A domain showing a hosting placeholder needs to be named plainly.
@@ -149,35 +155,7 @@ ${notYet.length ? `> **Fill these in before you send.** The page does not yet sh
 
 **Subject:** ${subject}
 
-Hi ${owner},
-
-I'm ${from.name}${fromBiz ? `, I run ${fromBiz}` : ''}. I build websites for ${b.address?.city || 'local'} businesses.
-
-${b.pitchOpener
-  ? `${b.pitchOpener}
-
-It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
-
-What's on it:`
-  : noSite
-  ? `I went looking for your website and ${host ? `${host} is showing a hosting placeholder page` : 'could not find one'} — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
-
-So I built you one. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
-
-What's on it:`
-  : `I looked at your website and rebuilt it. It's attached — open it on your phone.${b.liveUrl ? ` You can also see it here: ${b.liveUrl}` : ''}
-
-What I changed:`}
-${emailFixes}
-
-Nothing is live. This is just so you can see what it would look like.
-
-${money(tier)} for the ${noSite ? tier.label.toLowerCase().replace('rebuild', 'website') : tier.label.toLowerCase()}, live on your domain in ${tier.includes.find((i) => /live in/i.test(i))?.replace(/live in /i, '') || 'about a week'}.${care ? ` ${money(care)} after that if you want me hosting it and making changes for you.` : ''} ${pricing.guarantee}
-
-Worth a 10-minute call?
-
-${from.name}
-${from.phone ? from.phone + '\n' : ''}${from.email}
+${body}
 
 ---
 

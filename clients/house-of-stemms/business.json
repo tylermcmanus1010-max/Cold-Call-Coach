@@ -5,15 +5,15 @@
   "category": "Florist",
   "owner": "",
   "currentSite": "https://deluxeflorist.com/san-diego-florist-flower-delivery",
-  "liveUrl": "",
-  "status": "new",
+  "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/house-of-stemms/index.html",
+  "status": "sent",
   "tier": "onepage",
   "headline": "Flowers with some thought behind them.",
   "subhead": "On Mission Gorge Road. Arranged to order, not pulled from a bucket.",
   "tagline": "Florist in San Diego, CA. Call (619) 237-8842.",
   "heroNote": "",
   "phone": "(619) 237-8842",
-  "email": "",
+  "email": "deluxeflorist@hotmail.com",
   "address": {
     "street": "6602 Mission Gorge Road",
     "city": "San Diego",
@@ -110,5 +110,6 @@
   "lastTried": "2026-08-26",
   "callNotes": [
     "2026-08-26: no answer, after hours"
-  ]
+  ],
+  "sentOn": "2026-09-08"
 }

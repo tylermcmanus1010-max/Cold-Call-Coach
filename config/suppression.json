@@ -1,0 +1,20 @@
+{
+  "_howto": "Never contacted again, no matter what campaign or area code. Checked before every send. Anyone who asks to stop, complains, or bounces hard goes here — by tools/suppress.js, or by hand.",
+  "entries": [
+    {
+      "email": "info@windowtinting.com",
+      "domain": "windowtinting.com",
+      "reason": "explicit stop request — threatened escalation if contacted again",
+      "source": "reply to Rebuilt your website pitch",
+      "at": "2026-08-31"
+    },
+    {
+      "email": "team@lumieresalonrb.com",
+      "domain": "lumieresalonrb.com",
+      "slug": "lumiere-salon",
+      "reason": "hard bounce — address not found (permanent failure)",
+      "source": "mailer-daemon bounce, 2026-09-08",
+      "at": "2026-09-08"
+    }
+  ]
+}

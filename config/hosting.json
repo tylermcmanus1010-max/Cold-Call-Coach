@@ -1,0 +1,4 @@
+{
+  "_howto": "cloudflarePagesDomain: the *.pages.dev (or custom) domain once the Cloudflare Pages project exists, e.g. \"cold-call-coach.pages.dev\". Leave blank to keep using the public-repo githack fallback. tools/campaign.js reads this on every run — no code change needed once the domain is set.",
+  "cloudflarePagesDomain": ""
+}

@@ -5,7 +5,6 @@
   "category": "beauty",
   "owner": "",
   "currentSite": "https://www.studiomanipoway.com/",
-  "liveUrl": "",
   "status": "new",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",

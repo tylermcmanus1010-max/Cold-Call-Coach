@@ -1,0 +1,8 @@
+# Serves site/ (built by tools/publish.js — rendered pitch pages only,
+# nothing else) as static assets. Cloudflare Workers Builds runs the Build
+# command below, then `npx wrangler deploy`, which reads this file.
+name = "cold-call-coach"
+compatibility_date = "2026-01-01"
+
+[assets]
+directory = "./site"

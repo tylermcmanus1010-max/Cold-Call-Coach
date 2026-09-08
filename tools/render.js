@@ -55,29 +55,56 @@ function stars(n) {
 }
 
 // A barbershop should not read like an endodontist. Each trade gets its own
-// voice — typeface class, weight, corner radius, letter-spacing and hero
-// treatment — built from system fonts so the page still makes no network
-// request and still opens instantly from an email attachment.
+// voice — typeface class, weight, corner radius, letter-spacing, hero
+// treatment, AND a default palette — built from system fonts so the page
+// still makes no network request and still opens instantly from an email
+// attachment. The palette is a *default*, not a limit: a human (or a color
+// pulled from the business's own logo/sign) still overrides it via
+// business.json's theme.accent/theme.ink. It exists so a page built with
+// nobody in the loop — the autonomous outreach path — still looks like it
+// was made for this business, not stamped from one template in one color.
 const VOICES = {
-  trade: {   // plumbers, roofers, auto, smog, contractors
+  trade: {   // plumbers, roofers, auto, smog, contractors, electricians
     display: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
     weight: 800, tracking: '-.035em', radius: '6px', caseLabel: 'uppercase',
     labelTrack: '.16em', heroSize: 'clamp(36px,7vw,66px)', rule: '3px',
+    accent: '#d3491d', ink: '#191512', texture: 'diagonal',
   },
-  care: {    // dentists, doctors, clinics
+  care: {    // dentists, doctors, clinics, vets, chiro
     display: '"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif',
     weight: 600, tracking: '-.015em', radius: '16px', caseLabel: 'uppercase',
     labelTrack: '.14em', heroSize: 'clamp(33px,5.6vw,54px)', rule: '1px',
+    accent: '#1d6f6a', ink: '#141c1e', texture: 'none',
   },
-  beauty: {  // salons, nails, spa, florists
+  beauty: {  // salons, nails, spa, florists, lashes
     display: '"Iowan Old Style",Palatino,Georgia,serif',
     weight: 500, tracking: '.005em', radius: '2px', caseLabel: 'uppercase',
     labelTrack: '.26em', heroSize: 'clamp(34px,6vw,58px)', rule: '1px',
+    accent: '#a9436b', ink: '#1c1417', texture: 'none',
   },
-  food: {    // bakeries, cafés, gyms, shops
+  food: {    // bakeries, cafés, restaurants, delis
     display: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
     weight: 750, tracking: '-.03em', radius: '20px', caseLabel: 'uppercase',
     labelTrack: '.1em', heroSize: 'clamp(35px,6.4vw,60px)', rule: '2px',
+    accent: '#c07a1e', ink: '#201a12', texture: 'dot',
+  },
+  fitness: { // gyms, climbing, martial arts, training
+    display: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+    weight: 850, tracking: '-.04em', radius: '4px', caseLabel: 'uppercase',
+    labelTrack: '.18em', heroSize: 'clamp(38px,7.4vw,72px)', rule: '4px',
+    accent: '#2a2f8f', ink: '#111217', texture: 'diagonal',
+  },
+  professional: { // law, insurance, finance, real estate, accounting
+    display: 'Georgia,"Times New Roman",Times,serif',
+    weight: 700, tracking: '-.01em', radius: '3px', caseLabel: 'uppercase',
+    labelTrack: '.12em', heroSize: 'clamp(32px,5vw,50px)', rule: '1px',
+    accent: '#1c3a5e', ink: '#14181d', texture: 'none',
+  },
+  retail: {  // shops, boutiques, apparel, hardware, furniture
+    display: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+    weight: 700, tracking: '-.02em', radius: '10px', caseLabel: 'uppercase',
+    labelTrack: '.13em', heroSize: 'clamp(35px,6.4vw,60px)', rule: '2px',
+    accent: '#2f6b3a', ink: '#151a15', texture: 'dot',
   },
 };
 
@@ -85,8 +112,11 @@ function voiceOf(b) {
   if (b.voice && VOICES[b.voice]) return b.voice;
   const c = (b.category || '').toLowerCase();
   if (/dent|endodont|medical|doctor|clinic|health|vet|chiro|ortho/.test(c)) return 'care';
-  if (/salon|nail|spa|beauty|hair|barber|massage|florist|flower/.test(c)) return 'beauty';
-  if (/baker|café|cafe|coffee|restaurant|deli|food|climb|fitness|gym|shop|store|apparel/.test(c)) return 'food';
+  if (/salon|nail|spa|beauty|hair|barber|massage|florist|flower|lash/.test(c)) return 'beauty';
+  if (/baker|café|cafe|coffee|restaurant|deli|food|catering/.test(c)) return 'food';
+  if (/climb|fitness|gym|martial|yoga|pilates|training(?! systems)/.test(c)) return 'fitness';
+  if (/law|attorney|legal|insurance|finance|accounting|realt|real estate|title company/.test(c)) return 'professional';
+  if (/shop|store|apparel|boutique|hardware|furniture|nursery|garden center/.test(c)) return 'retail';
   if (/plumb|roof|auto|repair|smog|tyre|tire|electric|hvac|contractor|construct|landscap|clean/.test(c)) return 'trade';
   return 'trade';
 }
@@ -94,8 +124,13 @@ function voiceOf(b) {
 function render(b) {
   const tel = digits(b.phone);
   const a = b.address || {};
-  const accent = b.theme?.accent || '#0f6b5c';
   const v = VOICES[voiceOf(b)];
+  // A human-chosen color (from business.json) always wins. Absent one — the
+  // autonomous outreach path, where nobody sat down and picked a hex from a
+  // logo — the voice's own default palette stands in, so the page still
+  // reads as fitted to the trade rather than every unbranded lead landing on
+  // the same green.
+  const accent = b.theme?.accent || v.accent;
 
   // A menu earns its layout only when there is something to choose between.
   const cents = (p) => {
@@ -116,7 +151,7 @@ function render(b) {
     }
     return [...out.entries()];
   })();
-  const ink = b.theme?.ink || '#12181c';
+  const ink = b.theme?.ink || v.ink;
   const hero = b.theme?.heroImage;
 
   const nav = [
@@ -231,6 +266,11 @@ ${jsonld(b)}
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
     background:
+      ${v.texture === 'diagonal'
+        ? 'repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 5%, transparent) 0 2px, transparent 2px 22px),'
+        : v.texture === 'dot'
+        ? 'radial-gradient(color-mix(in srgb, var(--accent) 14%, transparent) 1.6px, transparent 1.6px) 0 0/22px 22px,'
+        : ''}
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
       linear-gradient(180deg, var(--soft), #fff);
   }

@@ -447,10 +447,16 @@ function toBusinessJson(lead, tplPath) {
     slug: lead.slug,
     name: lead.name || info.ldName || info.title || '',
     category: lead.category,
-    currentSite: lead.website ? (a.finalUrl || 'https://' + a.url) : '',
+    // A redirect to a bot challenge is not where their site lives. Seven open
+    // leads carried /.well-known/sgcaptcha/ as their currentSite this way.
+    currentSite: lead.website ? ((a.finalUrl && !/cdn-cgi\/challenge|\/\.well-known\/sgcaptcha|_Incapsula_Resource/i.test(a.finalUrl) ? a.finalUrl : 'https://' + a.url)) : '',
     phone: lead.phone || info.ldPhone || info.phone || '',
     address: { street: addr?.street || '', city: addr?.city || '', state: addr?.state || lead.address?.state || '', zip: addr?.zip || '' },
-    tagline: info.description || '',
+    // A parked or placeholder page describes the parking company, not the
+    // business — Estrella Dental shipped "Get a new domain name for your
+    // startup" as its headline this way. Nothing off a placeholder is theirs.
+    tagline: a.placeholder ? '' : (info.description || ''),
+    siteKind: !lead.website ? 'none' : a.placeholder ? 'parked' : !a.reachable ? 'dead' : undefined,
     rating: lead.rating
       ? { value: String(lead.rating), count: String(lead.reviewCount ?? ''), source: 'Google' }
       : (info.ldRating ? { value: String(info.ldRating.value), count: String(info.ldRating.count), source: 'Google' } : tpl.rating),

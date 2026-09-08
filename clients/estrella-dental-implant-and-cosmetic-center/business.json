@@ -105,5 +105,10 @@
     "rendered": true,
     "hardGaps": 7
   },
-  "photos": []
+  "photos": [],
+  "siteKind": "parked",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

@@ -1,0 +1,98 @@
+# Everything we can learn about a business before we build its page, from
+# every source we can reach — run here because the coding sandbox has no
+# open egress and no Chrome that can reach the internet.
+#
+#   1. siteKind  what is actually at their URL, decided before anything is
+#                scraped: their own site, a parked domain, a bot challenge,
+#                a managed platform, a page that never names them — or
+#                unreachable, which is retried rather than believed
+#   2. JSON-LD   the site's own schema.org block — hours, price range, socials
+#   3. Google    Place Details — hours, reviews with names, owner photos,
+#                the business's own description. Needs the
+#                GOOGLE_MAPS_API_KEY repository secret; skipped, loudly,
+#                without it.
+#   4. crawl     the nine-page read tools/harvest.js has always done
+#
+# All of it lands raw in clients/<slug>/harvest.json. With `apply`, the
+# structured and attributed parts — siteKind, Google hours and reviews,
+# photos — are written into business.json. Services and headlines never are.
+
+name: Research a business
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'One client only (blank = every open client)'
+        required: false
+      apply:
+        description: 'Write the attributed facts into business.json'
+        type: boolean
+        default: true
+      fresh:
+        description: 'Re-fetch Google even if fetched in the last 30 days'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Research
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: |
+          flags=""
+          [ "${{ inputs.apply }}" = "true" ] && flags="$flags --apply"
+          [ "${{ inputs.fresh }}" = "true" ] && flags="$flags --fresh"
+          if [ -n "${{ inputs.slug }}" ]; then
+            node tools/research.js "${{ inputs.slug }}" $flags | tee research.log
+          else
+            node tools/research.js --all $flags | tee research.log
+          fi
+
+      - name: Rebuild pages with what was found
+        if: ${{ inputs.apply }}
+        run: node cc build
+
+      - name: Summary
+        run: |
+          {
+            echo "## Research"
+            echo
+            echo '```'
+            cat research.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add clients/
+          if git diff --cached --quiet; then
+            echo "nothing new"
+          else
+            git commit -m "Research $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin main || exit 1
+              sleep $((i * 3))
+            done
+          fi

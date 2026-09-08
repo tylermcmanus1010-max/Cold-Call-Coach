@@ -103,5 +103,10 @@
     "pageKb": 15,
     "builder": null,
     "copyrightYear": 1999
+  },
+  "siteKind": "parked",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
   }
 }

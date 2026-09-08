@@ -1108,3 +1108,4 @@ module.exports = function renderChecked(b) {
   return html;
 };
 module.exports.unchecked = render;
+module.exports.PLACEHOLDER_HOURS_SIG = PLACEHOLDER_HOURS_SIG;

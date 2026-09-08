@@ -170,5 +170,10 @@
   "lastTried": "2026-08-31",
   "callNotes": [
     "2026-08-31: receptionist — Dr Mechael not in, \"probably isn't interested\". That is a gatekeeper guessing, not the dentist deciding. Attempt 6."
-  ]
+  ],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

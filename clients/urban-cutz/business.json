@@ -143,5 +143,10 @@
       "alt": "In the chair at Urban Cutz",
       "kind": "work"
     }
-  ]
+  ],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

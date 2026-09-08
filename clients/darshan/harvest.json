@@ -1,0 +1,20 @@
+{
+  "_readMe": "Everything research.js could find, from every source, raw. NOTHING here is verified. --apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) into business.json; services and headline still need a person to read this.",
+  "researchedAt": "2026-09-08",
+  "siteKind": "own",
+  "site": {
+    "url": "https://www.darshanbakery.com/",
+    "finalUrl": "https://www.darshanbakery.com/",
+    "status": 200,
+    "platform": null,
+    "builder": "Weebly",
+    "title": "Home-1 | Darshan Bakery",
+    "description": "",
+    "reason": null
+  },
+  "jsonld": null,
+  "google": {
+    "skipped": "no GOOGLE_MAPS_API_KEY"
+  },
+  "crawlNote": "--no-crawl"
+}

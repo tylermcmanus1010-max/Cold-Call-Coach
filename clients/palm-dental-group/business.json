@@ -146,5 +146,11 @@
       "alt": "A toothbrush and toothpaste on a leaf",
       "kind": "other"
     }
-  ]
+  ],
+  "siteKind": "platform",
+  "sitePlatform": "Squarespace",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

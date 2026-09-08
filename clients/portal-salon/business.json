@@ -149,5 +149,10 @@
       "alt": "Inside Portal Salon, looking out to the street",
       "kind": "place"
     }
-  ]
+  ],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

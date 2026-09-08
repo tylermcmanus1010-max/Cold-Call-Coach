@@ -127,5 +127,10 @@
     "builder": null,
     "copyrightYear": null
   },
-  "sentOn": "2026-09-08"
+  "sentOn": "2026-09-08",
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

@@ -20,8 +20,13 @@ confidence beats sixty he has to check himself.
 2. **Wait for it, then `git pull`.**
 3. **Run `./cc reaudit`** via the `reaudit.yml` workflow so every new lead is
    measured in a real browser, not read off raw HTML.
-4. **Cull, hard** — see below.
-5. **Report.** Short, phone-readable, ranked.
+4. **Run `research.yml`** (blank slug = every open client, apply = true). It
+   decides what is actually at each URL — their site, a parked domain, a bot
+   challenge, a managed platform, a page that never names them — and pulls
+   Google's hours, reviews and photos into `business.json` when the key is
+   set. The campaign will not send a page that has not been through this.
+5. **Cull, hard** — see below. `siteKind` does the first pass for you.
+6. **Report.** Short, phone-readable, ranked.
 
 ## What is not a lead
 

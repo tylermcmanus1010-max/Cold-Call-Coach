@@ -142,5 +142,10 @@
       "alt": "Bottles and brushes on a counter",
       "kind": "other"
     }
-  ]
+  ],
+  "siteKind": "unreachable",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

@@ -127,5 +127,10 @@
     "copyrightYear": 2026
   },
   "liveUrl": "https://cold-call-coachv3.buildscope-ai.workers.dev/cupcakes-a-la-yola/",
-  "sentOn": "2026-09-08"
+  "sentOn": "2026-09-08",
+  "siteKind": "unreachable",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

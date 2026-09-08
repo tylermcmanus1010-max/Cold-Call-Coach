@@ -116,5 +116,10 @@
   ],
   "pitchSubject": "Your site is fine — your phone number is the problem",
   "pitchEmail": "Hi Dr. Vincent,\n\nTyler McManus here — thanks for the email address earlier.\n\nFirst, the honest part: your site is not broken. It works on a phone, it is secure, and it loads quickly. I am not going to tell you otherwise.\n\nWhat I did find is smaller and more specific.\n\nYour phone number is not tappable. Somebody with a cracked tooth, on their phone, has to copy it out by hand instead of pressing it. For a dental practice that is the whole point of the page.\n\nYour site also has no page title or description, and no Google business markup — which is the bit that tells Google your hours, your address and your phone. Right now Google has to guess, and the copyright on the page still says 2012.\n\nAttached is a version with those fixed. Open it on your phone. It is 38KB, loads instantly, and the number is tappable everywhere.\n\n$750 to put it on your domain, live in 5 business days. $60/month after that if you want me hosting it and making changes — cancel any time. If you don't like it, you don't pay, and you keep the file either way.\n\nOne thing I would need from you before it went live: your real service list and a few reviews from patients. I have not invented either, so the page is honest but thin until you fill those in.\n\nTyler McManus\nMcManus Web Co.\n302-649-6600",
-  "photos": []
+  "photos": [],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

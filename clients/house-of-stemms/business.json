@@ -23,7 +23,23 @@
   "serviceArea": [],
   "license": "",
   "priceRange": "$$",
-  "hours": [],
+  "hours": [
+    {
+      "days": "Mon–Fri",
+      "time": "10:00 AM – 6:00 PM",
+      "schema": "Mo-Fr 10:00-18:00"
+    },
+    {
+      "days": "Saturday",
+      "time": "10:00 AM – 5:00 PM",
+      "schema": "Sa 10:00-17:00"
+    },
+    {
+      "days": "Sunday",
+      "time": "10:00 AM – 3:00 PM",
+      "schema": "Su 10:00-15:00"
+    }
+  ],
   "highlights": [],
   "servicesHeading": "What we arrange",
   "servicesLede": "",
@@ -111,5 +127,10 @@
   "callNotes": [
     "2026-08-26: no answer, after hours"
   ],
-  "sentOn": "2026-09-08"
+  "sentOn": "2026-09-08",
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

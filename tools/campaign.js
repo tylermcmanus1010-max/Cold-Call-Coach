@@ -69,6 +69,28 @@ function suppressed(b) {
   return suppress.isSuppressed({ email: b.email, domain: domainOf(b.currentSite), phone: b.phone });
 }
 
+// What a page needs before it can be sent with nobody looking. The README
+// has said it for months — "a page needs hours and reviews before it goes
+// out" — and ./cc check flags both; on the autonomous path that has to be a
+// stop, not a warning, because the ten sent on 8 Sep all lacked reviews.
+// Every reason here is one ./cc research fills from Google or their own
+// site, so "not sendable" means "research it", not "give up".
+const PLACEHOLDER_HOURS_SIG = require('./render').PLACEHOLDER_HOURS_SIG;
+function unsendable(b) {
+  const why = [];
+  const kind = b.siteKind;
+  if (!kind) why.push('not researched yet — ./cc research fills siteKind, hours and reviews');
+  else if (kind === 'challenge') why.push('their site sits behind a bot challenge — we never saw it, nothing to claim');
+  else if (kind === 'notTheirs') why.push('the page at currentSite never names them — probably not their site');
+  else if (kind === 'platform') why.push(`on a managed platform (${b.sitePlatform || 'Wix/Squarespace/Vagaro…'}) — someone is already paid to look after it`);
+  else if (kind === 'unreachable') why.push('research could not reach their site — rerun research.yml on Actions before deciding anything');
+  const hoursSig = (b.hours || []).map((h) => h.schema || '').filter(Boolean).join('|');
+  const realHours = (b.hours || []).some((h) => h.time) && hoursSig !== PLACEHOLDER_HOURS_SIG;
+  if (!realHours) why.push('no real hours');
+  if (!(b.reviews || []).some((r) => r && r.text)) why.push('no real reviews');
+  return why;
+}
+
 async function prepare({ need = 10, log = console.log } = {}) {
   const slugs = fs.existsSync(CLIENTS)
     ? fs.readdirSync(CLIENTS).filter((d) =>
@@ -111,6 +133,9 @@ async function prepare({ need = 10, log = console.log } = {}) {
       skipped.push({ slug, why: 'audit not browser-rendered — unsafe to claim findings, needs a human look' });
       continue;
     }
+
+    const gaps = unsendable(b);
+    if (gaps.length) { skipped.push({ slug, why: gaps.join('; ') }); continue; }
 
     if (!b.email && b.currentSite) {
       try {
@@ -161,7 +186,7 @@ async function prepare({ need = 10, log = console.log } = {}) {
   return { ready, skipped };
 }
 
-module.exports = { prepare };
+module.exports = { prepare, unsendable };
 
 if (require.main === module) {
   const need = Number((process.argv.find((a) => a.startsWith('--need=')) || '--need=10').split('=')[1]) || 10;

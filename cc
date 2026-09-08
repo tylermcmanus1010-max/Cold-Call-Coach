@@ -10,6 +10,12 @@
 //   ./cc audit <url>        audit one site and print what it fails
 //   ./cc new <slug>         scaffold a client folder by hand
 //   ./cc harvest <slug>     read THEIR site first — services, hours, real reviews
+//   ./cc research [slug]    everything we can learn before building: what is at
+//                          their URL, their site's own schema data, Google's
+//                          hours/reviews/photos (needs GOOGLE_MAPS_API_KEY),
+//                          and the site crawl. --all for every open client,
+//                          --no-crawl to skip the nine-page read, --apply to
+//                          write the attributed facts into business.json
 //   ./cc build [slug]       render index.html + pitch.md (all clients if no slug)
 //   ./cc tried <slug>       log a call attempt (no answer, gatekeeper, callback)
 //   ./cc sent <slug>        mark as sent today
@@ -625,6 +631,42 @@ async function cmdHarvest(slug) {
   console.log('\n  Read it before you build. Nothing was written to business.json.\n');
 }
 
+// Research before build: one command, every source, one harvest.json.
+async function cmdResearch(args) {
+  const { research, openSlugs } = require('./tools/research');
+  const all = args.includes('--all');
+  const apply = args.includes('--apply');
+  const fresh = args.includes('--fresh');
+  const noCrawl = args.includes('--no-crawl');
+  const slugs = all ? openSlugs() : args.filter((a) => !a.startsWith('--'));
+  if (!slugs.length) die('Usage: ./cc research <slug> [--apply] [--fresh]   or   ./cc research --all [--apply]');
+  if (!process.env.GOOGLE_MAPS_API_KEY) {
+    console.log('\n  No GOOGLE_MAPS_API_KEY — Google hours, reviews and photos will be skipped.');
+    console.log('  Everything else still runs. Add the key as a repository secret to fill the gaps.');
+  }
+  const summary = { own: 0, parked: 0, dead: 0, unreachable: 0, challenge: 0, platform: 0, notTheirs: 0, none: 0,
+                    google: 0, hours: 0, reviews: 0, photos: 0, failed: 0 };
+  for (const slug of slugs) {
+    try {
+      const r = await research(slug, { apply, fresh, noCrawl });
+      summary[r.siteKind] = (summary[r.siteKind] || 0) + 1;
+      if (r.google?.resolved) summary.google++;
+      if (r.applied?.hours) summary.hours++;
+      if (r.applied?.reviews) summary.reviews++;
+      if (r.applied?.photos) summary.photos += r.applied.photos;
+    } catch (e) {
+      summary.failed++;
+      console.log(`  ✗ ${slug}: ${e.message.split('\n')[0]}`);
+    }
+  }
+  const kinds = ['own', 'parked', 'dead', 'unreachable', 'challenge', 'platform', 'notTheirs', 'none']
+    .filter((k) => summary[k]).map((k) => `${summary[k]} ${k}`).join(' · ');
+  console.log(`\n  ${slugs.length} researched — ${kinds || 'nothing decided'}`);
+  console.log(`  Google resolved ${summary.google} · applied hours to ${summary.hours}, reviews to ${summary.reviews}, ${summary.photos} photos` +
+    (summary.failed ? ` · ${summary.failed} failed` : ''));
+  if (apply) console.log('  next: ./cc build');
+}
+
 function cmdNext(args) {
   const rank = require('./tools/next');
   const list = rank();
@@ -776,6 +818,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'reaudit': await cmdReaudit(args); break;
     case 'next': cmdNext(args); break;
     case 'harvest': await cmdHarvest(args[0]); break;
+    case 'research': await cmdResearch(args); break;
     case 'watch': await cmdWatch(args); break;
     default:
       for (const line of fs.readFileSync(__filename, 'utf8').split('\n').slice(1)) {

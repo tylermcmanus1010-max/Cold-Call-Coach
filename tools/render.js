@@ -186,7 +186,7 @@ function render(b) {
 
   const nav = [
     services.length && ['Services', '#services'],
-    photos.length && ['Work', '#work'],
+    photos.length > 1 && ['Work', '#work'],
     team.length && ['Team', '#team'],
     b.about && ['About', '#about'],
     reviews.length && ['Reviews', '#reviews'],
@@ -305,6 +305,25 @@ ${jsonld(b)}
       linear-gradient(180deg, var(--soft), #fff);
   }
   ${hero ? `.hero::after{content:"";position:absolute;inset:0;z-index:-2;background:url("${esc(hero)}") center/cover;opacity:.14}` : ''}
+
+  /* A real photo of the actual business, not a texture — this is the
+     difference between a page that looks like a template and one that
+     looks like theirs. Stacked by default (photo reads as evidence right
+     under the pitch); side-by-side on wide screens for the voices where a
+     strong image belongs beside the headline, not under it. */
+  .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
+    aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
+  .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  @media (min-width:900px){
+    .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
+    .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+      grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+    .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+      margin-top:0;aspect-ratio:1/1}
+  }
+  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
   .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
@@ -532,6 +551,7 @@ ${jsonld(b)}
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-grid${photos.length ? ' has-photo' : ''}">
     <div class="hero-inner">
     ${b.logo ? `<img class="logo rise" style="--i:0" src="${esc(b.logo)}" alt="${esc(b.name)}" width="${esc(b.logoWidth || 300)}">` : ''}
     ${b.category ? `<div class="eyebrow rise" style="--i:0">${esc(b.category)}${a.city ? ' · ' + esc(a.city) + ', ' + esc(a.state || '') : ''}</div>` : ''}
@@ -542,6 +562,8 @@ ${jsonld(b)}
       ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Get directions</a>` : ''}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
+    </div>
+    ${photos.length ? `<div class="hero-shot rise" style="--i:2"><img src="${esc(typeof photos[0] === 'string' ? photos[0] : photos[0].src)}" alt="${esc(typeof photos[0] === 'object' && photos[0].alt || b.name)}" loading="eager"></div>` : ''}
     </div>
     ${highlights.length ? `<div class="trust rise" style="--i:5">${highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
@@ -594,17 +616,22 @@ ${team.length ? `
   </div>
 </section>` : ''}
 
-${photos.length ? `
+${(() => {
+  // photos[0] already leads the hero — repeating it here would read as
+  // padding, not more evidence. Only worth a section when there's more.
+  const rest = photos.slice(1);
+  return rest.length ? `
 <section id="work">
   <div class="wrap">
     <div class="eyebrow">${esc(b.galleryEyebrow || 'Our work')}</div>
     <h2>${esc(b.galleryHeading || 'Recent work')}</h2>
     ${b.galleryLede ? `<p class="lede">${esc(b.galleryLede)}</p>` : ''}
     <div class="shots">
-      ${photos.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 1))}" loading="lazy"></figure>`).join('')}
+      ${rest.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 2))}" loading="lazy"></figure>`).join('')}
     </div>
   </div>
-</section>` : ''}
+</section>` : '';
+})()}
 
 ${b.about ? `
 <section id="about">

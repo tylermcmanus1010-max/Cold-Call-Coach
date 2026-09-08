@@ -1,0 +1,66 @@
+# Real Chrome, real network — the two things the coding sandbox doesn't
+# reliably have. Loads each business's own site, waits for it to actually
+# finish rendering (catches GoDaddy Website Builder, React, Vue — anything
+# that only shows its real content after the page hydrates), and embeds up
+# to 4 real photos as resized data URIs. Finds nothing on a JS-rendered
+# site it cannot? Leaves the client without a gallery rather than guessing.
+
+name: Harvest photos
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'One client only (blank = every "new" client missing photos)'
+        required: false
+      max:
+        description: 'Max photos per client'
+        required: false
+        default: '4'
+
+permissions:
+  contents: write
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Harvest
+        run: |
+          if [ -n "${{ inputs.slug }}" ]; then
+            node tools/harvest-photos.js "${{ inputs.slug }}" --max="${{ inputs.max || '4' }}"
+          else
+            node tools/harvest-photos.js --all --max="${{ inputs.max || '4' }}"
+          fi
+
+      - name: Rebuild pages with the new photos
+        run: node cc build
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add clients/
+          if git diff --cached --quiet; then
+            echo "no new photos"
+          else
+            git commit -m "Photo harvest $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin main || exit 1
+              sleep $((i * 3))
+            done
+          fi

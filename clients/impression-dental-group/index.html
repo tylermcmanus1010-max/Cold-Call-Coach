@@ -126,6 +126,25 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
+
+  /* A real photo of the actual business, not a texture — this is the
+     difference between a page that looks like a template and one that
+     looks like theirs. Stacked by default (photo reads as evidence right
+     under the pitch); side-by-side on wide screens for the voices where a
+     strong image belongs beside the headline, not under it. */
+  .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
+    aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
+  .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  @media (min-width:900px){
+    .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
+    .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+      grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+    .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+      margin-top:0;aspect-ratio:1/1}
+  }
+  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
   .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
@@ -349,6 +368,7 @@
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-grid">
     <div class="hero-inner">
     
     <div class="eyebrow rise" style="--i:0">Dental practice · San Diego, CA</div>
@@ -357,6 +377,8 @@
     <div class="actions rise" style="--i:3">
       <a class="btn btn-primary" href="tel:8585784677">Call (858) 578-4677</a>
       <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=8270%20Mira%20Mesa%20Boulevard%2C%20San%20Diego%2C%20CA%2C%2092126" target="_blank" rel="noopener">Get directions</a>
+    </div>
+    
     </div>
     
     </div>

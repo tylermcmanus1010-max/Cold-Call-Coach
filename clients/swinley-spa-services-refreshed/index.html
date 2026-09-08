@@ -152,6 +152,25 @@
       linear-gradient(180deg, var(--soft), #fff);
   }
   
+
+  /* A real photo of the actual business, not a texture — this is the
+     difference between a page that looks like a template and one that
+     looks like theirs. Stacked by default (photo reads as evidence right
+     under the pitch); side-by-side on wide screens for the voices where a
+     strong image belongs beside the headline, not under it. */
+  .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
+    aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
+  .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  @media (min-width:900px){
+    .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
+    .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+      grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+    .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+      margin-top:0;aspect-ratio:1/1}
+  }
+  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
   .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
@@ -375,6 +394,7 @@
 
 <div class="hero">
   <div class="wrap">
+    <div class="hero-grid">
     <div class="hero-inner">
     <img class="logo rise" style="--i:0" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20440%20214%22%20role%3D%22img%22%20aria-label%3D%22Swinley%20Spa%20Services%20%E2%80%94%20Relax.%20Soak.%20Repeat.%22%3E%20%3Ctitle%3ESwinley%20Spa%20Services%3C%2Ftitle%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22swLockDrop%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2384AED4%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233B5576%22%2F%3E%20%3C%2FlinearGradient%3E%20%3Cg%20id%3D%22swLockWrench%22%20fill-rule%3D%22evenodd%22%3E%20%3Cpath%20d%3D%22M45%2033%20H55%20A3%203%200%200%201%2058%2036%20V45%20A3%203%200%200%201%2055%2048%20H45%20A3%203%200%200%201%2042%2045%20V36%20A3%203%200%200%201%2045%2033%20Z%20M46.8%2033%20V39%20A3.2%203.2%200%200%200%2053.2%2039%20V33%20Z%22%2F%3E%20%3Crect%20x%3D%2246%22%20y%3D%2246%22%20width%3D%228%22%20height%3D%2232%22%20rx%3D%224%22%2F%3E%20%3Cpath%20d%3D%22M50%2075%20L57.4%2079.25%20L57.4%2087.75%20L50%2092%20L42.6%2087.75%20L42.6%2079.25%20Z%20M50%2080.5%20L52.6%2082%20L52.6%2085%20L50%2086.5%20L47.4%2085%20L47.4%2082%20Z%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fdefs%3E%20%3Cg%20transform%3D%22translate(155%200)%20scale(1.3)%22%3E%20%3Cpath%20d%3D%22M50%202%20C%2050%202%2037%2021%2037%2028%20a%2013%2013%200%200%200%2026%200%20C%2063%2021%2050%202%2050%202%20Z%22%20fill%3D%22url(%23swLockDrop)%22%2F%3E%20%3Cg%20fill%3D%22%238DB0D0%22%3E%20%3Cuse%20href%3D%22%23swLockWrench%22%20transform%3D%22rotate(-36%2050%2062)%22%2F%3E%20%3Cuse%20href%3D%22%23swLockWrench%22%20transform%3D%22rotate(36%2050%2062)%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fg%3E%20%3C!--%20Small%20caps%20drawn%20as%20sized%20tspans%20rather%20than%20font-variant%2C%20which%20not%20every%20renderer%20honours.%20Set%20straight%3A%20type%20on%20an%20arc%20is%20the%20one%20thing%20that%20most%20makes%20a%20logo%20look%20homemade.%20--%3E%20%3Ctext%20x%3D%22220%22%20y%3D%22162%22%20text-anchor%3D%22middle%22%20fill%3D%22%2341597E%22%20font-family%3D%22Palatino%2C%20&#39;Palatino%20Linotype&#39;%2C%20&#39;Iowan%20Old%20Style&#39;%2C%20Georgia%2C%20serif%22%20font-size%3D%2242%22%20letter-spacing%3D%221.5%22%20%3E%3Ctspan%3ES%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2230%22%3EWINLEY%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2242%22%3E%20S%3C%2Ftspan%20%3E%3Ctspan%20font-size%3D%2230%22%3EPA%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2242%22%3E%20S%3C%2Ftspan%3E%3Ctspan%20font-size%3D%2230%22%3EERVICES%3C%2Ftspan%3E%3C%2Ftext%3E%20%3Ctext%20x%3D%22217%22%20y%3D%22196%22%20text-anchor%3D%22middle%22%20fill%3D%22%237C93AE%22%20font-family%3D%22Palatino%2C%20&#39;Palatino%20Linotype&#39;%2C%20Georgia%2C%20serif%22%20font-size%3D%2215%22%20letter-spacing%3D%225.5%22%3ERELAX.%20SOAK.%20REPEAT.%3C%2Ftext%3E%20%3C%2Fsvg%3E%20" alt="Swinley Spa Services" width="286">
     <div class="eyebrow rise" style="--i:0">Hot tub and pool service · Omaha, NE</div>
@@ -385,6 +405,8 @@
       
     </div>
     <div class="hero-note rise" style="--i:4">Licensed and insured · Free water test on the first visit</div>
+    </div>
+    
     </div>
     <div class="trust rise" style="--i:5"><div><b>Weekly</b><span>Same tech, same day</span></div><div><b>Included</b><span>All chemicals</span></div><div><b>48 hr</b><span>Callback on repairs</span></div><div><b>No</b><span>Long-term contract</span></div></div>
   </div>

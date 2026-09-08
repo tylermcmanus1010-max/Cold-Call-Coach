@@ -20,7 +20,7 @@
   "tagline": "bakery in Poway.",
   "heroNote": "",
   "phone": "+1-858-668-7234",
-  "email": "",
+  "email": "cupcakesalayola@gmail.com",
   "address": {
     "street": "13339 Poway Road",
     "city": "Poway",
@@ -125,5 +125,6 @@
     "pageKb": 235,
     "builder": null,
     "copyrightYear": 2026
-  }
+  },
+  "liveUrl": "https://cold-call-coachv3.buildscope-ai.workers.dev/cupcakes-a-la-yola/"
 }

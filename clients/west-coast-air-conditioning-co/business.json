@@ -5,7 +5,7 @@
   "category": "hvac",
   "owner": "",
   "currentSite": "https://www.wcac.com/",
-  "liveUrl": "https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/west-coast-air-conditioning-co/index.html",
+  "liveUrl": "https://cold-call-coachv3.buildscope-ai.workers.dev/west-coast-air-conditioning-co/",
   "status": "new",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
@@ -21,7 +21,7 @@
   "tagline": "hvac in El Cajon.",
   "heroNote": "",
   "phone": "+1-619-561-8000",
-  "email": "",
+  "email": "hvacemployment@wcac.com",
   "address": {
     "street": "1155 Pioneer Way",
     "city": "El Cajon",

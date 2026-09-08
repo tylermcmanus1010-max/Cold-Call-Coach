@@ -284,4 +284,28 @@ function namesBusiness(name, pageText) {
   return hits / words.length >= 0.6;
 }
 
-module.exports = { auditRendered, chromium, EXEC, namesBusiness };
+// A real look, not a DOM heuristic. checks.mobile/speed/etc. only ever prove
+// what they were built to test for; a business owner (or Tyler, or a model
+// with eyes) judging "does this look like 2011" needs to actually see it.
+// Reuses the same phone viewport and UA as the audit, so what gets saved is
+// what a visitor on their phone would actually see — not a desktop crop.
+async function screenshot(rawUrl, outPath, { browser, timeout = 20000 } = {}) {
+  const bare = String(rawUrl).replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+  const own = !browser;
+  const b = browser || await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
+  const ctx = await b.newContext({ ...PHONE, userAgent: UA });
+  const page = await ctx.newPage();
+  try {
+    try { await page.goto('https://' + bare, { waitUntil: 'domcontentloaded', timeout }); }
+    catch { await page.goto('http://' + bare, { waitUntil: 'domcontentloaded', timeout }); }
+    await page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: outPath, fullPage: false });   // one phone screen, not the whole scroll — that's what "first impression" means
+    return outPath;
+  } finally {
+    await ctx.close();
+    if (own) await b.close();
+  }
+}
+
+module.exports = { auditRendered, chromium, EXEC, namesBusiness, screenshot };

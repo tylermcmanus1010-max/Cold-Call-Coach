@@ -21,6 +21,22 @@ const ROOT = path.join(__dirname, '..');
 const CLIENTS = path.join(ROOT, 'clients');
 const pricing = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/pricing.json'), 'utf8'));
 
+// Link, not attachment (2026-09-08 decision): a real inline attachment has
+// to pass through as literal base64 text, which measured at 100K+ tokens per
+// email — not sustainable at any real daily volume, and a single mistyped
+// character corrupts the file. A link costs nothing and can't be corrupted
+// in transit. jsdelivr's raw-file CDN (fronted by githack, no setup, no
+// auth) serves this repo's own committed HTML with the right content-type,
+// so the built page opens and renders exactly like an attachment would.
+// This repo is PUBLIC, so the same link pattern would let anyone enumerate
+// every other prospect's pitch page, plus config/pricing.json and
+// config/suppression.json — flagged to the user, not yet resolved.
+const REPO_OWNER = 'tylermcmanus1010-max';
+const REPO_NAME = 'Cold-Call-Coach';
+const REPO_BRANCH = 'claude/zen-johnson-yw623l';
+const liveUrlFor = (slug) =>
+  `https://rawcdn.githack.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/clients/${slug}/index.html`;
+
 const loadClient = (slug) => JSON.parse(fs.readFileSync(path.join(CLIENTS, slug, 'business.json'), 'utf8'));
 const saveClient = (slug, b) => fs.writeFileSync(path.join(CLIENTS, slug, 'business.json'), JSON.stringify(b, null, 2) + '\n');
 
@@ -58,6 +74,16 @@ async function prepare({ need = 10, log = console.log } = {}) {
       continue;
     }
 
+    // A hand-written pitchEmail means Tyler already wrote this one himself —
+    // pitch.js's own comment calls it out: "a referral, someone who already
+    // asked... templating around every case is worse than writing it." That
+    // copy can reference things (a name, a prior call, an attachment) that
+    // don't hold for a blind autonomous send. This lead stays Tyler's to send.
+    if (b.pitchEmail) {
+      skipped.push({ slug, why: 'has hand-written pitchEmail — warm lead, needs a human, not the autonomous queue' });
+      continue;
+    }
+
     // A raw-HTML scan cannot see JavaScript-rendered hours, phone links or
     // layout — pitch.js itself refuses to let those findings become claims in
     // front of an owner (see its "unverified" check). Same rule here: never
@@ -89,8 +115,9 @@ async function prepare({ need = 10, log = console.log } = {}) {
       const where = b.address?.city || 'San Diego';
       const what = (b.category || '').trim();
       b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
-      saveClient(slug, b);
     }
+    b.liveUrl = liveUrlFor(slug);   // pitch.js adds "you can also see it here: {liveUrl}" once this is set
+    saveClient(slug, b);
 
     const html = render(b);
     fs.writeFileSync(path.join(CLIENTS, slug, 'index.html'), html);
@@ -99,10 +126,9 @@ async function prepare({ need = 10, log = console.log } = {}) {
     fs.writeFileSync(path.join(CLIENTS, slug, 'email.txt'), `Subject: ${p.subject}\n\n${p.body}\n`);
 
     ready.push({
-      slug, to: b.email, name: b.name, subject: p.subject, body: p.body,
-      attachment: path.join(CLIENTS, slug, 'index.html'),
+      slug, to: b.email, name: b.name, subject: p.subject, body: p.body, link: b.liveUrl,
     });
-    log(`  + ${slug} -> ${b.email}`);
+    log(`  + ${slug} -> ${b.email}  (${b.liveUrl})`);
   }
 
   return { ready, skipped };

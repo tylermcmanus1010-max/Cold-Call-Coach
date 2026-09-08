@@ -41,7 +41,7 @@ I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego business
 
 I went looking for your website and deluxeflorist.com/san-diego-florist-flower-delivery is showing a hosting placeholder page — the kind that says there is no site at this address. Anyone who looks you up and lands there assumes you closed.
 
-So I built you one. It's attached — open it on your phone.
+So I built you one. Take a look: https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/house-of-stemms/index.html
 
 What's on it:
 - Rebuilt mobile-first; tested down to a 320px screen

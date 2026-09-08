@@ -19,6 +19,19 @@ function addressLine(a) {
   return [a.street, [a.city, a.state].filter(Boolean).join(', '), a.zip].filter(Boolean).join(' · ');
 }
 
+// business.template.json ships a *plausible-looking* default (Mon-Fri
+// 8-5, Sat 9-2, Sun closed) for a human to overwrite or delete — not blank,
+// so the length/blank checks elsewhere in this file don't catch it. Caught
+// for real: every autonomously-built page today showed this exact same
+// invented schedule as if it were verified, for a bakery, a salon and an
+// insurance agency alike. Only real hours — anything that doesn't match
+// this signature — should ever render or reach the schema markup.
+const PLACEHOLDER_HOURS_SIG = 'Mo-Fr 08:00-17:00|Sa 09:00-14:00';
+function realHours(hours) {
+  const sig = (hours || []).map((h) => h.schema || '').filter(Boolean).join('|');
+  return sig && sig === PLACEHOLDER_HOURS_SIG ? [] : (hours || []);
+}
+
 function jsonld(b) {
   const a = b.address || {};
   const data = {
@@ -34,7 +47,7 @@ function jsonld(b) {
       addressRegion: a.state, postalCode: a.zip, addressCountry: 'US',
     } : undefined,
     areaServed: (b.serviceArea || []).map((n) => ({ '@type': 'Place', name: n })),
-    openingHours: (b.hours || []).map((h) => h.schema).filter(Boolean),
+    openingHours: realHours(b.hours).map((h) => h.schema).filter(Boolean),
     priceRange: b.priceRange || undefined,
     aggregateRating: b.rating ? {
       '@type': 'AggregateRating',
@@ -132,6 +145,23 @@ function render(b) {
   // the same green.
   const accent = b.theme?.accent || v.accent;
 
+  // A template placeholder — every field blank, left over from
+  // business.template.json — is not content. It used to sail straight
+  // through the old `b.services?.length` checks (the array has length 1,
+  // it's just full of empty strings) and render as a blank, broken-looking
+  // stub section. Caught for real: an autonomously-built page with an
+  // empty "Services" row nobody could tap, an empty team card with no
+  // name. Real emptiness — the array deleted, per this repo's own
+  // convention — is the only thing that should hide a section now.
+  const real = (arr, keys) => (arr || []).filter((o) =>
+    keys.some((k) => String((o || {})[k] || '').trim()));
+  const services = real(b.services, ['name']);
+  const team = real(b.team, ['name']);
+  const reviews = real(b.reviews, ['text']);
+  const highlights = real(b.highlights, ['value', 'label']);
+  const photos = (b.photos || []).filter((p) => (typeof p === 'string' ? p : p?.src));
+  const hours = realHours(b.hours);
+
   // A menu earns its layout only when there is something to choose between.
   const cents = (p) => {
     const m = String(p || '').match(/(\d+(?:\.\d{1,2})?)/);
@@ -144,7 +174,7 @@ function render(b) {
   };
   const groups = (() => {
     const out = new Map();
-    for (const s of b.services || []) {
+    for (const s of services) {
       const k = s.group || '';
       if (!out.has(k)) out.set(k, []);
       out.get(k).push(s);
@@ -155,11 +185,11 @@ function render(b) {
   const hero = b.theme?.heroImage;
 
   const nav = [
-    b.services?.length && ['Services', '#services'],
-    b.photos?.length && ['Work', '#work'],
-    b.team?.length && ['Team', '#team'],
+    services.length && ['Services', '#services'],
+    photos.length && ['Work', '#work'],
+    team.length && ['Team', '#team'],
     b.about && ['About', '#about'],
-    b.reviews?.length && ['Reviews', '#reviews'],
+    reviews.length && ['Reviews', '#reviews'],
     ['Contact', '#contact'],
   ].filter(Boolean);
 
@@ -513,12 +543,12 @@ ${jsonld(b)}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
     </div>
-    ${b.highlights?.length ? `<div class="trust rise" style="--i:5">${b.highlights.map((h) =>
+    ${highlights.length ? `<div class="trust rise" style="--i:5">${highlights.map((h) =>
       `<div><b>${esc(h.value)}</b><span>${esc(h.label)}</span></div>`).join('')}</div>` : ''}
   </div>
 </div>
 
-${b.services?.length ? `
+${services.length ? `
 <section id="services">
   <div class="wrap">
     <div class="eyebrow">Services</div>
@@ -548,14 +578,14 @@ ${b.services?.length ? `
   </div>
 </section>` : ''}
 
-${b.team?.length ? `
+${team.length ? `
 <section id="team">
   <div class="wrap">
     <div class="eyebrow">Our team</div>
     <h2>${esc(b.teamHeading || 'Who you will see')}</h2>
     ${b.teamLede ? `<p class="lede">${esc(b.teamLede)}</p>` : ''}
-    <div class="team${b.team.length === 1 ? ' solo' : ''}">
-      ${b.team.map((m) => `<div class="member">
+    <div class="team${team.length === 1 ? ' solo' : ''}">
+      ${team.map((m) => `<div class="member">
         <div class="av">${esc((m.name || '?').trim()[0].toUpperCase())}</div>
         <b>${esc(m.name)}</b>
         ${m.role ? `<span>${esc(m.role)}</span>` : ''}
@@ -564,14 +594,14 @@ ${b.team?.length ? `
   </div>
 </section>` : ''}
 
-${b.photos?.length ? `
+${photos.length ? `
 <section id="work">
   <div class="wrap">
     <div class="eyebrow">${esc(b.galleryEyebrow || 'Our work')}</div>
     <h2>${esc(b.galleryHeading || 'Recent work')}</h2>
     ${b.galleryLede ? `<p class="lede">${esc(b.galleryLede)}</p>` : ''}
     <div class="shots">
-      ${b.photos.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 1))}" loading="lazy"></figure>`).join('')}
+      ${photos.map((p, i) => `<figure><img src="${esc(p.src || p)}" alt="${esc(p.alt || b.name + ' — photo ' + (i + 1))}" loading="lazy"></figure>`).join('')}
     </div>
   </div>
 </section>` : ''}
@@ -586,7 +616,7 @@ ${b.about ? `
       ${b.points?.length ? `<ul class="ticks">${b.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : ''}
     </div>
     <div class="panel">
-      ${b.hours?.length ? `<h3>Hours</h3><div class="rows">${b.hours.map((h) =>
+      ${hours.length ? `<h3>Hours</h3><div class="rows">${hours.map((h) =>
         `<div class="row"><span>${esc(h.days)}</span><span>${esc(h.time)}</span></div>`).join('')}</div>` : ''}
       ${b.serviceArea?.length ? `<h3 style="margin-top:22px">Service area</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(b.serviceArea.join(' · '))}</p>` : ''}
       ${a.street ? `<h3 style="margin-top:22px">Find us</h3>
@@ -596,14 +626,14 @@ ${b.about ? `
   </div>
 </section>` : ''}
 
-${b.reviews?.length ? `
+${reviews.length ? `
 <section id="reviews">
   <div class="wrap">
     <div class="eyebrow">Reviews</div>
     <h2>${esc(b.reviewsHeading || 'What customers say')}</h2>
     ${b.rating ? `<p class="lede">${stars(b.rating.value)} ${esc(b.rating.value)} from ${esc(b.rating.count)} reviews${b.rating.source ? ' on ' + esc(b.rating.source) : ''}.</p>` : ''}
     <div class="grid">
-      ${b.reviews.map((r) => `<blockquote class="quote">
+      ${reviews.map((r) => `<blockquote class="quote">
         ${r.stars ? stars(r.stars) : stars(5)}
         <p>“${esc(r.text)}”</p>
         <footer>— ${esc(r.author)}${r.source ? ', ' + esc(r.source) : ''}</footer>
@@ -636,7 +666,7 @@ ${b.reviews?.length ? `
   </div>
 </footer>
 
-${b.services?.length ? `<div class="basket" id="basket" hidden>
+${services.length ? `<div class="basket" id="basket" hidden>
   <div class="sum"><b id="bkTotal"></b><span id="bkMeta"></span></div>
   <button type="button" class="clear" id="bkClear">Clear</button>
   <a class="btn" id="bkGo" href="#">Request</a>
@@ -687,7 +717,7 @@ ${b.phone ? `<div class="callbar">
     var BIZ = ${JSON.stringify(b.name || '')};
     // A quote trade is not a booking trade. Nobody books a re-roof; they ask
     // someone to come and look at it.
-    var QUOTES = ${JSON.stringify(!(b.services || []).some((s) => s.price))};
+    var QUOTES = ${JSON.stringify(!services.some((s) => s.price))};
     // Some trades travel to the customer; for everyone else the customer
     // travels to them. "When could you come out?" to a dentist is nonsense.
     var VISITS = ${JSON.stringify(/plumb|roof|electric|hvac|contractor|construct|carpenter|painter|glaz|floor|tiler|locksmith|garden|landscap|pool|spa service|hot tub|clean|pest|gutter|window|upholster|mov|haul/i.test(b.category || ''))};

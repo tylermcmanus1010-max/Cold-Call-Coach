@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="v-care">
+<html lang="en" class="v-care f-plain ph-full">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,8 +9,8 @@
 <meta property="og:title" content="Estrella Dental Implant &amp; Cosmetic Center">
 <meta property="og:description" content="Get a new domain name for your startup. Quick and professional service. Seamless domain transfers.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0f6b5c">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230f6b5c%22%2F%3E%3Ctext%20x%3D%2216%22%20y%3D%2222%22%20font-size%3D%2217%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3EE%3C%2Ftext%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#0e6a72">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230e6a72%22%2F%3E%3Ctext%20x%3D%2216%22%20y%3D%2222%22%20font-size%3D%2217%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3EE%3C%2Ftext%3E%3C%2Fsvg%3E">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -39,42 +39,52 @@
 <script>document.documentElement.className+=' js';</script>
 <style>
   :root{
-    --accent:#0f6b5c;
+    --accent:#0e6a72;
     --accent-ink:#fff;
     --ink:#12181c;
-    --muted:#5b6770;
-    --line:#e3e8ea;
+    --muted:color-mix(in srgb, #12181c 58%, #fff);
+    --line:#e2ebeb;
     --bg:#fff;
-    --soft:#f6f8f8;
-    --radius:16px;
+    --card:#fff;
+    --soft:#f2f7f7;
+    --radius:18px;
     --wrap:1080px;
     --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --display-weight:600;
-    --tracking:-.015em;
+    --tracking:-.018em;
     --label-case:uppercase;
-    --label-track:.14em;
-    --hero-size:clamp(33px,5.6vw,54px);
+    --label-track:.15em;
+    --hero-size:clamp(32px,5.4vw,52px);
+    --hero-case:none;
     --rule:1px;
+    --air:1.22;
+    --btn-radius:999px;
     --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font:16px/1.62 var(--body);
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
   a{color:inherit}
-  h1,h2,h3{line-height:1.14;margin:0;font-family:var(--display);
+  h1,h2,h3{line-height:1.13;margin:0;font-family:var(--display);
     font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
-  h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
+  h2{font-size:clamp(25px,3.6vw,36px);margin-bottom:10px}
   p{margin:0 0 14px}
   /* the header is sticky, so an anchored jump must leave room for it or the
      first line of the section lands underneath. */
-  section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:72px}
+  section{padding:calc(64px * var(--air)) 0;border-top:1px solid var(--line);scroll-margin-top:72px}
+  /* Section headers carry the page's rhythm. A hairline the width of the
+     column above the label does more for hierarchy than another box. */
   .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
-    text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
+    text-transform:var(--label-case);color:var(--accent);margin-bottom:14px;
+    display:flex;align-items:baseline;gap:12px}
+  .eyebrow .num{font-family:var(--display);font-size:12.5px;font-weight:var(--display-weight);
+    font-variant-numeric:tabular-nums;letter-spacing:0;color:var(--ink);opacity:.34}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
 
   /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
@@ -83,11 +93,12 @@
     margin:0 0 24px;mix-blend-mode:multiply}
   /* multiply needs something light behind it; on a full-bleed accent hero the
      logo keeps its own white card instead. */
-  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-trade .hero .logo,.v-barber .hero .logo,.v-fitness .hero .logo{
+    mix-blend-mode:normal;background:#fff;border-radius:6px;padding:10px}
   .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
 
   /* header */
-  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
   .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
     font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px;
@@ -96,22 +107,30 @@
   .brand .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   @media (max-width:520px){ .brand{font-size:16px} }
   @media (max-width:400px){ .brand{font-size:15px} }
-  .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+  .mark{width:30px;height:30px;border-radius:clamp(0px,var(--radius),9px);background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
   /* a stacked logo is unreadable in a 66px bar, so the header takes a compact
      mark and sets the name in type beside it. */
   .mark-img{width:30px;height:30px;object-fit:contain;flex:none;display:block}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
   nav a:hover{color:var(--ink)}
+  /* Pill buttons on every page is one of the tells that a page came off a
+     template. The shape follows the voice: a pill for the soft trades, a
+     square edge for the ones whose whole pitch is that they are not soft. */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    padding:12px 20px;border-radius:999px;font-weight:650;font-size:15px;
+    padding:13px 22px;border-radius:var(--btn-radius);font-weight:650;font-size:15px;
     text-decoration:none;border:1px solid transparent;white-space:nowrap;
   }
+  .v-barber .btn,.v-fitness .btn{text-transform:uppercase;letter-spacing:.09em;
+    font-size:13px;font-weight:800;padding:14px 22px}
+  .v-beauty .btn{letter-spacing:.14em;text-transform:uppercase;font-size:12px;
+    font-family:var(--display);font-weight:600;padding:15px 26px}
   .btn-primary{background:var(--accent);color:var(--accent-ink)}
   .btn-primary:hover{filter:brightness(.92)}
-  .btn-ghost{border-color:var(--line);background:#fff;color:var(--ink)}
-  .btn-ghost:hover{border-color:var(--muted)}
+  .btn-ghost{border-color:var(--line);background:var(--card);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .v-barber .btn-ghost,.v-professional .btn-ghost,.v-beauty .btn-ghost{border-color:var(--ink);background:transparent}
 
   /* hero */
   .hero{padding:74px 0 66px;position:relative;overflow:hidden}
@@ -120,7 +139,7 @@
     background:
       
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
-      linear-gradient(180deg, var(--soft), #fff);
+      linear-gradient(180deg, var(--soft), var(--bg));
   }
   
 
@@ -132,6 +151,10 @@
   .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
     aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
   .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  /* A banner shown at its own proportions, whole. --ar carries the real
+     ratio measured out of the file at render time. */
+  .hero-shot.wide{aspect-ratio:var(--ar);background:var(--soft)}
+  .hero-shot.wide img{object-fit:contain}
   /* On a phone — where this actually gets read — a photo boxed inside the
      page margins reads as a thumbnail. Bleeding it to the screen edges,
      taller, is what makes it feel like the front of the business rather
@@ -139,17 +162,24 @@
   @media (max-width:760px){
     .hero-shot{margin:28px -22px 0;border-radius:0;border-left:0;border-right:0;
       aspect-ratio:1/1}
+    /* A photo bled to the screen edges with nothing after it left a bar of
+       hero colour hanging below it — most obvious on the dark heroes, where
+       it read as an empty black band. If the photo is the last thing in the
+       hero, it ends the hero. */
+    .hero:has(.hero-grid.has-photo:last-child){padding-bottom:0}
   }
   @media (min-width:900px){
     .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
     .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
-    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo,
+    .v-barber .hero-grid.has-photo{
       grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
     .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
-    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot,
+    .v-barber .hero-grid.has-photo .hero-shot{
       margin-top:0;aspect-ratio:1/1}
   }
-  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
+  .v-trade .hero-shot,.v-barber .hero-shot,.v-fitness .hero-shot{border-color:rgba(255,255,255,.28)}
 
   /* A second photo, cropped round, doing one job: proof this page was
      built from their real place, sitting right where the ask is made. */
@@ -157,49 +187,111 @@
     margin:0 auto 20px;border:3px solid var(--bg);
     box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(16,32,40,.35)}
   .cta-shot img{width:100%;height:100%;object-fit:cover;display:block}
-  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance;text-transform:var(--hero-case)}
+  .hero h1.long{font-size:clamp(26px,4.6vw,40px);max-width:24ch;line-height:1.18}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
      breaks the width itself would not. Let the phone use what it has. */
-  .hero .lede{margin:18px 0 28px;font-size:19px}
+  .hero .lede{margin:18px 0 28px;font-size:19px;max-width:56ch}
+  /* A scraped description standing in for a strapline is a paragraph, and it
+     needs a paragraph's size to be read rather than skimmed past. */
+  .hero .lede.long{font-size:16.5px;line-height:1.62}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
     padding-top:16px;border-top:var(--rule) solid color-mix(in srgb, var(--accent) 35%, transparent);
     display:inline-block}
 
-  /* trust strip */
-  /* Cell borders rather than a gap over a coloured container: an odd number of
-     highlights used to leave the container colour showing as an empty grey box. */
-  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px;background:#fff}
-  .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .trust b{display:block;font-size:26px;letter-spacing:-.02em}
+  /* ── the trust facts, three ways ─────────────────────────────────────────
+     Same real data (business.json highlights, nothing invented), presented to
+     suit the trade. A grid of cells for the shops; a quiet ruled row where
+     calm is the product; and a running band for the loud ones. */
+
+  /* GRID — cell borders rather than a gap over a coloured container: an odd
+     number of highlights used to leave the container colour showing as an
+     empty grey box. */
+  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:44px}
+  .trust.grid{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .trust.grid div{background:var(--card);padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .trust b{display:block;font-size:26px;letter-spacing:-.02em;font-family:var(--display);
+    font-weight:var(--display-weight)}
   .trust span{font-size:13px;color:var(--muted)}
+  /* QUIET — no boxes at all. One hairline above, then air. */
+  .trust.quiet{border-top:1px solid var(--line);margin-top:48px;
+    grid-template-columns:repeat(auto-fit,minmax(136px,1fr))}
+  .trust.quiet div{padding:24px 20px 4px 0}
+  .trust.quiet b{font-size:29px;margin-bottom:4px}
+
+  /* BAND — a continuous run of the same facts, edge to edge. The duplicate
+     run is aria-hidden and exists only so the loop has no seam; the first run
+     alone is complete, so with the animation off (reduced motion, old
+     browsers, print) nothing is missing, it simply stops moving. */
+  .band{overflow:hidden;background:var(--ink);color:var(--bg);
+    border-top:var(--rule) solid var(--accent)}
+  .band-track{display:flex;width:max-content}
+  .band-run{display:flex;flex:none}
+  .sig{display:flex;align-items:baseline;gap:9px;padding:15px 24px;white-space:nowrap;
+    border-right:1px solid color-mix(in srgb, var(--bg) 18%, transparent)}
+  .sig b{font-family:var(--display);font-weight:var(--display-weight);font-size:17px;
+    letter-spacing:-.02em}
+  .sig i{font-style:normal;font-size:11.5px;text-transform:uppercase;
+    letter-spacing:.15em;opacity:.62}
 
   /* menu — grouped, priced, and selectable, the way a booking platform does it */
   .menu{margin-top:26px;display:flex;flex-direction:column;gap:26px}
   .mgroup h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
     color:var(--accent);margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
-  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  /* This list used to be called .rows — the same class the hours table in the
+     About panel uses. The panel's display:flex + gap:9px therefore also
+     applied here, prising every service row apart by 9px on top of its own
+     bottom border, which is why the menu read as a stack of floating slabs
+     instead of one list. Its own name now. */
+  .svc-rows{background:var(--card)}
+  .f-boxed .svc-rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .f-ruled .svc-rows{border-top:var(--rule) solid var(--ink);background:transparent}
+  .f-plain .svc-rows{background:transparent}
   /* a button carries a chunky default border on every side — left unreset it
      turns a clean list into a stack of boxes. */
-  .row-svc{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
+  .row-svc{position:relative;display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
     border:0;border-bottom:1px solid var(--line);border-radius:0;
-    width:100%;text-align:left;background:#fff;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+    width:100%;text-align:left;background:transparent;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .f-boxed .row-svc{background:var(--card)}
+  .f-ruled .row-svc,.f-plain .row-svc{padding:17px 4px 17px 0}
+  .f-plain .row-svc{padding-top:19px;padding-bottom:19px}
   .row-svc:last-child{border-bottom:0}
+  .f-ruled .row-svc:last-child,.f-plain .row-svc:last-child{border-bottom:1px solid var(--line)}
   .js .row-svc{cursor:pointer}
-  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 4%, #fff)}
-  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;border-radius:6px;
+  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 5%, transparent)}
+  /* the one deliberate micro-interaction on the list: an accent rule that
+     grows out of the left edge under the pointer. It is a transform on a
+     pseudo-element, so it costs nothing and disappears entirely under
+     reduced motion. */
+  .row-svc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:var(--accent);transform:scaleY(0);transform-origin:50% 100%}
+  .js .row-svc:hover::before,.js .row-svc:focus-visible::before,.row-svc.on::before{transform:scaleY(1)}
+  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;
+    border-radius:clamp(0px,var(--radius),7px);
     border:1.5px solid var(--line);display:grid;place-items:center;
-    font-size:11px;color:#fff;background:#fff}
+    font-size:11px;color:#fff;background:var(--card)}
   html:not(.js) .row-svc .tick{display:none}
-  .row-svc.on{background:color-mix(in srgb, var(--accent) 7%, #fff)}
+  .row-svc.on{background:color-mix(in srgb, var(--accent) 8%, transparent)}
   .row-svc.on .tick{background:var(--accent);border-color:var(--accent)}
   .row-svc.on .tick::after{content:"\2713"}
   /* these are spans, because a <button> may only hold phrasing content —
      so each one has to be told to take its own line. */
   .svc-main{flex:1;min-width:0;display:block}
   .svc-name{display:block;font-size:15.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .v-barber .svc-name,.v-fitness .svc-name{font-family:var(--display);font-weight:800;
+    text-transform:uppercase;letter-spacing:-.01em;font-size:15px}
+  .v-beauty .svc-name,.v-care .svc-name,.v-professional .svc-name{
+    font-family:var(--display);font-weight:var(--display-weight);font-size:17.5px;letter-spacing:0}
+  /* FOOD — a counter list is a menu, and a menu runs the name to the price on
+     a leader. Only where there is a price to run to; a leader ending in
+     nothing would just be a dotted line to nowhere. */
+  .v-food .row-svc:has(.svc-price) .svc-name::after{
+    content:"";display:inline-block;width:100%;margin:0 0 0 8px;vertical-align:.24em;
+    border-bottom:1.5px dotted color-mix(in srgb, var(--ink) 28%, transparent)}
+  .v-food .row-svc:has(.svc-price) .svc-name{display:flex;align-items:baseline;white-space:nowrap;overflow:hidden}
+  .v-food .svc-price{font-family:var(--display);font-weight:var(--display-weight)}
   .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
   .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
   .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
@@ -219,27 +311,33 @@
 
   /* team */
   .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
-  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:var(--card)}
+  .f-plain .member,.f-ruled .member{border:0;border-top:1px solid var(--line);border-radius:0;
+    padding:20px 0 0;text-align:left;background:transparent}
+  .f-plain .member .av,.f-ruled .member .av{margin:0 0 12px}
   /* a one-person business is a selling point, but a lone card floating in a
      full-width box reads as an unfinished page. Lay it on its side instead. */
   .team.solo{grid-template-columns:1fr}
   .team.solo .member{display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px}
   .team.solo .member .av{margin:0}
   .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
-    background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
-  .member b{display:block;letter-spacing:-.01em}
+    background:color-mix(in srgb, var(--accent) 12%, var(--card));color:var(--accent);
+    font-family:var(--display);font-weight:700;font-size:19px}
+  .member b{display:block;letter-spacing:-.01em;font-family:var(--display);font-weight:var(--display-weight);font-size:17px}
   .member span{font-size:12.5px;color:var(--muted)}
 
   /* services */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:30px}
-  .card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:#fff}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--card)}
   .card h3{font-size:18px;margin-bottom:6px}
   .card p{color:var(--muted);font-size:15px;margin:0}
-  .price{display:inline-block;margin-top:14px;font-weight:700;font-size:14px;color:var(--accent);background:color-mix(in srgb, var(--accent) 10%, #fff);padding:5px 11px;border-radius:999px}
+  .price{display:inline-block;margin-top:14px;font-weight:700;font-size:14px;color:var(--accent);background:color-mix(in srgb, var(--accent) 10%, var(--card));padding:5px 11px;border-radius:999px}
 
   /* about */
   .split{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
   .panel{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .f-plain .panel,.f-ruled .panel{background:transparent;border:0;
+    border-top:var(--rule) solid var(--ink);border-radius:0;padding:22px 0 0}
   .panel h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px}
   .rows{display:flex;flex-direction:column;gap:9px;font-size:15px}
   .row{display:flex;justify-content:space-between;gap:16px}
@@ -256,29 +354,56 @@
     border:1px solid var(--line);aspect-ratio:1/1}
   .shots img{width:100%;height:100%;object-fit:cover;display:block}
   .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  /* Tonally consistent photography, one image left in full colour — the
+     trades whose work photographs as texture and metal, not as produce.
+     A bakery's pastries and a florist's stems are the product; they stay in
+     colour. The lead shot keeps its colour everywhere, because on a phone
+     there is no hover to reveal it with. */
+  .ph-bw .shots img,.ph-bw .hero-shot img{filter:grayscale(1) contrast(1.06)}
+  .ph-soft .shots img{filter:saturate(.78)}
+  .ph-bw .shots figure:first-child img,.ph-bw .hero-shot img:hover,
+  .ph-bw .shots figure:hover img,.ph-soft .shots figure:hover img{filter:none}
   /* A grid this small on a phone is four postage stamps. A horizontal,
      snap-scrolling row of real-sized photos reads like an actual gallery
      someone can swipe through, not a cropped thumbnail strip. */
+  /* A wide picture spans; it is not going to survive a square crop. */
+  .shots figure.wide{aspect-ratio:var(--ar);grid-column:1/-1;grid-row:auto}
+  .shots figure.wide img{object-fit:contain}
+  /* When every picture is a banner, a snap-scrolling row of them is the wrong
+     shape entirely — they stack, full width, at their own proportions. */
+  .shots.allwide{display:grid;grid-template-columns:1fr}
   @media (max-width:640px){
     .shots{display:flex;gap:12px;margin:28px -22px 0;padding:0 22px 4px;
       overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
     .shots::-webkit-scrollbar{display:none}
     .shots figure{flex:0 0 80%;aspect-ratio:4/5;scroll-snap-align:start;
       grid-column:unset;grid-row:unset}
+    .shots.allwide{display:grid;grid-template-columns:1fr;gap:14px;
+      margin:28px 0 0;padding:0;overflow:visible}
+    .shots.allwide figure{flex:none;aspect-ratio:var(--ar)}
   }
 
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
-  .quote{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff}
+  .quote{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--card)}
   .quote p{font-size:16px}
   .quote footer{font-size:14px;color:var(--muted);font-weight:600}
+  /* Where the voice hangs everything off rules, a quote is set as a quote —
+     no card, a heavy rule above it and the words at reading size. */
+  .f-plain .quote,.f-ruled .quote{border:0;border-top:var(--rule) solid var(--ink);
+    border-radius:0;padding:22px 0 0;background:transparent}
+  .f-plain .quote p,.f-ruled .quote p{font-family:var(--display);font-size:19px;line-height:1.45}
 
   /* contact */
   .contact{background:var(--soft)}
-  .cta-box{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:32px;text-align:center}
+  .cta-box{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:32px;text-align:center}
+  .f-plain .cta-box,.f-ruled .cta-box{border:0;border-radius:0;background:transparent;padding:8px 0}
   .cta-box h2{margin-bottom:8px}
+  .cta-box .eyebrow{justify-content:center}
   .cta-box .actions{justify-content:center;margin-top:22px}
-  .big-phone{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;text-decoration:none;display:inline-block;margin:6px 0}
+  .big-phone{font-family:var(--display);font-size:clamp(28px,5vw,42px);
+    font-weight:var(--display-weight);letter-spacing:var(--tracking);
+    text-decoration:none;display:inline-block;margin:6px 0}
 
   footer.site{padding:30px 0;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
 
@@ -292,7 +417,8 @@
     body{padding-bottom:74px}
     .callbar{
       display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:10px;padding:10px 14px;
-      background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+      background:color-mix(in srgb, var(--bg) 96%, transparent);backdrop-filter:blur(10px);
+      border-top:1px solid var(--line);
     }
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
@@ -300,50 +426,89 @@
   /* ── hero shape per voice ─────────────────────────────────────────────────
      Type alone could not separate two sans voices without loading web fonts,
      which would break the "no external requests" promise in the pitch. So the
-     hero is structurally different instead. */
+     hero is structurally different instead — and so is everything under it. */
+
+  /* A hero laid over a solid dark or accent field: the copy has to invert,
+     and the invert is identical whichever field it is. */
+  .hero.dark .eyebrow{color:color-mix(in srgb, var(--accent) 72%, #fff)}
+  .hero.dark h1{color:#fff}
+  .hero.dark .lede{color:rgba(255,255,255,.86)}
+  .hero.dark .hero-note{color:rgba(255,255,255,.72);border-top-color:rgba(255,255,255,.3)}
+  .hero.dark .btn-primary{background:#fff;color:var(--ink);border-color:#fff}
+  .hero.dark .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+  .hero.dark .trust.grid{border-color:rgba(255,255,255,.28);margin-top:38px}
+  .hero.dark .trust.quiet{border-top-color:rgba(255,255,255,.3)}
+  .hero.dark .trust.quiet b,.hero.dark .trust.quiet span{color:rgba(255,255,255,.9)}
 
   /* TRADE — a full-bleed block of colour. Reads like a work truck. */
   .v-trade .hero{background:var(--accent);padding-top:56px}
   .v-trade .hero::before{opacity:.18}
-  .v-trade .hero h1{color:#fff}
-  .v-trade .hero .eyebrow{color:rgba(255,255,255,.72)}
-  .v-trade .hero .lede{color:rgba(255,255,255,.88)}
-  .v-trade .hero-note{color:rgba(255,255,255,.75);border-top-color:rgba(255,255,255,.32)}
-  .v-trade .hero .btn-primary{background:#fff;color:var(--accent);border-color:#fff}
-  .v-trade .hero .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
-  .v-trade .trust{border-color:rgba(255,255,255,.3);margin-top:38px}
+  .v-trade .hero .eyebrow{color:rgba(255,255,255,.75)}
+
+  /* BARBER — a black shopfront, the name shouted in caps, one red line under
+     it. Nothing rounded anywhere on the page. */
+  .v-barber .hero{background:#101010;padding:62px 0 54px}
+  .v-barber .hero::before{opacity:.28;
+    background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 60%)}
+  .v-barber .hero h1{line-height:1.02}
+  .v-barber .hero .eyebrow{color:var(--accent);letter-spacing:.24em}
+  .v-barber .hero-note{border-top-width:2px;border-top-color:var(--accent)}
+  .v-barber h2{text-transform:uppercase}
+  .v-barber .band{border-top-color:var(--accent)}
+
+  /* FITNESS — the same dark field, but the type is the loudest thing on it. */
+  .v-fitness .hero{background:#101116;padding:66px 0 56px}
+  .v-fitness .hero::before{opacity:.3}
+  .v-fitness .hero h1{line-height:1.03}
 
   /* CARE — centred and unhurried. Calm is the product. */
-  .v-care .hero{padding:84px 0 70px;text-align:center}
+  .v-care .hero{padding:88px 0 74px;text-align:center}
   .v-care .hero h1,.v-care .hero .lede{margin-left:auto;margin-right:auto}
   .v-care .hero .actions{justify-content:center}
+  .v-care .hero .eyebrow{justify-content:center}
   .v-care .hero-inner{max-width:44rem;margin:0 auto}
+  .v-care .hero .hero-note{margin-left:auto;margin-right:auto}
+  /* centred text needs symmetric cells, or every figure sits a few pixels
+     left of where the eye expects it */
+  .v-care .trust.quiet div{padding:24px 14px 6px}
 
   /* BEAUTY — editorial: a rule down the side, deep top margin, nothing rushed. */
-  .v-beauty .hero{padding:92px 0 68px}
-  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
+  .v-beauty .hero{padding:96px 0 72px}
+  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:28px}
   .v-beauty .hero h1{max-width:14ch}
+  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);
+    display:inline-flex;width:auto}
+
+  /* PROFESSIONAL — set like a document: flush left, ruled, no ornament. */
+  .v-professional .hero{padding:70px 0 58px}
+  .v-professional .hero::before{background:linear-gradient(180deg,var(--soft),var(--bg))}
+  .v-professional .hero-inner{border-top:3px solid var(--ink);padding-top:26px}
+  .v-professional section{border-top-color:var(--line)}
+
+  /* FOOD / RETAIL — the copy sits on a card, like something on a counter. */
+  .v-food .hero,.v-retail .hero{padding:40px 0 52px}
+  .v-food .hero-inner,.v-retail .hero-inner{
+    background:color-mix(in srgb, var(--accent) 7%, var(--card));
+    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+    border-radius:calc(var(--radius) + 4px);padding:36px 32px}
+  .v-food .trust,.v-retail .trust{margin-top:20px}
 
   /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
      they force line breaks the width itself would never make. This has to sit
      after the per-voice rules — it matches their specificity, so order decides. */
   @media (max-width:640px){
-    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,
+    .v-food .hero h1,.v-barber .hero h1{max-width:none}
   }
-  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
-
-  /* FOOD — the copy sits on a warm card, like something on a counter. */
-  .v-food .hero{padding:40px 0 52px}
-  .v-food .hero-inner{background:color-mix(in srgb, var(--accent) 8%, #fff);
-    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
-    border-radius:26px;padding:36px 32px}
-  .v-food .trust{margin-top:20px}
 
   @media (max-width:760px){
-    .v-food .hero-inner{padding:26px 20px;border-radius:20px}
+    .v-food .hero-inner,.v-retail .hero-inner{padding:26px 20px}
     .v-beauty .hero-inner{padding-left:18px}
-    .v-care .hero{padding:52px 0 44px}
-    .v-beauty .hero{padding:56px 0 44px}
+    .v-care .hero{padding:54px 0 46px}
+    .v-beauty .hero{padding:58px 0 46px}
+    .v-professional .hero{padding:46px 0 40px}
+    .sig{padding:13px 18px}
+    .trust.quiet div{padding:20px 16px 4px 0}
   }
 
   /* ── motion ──────────────────────────────────────────────────────────────
@@ -365,22 +530,35 @@
     .card{transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease)}
     .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
       box-shadow:0 10px 24px -14px rgba(16,32,40,.35)}
-    .shots img,.hero-shot img{transition:transform .5s var(--ease)}
+    .shots img,.hero-shot img{transition:transform .5s var(--ease),filter .5s var(--ease)}
     .shots figure:hover img,.hero-shot:hover img{transform:scale(1.06)}
-    .btn{transition:transform .18s var(--ease),filter .18s var(--ease)}
+    .row-svc,.row-svc::before{transition:background .2s var(--ease),transform .22s var(--ease)}
+    .btn{transition:transform .18s var(--ease),filter .18s var(--ease),
+      background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
     .btn:active{transform:scale(.97)}
     .trust div{transition:background .3s var(--ease)}
-    .trust div:hover{background:color-mix(in srgb,var(--accent) 5%,#fff)}
+    .trust.grid div:hover{background:color-mix(in srgb,var(--accent) 5%,var(--card))}
+    /* The band runs. The second copy of the facts exists only so the loop has
+       no seam — it is aria-hidden, and translating exactly -50% lands run two
+       where run one started. Pauses under the pointer so a fact can be read. */
+    .band-track{animation:bandroll 18s linear infinite}
+    .band:hover .band-track,.band:focus-within .band-track{animation-play-state:paused}
     .js .callbar{transform:translateY(110%);transition:transform .38s var(--ease)}
     .js .callbar.up{transform:none}
     .tel-pulse{position:relative}
   }
+  @keyframes bandroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){
     .rise,.js .rise,.photo-in,.js .photo-in{opacity:1;transform:none}
     .callbar,.js .callbar{transform:none}
+    /* The band stops. It does not disappear: run one is the complete set of
+       facts and it is what stays on screen. Motion is a preference; the
+       content behind it is not negotiable. */
+    .band-track{animation:none}
   }
 
-  @media print{header,.callbar{position:static}.rise{opacity:1;transform:none}}
+  @media print{header,.callbar{position:static}.rise{opacity:1;transform:none}
+    .band-track{animation:none}}
 </style>
 </head>
 <body>
@@ -401,15 +579,15 @@
     <div class="hero-inner">
     
     <div class="eyebrow rise" style="--i:0">dentist · Chula Vista, CA</div>
-    <h1 class="rise" style="--i:1">Get a new domain name for your startup. Quick and professional service. Seamless domain transfers.</h1>
-    
+    <h1 class="rise" style="--i:1">Estrella Dental Implant &amp; Cosmetic Center</h1>
+    <p class="lede rise long" style="--i:2">Get a new domain name for your startup. Quick and professional service. Seamless domain transfers.</p>
     <div class="actions rise" style="--i:3">
       <a class="btn btn-primary" href="tel:+16193974111">Call +1-619-397-4111</a>
       <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=2452%20Fenton%20Street%2C%20Chula%20Vista%2C%20CA%2C%2091914" target="_blank" rel="noopener">Get directions</a>
     </div>
     
     </div>
-    <div class="hero-shot photo-in" style="--i:2"><img src="data:image/jpeg;base64,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" alt="Estrella Dental Implant &amp; Cosmetic Center — photo 1" loading="eager"></div>
+    <div class="hero-shot photo-in" style="--i:2;--ar:1.8383233532934131"><img src="data:image/jpeg;base64,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" alt="Estrella Dental Implant &amp; Cosmetic Center — photo 1" loading="eager"></div>
     </div>
     
   </div>
@@ -425,10 +603,12 @@
 
 
 
+
 <section id="contact" class="contact">
   <div class="wrap">
     <div class="cta-box">
       
+      <div class="eyebrow">Contact</div>
       <h2>Ready when you are</h2>
       <p class="lede" style="margin:0 auto">Call and talk to a real person.</p>
       <a class="big-phone" href="tel:+16193974111" style="color:var(--accent)">+1-619-397-4111</a>

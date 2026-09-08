@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="v-beauty">
+<html lang="en" class="v-beauty f-plain ph-soft">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,39 +42,49 @@
     --accent:#3d7a70;
     --accent-ink:#fff;
     --ink:#12181c;
-    --muted:#5b6770;
-    --line:#e3e8ea;
-    --bg:#fff;
-    --soft:#f6f8f8;
-    --radius:2px;
+    --muted:color-mix(in srgb, #12181c 58%, #fff);
+    --line:#e6dedd;
+    --bg:#fdfcfb;
+    --card:#fff;
+    --soft:#f6f2f1;
+    --radius:0px;
     --wrap:1080px;
-    --display:"Iowan Old Style",Palatino,Georgia,serif;
+    --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
     --display-weight:500;
-    --tracking:.005em;
+    --tracking:.004em;
     --label-case:uppercase;
-    --label-track:.26em;
-    --hero-size:clamp(34px,6vw,58px);
+    --label-track:.3em;
+    --hero-size:clamp(33px,6vw,58px);
+    --hero-case:none;
     --rule:1px;
+    --air:1.16;
+    --btn-radius:0px;
     --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font:16px/1.62 var(--body);
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
   a{color:inherit}
-  h1,h2,h3{line-height:1.14;margin:0;font-family:var(--display);
+  h1,h2,h3{line-height:1.13;margin:0;font-family:var(--display);
     font-weight:var(--display-weight);letter-spacing:var(--tracking);text-wrap:balance}
-  h2{font-size:clamp(24px,3.4vw,33px);margin-bottom:10px}
+  h2{font-size:clamp(25px,3.6vw,36px);margin-bottom:10px}
   p{margin:0 0 14px}
   /* the header is sticky, so an anchored jump must leave room for it or the
      first line of the section lands underneath. */
-  section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:72px}
+  section{padding:calc(64px * var(--air)) 0;border-top:1px solid var(--line);scroll-margin-top:72px}
+  /* Section headers carry the page's rhythm. A hairline the width of the
+     column above the label does more for hierarchy than another box. */
   .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:var(--label-track);
-    text-transform:var(--label-case);color:var(--accent);margin-bottom:14px}
+    text-transform:var(--label-case);color:var(--accent);margin-bottom:14px;
+    display:flex;align-items:baseline;gap:12px}
+  .eyebrow .num{font-family:var(--display);font-size:12.5px;font-weight:var(--display-weight);
+    font-variant-numeric:tabular-nums;letter-spacing:0;color:var(--ink);opacity:.34}
   .lede{color:var(--muted);max-width:60ch;font-size:17px}
 
   /* a supplied logo leads the hero. Stacked wordmarks (name inside the art)
@@ -83,11 +93,12 @@
     margin:0 0 24px;mix-blend-mode:multiply}
   /* multiply needs something light behind it; on a full-bleed accent hero the
      logo keeps its own white card instead. */
-  .v-trade .hero .logo{mix-blend-mode:normal;background:#fff;border-radius:8px;padding:10px}
+  .v-trade .hero .logo,.v-barber .hero .logo,.v-fitness .hero .logo{
+    mix-blend-mode:normal;background:#fff;border-radius:6px;padding:10px}
   .v-care .hero .logo,.v-food .hero .logo{margin-left:auto;margin-right:auto}
 
   /* header */
-  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:18px;height:66px}
   .brand{font-family:var(--display);font-weight:var(--display-weight);letter-spacing:var(--tracking);
     font-size:18px;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:10px;
@@ -96,22 +107,30 @@
   .brand .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   @media (max-width:520px){ .brand{font-size:16px} }
   @media (max-width:400px){ .brand{font-size:15px} }
-  .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+  .mark{width:30px;height:30px;border-radius:clamp(0px,var(--radius),9px);background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
   /* a stacked logo is unreadable in a 66px bar, so the header takes a compact
      mark and sets the name in type beside it. */
   .mark-img{width:30px;height:30px;object-fit:contain;flex:none;display:block}
   nav{display:flex;gap:22px}
   nav a{color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
   nav a:hover{color:var(--ink)}
+  /* Pill buttons on every page is one of the tells that a page came off a
+     template. The shape follows the voice: a pill for the soft trades, a
+     square edge for the ones whose whole pitch is that they are not soft. */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    padding:12px 20px;border-radius:999px;font-weight:650;font-size:15px;
+    padding:13px 22px;border-radius:var(--btn-radius);font-weight:650;font-size:15px;
     text-decoration:none;border:1px solid transparent;white-space:nowrap;
   }
+  .v-barber .btn,.v-fitness .btn{text-transform:uppercase;letter-spacing:.09em;
+    font-size:13px;font-weight:800;padding:14px 22px}
+  .v-beauty .btn{letter-spacing:.14em;text-transform:uppercase;font-size:12px;
+    font-family:var(--display);font-weight:600;padding:15px 26px}
   .btn-primary{background:var(--accent);color:var(--accent-ink)}
   .btn-primary:hover{filter:brightness(.92)}
-  .btn-ghost{border-color:var(--line);background:#fff;color:var(--ink)}
-  .btn-ghost:hover{border-color:var(--muted)}
+  .btn-ghost{border-color:var(--line);background:var(--card);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .v-barber .btn-ghost,.v-professional .btn-ghost,.v-beauty .btn-ghost{border-color:var(--ink);background:transparent}
 
   /* hero */
   .hero{padding:74px 0 66px;position:relative;overflow:hidden}
@@ -120,7 +139,7 @@
     background:
       
       radial-gradient(760px 420px at 78% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
-      linear-gradient(180deg, var(--soft), #fff);
+      linear-gradient(180deg, var(--soft), var(--bg));
   }
   
 
@@ -132,6 +151,10 @@
   .hero-shot{border-radius:var(--radius);overflow:hidden;margin-top:28px;
     aspect-ratio:4/3;background:var(--soft);border:1px solid var(--line)}
   .hero-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  /* A banner shown at its own proportions, whole. --ar carries the real
+     ratio measured out of the file at render time. */
+  .hero-shot.wide{aspect-ratio:var(--ar);background:var(--soft)}
+  .hero-shot.wide img{object-fit:contain}
   /* On a phone — where this actually gets read — a photo boxed inside the
      page margins reads as a thumbnail. Bleeding it to the screen edges,
      taller, is what makes it feel like the front of the business rather
@@ -139,17 +162,24 @@
   @media (max-width:760px){
     .hero-shot{margin:28px -22px 0;border-radius:0;border-left:0;border-right:0;
       aspect-ratio:1/1}
+    /* A photo bled to the screen edges with nothing after it left a bar of
+       hero colour hanging below it — most obvious on the dark heroes, where
+       it read as an empty black band. If the photo is the last thing in the
+       hero, it ends the hero. */
+    .hero:has(.hero-grid.has-photo:last-child){padding-bottom:0}
   }
   @media (min-width:900px){
     .hero-grid.has-photo{display:grid;grid-template-columns:1fr;gap:0}
     .v-trade .hero-grid.has-photo,.v-food .hero-grid.has-photo,
-    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo{
+    .v-fitness .hero-grid.has-photo,.v-retail .hero-grid.has-photo,
+    .v-barber .hero-grid.has-photo{
       grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
     .v-trade .hero-grid.has-photo .hero-shot,.v-food .hero-grid.has-photo .hero-shot,
-    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot{
+    .v-fitness .hero-grid.has-photo .hero-shot,.v-retail .hero-grid.has-photo .hero-shot,
+    .v-barber .hero-grid.has-photo .hero-shot{
       margin-top:0;aspect-ratio:1/1}
   }
-  .v-trade .hero-shot{border-color:rgba(255,255,255,.3)}
+  .v-trade .hero-shot,.v-barber .hero-shot,.v-fitness .hero-shot{border-color:rgba(255,255,255,.28)}
 
   /* A second photo, cropped round, doing one job: proof this page was
      built from their real place, sitting right where the ask is made. */
@@ -157,49 +187,111 @@
     margin:0 auto 20px;border:3px solid var(--bg);
     box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(16,32,40,.35)}
   .cta-shot img{width:100%;height:100%;object-fit:cover;display:block}
-  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance}
+  .hero h1{font-size:var(--hero-size);max-width:17ch;text-wrap:balance;text-transform:var(--hero-case)}
+  .hero h1.long{font-size:clamp(26px,4.6vw,40px);max-width:24ch;line-height:1.18}
   h2{text-wrap:balance}
   /* a measure set for desktop is a straitjacket on a 390px screen — it forces
      breaks the width itself would not. Let the phone use what it has. */
-  .hero .lede{margin:18px 0 28px;font-size:19px}
+  .hero .lede{margin:18px 0 28px;font-size:19px;max-width:56ch}
+  /* A scraped description standing in for a strapline is a paragraph, and it
+     needs a paragraph's size to be read rather than skimmed past. */
+  .hero .lede.long{font-size:16.5px;line-height:1.62}
   .actions{display:flex;flex-wrap:wrap;gap:12px}
   .hero-note{margin-top:20px;font-size:14px;color:var(--muted);
     padding-top:16px;border-top:var(--rule) solid color-mix(in srgb, var(--accent) 35%, transparent);
     display:inline-block}
 
-  /* trust strip */
-  /* Cell borders rather than a gap over a coloured container: an odd number of
-     highlights used to leave the container colour showing as an empty grey box. */
-  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:44px;background:#fff}
-  .trust div{background:#fff;padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .trust b{display:block;font-size:26px;letter-spacing:-.02em}
+  /* ── the trust facts, three ways ─────────────────────────────────────────
+     Same real data (business.json highlights, nothing invented), presented to
+     suit the trade. A grid of cells for the shops; a quiet ruled row where
+     calm is the product; and a running band for the loud ones. */
+
+  /* GRID — cell borders rather than a gap over a coloured container: an odd
+     number of highlights used to leave the container colour showing as an
+     empty grey box. */
+  .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:44px}
+  .trust.grid{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .trust.grid div{background:var(--card);padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .trust b{display:block;font-size:26px;letter-spacing:-.02em;font-family:var(--display);
+    font-weight:var(--display-weight)}
   .trust span{font-size:13px;color:var(--muted)}
+  /* QUIET — no boxes at all. One hairline above, then air. */
+  .trust.quiet{border-top:1px solid var(--line);margin-top:48px;
+    grid-template-columns:repeat(auto-fit,minmax(136px,1fr))}
+  .trust.quiet div{padding:24px 20px 4px 0}
+  .trust.quiet b{font-size:29px;margin-bottom:4px}
+
+  /* BAND — a continuous run of the same facts, edge to edge. The duplicate
+     run is aria-hidden and exists only so the loop has no seam; the first run
+     alone is complete, so with the animation off (reduced motion, old
+     browsers, print) nothing is missing, it simply stops moving. */
+  .band{overflow:hidden;background:var(--ink);color:var(--bg);
+    border-top:var(--rule) solid var(--accent)}
+  .band-track{display:flex;width:max-content}
+  .band-run{display:flex;flex:none}
+  .sig{display:flex;align-items:baseline;gap:9px;padding:15px 24px;white-space:nowrap;
+    border-right:1px solid color-mix(in srgb, var(--bg) 18%, transparent)}
+  .sig b{font-family:var(--display);font-weight:var(--display-weight);font-size:17px;
+    letter-spacing:-.02em}
+  .sig i{font-style:normal;font-size:11.5px;text-transform:uppercase;
+    letter-spacing:.15em;opacity:.62}
 
   /* menu — grouped, priced, and selectable, the way a booking platform does it */
   .menu{margin-top:26px;display:flex;flex-direction:column;gap:26px}
   .mgroup h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
     color:var(--accent);margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
-  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  /* This list used to be called .rows — the same class the hours table in the
+     About panel uses. The panel's display:flex + gap:9px therefore also
+     applied here, prising every service row apart by 9px on top of its own
+     bottom border, which is why the menu read as a stack of floating slabs
+     instead of one list. Its own name now. */
+  .svc-rows{background:var(--card)}
+  .f-boxed .svc-rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .f-ruled .svc-rows{border-top:var(--rule) solid var(--ink);background:transparent}
+  .f-plain .svc-rows{background:transparent}
   /* a button carries a chunky default border on every side — left unreset it
      turns a clean list into a stack of boxes. */
-  .row-svc{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
+  .row-svc{position:relative;display:flex;align-items:flex-start;gap:13px;padding:14px 16px;
     border:0;border-bottom:1px solid var(--line);border-radius:0;
-    width:100%;text-align:left;background:#fff;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+    width:100%;text-align:left;background:transparent;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .f-boxed .row-svc{background:var(--card)}
+  .f-ruled .row-svc,.f-plain .row-svc{padding:17px 4px 17px 0}
+  .f-plain .row-svc{padding-top:19px;padding-bottom:19px}
   .row-svc:last-child{border-bottom:0}
+  .f-ruled .row-svc:last-child,.f-plain .row-svc:last-child{border-bottom:1px solid var(--line)}
   .js .row-svc{cursor:pointer}
-  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 4%, #fff)}
-  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;border-radius:6px;
+  .js .row-svc:hover{background:color-mix(in srgb, var(--accent) 5%, transparent)}
+  /* the one deliberate micro-interaction on the list: an accent rule that
+     grows out of the left edge under the pointer. It is a transform on a
+     pseudo-element, so it costs nothing and disappears entirely under
+     reduced motion. */
+  .row-svc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:var(--accent);transform:scaleY(0);transform-origin:50% 100%}
+  .js .row-svc:hover::before,.js .row-svc:focus-visible::before,.row-svc.on::before{transform:scaleY(1)}
+  .row-svc .tick{flex:none;width:21px;height:21px;margin-top:1px;
+    border-radius:clamp(0px,var(--radius),7px);
     border:1.5px solid var(--line);display:grid;place-items:center;
-    font-size:11px;color:#fff;background:#fff}
+    font-size:11px;color:#fff;background:var(--card)}
   html:not(.js) .row-svc .tick{display:none}
-  .row-svc.on{background:color-mix(in srgb, var(--accent) 7%, #fff)}
+  .row-svc.on{background:color-mix(in srgb, var(--accent) 8%, transparent)}
   .row-svc.on .tick{background:var(--accent);border-color:var(--accent)}
   .row-svc.on .tick::after{content:"\2713"}
   /* these are spans, because a <button> may only hold phrasing content —
      so each one has to be told to take its own line. */
   .svc-main{flex:1;min-width:0;display:block}
   .svc-name{display:block;font-size:15.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .v-barber .svc-name,.v-fitness .svc-name{font-family:var(--display);font-weight:800;
+    text-transform:uppercase;letter-spacing:-.01em;font-size:15px}
+  .v-beauty .svc-name,.v-care .svc-name,.v-professional .svc-name{
+    font-family:var(--display);font-weight:var(--display-weight);font-size:17.5px;letter-spacing:0}
+  /* FOOD — a counter list is a menu, and a menu runs the name to the price on
+     a leader. Only where there is a price to run to; a leader ending in
+     nothing would just be a dotted line to nowhere. */
+  .v-food .row-svc:has(.svc-price) .svc-name::after{
+    content:"";display:inline-block;width:100%;margin:0 0 0 8px;vertical-align:.24em;
+    border-bottom:1.5px dotted color-mix(in srgb, var(--ink) 28%, transparent)}
+  .v-food .row-svc:has(.svc-price) .svc-name{display:flex;align-items:baseline;white-space:nowrap;overflow:hidden}
+  .v-food .svc-price{font-family:var(--display);font-weight:var(--display-weight)}
   .svc-desc{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:3px}
   .svc-meta{flex:none;display:block;text-align:right;padding-left:4px}
   .svc-price{display:block;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
@@ -219,27 +311,33 @@
 
   /* team */
   .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:26px}
-  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:#fff}
+  .member{border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;background:var(--card)}
+  .f-plain .member,.f-ruled .member{border:0;border-top:1px solid var(--line);border-radius:0;
+    padding:20px 0 0;text-align:left;background:transparent}
+  .f-plain .member .av,.f-ruled .member .av{margin:0 0 12px}
   /* a one-person business is a selling point, but a lone card floating in a
      full-width box reads as an unfinished page. Lay it on its side instead. */
   .team.solo{grid-template-columns:1fr}
   .team.solo .member{display:flex;align-items:center;gap:16px;text-align:left;padding:16px 18px}
   .team.solo .member .av{margin:0}
   .member .av{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
-    background:color-mix(in srgb, var(--accent) 12%, #fff);color:var(--accent);font-weight:700;font-size:19px}
-  .member b{display:block;letter-spacing:-.01em}
+    background:color-mix(in srgb, var(--accent) 12%, var(--card));color:var(--accent);
+    font-family:var(--display);font-weight:700;font-size:19px}
+  .member b{display:block;letter-spacing:-.01em;font-family:var(--display);font-weight:var(--display-weight);font-size:17px}
   .member span{font-size:12.5px;color:var(--muted)}
 
   /* services */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:30px}
-  .card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:#fff}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--card)}
   .card h3{font-size:18px;margin-bottom:6px}
   .card p{color:var(--muted);font-size:15px;margin:0}
-  .price{display:inline-block;margin-top:14px;font-weight:700;font-size:14px;color:var(--accent);background:color-mix(in srgb, var(--accent) 10%, #fff);padding:5px 11px;border-radius:999px}
+  .price{display:inline-block;margin-top:14px;font-weight:700;font-size:14px;color:var(--accent);background:color-mix(in srgb, var(--accent) 10%, var(--card));padding:5px 11px;border-radius:999px}
 
   /* about */
   .split{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
   .panel{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .f-plain .panel,.f-ruled .panel{background:transparent;border:0;
+    border-top:var(--rule) solid var(--ink);border-radius:0;padding:22px 0 0}
   .panel h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px}
   .rows{display:flex;flex-direction:column;gap:9px;font-size:15px}
   .row{display:flex;justify-content:space-between;gap:16px}
@@ -256,29 +354,56 @@
     border:1px solid var(--line);aspect-ratio:1/1}
   .shots img{width:100%;height:100%;object-fit:cover;display:block}
   .shots figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:1/1}
+  /* Tonally consistent photography, one image left in full colour — the
+     trades whose work photographs as texture and metal, not as produce.
+     A bakery's pastries and a florist's stems are the product; they stay in
+     colour. The lead shot keeps its colour everywhere, because on a phone
+     there is no hover to reveal it with. */
+  .ph-bw .shots img,.ph-bw .hero-shot img{filter:grayscale(1) contrast(1.06)}
+  .ph-soft .shots img{filter:saturate(.78)}
+  .ph-bw .shots figure:first-child img,.ph-bw .hero-shot img:hover,
+  .ph-bw .shots figure:hover img,.ph-soft .shots figure:hover img{filter:none}
   /* A grid this small on a phone is four postage stamps. A horizontal,
      snap-scrolling row of real-sized photos reads like an actual gallery
      someone can swipe through, not a cropped thumbnail strip. */
+  /* A wide picture spans; it is not going to survive a square crop. */
+  .shots figure.wide{aspect-ratio:var(--ar);grid-column:1/-1;grid-row:auto}
+  .shots figure.wide img{object-fit:contain}
+  /* When every picture is a banner, a snap-scrolling row of them is the wrong
+     shape entirely — they stack, full width, at their own proportions. */
+  .shots.allwide{display:grid;grid-template-columns:1fr}
   @media (max-width:640px){
     .shots{display:flex;gap:12px;margin:28px -22px 0;padding:0 22px 4px;
       overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
     .shots::-webkit-scrollbar{display:none}
     .shots figure{flex:0 0 80%;aspect-ratio:4/5;scroll-snap-align:start;
       grid-column:unset;grid-row:unset}
+    .shots.allwide{display:grid;grid-template-columns:1fr;gap:14px;
+      margin:28px 0 0;padding:0;overflow:visible}
+    .shots.allwide figure{flex:none;aspect-ratio:var(--ar)}
   }
 
   /* reviews */
   .stars{color:#e8a33d;letter-spacing:2px}
-  .quote{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff}
+  .quote{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--card)}
   .quote p{font-size:16px}
   .quote footer{font-size:14px;color:var(--muted);font-weight:600}
+  /* Where the voice hangs everything off rules, a quote is set as a quote —
+     no card, a heavy rule above it and the words at reading size. */
+  .f-plain .quote,.f-ruled .quote{border:0;border-top:var(--rule) solid var(--ink);
+    border-radius:0;padding:22px 0 0;background:transparent}
+  .f-plain .quote p,.f-ruled .quote p{font-family:var(--display);font-size:19px;line-height:1.45}
 
   /* contact */
   .contact{background:var(--soft)}
-  .cta-box{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:32px;text-align:center}
+  .cta-box{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:32px;text-align:center}
+  .f-plain .cta-box,.f-ruled .cta-box{border:0;border-radius:0;background:transparent;padding:8px 0}
   .cta-box h2{margin-bottom:8px}
+  .cta-box .eyebrow{justify-content:center}
   .cta-box .actions{justify-content:center;margin-top:22px}
-  .big-phone{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;text-decoration:none;display:inline-block;margin:6px 0}
+  .big-phone{font-family:var(--display);font-size:clamp(28px,5vw,42px);
+    font-weight:var(--display-weight);letter-spacing:var(--tracking);
+    text-decoration:none;display:inline-block;margin:6px 0}
 
   footer.site{padding:30px 0;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
 
@@ -292,7 +417,8 @@
     body{padding-bottom:74px}
     .callbar{
       display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:10px;padding:10px 14px;
-      background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+      background:color-mix(in srgb, var(--bg) 96%, transparent);backdrop-filter:blur(10px);
+      border-top:1px solid var(--line);
     }
     .callbar .btn{flex:1}
     .bar .btn span.label{display:none}
@@ -300,50 +426,89 @@
   /* ── hero shape per voice ─────────────────────────────────────────────────
      Type alone could not separate two sans voices without loading web fonts,
      which would break the "no external requests" promise in the pitch. So the
-     hero is structurally different instead. */
+     hero is structurally different instead — and so is everything under it. */
+
+  /* A hero laid over a solid dark or accent field: the copy has to invert,
+     and the invert is identical whichever field it is. */
+  .hero.dark .eyebrow{color:color-mix(in srgb, var(--accent) 72%, #fff)}
+  .hero.dark h1{color:#fff}
+  .hero.dark .lede{color:rgba(255,255,255,.86)}
+  .hero.dark .hero-note{color:rgba(255,255,255,.72);border-top-color:rgba(255,255,255,.3)}
+  .hero.dark .btn-primary{background:#fff;color:var(--ink);border-color:#fff}
+  .hero.dark .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+  .hero.dark .trust.grid{border-color:rgba(255,255,255,.28);margin-top:38px}
+  .hero.dark .trust.quiet{border-top-color:rgba(255,255,255,.3)}
+  .hero.dark .trust.quiet b,.hero.dark .trust.quiet span{color:rgba(255,255,255,.9)}
 
   /* TRADE — a full-bleed block of colour. Reads like a work truck. */
   .v-trade .hero{background:var(--accent);padding-top:56px}
   .v-trade .hero::before{opacity:.18}
-  .v-trade .hero h1{color:#fff}
-  .v-trade .hero .eyebrow{color:rgba(255,255,255,.72)}
-  .v-trade .hero .lede{color:rgba(255,255,255,.88)}
-  .v-trade .hero-note{color:rgba(255,255,255,.75);border-top-color:rgba(255,255,255,.32)}
-  .v-trade .hero .btn-primary{background:#fff;color:var(--accent);border-color:#fff}
-  .v-trade .hero .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
-  .v-trade .trust{border-color:rgba(255,255,255,.3);margin-top:38px}
+  .v-trade .hero .eyebrow{color:rgba(255,255,255,.75)}
+
+  /* BARBER — a black shopfront, the name shouted in caps, one red line under
+     it. Nothing rounded anywhere on the page. */
+  .v-barber .hero{background:#101010;padding:62px 0 54px}
+  .v-barber .hero::before{opacity:.28;
+    background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 60%)}
+  .v-barber .hero h1{line-height:1.02}
+  .v-barber .hero .eyebrow{color:var(--accent);letter-spacing:.24em}
+  .v-barber .hero-note{border-top-width:2px;border-top-color:var(--accent)}
+  .v-barber h2{text-transform:uppercase}
+  .v-barber .band{border-top-color:var(--accent)}
+
+  /* FITNESS — the same dark field, but the type is the loudest thing on it. */
+  .v-fitness .hero{background:#101116;padding:66px 0 56px}
+  .v-fitness .hero::before{opacity:.3}
+  .v-fitness .hero h1{line-height:1.03}
 
   /* CARE — centred and unhurried. Calm is the product. */
-  .v-care .hero{padding:84px 0 70px;text-align:center}
+  .v-care .hero{padding:88px 0 74px;text-align:center}
   .v-care .hero h1,.v-care .hero .lede{margin-left:auto;margin-right:auto}
   .v-care .hero .actions{justify-content:center}
+  .v-care .hero .eyebrow{justify-content:center}
   .v-care .hero-inner{max-width:44rem;margin:0 auto}
+  .v-care .hero .hero-note{margin-left:auto;margin-right:auto}
+  /* centred text needs symmetric cells, or every figure sits a few pixels
+     left of where the eye expects it */
+  .v-care .trust.quiet div{padding:24px 14px 6px}
 
   /* BEAUTY — editorial: a rule down the side, deep top margin, nothing rushed. */
-  .v-beauty .hero{padding:92px 0 68px}
-  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:26px}
+  .v-beauty .hero{padding:96px 0 72px}
+  .v-beauty .hero-inner{border-left:2px solid var(--accent);padding-left:28px}
   .v-beauty .hero h1{max-width:14ch}
+  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);
+    display:inline-flex;width:auto}
+
+  /* PROFESSIONAL — set like a document: flush left, ruled, no ornament. */
+  .v-professional .hero{padding:70px 0 58px}
+  .v-professional .hero::before{background:linear-gradient(180deg,var(--soft),var(--bg))}
+  .v-professional .hero-inner{border-top:3px solid var(--ink);padding-top:26px}
+  .v-professional section{border-top-color:var(--line)}
+
+  /* FOOD / RETAIL — the copy sits on a card, like something on a counter. */
+  .v-food .hero,.v-retail .hero{padding:40px 0 52px}
+  .v-food .hero-inner,.v-retail .hero-inner{
+    background:color-mix(in srgb, var(--accent) 7%, var(--card));
+    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+    border-radius:calc(var(--radius) + 4px);padding:36px 32px}
+  .v-food .trust,.v-retail .trust{margin-top:20px}
 
   /* Measures tuned for a desktop column are a straitjacket on a 390px screen:
      they force line breaks the width itself would never make. This has to sit
      after the per-voice rules — it matches their specificity, so order decides. */
   @media (max-width:640px){
-    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,.v-food .hero h1{max-width:none}
+    .hero h1,.v-trade .hero h1,.v-care .hero h1,.v-beauty .hero h1,
+    .v-food .hero h1,.v-barber .hero h1{max-width:none}
   }
-  .v-beauty .eyebrow{padding-bottom:14px;border-bottom:1px solid var(--line);display:inline-block}
-
-  /* FOOD — the copy sits on a warm card, like something on a counter. */
-  .v-food .hero{padding:40px 0 52px}
-  .v-food .hero-inner{background:color-mix(in srgb, var(--accent) 8%, #fff);
-    border:1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
-    border-radius:26px;padding:36px 32px}
-  .v-food .trust{margin-top:20px}
 
   @media (max-width:760px){
-    .v-food .hero-inner{padding:26px 20px;border-radius:20px}
+    .v-food .hero-inner,.v-retail .hero-inner{padding:26px 20px}
     .v-beauty .hero-inner{padding-left:18px}
-    .v-care .hero{padding:52px 0 44px}
-    .v-beauty .hero{padding:56px 0 44px}
+    .v-care .hero{padding:54px 0 46px}
+    .v-beauty .hero{padding:58px 0 46px}
+    .v-professional .hero{padding:46px 0 40px}
+    .sig{padding:13px 18px}
+    .trust.quiet div{padding:20px 16px 4px 0}
   }
 
   /* ── motion ──────────────────────────────────────────────────────────────
@@ -365,22 +530,35 @@
     .card{transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease)}
     .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
       box-shadow:0 10px 24px -14px rgba(16,32,40,.35)}
-    .shots img,.hero-shot img{transition:transform .5s var(--ease)}
+    .shots img,.hero-shot img{transition:transform .5s var(--ease),filter .5s var(--ease)}
     .shots figure:hover img,.hero-shot:hover img{transform:scale(1.06)}
-    .btn{transition:transform .18s var(--ease),filter .18s var(--ease)}
+    .row-svc,.row-svc::before{transition:background .2s var(--ease),transform .22s var(--ease)}
+    .btn{transition:transform .18s var(--ease),filter .18s var(--ease),
+      background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
     .btn:active{transform:scale(.97)}
     .trust div{transition:background .3s var(--ease)}
-    .trust div:hover{background:color-mix(in srgb,var(--accent) 5%,#fff)}
+    .trust.grid div:hover{background:color-mix(in srgb,var(--accent) 5%,var(--card))}
+    /* The band runs. The second copy of the facts exists only so the loop has
+       no seam — it is aria-hidden, and translating exactly -50% lands run two
+       where run one started. Pauses under the pointer so a fact can be read. */
+    .band-track{animation:bandroll 18s linear infinite}
+    .band:hover .band-track,.band:focus-within .band-track{animation-play-state:paused}
     .js .callbar{transform:translateY(110%);transition:transform .38s var(--ease)}
     .js .callbar.up{transform:none}
     .tel-pulse{position:relative}
   }
+  @keyframes bandroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){
     .rise,.js .rise,.photo-in,.js .photo-in{opacity:1;transform:none}
     .callbar,.js .callbar{transform:none}
+    /* The band stops. It does not disappear: run one is the complete set of
+       facts and it is what stays on screen. Motion is a preference; the
+       content behind it is not negotiable. */
+    .band-track{animation:none}
   }
 
-  @media print{header,.callbar{position:static}.rise{opacity:1;transform:none}}
+  @media print{header,.callbar{position:static}.rise{opacity:1;transform:none}
+    .band-track{animation:none}}
 </style>
 </head>
 <body>
@@ -416,16 +594,17 @@
 </div>
 
 
+
 <section id="services">
   <div class="wrap">
-    <div class="eyebrow">Services</div>
+    <div class="eyebrow"><span class="num">01</span>Services</div>
     <h2>On the menu</h2>
     
     
     <div class="menu">
         <div class="mgroup">
           
-          <div class="rows">
+          <div class="svc-rows">
             <button type="button" class="row-svc" data-price="0" data-mins="0" data-unit="" data-name="Swedish massage">
               <span class="tick" aria-hidden="true"></span>
               <span class="svc-main">
@@ -504,6 +683,7 @@
   <div class="wrap">
     <div class="cta-box">
       
+      <div class="eyebrow"><span class="num">02</span>Contact</div>
       <h2>Give us a call</h2>
       <p class="lede" style="margin:0 auto">You will get a person, not a booking robot.</p>
       <a class="big-phone" href="tel:6193897773" style="color:var(--accent)">(619) 389-7773</a>

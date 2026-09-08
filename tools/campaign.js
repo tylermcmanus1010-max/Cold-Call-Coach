@@ -25,17 +25,28 @@ const pricing = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/pricing.json'
 // to pass through as literal base64 text, which measured at 100K+ tokens per
 // email — not sustainable at any real daily volume, and a single mistyped
 // character corrupts the file. A link costs nothing and can't be corrupted
-// in transit. jsdelivr's raw-file CDN (fronted by githack, no setup, no
-// auth) serves this repo's own committed HTML with the right content-type,
-// so the built page opens and renders exactly like an attachment would.
-// This repo is PUBLIC, so the same link pattern would let anyone enumerate
-// every other prospect's pitch page, plus config/pricing.json and
-// config/suppression.json — flagged to the user, not yet resolved.
+// in transit.
+//
+// Two ways to serve that link, chosen by config/hosting.json:
+//   - cloudflarePagesDomain set: the preferred path once it exists. Pages'
+//     Git integration works with a PRIVATE repo, and tools/publish.js builds
+//     a site/ folder containing ONLY rendered pages — no pricing, no
+//     suppression list, no other client's audit data. Point Cloudflare
+//     Pages' build output directory at "site" (build command:
+//     `node tools/publish.js`), never at the repo root.
+//   - unset: falls back to jsdelivr's raw-file CDN (fronted by githack, no
+//     setup, no auth), serving this repo's own committed HTML directly.
+//     Only viable while the repo stays PUBLIC — anyone can then also
+//     enumerate every other prospect's page plus config/pricing.json and
+//     config/suppression.json. Flagged to the user; superseded once
+//     cloudflarePagesDomain is set.
 const REPO_OWNER = 'tylermcmanus1010-max';
 const REPO_NAME = 'Cold-Call-Coach';
 const REPO_BRANCH = 'claude/zen-johnson-yw623l';
-const liveUrlFor = (slug) =>
-  `https://rawcdn.githack.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/clients/${slug}/index.html`;
+const hosting = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/hosting.json'), 'utf8'));
+const liveUrlFor = (slug) => hosting.cloudflarePagesDomain
+  ? `https://${hosting.cloudflarePagesDomain}/${slug}/`
+  : `https://rawcdn.githack.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/clients/${slug}/index.html`;
 
 const loadClient = (slug) => JSON.parse(fs.readFileSync(path.join(CLIENTS, slug, 'business.json'), 'utf8'));
 const saveClient = (slug, b) => fs.writeFileSync(path.join(CLIENTS, slug, 'business.json'), JSON.stringify(b, null, 2) + '\n');

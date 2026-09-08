@@ -12,6 +12,16 @@ Everything ships from one file: **`tools/render.js`** turns a
 Improving that file improves every page at once. That is where most of your
 work belongs.
 
+## The bar
+
+**`DESIGN.md`** and the captures in **`design/reference/`**. Read both before
+you change anything. That is the standard every page is judged against — not
+"is this clean", but *does this look like it belongs next to those frames*.
+Texture on every ground, two grounds that alternate, three scales of type
+far apart, the headline in the accent, photos as physical objects, numbered
+paired labels, brackets over rounded cards, whitespace as a decision. The
+file says what each of those means under our constraints.
+
 ## The constraints, which are not negotiable
 
 These are promises made in writing to paying clients. Breaking one is worse
@@ -34,8 +44,16 @@ than any design win.
 
 ## How to actually work
 
-**Look at it.** Render at 390px with Playwright and screenshot. Read the
-screenshot. Most of what is wrong is visible and invisible in the source: a
+**Look at it.**
+
+```bash
+./cc shot <slug>                     # phone folds + full page + desktop → shots/<slug>/
+./cc shot https://www.aashishthakuri.com   # the reference itself, fresh
+```
+
+Read the screenshots. Open `shots/<slug>/phone-01.png` beside
+`design/reference/01-hero-phone.png`. Most of what is wrong is visible and
+invisible in the source: a
 `<button>` with unreset borders turning a clean list into stacked boxes, a
 `max-width: 14ch` written for desktop forcing four lines on a phone, a caption
 colliding with the art above it, a logo's white JPEG background reading as a
@@ -83,16 +101,25 @@ colours. Push **layout** before type.
 
 ## Avoid
 
-The look every AI-generated page has: warm cream with a terracotta accent,
-near-black with one acid-green pop, purple-to-blue gradient heroes, emoji as
-section markers, everything centred, rounded corners on everything. These pages
-are for a roofer in Poway and a dentist in Sabre Springs. They should look like
-somebody made a decision.
+The look every AI-generated page has: a flat hex fill for a background,
+purple-to-blue gradient heroes, emoji as section markers, everything centred,
+rounded corners on everything, one accent used only on buttons, a 12px eyebrow
+above a 40px heading and nothing bigger or smaller anywhere.
+
+Note what is *not* on that list. The reference is warm paper with a red
+accent — the exact palette that used to be named here as the tell. It was
+never the colours. It was the flatness: no grain, no second ground, no scale
+contrast, nothing stuck on at an angle. Cream and terracotta with texture and
+nerve look like somebody made a decision. Cream and terracotta flat look like
+a template. These pages are for a roofer in Poway and a dentist in Sabre
+Springs; they should look like the first one.
 
 ## Your weekly pass
 
 1. `./cc check` — which of our own pages fail our own 12 checks, and why
-2. Screenshot three or four recent client pages at 390px and actually look
+2. `./cc shot` three or four recent client pages and put them next to
+   `design/reference/` — actually look, and say which strand of the DNA is
+   furthest off
 3. Pick **one or two** real weaknesses and fix them **in `tools/render.js`**, so
    every page benefits
 4. Rebuild everything, verify nothing regressed, commit with a message that

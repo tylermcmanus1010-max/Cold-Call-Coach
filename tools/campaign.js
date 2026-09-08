@@ -27,26 +27,29 @@ const pricing = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/pricing.json'
 // character corrupts the file. A link costs nothing and can't be corrupted
 // in transit.
 //
-// Two ways to serve that link, chosen by config/hosting.json:
-//   - cloudflarePagesDomain set: the preferred path once it exists. Pages'
-//     Git integration works with a PRIVATE repo, and tools/publish.js builds
-//     a site/ folder containing ONLY rendered pages — no pricing, no
-//     suppression list, no other client's audit data. Point Cloudflare
-//     Pages' build output directory at "site" (build command:
-//     `node tools/publish.js`), never at the repo root.
-//   - unset: falls back to jsdelivr's raw-file CDN (fronted by githack, no
-//     setup, no auth), serving this repo's own committed HTML directly.
-//     Only viable while the repo stays PUBLIC — anyone can then also
-//     enumerate every other prospect's page plus config/pricing.json and
-//     config/suppression.json. Flagged to the user; superseded once
-//     cloudflarePagesDomain is set.
-const REPO_OWNER = 'tylermcmanus1010-max';
-const REPO_NAME = 'Cold-Call-Coach';
-const REPO_BRANCH = 'claude/zen-johnson-yw623l';
+// That link is served by cloudflarePagesDomain in config/hosting.json.
+// Cloudflare's Git integration works with a PRIVATE repo, and
+// tools/publish.js builds a site/ folder containing ONLY rendered pages —
+// no pricing, no suppression list, no other prospect's audit data. Point
+// the build output directory at "site" (build command
+// `node tools/publish.js`), never at the repo root.
+//
+// There is deliberately NO fallback. The old one served this repo's own
+// committed HTML off a raw-file CDN, which only works while the repo is
+// PUBLIC — and a public repo hands a stranger every other prospect's page,
+// config/pricing.json, config/suppression.json and outreach/sent-log.jsonl
+// along with it. A missing domain is a setup error worth stopping for, not
+// something to paper over by quietly publishing the whole repo.
 const hosting = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/hosting.json'), 'utf8'));
-const liveUrlFor = (slug) => hosting.cloudflarePagesDomain
-  ? `https://${hosting.cloudflarePagesDomain}/${slug}/`
-  : `https://rawcdn.githack.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/clients/${slug}/index.html`;
+const liveUrlFor = (slug) => {
+  if (!hosting.cloudflarePagesDomain) {
+    throw new Error(
+      'config/hosting.json has no cloudflarePagesDomain, so there is nowhere to\n' +
+      'host the page this email links to. Set it to the domain serving site/\n' +
+      '(see tools/publish.js) and run again.');
+  }
+  return `https://${hosting.cloudflarePagesDomain}/${slug}/`;
+};
 
 const loadClient = (slug) => JSON.parse(fs.readFileSync(path.join(CLIENTS, slug, 'business.json'), 'utf8'));
 const saveClient = (slug, b) => fs.writeFileSync(path.join(CLIENTS, slug, 'business.json'), JSON.stringify(b, null, 2) + '\n');
@@ -125,7 +128,9 @@ async function prepare({ need = 10, log = console.log } = {}) {
     if (!b.tagline) {
       const where = b.address?.city || 'San Diego';
       const what = (b.category || '').trim();
-      b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
+      // Sentence-case the category for the <h1>; a lowercase acronym would come out as "Hvac".
+      const shown = !what ? '' : /^(hvac|ac|dds|dmd|cpa|llc|rv|atv|ev|it)$/i.test(what) ? what.toUpperCase() : what[0].toUpperCase() + what.slice(1);
+      b.tagline = what ? `${shown} in ${where}.` : `Serving ${where}.`;
     }
     b.liveUrl = liveUrlFor(slug);   // pitch.js adds "you can also see it here: {liveUrl}" once this is set
     saveClient(slug, b);

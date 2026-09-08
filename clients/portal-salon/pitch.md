@@ -38,7 +38,7 @@ Hi there,
 
 I'm Tyler McManus, I run McManus Web Co. I build websites for San Diego businesses.
 
-I looked at your website and rebuilt it. Take a look: https://rawcdn.githack.com/tylermcmanus1010-max/Cold-Call-Coach/claude/zen-johnson-yw623l/clients/portal-salon/index.html
+I looked at your website and rebuilt it. Take a look: https://cold-call-coachv3.buildscope-ai.workers.dev/portal-salon/
 
 What I changed:
 - Single self-contained file, no trackers, loads instantly

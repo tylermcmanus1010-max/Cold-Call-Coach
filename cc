@@ -17,6 +17,8 @@
 //   ./cc photo <slug> <img...>  add photos to a page (resized and embedded,
 //                           so the file still opens with no internet)
 //   ./cc check [slug]       run our own 12 checks against the pages WE built
+//   ./cc shot <slug|url>    screenshot a page at phone + desktop width, so the
+//                          design can be judged by eye against design/reference/
 //   ./cc reaudit [slug]     re-check leads in a real browser and drop the ones
 //                           whose site turns out to be fine (--all to redo every one)
 //   ./cc export [slug]      copy built pages to send/ named by business,
@@ -384,7 +386,9 @@ function cmdBuild(slug) {
     if (!b.tagline) {
       const where = b.address?.city || 'San Diego';
       const what = (b.category || '').trim();
-      b.tagline = what ? `${what} in ${where}.` : `Serving ${where}.`;
+      // Sentence-case the category for the <h1>; a lowercase acronym would come out as "Hvac".
+      const shown = !what ? '' : /^(hvac|ac|dds|dmd|cpa|llc|rv|atv|ev|it)$/i.test(what) ? what.toUpperCase() : what[0].toUpperCase() + what.slice(1);
+      b.tagline = what ? `${shown} in ${where}.` : `Serving ${where}.`;
       generic.push(s);
     }
     if (b.currentSite && !fs.existsSync(path.join(dir(s), 'harvest.json'))
@@ -455,6 +459,20 @@ async function cmdPhoto(slug, files) {
   console.log(`✓ ${b.photos.length} photo${b.photos.length === 1 ? '' : 's'} on the page, ${kb(total)} total`);
   if (total > 4 * 1024 * 1024) console.log('  ⚠️  Over 4MB — some mail servers will bounce it. Drop a couple.');
   console.log(`  next: ./cc build ${slug}`);
+}
+
+// Looking beats reading. Most of what has been wrong with a page was invisible
+// in its CSS and obvious in a picture of it on a phone.
+async function cmdShot(target, outDir) {
+  if (!target) die('Usage: ./cc shot <slug | url> [outdir]');
+  const { shoot } = require('./tools/shot');
+  const r = await shoot(target, outDir);
+  console.log(`${r.url}\n  ${r.height}px tall at 390 · ${r.files.length} shots → ${path.relative(ROOT, r.out)}/`);
+  if (r.overflow390 > 0) console.log(`  ⚠️  scrolls sideways at 390px by ${r.overflow390}px`);
+  if (r.overflow320 > 0) console.log(`  ⚠️  scrolls sideways at 320px by ${r.overflow320}px`);
+  if (!r.overflow390 && !r.overflow320) console.log('  no horizontal overflow at 320 or 390');
+  for (const f of r.files) console.log('  ' + path.relative(ROOT, f));
+  console.log('\n  Open them next to design/reference/ and ask: does this belong there?');
 }
 
 // We sell a twelve-point audit. Shipping a page that fails it is indefensible.
@@ -731,6 +749,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'status': cmdStatus(args[0], args[1]); break;
     case 'photo': await cmdPhoto(args[0], args.slice(1)); break;
     case 'check': await cmdCheck(args[0]); break;
+    case 'shot': await cmdShot(args[0], args[1]); break;
     case 'export': cmdExport(args[0]); break;
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;

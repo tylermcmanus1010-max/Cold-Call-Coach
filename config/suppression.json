@@ -15,6 +15,30 @@
       "reason": "hard bounce — address not found (permanent failure)",
       "source": "mailer-daemon bounce, 2026-09-08",
       "at": "2026-09-08"
+    },
+    {
+      "email": "info@estrelladental.com",
+      "domain": "estrelladental.com",
+      "slug": "estrella-dental-implant-and-cosmetic-center",
+      "reason": "hard bounce — recipient server did not accept our mail (permanent failure)",
+      "source": "mailer-daemon bounce, 2026-09-03",
+      "at": "2026-09-09"
+    },
+    {
+      "email": "hello@saltedbarber.com",
+      "domain": "saltedbarber.com",
+      "slug": "salted-barber",
+      "reason": "hard bounce — address not found (550 5.1.1)",
+      "source": "mailer-daemon bounce, 2026-08-31",
+      "at": "2026-09-09"
+    },
+    {
+      "email": "davidcravens@mailfence.com",
+      "domain": "mailfence.com",
+      "slug": "david-cravens-insurance-services",
+      "reason": "hard bounce — address not found (550), sent twice 12 minutes apart before being caught",
+      "source": "mailer-daemon bounce, 2026-08-31",
+      "at": "2026-09-09"
     }
   ]
 }

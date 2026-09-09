@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.hugedomains.com/domain_profile.cfm?d=estrelladental.com",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "headline": "",
   "subhead": "",
@@ -110,5 +110,8 @@
   "_research": {
     "at": "2026-09-08",
     "applied": []
-  }
+  },
+  "callNotes": [
+    "2026-09-09: info@estrelladental.com hard-bounced (3 failure notices, 8/31-9/3) — suppressed. Site is also parked (domain marketplace). Dead unless a real contact surfaces."
+  ]
 }

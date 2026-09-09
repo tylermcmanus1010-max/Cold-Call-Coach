@@ -224,5 +224,10 @@
   "sentOn": "2026-08-31",
   "callNotes": [
     "2026-08-31: pitch emailed to CS@PearlCosmeticDDS.com. Page built entirely from their own site — Solea laser as the headline. 12/12 on our checks."
-  ]
+  ],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

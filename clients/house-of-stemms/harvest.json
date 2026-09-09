@@ -1,0 +1,127 @@
+{
+  "_readMe": "Everything research.js could find, from every source, raw. NOTHING here is verified. --apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) into business.json; services and headline still need a person to read this.",
+  "researchedAt": "2026-09-08",
+  "siteKind": "own",
+  "site": {
+    "url": "https://deluxeflorist.com/san-diego-florist-flower-delivery",
+    "finalUrl": "https://deluxeflorist.com/san-diego-florist-flower-delivery/",
+    "status": 200,
+    "platform": null,
+    "builder": null,
+    "title": "Flowers Delivery San Diego | House of Stemms",
+    "description": "Send flowers from a real San Diego, CA local florist. House of Stemms has a large selection of gorgeous floral arrangements and bouquets. We offer same-day flower deliveries for flowers.",
+    "reason": null
+  },
+  "jsonld": {
+    "types": [
+      "Florist",
+      "LocalBusiness",
+      "Organization"
+    ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Sunday",
+        "opens": "10:00",
+        "closes": "15:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "10:00",
+        "closes": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Saturday",
+        "opens": "10:00",
+        "closes": "17:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2026-12-25",
+        "validThrough": "2026-12-25",
+        "opens": "00:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2027-07-04",
+        "validThrough": "2027-07-04",
+        "opens": "00:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2027-09-06",
+        "validThrough": "2027-09-06",
+        "opens": "00:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2027-05-31",
+        "validThrough": "2027-05-31",
+        "opens": "00:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2027-01-01",
+        "validThrough": "2027-01-01",
+        "opens": "00:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "validFrom": "2026-11-26",
+        "validThrough": "2026-11-26",
+        "opens": "00:00",
+        "closes": "00:00"
+      }
+    ],
+    "priceRange": "$$",
+    "sameAs": [
+      "https://www.facebook.com/HouseOfStemmsSD/",
+      "https://www.instagram.com/houseofstemms/",
+      "https://x.com/HouseOfStemms",
+      "https://www.google.com/maps?q=place_id:ChIJI0s48FdT2YARK9sv5oFO68w",
+      "https://www.yelp.com/biz/house-of-stemms-san-diego-3",
+      "https://www.bloomnation.com/florist/house-of-stemms/"
+    ],
+    "telephone": "+16192378842",
+    "description": "Order Flowers Online with House of Stemms, San Diego’s Favorite Locally Owned and Operated Florist!\n\nWelcome to House of Stemms! Our family-owned and operated San Diego flower shop is one of the most popular, top-rated floral companies in the Southern California region. We strive to provide a high level of service, working with our clients to create the perfect flower creations to meet their needs, and their budget.\n\nEstablished in 1996, House of Stemms specializes in offering unique and distinc",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8451",
+      "reviewCount": "711",
+      "worstRating": "1",
+      "bestRating": "5",
+      "url": "https://www.bloomnation.com/florist/house-of-stemms/reviews/"
+    },
+    "image": "https://asset.bloomnation.com/c_fit,dpr_2,f_auto,h_1000,q_auto,w_1000/v1/vendor/6762/profile/h/o/houseofstemms-logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "6602 Mission Gorge Road Suite B",
+      "addressLocality": "San Diego",
+      "addressRegion": "CA",
+      "postalCode": "92120",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "longitude": -117.098223,
+      "latitude": 32.7931304
+    }
+  },
+  "google": {
+    "skipped": "no GOOGLE_MAPS_API_KEY"
+  },
+  "crawlNote": "--no-crawl"
+}

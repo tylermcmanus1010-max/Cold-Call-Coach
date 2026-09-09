@@ -100,40 +100,48 @@ The checks: mobile, HTTPS, speed, tap-to-call, hours, address, services/pricing,
 reviews, call-to-action, schema markup, meta tags, link previews. They live in
 `tools/checks.js` along with the exact wording each one gets in the pitch email.
 
-## 3. Read their site first — `./cc harvest <slug>`
+## 3. Research first — `./cc research`
 
 ```bash
-./cc harvest pearl-cosmetic-dds
+./cc research pearl-cosmetic-dds --apply     # one client
+./cc research --all --apply                  # every open client
+./cc research --all --apply --no-crawl       # fast pass: verdicts + Google, no nine-page read
 ```
 
 **Do this before you write a word of copy.** Every page built from guesses is a
-page of guesses.
-
-Pearl Cosmetic scored 10/12 on invented services. The moment their real ones
-went in it scored 12/12 — because their own homepage had a laser that does
-fillings with no needle, crowns finished in a single visit, a $399 membership
-plan for people with no insurance, and three testimonials with real names.
-None of that could have been guessed. All of it was sitting there.
-
-It crawls their site and writes `clients/<slug>/harvest.json`:
+page of guesses — and the three gaps every pitch flags (hours, services,
+reviews) are the three things most small-business sites never put in
+scrapeable text. So this asks four sources, and each is allowed to fail
+without taking the others down:
 
 | | |
 |---|---|
-| `quotes` | Possible testimonials — **the one gap our checks always flag, and the one thing that cannot be invented** |
-| `hours` | Day-and-time lines, in their words |
-| `people` | Dr. Whoever, Someone DDS — who to name on the page |
-| `prices` | Any dollar figure, with the sentence around it |
-| `emails`, `phones`, `social` | Contact details straight from the source |
-| `headings` | Every heading — this is where their real service list lives |
+| **siteKind** | What is actually at their URL, decided *before* anything is scraped: `own`, `parked`, `dead`, `challenge`, `platform`, `notTheirs`, `unreachable`, `none`. A parked page's description is the parking company's. A bot-challenge page's faults are the CAPTCHA's. `dead` means the domain is gone or the page 404s on the server's word; a failed connection is `unreachable` — our network as often as theirs — and is retried next run. Nothing downstream reads a page this says not to. |
+| **JSON-LD** | The site's own schema.org block — hours, price range, socials — structured, for free. |
+| **Google** | Place Details: real hours, up to five reviews with names, owner-uploaded photos, the business's own description. Needs `GOOGLE_MAPS_API_KEY`. Skipped, loudly, without it. |
+| **crawl** | The nine-page read of their own site: `quotes`, `hours`, `people`, `prices`, `emails`, `phones`, `social`, `headings` — where their real service list lives. |
 
-**It never writes `business.json`.** Deciding what is true, and what belongs in
-front of an owner, stays with you.
+All of it lands raw in `clients/<slug>/harvest.json`. **`--apply` writes only
+the structured, attributed parts into `business.json`**, and only where the
+field is empty or a placeholder: `siteKind`, the Google place (id, rating,
+count, maps link), hours, up to three four-or-five-star Google reviews with
+names, and photos through the same dedup and embed as `./cc photo`, untagged
+until someone looks. Services and the headline are never written — those
+need a person to read the harvest. Nothing is invented; everything written
+names its source.
+
+**The campaign will not send a page that has not been through this.** No
+`siteKind`, no real hours, or no real reviews means "research it", not "send
+anyway" — the ten sent on 8 Sep all lacked reviews, and that is the bar the
+README has always stated.
 
 Egress is blocked on most machines, so run it where it works: Actions tab →
-**Harvest a site** → Run workflow. The testimonials and hours come back in the
-run summary, readable on a phone.
+**Research a business** → Run workflow (blank slug = every open client). Add
+your Google key as the repository secret `GOOGLE_MAPS_API_KEY` to fill the
+hours and reviews; without it you still get `siteKind`, the site's own
+structured data, and the crawl.
 
-`./cc build` tells you which clients were built without this.
+`./cc harvest <slug>` is still there — it is the crawl on its own.
 
 ## 4. Fill in the sales copy
 
@@ -189,6 +197,15 @@ button sends people there instead.
 
 Resized to 1400px and embedded as data URIs, so the page still opens with no
 internet and still arrives as one file. A 4MB phone photo lands around 400KB.
+
+Each photo also carries a **`kind`** — `work`, `place`, `team`, `product` or
+`other` — and the page places it by that. Only `work` (a finished cut, a cake,
+a re-roofed house, a client in the chair) may sit under "Recent work"; the
+storefront and the interior go under "Around <name>"; `other` (stock, once
+someone has looked) is kept but never shown. A photo with no `kind`
+has not been looked at yet and never sits under "Recent work". `./cc shot
+<slug>` writes every photo to `shots/<slug>/photos/` so you can look; the
+harvest guesses from the site's own alt text and headings where it can.
 
 This matters more than it sounds. A nail salon, a bakery or a barber is selling
 something visual, and a text-only page cannot compete with a booking platform

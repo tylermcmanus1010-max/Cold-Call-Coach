@@ -16,28 +16,44 @@ const path = require('path');
 const { chromium, EXEC } = require('./browser-audit');
 const { embed } = require('./embed-photo');
 const { keepDistinct } = require('./dedupe-images');
+const { guessKind } = require('./photo-kind');
 
 const ROOT = path.join(__dirname, '..');
 const CLIENTS = path.join(ROOT, 'clients');
 
 const SKIP = /logo|icon|favicon|sprite|pixel|spacer|placeholder|avatar|badge|banner-ad|wp-includes|gravatar|elementor-placeholder/i;
 
+// Returns { url, alt, under } per image. The alt and the nearest heading
+// above the image are the site's own word for what it shows — kept, because
+// "Recent work" over a photo of a wall is a claim we cannot make, and this
+// is the only cheap evidence of what the photo is of (see photo-kind.js).
 async function realImageUrls(page, max) {
   const withSize = await page.evaluate(() => {
+    const headingAbove = (el) => {
+      // walk up until an ancestor contains a heading that precedes this image
+      for (let n = el; n && n !== document.body; n = n.parentElement) {
+        const hs = [...n.querySelectorAll('h1,h2,h3,h4')].filter((h) =>
+          h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING);
+        if (hs.length) return hs[hs.length - 1].textContent.trim().slice(0, 80);
+      }
+      return '';
+    };
     return [...document.querySelectorAll('img')].map((el) => ({
       src: el.currentSrc || el.src || el.dataset.src || '',
       w: el.naturalWidth || el.width || 0,
       h: el.naturalHeight || el.height || 0,
+      alt: (el.getAttribute('alt') || el.getAttribute('title') || '').trim().slice(0, 120),
+      under: headingAbove(el),
     }));
   });
   const seen = new Set();
   const out = [];
-  for (const { src, w, h } of withSize) {
+  for (const { src, w, h, alt, under } of withSize) {
     if (!src || src.startsWith('data:') || seen.has(src)) continue;
     seen.add(src);
     if (SKIP.test(src)) continue;
     if (w && w < 200 && h && h < 200) continue;   // icon-sized, not a content photo
-    out.push(src);
+    out.push({ url: src, alt, under });
     if (out.length >= max) break;
   }
   return out;
@@ -76,8 +92,9 @@ async function harvestOne(slug, { max = 4, browser, log = console.log } = {}) {
   if (!urls.length) { log(`  - ${slug}: no real photos found`); return { slug, added: 0 }; }
 
   const tmp = require('os').tmpdir();
-  const downloaded = [];   // { file, buf, mime }
-  for (const [i, url] of urls.entries()) {
+  const downloaded = [];   // { file, buf, mime, meta: { url, alt, under } }
+  for (const [i, meta] of urls.entries()) {
+    const url = meta.url;
     try {
       const buf = await fetchBuffer(url);
       if (buf.length < 4000) continue;
@@ -85,13 +102,14 @@ async function harvestOne(slug, { max = 4, browser, log = console.log } = {}) {
       const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
       const f = path.join(tmp, `harvest-${slug}-${i}.${ext}`);
       fs.writeFileSync(f, buf);
-      downloaded.push({ file: f, buf, mime });
+      downloaded.push({ file: f, buf, mime, meta });
     } catch { /* skip this one */ }
   }
   if (!downloaded.length) { log(`  - ${slug}: found image URLs but none downloaded cleanly`); return { slug, added: 0 }; }
 
   const distinctIdx = await keepDistinct(downloaded.map((d) => ({ buf: d.buf, mime: d.mime })), { browser });
-  const files = distinctIdx.slice(0, max).map((i) => downloaded[i].file);
+  const kept = distinctIdx.slice(0, max).map((i) => downloaded[i]);
+  const files = kept.map((d) => d.file);
   if (distinctIdx.length < downloaded.length) {
     log(`  · ${slug}: dropped ${downloaded.length - distinctIdx.length} near-duplicate photo(s)`);
   }
@@ -99,7 +117,20 @@ async function harvestOne(slug, { max = 4, browser, log = console.log } = {}) {
   const embedded = await embed(files);
   downloaded.forEach((d) => { try { fs.unlinkSync(d.file); } catch {} });
 
-  b.photos = embedded.map((e, i) => ({ src: e.src, alt: `${b.name} — photo ${i + 1}` }));
+  // A guessed kind is a hint, not a verdict; untagged photos never sit under
+  // "Recent work" until someone looks (./cc shot writes them out to look at).
+  b.photos = embedded.map((e, i) => {
+    const m = kept[i]?.meta || {};
+    const kind = guessKind(m);
+    return {
+      src: e.src,
+      alt: m.alt || `${b.name} — photo ${i + 1}`,
+      ...(kind ? { kind } : {}),
+      from: { url: m.url, alt: m.alt || '', under: m.under || '' },
+    };
+  });
+  const tagged = b.photos.filter((p) => p.kind).length;
+  if (tagged < b.photos.length) log(`  · ${slug}: ${b.photos.length - tagged} photo(s) need a look — ./cc shot ${slug}, then set kind`);
   fs.writeFileSync(bFile, JSON.stringify(b, null, 2) + '\n');
   log(`  + ${slug}: ${embedded.length} real photo(s) embedded`);
   return { slug, added: embedded.length };

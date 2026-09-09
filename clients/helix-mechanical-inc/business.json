@@ -140,5 +140,10 @@
   "sentOn": "2026-08-26",
   "callNotes": [
     "2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply."
-  ]
+  ],
+  "siteKind": "own",
+  "_research": {
+    "at": "2026-09-08",
+    "applied": []
+  }
 }

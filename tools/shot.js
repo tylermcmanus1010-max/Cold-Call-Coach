@@ -116,16 +116,50 @@ async function overflow(page) {
   return page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 }
 
+// A client's photos, written out as files next to its screenshots, so
+// whoever is judging the page can look at each one and say what it is of.
+// The page decides where a photo may go by its `kind` (see photo-kind.js);
+// a photo of a wall under "Recent work" is a claim, and the only way to
+// catch it is to look. photos.txt beside them says what each is tagged as.
+function dumpPhotos(slug, out) {
+  const file = path.join(ROOT, 'clients', slug, 'business.json');
+  if (!fs.existsSync(file)) return [];
+  const b = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const photos = (b.photos || []).filter((p) => p && (typeof p === 'string' ? p : p.src));
+  if (!photos.length) return [];
+  const dir = path.join(out, 'photos');
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  const lines = [], files = [];
+  photos.forEach((p, i) => {
+    const src = typeof p === 'string' ? p : p.src;
+    const m = /^data:(image\/[a-z+]+);base64,(.+)$/s.exec(src);
+    if (!m) return;
+    const ext = m[1].split('/')[1].replace('jpeg', 'jpg').replace('svg+xml', 'svg');
+    const f = path.join(dir, `${String(i).padStart(2, '0')}.${ext}`);
+    fs.writeFileSync(f, Buffer.from(m[2], 'base64'));
+    files.push(f);
+    const o = typeof p === 'object' ? p : {};
+    lines.push(`${String(i).padStart(2, '0')}  kind=${o.kind || '—'}  alt="${o.alt || ''}"` +
+      (o.from ? `  under="${o.from.under || ''}"  from=${o.from.url || ''}` : ''));
+  });
+  fs.writeFileSync(path.join(dir, 'photos.txt'),
+    `# ${slug} — ${photos.length} photo(s). kind decides where each may go (tools/photo-kind.js).\n` +
+    lines.join('\n') + '\n');
+  return files;
+}
+
 async function shoot(target, outDir) {
   const { url, name } = resolveTarget(target);
   const out = outDir || path.join(ROOT, 'shots', name);
   fs.mkdirSync(out, { recursive: true });
   for (const f of fs.readdirSync(out)) if (f.endsWith('.png')) fs.unlinkSync(path.join(out, f));
+  const photoFiles = isUrl(target) ? [] : dumpPhotos(target, out);
 
   const browser = await chromium.launch({ executablePath: EXEC,
     args: ['--no-sandbox', '--disable-background-networking', '--disable-component-update'] });
   const files = [];
-  const report = { url, out, files, height: 0, overflow390: 0, overflow320: 0 };
+  const report = { url, out, files, photos: photoFiles, height: 0, overflow390: 0, overflow320: 0 };
   try {
     // Phone: the folds, then the whole thing.
     let { ctx, page } = await open(browser, url, PHONE, 2, true);
@@ -171,5 +205,6 @@ if (require.main === module) {
     if (r.overflow320 > 0) console.log(`  ⚠️  scrolls sideways at 320px by ${r.overflow320}px`);
     if (!r.overflow390 && !r.overflow320) console.log('  no horizontal overflow at 320 or 390');
     for (const f of r.files) console.log('  ' + path.relative(ROOT, f));
+    if (r.photos.length) console.log(`  ${r.photos.length} photo(s) written to ${path.relative(ROOT, path.dirname(r.photos[0]))}/ — see photos.txt for what each is tagged as`);
   }).catch((e) => { console.error('✗ ' + e.message); process.exit(1); });
 }

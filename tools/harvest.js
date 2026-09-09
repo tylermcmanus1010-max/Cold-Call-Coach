@@ -75,7 +75,9 @@ async function readPage(page, url) {
   });
 }
 
-async function harvest(slug, { log = console.log } = {}) {
+// `write: false` returns the crawl without touching harvest.json, so
+// tools/research.js can fold it in with the other sources and write once.
+async function harvest(slug, { log = console.log, write = true } = {}) {
   const f = path.join(ROOT, 'clients', slug, 'business.json');
   if (!fs.existsSync(f)) throw new Error(`no such client: ${slug}`);
   const b = JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -145,7 +147,7 @@ async function harvest(slug, { log = console.log } = {}) {
     pageText: Object.fromEntries(pages.map((p) => [p.url, p.text])),
   };
 
-  fs.writeFileSync(path.join(ROOT, 'clients', slug, 'harvest.json'), JSON.stringify(out, null, 2));
+  if (write) fs.writeFileSync(path.join(ROOT, 'clients', slug, 'harvest.json'), JSON.stringify(out, null, 2));
   return out;
 }
 

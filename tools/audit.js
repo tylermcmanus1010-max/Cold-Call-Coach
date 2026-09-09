@@ -219,4 +219,4 @@ async function audit(rawUrl, { timeout = 12000 } = {}) {
   };
 }
 
-module.exports = { audit, CHECKS };
+module.exports = { audit, CHECKS, looksParked, BUILDERS };

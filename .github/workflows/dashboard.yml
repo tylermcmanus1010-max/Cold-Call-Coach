@@ -1,0 +1,69 @@
+# Rebuild the morning dashboard and commit it, every morning.
+#
+# dashboard/index.html is the answer to "where are we": everyone contacted and
+# what came back on one tab, the next 25–50 on the other. It is derived
+# entirely from clients/, the send log and the lead files, so committing it
+# costs nothing and means the phone never shows yesterday's numbers.
+#
+# Runs after the site watch (06:00 Pacific) so a site that went down
+# overnight is already in the data it reads. On main, tools/publish.js copies
+# the result into site/dash/ and the Worker serves it behind DASH_KEY.
+
+name: Morning dashboard
+
+on:
+  schedule:
+    - cron: '30 13 * * *'      # 6:30am Pacific
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'How many businesses on the Up next tab (25–50)'
+        required: false
+        default: '50'
+
+permissions:
+  contents: write
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: ./cc dashboard --limit "${{ inputs.limit || '50' }}" | tee dashboard.log
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Morning dashboard — $(date -u '+%d %b %Y')"
+            echo
+            echo '```'
+            cat dashboard.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f dashboard.log
+          git add dashboard/
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "Morning dashboard $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin "$GITHUB_REF_NAME" || exit 1
+              sleep $((i * 3))
+            done
+          fi

@@ -134,5 +134,6 @@
   },
   "callNotes": [
     "2026-09-09: reconciled against Gmail — this was actually sent 2026-08-31 to experience@eversunwellness.com (old attachment-era send, predates outreach/sent-log.jsonl). No bounce, no reply seen since. Status corrected from new to sent so it is not pitched twice."
-  ]
+  ],
+  "sentOn": "2026-08-31"
 }

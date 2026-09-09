@@ -8,7 +8,50 @@ the thing, price it, and ask for what you need.
 
 ---
 
+## Reaching back out now, ahead of the 15 Oct revisit — 9 Sep 2026
+
+His last word (31 Aug) was a real objection, not a no: *"I don't think my
+business is quite there yet with insurance and shop cost at the moment."* The
+plan was to leave that alone until mid-October, because that was a
+this-month problem for him, not a verdict on the page. Nothing about his
+situation has changed since — **do not re-pitch the price, and do not treat
+this as a second attempt at the same close.**
+
+What has changed is the page itself. It was rebuilt on a new design standard
+last night — every client page was — and his held up well without a single
+invented fact added: same headline, same services, same $750/$60 offer,
+same real service area and email. What's different is how it's built —
+texture instead of a flat fill, a wider gap between the small print and the
+headline, his own accent blue actually used on the headline instead of
+tucked into a button, and the "Ready when you are" section now sits as a
+paper card on a dark band instead of a plain form. Worth a look on its own
+terms, not as a reason to reopen the sale.
+
+**Say this plainly if you reach him**, low-pressure: *"No update on the
+price — I know where that stands. I rebuilt the page itself, wanted you to
+see it since you're the one who already looked at the first version."*
+
+Two things worth asking while you have him, both already the plan from
+31 Aug and both free to him:
+
+1. **Two or three photos** — the van, a tub mid-service, anything. His page
+   is the one on the new standard with zero photos on it; even one turns the
+   hero from a plain color block into something that looks like his actual
+   business. Nothing gets added without them — that rule does not bend for
+   a warm lead either.
+2. **Host his page live, free, as our portfolio piece** — we still have no
+   live site and no testimonial to point to, and he is the best candidate
+   for both.
+
+**Do not update `revisitAfter` or log this as a completed contact until it
+actually happens.** This file is prepped; nothing has been sent.
+
+---
+
 ## The timing, which is the strongest thing you have
+
+*(Written in August, before the first pitch — the season argument, not the
+redesign, is still the reason to move now rather than wait for October.)*
 
 It is late August. **Pool closing season in Nebraska runs September into
 October**, and closing is one of his two biggest jobs of the year at $265 a

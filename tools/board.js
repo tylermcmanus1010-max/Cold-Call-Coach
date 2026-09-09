@@ -186,7 +186,7 @@ function fromClients() {
       rendered: sc.rendered === true,
       namesBusiness: sc.namesBusiness,
       loadMs: sc.loadMs || null,
-      attempts: (b.callNotes || []).length,
+      attempts: b.attempts || 0,   // ./cc tried's counter — NOT callNotes.length. A logged conversation (a reply, a plan, a revisit date) is not a failed dial; conflating them flagged Seth Wright, an engaged warm lead, as "past the four-strike rule."
       notes: b.callNotes || [],
       built: fs.existsSync(path.join(dir, slug, 'index.html')),
     });

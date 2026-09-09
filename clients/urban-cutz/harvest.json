@@ -1,6 +1,6 @@
 {
-  "_readMe": "Everything research.js could find, from every source, raw. NOTHING here is verified. --apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) into business.json; services and headline still need a person to read this.",
-  "researchedAt": "2026-09-08",
+  "_readMe": "Material taken off their own website. NOTHING here is verified and nothing has been written to business.json — decide what is true and what belongs on the page yourself. Quotes are the valuable part: real testimonials with real names are the one gap our own checks always flag, and they cannot be invented.",
+  "researchedAt": "2026-09-09",
   "siteKind": "own",
   "site": {
     "url": "https://placejuice.com/urban-cutz-barber-shop-pcrpmtq",
@@ -16,5 +16,45 @@
   "google": {
     "skipped": "no GOOGLE_MAPS_API_KEY"
   },
-  "crawlNote": "--no-crawl"
+  "osmTags": null,
+  "harvestedAt": "2026-09-09",
+  "from": "https://placejuice.com/urban-cutz-barber-shop-pcrpmtq",
+  "namesBusiness": true,
+  "pagesRead": [
+    "https://placejuice.com/urban-cutz-barber-shop-pcrpmtq"
+  ],
+  "emails": [
+    "info@example.com"
+  ],
+  "phones": [
+    "+1 619-866-8710"
+  ],
+  "hours": [
+    "Monday 09:00 AM - 08:00 PM",
+    "Tuesday 09:00 AM - 08:00 PM",
+    "Wednesday 09:00 AM - 08:00 PM",
+    "Thursday 09:00 AM - 08:00 PM",
+    "Friday 09:00 AM - 08:00 PM",
+    "Saturday 09:00 AM - 08:00 PM",
+    "Sunday 09:00 AM - 07:00 PM"
+  ],
+  "people": [],
+  "prices": [
+    "He charged me $40 for a buzz cut"
+  ],
+  "social": [],
+  "headings": [
+    "Urban Cutz Barber Shop",
+    "Urban Cutz Barber Shop Info",
+    "Best PlaceJuice Reviews",
+    "Opening Hours",
+    "Amenities",
+    "Place Pictures",
+    "Location",
+    "Other Places"
+  ],
+  "quotes": [],
+  "pageText": {
+    "https://placejuice.com/urban-cutz-barber-shop-pcrpmtq": "Discover more Geographic Reference Hair Cutting, Coloring & Styling Services Assistive Technology Biological Sciences Unwanted Body & Facial Hair Removal Urban Cutz Barber Shop +1 619-866-8710 7907 Broadway, Lemon Grove, CA 91945 United States of America Open Today: 09:00 AM - 08:00 PM Urban Cutz Barber Shop Info 7907 Broadway, Lemon Grove, CA 91945 United States of America +1 619-866-8710 info@example.com +1 619-866-8710 +1 619-866-8710 Discover more Hair Care hair Fashion & Style Disabled & Special Needs Hair Cutting, Coloring & Styling Services Best PlaceJuice Reviews Big Dave cut ✂️my son's hair. He did an awesome ????????job. All other barbers did a great job on their customers heads. Discover more Unwanted Body & Facial Hair Removal Hair Care Biological Sciences Geographic Reference Fashion & Style Grew up getting my haircut at the El Cajon Blvd location so when I saw this one driving by I new I had to step in. Billy hooked me up with a low skin fade & I love it! Great service, didn’t even have to wait. Have had some good cuts here before. Past 2 times left me wondering if they even graduated barber school. 50/50 could get a quality haircut or could get some botched up Weird stuff going on. Overall having to get another barber to fix a haircut is not the move. He charged me $40 for a buzz cut . It’s cool tho dude look like he needed the money more then I did My husband went to get a haircut today and came back with this style it was so awesome I love it he loves it whoever did this thank you!!! Great place with knowledgeable stylists. Great environment/with the best of everything,equipment,skills & techniques whatever your request is they can & will get it done My son and I were apprehensive about the young Latino guy who we were assigned to, to cut my young, African-American son's hair. The guy in the first chair ASSURED me that the young guy was proficient and just in case he didn't accomplish satisfactory work, that he would personally fix it. We reluctantly, but PRAYERFULLY gave him a try. Boy, are we glad that we took a faith walk today, because my son's cut was better than it has been for a little while now. THANK YOU URBAN CUTZ for giving me a good first experience at your establishment. TODAY Opening Hours Monday 09:00 AM - 08:00 PM Tuesday 09:00 AM - 08:00 PM Wednesday 09:00 AM - 08:00 PM Thursday 09:00 AM - 08:00 PM Friday 09:00 AM - 08:00 PM Saturday 09:00 AM - 08:00 PM Sunday 09:00 AM - 07:00 PM Amenities Accessibility Wheelchair accessible entrance Wheelchair accessible parking lot Wheelchair accessible restroom Amenities Gender-neutral restroom Restroom Crowd LGBTQ+ friendly Planning Appointments recommended Discover more Disabled & Special Needs Assistive Technology Unwanted Body & Facial Hair Removal hair Geographic Reference Place Pictures HOW TO GO THERE Location PLACES Other Places 1. Saraykapi 2. Mabuhay 3. Henry Town Center 4. China-Restaurant Asia Palast 5. Grammas Country Kitchen 6. Calverley Grounds 7. Café MAY 8. Mengu Buffet 9. GALERIA Heidelberg am Bismarckplatz 10. Oishii - Sushi & Grill 11. Cleveleys Kitchen 12. The Rose Salterne - JD Wetherspoons © 2026, Your company. All rights reserved. Home | United States | United Kingdom | Germany | Contact Us | Privacy Policy | Terms of Use"
+  }
 }

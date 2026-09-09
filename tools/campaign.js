@@ -88,6 +88,12 @@ function unsendable(b) {
   const realHours = (b.hours || []).some((h) => h.time) && hoursSig !== PLACEHOLDER_HOURS_SIG;
   if (!realHours) why.push('no real hours');
   if (!(b.reviews || []).some((r) => r && r.text)) why.push('no real reviews');
+  // Not populated automatically — research.js only points out a CSLB-shaped
+  // number for a human to check by hand (see tools/research.js). If someone
+  // records the answer here after checking, a bad one is worse than no claim.
+  if (b.licenseCheck && /expired|revoked|suspended|inactive/i.test(b.licenseCheck.status)) {
+    why.push(`license on file is ${b.licenseCheck.status} (${b.licenseCheck.source || 'checked by hand'}) — verify before pitching, do not send as-is`);
+  }
   return why;
 }
 

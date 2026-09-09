@@ -181,6 +181,11 @@ function toLeads(elements, defaultState = 'CA') {
         city: t['addr:city'] || '', state: t['addr:state'] || defaultState, zip: t['addr:postcode'] || '',
       },
       rating: null, reviewCount: null,
+      // Overpass fetches every tag on the node ("out tags center"); kept
+      // raw here rather than discarded, so ./cc research can read
+      // opening_hours, contact:instagram, wheelchair, payment:* etc. —
+      // all free, all already fetched, none of it used until now.
+      osmTags: t,
     };
   }).filter((b) => {
     // The per-trade fallback can return the same place under two tags.
@@ -463,6 +468,7 @@ function toBusinessJson(lead, tplPath) {
     audit: a.checks,
     _scout: {
       score: lead.score, gaps: a.gaps,
+      ...(lead.osmTags ? { osmTags: lead.osmTags } : {}),
       // Whether these findings were measured in a real browser. A raw-HTML run
       // cannot see JavaScript-rendered hours, phone links or layout, so its
       // findings are not safe to put in front of an owner.

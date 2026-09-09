@@ -391,6 +391,132 @@ async function crawl(slug, log) {
   }
 }
 
+// ------------------------------------------------------------- 5. CSLB
+//
+// Not automated. CSLB's public lookup has no API — classic ASP.NET
+// WebForms, a viewstate postback to a detail page. In testing that flow
+// worked cleanly once, against a real license (Helix Mechanical, #834736,
+// confirmed active). Ten-odd requests later, spread over several minutes
+// with a courtesy delay between them, the same endpoint answered "Request
+// Rejected... consult with your administrator" — a WAF declining automated
+// traffic. That is the site's own bot-defense saying no, the same category
+// of signal as DCA's Cloudflare Turnstile and the CA Secretary of State's
+// Akamai block on its search API — both of those are skipped entirely for
+// the same reason. This one is not built around either.
+//
+// What's left is harmless and costs no request: recognizing a CSLB-shaped
+// number already sitting in business.json, so research can point a human
+// at cslb.ca.gov/OnlineServices/CheckLicenseII/CheckLicense.aspx to check
+// it by hand — one person, one click-through, which is what that form is
+// actually for.
+function extractCslbNumber(license) {
+  const m = String(license || '').match(/\b(\d{6,7})\b/);
+  return m ? m[1] : null;
+}
+
+// ------------------------------------------------------------- 6. RDAP
+//
+// Domain age, from the standard RDAP protocol — no key, no bot-protection,
+// well-behaved. Kept for internal use only: a `_` field, never rendered.
+// "This domain has been registered since 2003" is not "in business since
+// 2003" — they could have moved onto a new domain last year and this would
+// say nothing true about them. It is a weak signal, worth having, never a
+// claim.
+async function domainAge(hostname, log) {
+  if (!hostname) return null;
+  try {
+    const res = await fetch(`https://rdap.org/domain/${hostname}`, { redirect: 'follow', headers: { 'user-agent': UA, accept: 'application/rdap+json' }, signal: AbortSignal.timeout(TIMEOUT) });
+    if (!res.ok) return null;
+    const d = await res.json();
+    const reg = (d.events || []).find((e) => e.eventAction === 'registration');
+    if (!reg) return null;
+    const years = (Date.now() - Date.parse(reg.eventDate)) / (365.25 * 86400000);
+    return { registered: reg.eventDate.slice(0, 10), years: Math.round(years * 10) / 10 };
+  } catch (e) {
+    log(`  domain age: skipped — ${e.message.split('\n')[0]}`);
+    return null;
+  }
+}
+
+// ------------------------------------------------------------- 7. wider OSM tags
+//
+// scout.js's Overpass query already asks for every tag on the node
+// ("out tags center") — toLeads() just throws all but five of them away.
+// So this costs nothing new: whatever survived into `_scout.osmTags` at
+// scout time (only present on leads scouted after this shipped) is read
+// here. opening_hours is OSM's own mini-language, not schema.org's — this
+// parses the common shapes (day ranges, one time range per group, "off",
+// "24/7") and returns null on anything it cannot read with confidence,
+// same rule as everywhere else: an unparsed spec is not a guessed one.
+function hoursFromOsm(spec) {
+  if (!spec || typeof spec !== 'string') return null;
+  const s = spec.trim();
+  if (/^24\/7$/i.test(s)) return [{ days: 'Every day', time: 'Open 24 hours', schema: 'Mo-Su 00:00-23:59' }];
+  // Reject anything with syntax this parser does not model, rather than
+  // guess at it: fallback groups ("||"), comments, holiday rules, week
+  // numbers, or a comma inside a single time spec (multiple ranges in one
+  // day — real, just not handled here). A run of ";"-joined day groups,
+  // the shape almost every real listing uses, is exactly what this parses.
+  if (/\|\||\(|PH|SH|week|easter|\d{2}:\d{2}\s*,/i.test(s) || (s.match(/;/g) || []).length > 8) return null;
+  const DAY_RE = /^(Mo|Tu|We|Th|Fr|Sa|Su)(-(Mo|Tu|We|Th|Fr|Sa|Su))?((,(Mo|Tu|We|Th|Fr|Sa|Su)(-(Mo|Tu|We|Th|Fr|Sa|Su))?)*)$/;
+  const order = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const rows = [];
+  for (const clause of s.split(';').map((c) => c.trim()).filter(Boolean)) {
+    const m = clause.match(/^([A-Za-z,\-]+)\s+(off|closed|(\d{2}:\d{2})-(\d{2}:\d{2}))$/i);
+    if (!m || !DAY_RE.test(m[1])) return null;
+    const days = [];
+    for (const part of m[1].split(',')) {
+      const [a, z] = part.split('-');
+      const ai = order.indexOf(a), zi = order.indexOf(z || a);
+      if (ai < 0 || zi < 0) return null;
+      if (zi >= ai) for (let i = ai; i <= zi; i++) days.push(order[i]);
+      else { for (let i = ai; i < 7; i++) days.push(order[i]); for (let i = 0; i <= zi; i++) days.push(order[i]); }
+    }
+    const closed = /^(off|closed)$/i.test(m[2]);
+    const label = closed ? 'Closed' : `${ampm(...m[3].split(':').map(Number))} – ${ampm(...m[4].split(':').map(Number))}`;
+    const schemaFrag = closed ? null : `${m[3]}-${m[4]}`;
+    for (const d of days) rows.push({ day: d, label, schemaFrag });
+  }
+  if (!rows.length) return null;
+  // Group consecutive Mon→Sun days with identical hours, same shape as
+  // rowsFromDays elsewhere in this file.
+  const byDay = Object.fromEntries(rows.map((r) => [r.day, r]));
+  const seq = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  const full = { Sunday: 'Su', Monday: 'Mo', Tuesday: 'Tu', Wednesday: 'We', Thursday: 'Th', Friday: 'Fr', Saturday: 'Sa' };
+  const nameOf = Object.fromEntries(Object.entries(full).map(([k, v]) => [v, k]));
+  const out = [];
+  let i = 0;
+  while (i < seq.length) {
+    const d = seq[i];
+    if (!byDay[d]) { i++; continue; }
+    let j = i;
+    while (j + 1 < seq.length && byDay[seq[j + 1]] && byDay[seq[j + 1]].label === byDay[d].label) j++;
+    const label = i === j ? nameOf[seq[i]] : `${DAY3[order.indexOf(seq[i]) === 0 ? 0 : ['Su','Mo','Tu','We','Th','Fr','Sa'].indexOf(seq[i])]}`;
+    const a = seq[i], z = seq[j];
+    const days = a === z ? nameOf[a] : `${nameOf[a].slice(0, 3)}–${nameOf[z].slice(0, 3)}`;
+    const code = a === z ? a : `${a}-${z}`;
+    out.push({ days, time: byDay[d].label, ...(byDay[d].schemaFrag ? { schema: `${code} ${byDay[d].schemaFrag}` } : {}) });
+    i = j + 1;
+  }
+  return out;
+}
+
+function fromOsmTags(tags) {
+  if (!tags || typeof tags !== 'object') return {};
+  const out = {};
+  const hours = hoursFromOsm(tags.opening_hours);
+  if (hours) out.hours = hours;
+  const insta = tags['contact:instagram'] || tags.instagram;
+  const fb = tags['contact:facebook'] || tags.facebook;
+  if (insta || fb) out.social = [insta, fb].filter(Boolean);
+  if (tags.wheelchair) out.wheelchair = tags.wheelchair;   // 'yes' | 'limited' | 'no'
+  const payment = Object.entries(tags).filter(([k, v]) => k.startsWith('payment:') && v === 'yes').map(([k]) => k.slice('payment:'.length));
+  if (payment.length) out.payment = payment;
+  if (tags.cuisine) out.cuisine = tags.cuisine.split(';');
+  if (tags.outdoor_seating) out.outdoorSeating = tags.outdoor_seating === 'yes';
+  return out;
+}
+
 // ------------------------------------------------------------------- --apply
 
 const PLACEHOLDER_HOURS_SIG = require('./render').PLACEHOLDER_HOURS_SIG;
@@ -432,9 +558,15 @@ async function apply(slug, b, h, { key, log }) {
     b.google = { placeId: g.placeId, mapsUrl: g.mapsUrl, rating: g.rating, reviewCount: g.reviewCount, fetchedAt: g.fetchedAt };
     if (!b.rating && g.rating && g.reviewCount) b.rating = { value: g.rating, count: g.reviewCount, source: 'Google' };
   }
+  // OSM's own opening_hours, when Google and JSON-LD both came up empty —
+  // it costs nothing new (the tags were already fetched at scout time) and
+  // it is the site owner's or a mapper's own word, structured, for free.
+  const osm = fromOsmTags(h.osmTags);
   if (!hasRealHours(b)) {
-    const hours = (g?.resolved && g.hours) || hoursFromJsonLd(h.jsonld);
-    if (hours && hours.some((r) => r.schema)) { b.hours = hours; applied.hours = g?.hours ? 'google' : 'jsonld'; }
+    const hours = (g?.resolved && g.hours) || hoursFromJsonLd(h.jsonld) || osm.hours;
+    if (hours && hours.some((r) => r.schema)) {
+      b.hours = hours; applied.hours = g?.hours ? 'google' : h.jsonld?.openingHoursSpecification ? 'jsonld' : 'osm';
+    }
   }
   if (!hasReviews(b) && g?.resolved && g.reviews?.length) { b.reviews = g.reviews.slice(0, 3); applied.reviews = 'google'; }
   if (g?.resolved && g._details && key) {
@@ -444,6 +576,22 @@ async function apply(slug, b, h, { key, log }) {
       if (n) applied.photos = n;
     } catch (e) { log(`  photos: skipped — ${e.message.split('\n')[0]}`); }
   }
+  if (!b.social && osm.social?.length) { b.social = osm.social; applied.social = 'osm'; }
+
+  // CSLB is not queried automatically (see the comment above extractCslbNumber).
+  // A number that looks like one is just pointed out for a human to check.
+  const licNo = extractCslbNumber(b.license);
+  if (licNo && b.address?.state === 'CA' && !b.licenseCheck) {
+    log(`  cslb: #${licNo} on file, not verified — check by hand at cslb.ca.gov/OnlineServices/CheckLicenseII/CheckLicense.aspx`);
+  }
+
+  // Domain age: internal only, `_`-prefixed, never a page claim.
+  const host = (() => { try { return new URL(b.currentSite).hostname.replace(/^www\./, ''); } catch { return null; } })();
+  if (host) {
+    const age = await domainAge(host, log);
+    if (age) { b._domainAge = age; log(`  domain age: registered ${age.registered} (${age.years}y) — internal only, never a page claim`); }
+  }
+
   b._research = { at: new Date().toISOString().slice(0, 10), applied: Object.keys(applied) };
   save(slug, b);
   const what = Object.entries(applied).map(([k, v]) => `${k}${typeof v === 'number' ? ' ×' + v : ' from ' + v}`).join(', ');
@@ -477,30 +625,36 @@ async function research(slug, { apply: doApply = false, fresh = false, noCrawl =
   // A crawl that could not run here must not erase one that ran in Actions.
   const crawlOut = c.error || c.skipped ? (prior.pagesRead ? { ...pickCrawl(prior), crawlNote: c.error || c.skipped } : { crawlNote: c.error || c.skipped }) : c;
 
+  const osmTags = b._scout?.osmTags || null;
+  if (osmTags) log(`  osm: ${Object.keys(fromOsmTags(osmTags)).join(', ') || 'no usable tags'}`);
+
   const { _details, ...gStored } = g;
   const out = {
     _readMe: 'Everything research.js could find, from every source, raw. NOTHING here is verified. ' +
-             '--apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) ' +
-             'into business.json; services and headline still need a person to read this.',
+             '--apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos, ' +
+             'OSM hours/social) into business.json; services and headline still need a person to read ' +
+             'this. A CSLB-shaped license number is pointed out, never fetched — see extractCslbNumber. ' +
+             '_domainAge, when present, is internal only — never a page claim.',
     researchedAt: new Date().toISOString().slice(0, 10),
     siteKind: kind.siteKind,
     site: { url: b.currentSite || null, finalUrl: page.finalUrl || null, status: page.status ?? null,
             platform: kind.platform || null, builder: kind.builder || null, ...meta, reason: kind.reason || null },
     jsonld: ld,
     google: gStored,
+    osmTags,
     ...crawlOut,
   };
   fs.writeFileSync(hFile, JSON.stringify(out, null, 2));
 
   let applied = null;
-  if (doApply) applied = await apply(slug, b, { ...out, google: g }, { key: process.env.GOOGLE_MAPS_API_KEY, log });
+  if (doApply) applied = await apply(slug, b, { ...out, google: g, osmTags }, { key: process.env.GOOGLE_MAPS_API_KEY, log });
   return { slug, siteKind: kind.siteKind, google: { resolved: !!g.resolved }, applied };
 }
 
 const CRAWL_KEYS = ['harvestedAt', 'from', 'namesBusiness', 'pagesRead', 'emails', 'phones', 'hours', 'people', 'prices', 'social', 'headings', 'quotes', 'pageText'];
 const pickCrawl = (h) => Object.fromEntries(CRAWL_KEYS.filter((k) => h[k] !== undefined).map((k) => [k, h[k]]));
 
-module.exports = { research, openSlugs, decideSiteKind, namesBusiness, jsonLd, hoursFromGoogle, hoursFromJsonLd, pickReviews, scoreCandidate, similar };
+module.exports = { research, openSlugs, decideSiteKind, namesBusiness, jsonLd, hoursFromGoogle, hoursFromJsonLd, pickReviews, scoreCandidate, similar, hoursFromOsm, fromOsmTags, extractCslbNumber, domainAge };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

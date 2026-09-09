@@ -33,18 +33,14 @@
   "priceRange": "$$",
   "hours": [
     {
-      "days": "Mon–Fri",
-      "time": "8:00 AM – 5:00 PM",
-      "schema": "Mo-Fr 08:00-17:00"
-    },
-    {
-      "days": "Saturday",
-      "time": "9:00 AM – 2:00 PM",
-      "schema": "Sa 09:00-14:00"
+      "days": "Mon–Sat",
+      "time": "9:00 AM – 8:00 PM",
+      "schema": "Mo-Sa 09:00-20:00"
     },
     {
       "days": "Sunday",
-      "time": "Closed"
+      "time": "9:00 AM – 7:00 PM",
+      "schema": "Su 09:00-19:00"
     }
   ],
   "highlights": [
@@ -147,7 +143,9 @@
   "siteKind": "own",
   "_research": {
     "at": "2026-09-09",
-    "applied": []
+    "applied": [
+      "hours"
+    ]
   },
   "_domainAge": {
     "registered": "2022-05-25",

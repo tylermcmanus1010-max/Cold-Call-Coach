@@ -501,6 +501,35 @@ function hoursFromOsm(spec) {
   return out;
 }
 
+// ------------------------------------------------------------- 8. crawl hours
+//
+// harvest.js's own regex (unchanged since before research.js existed)
+// already pulls lines like "Monday 09:00 AM - 08:00 PM" out of a site's
+// rendered text — a real find on urban-cutz's crawl, sitting unused in
+// harvest.json because nothing ever turned that shape into the
+// {days,time,schema} rows apply() writes. Full day name, one line per day,
+// is the one shape this reads with confidence; anything else (a "Mon-Fri"
+// range already collapsed, a "Closed" line, stray text harvest.js's loose
+// regex pulled in) is left alone rather than guessed at.
+function hoursFromCrawlText(lines) {
+  if (!Array.isArray(lines) || !lines.length) return null;
+  const days = Array.from({ length: 7 }, () => []);
+  const to24 = (h, m, ap) => { let hh = Number(h) % 12; if (/pm/i.test(ap)) hh += 12; return `${String(hh).padStart(2, '0')}:${m}`; };
+  let hits = 0;
+  for (const line of lines) {
+    const m = String(line).trim().match(/^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)\b[^\d]*(\d{1,2}):(\d{2})\s*(AM|PM)\s*[-–—to]+\s*(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) continue;
+    const d = DAY.findIndex((n) => n.toLowerCase() === m[1].toLowerCase());
+    if (d < 0) continue;
+    days[d].push({ open: to24(m[2], m[3], m[4]), close: to24(m[5], m[6], m[7]) });
+    hits++;
+  }
+  // Require most of the lines offered to have actually parsed — a handful
+  // of hits out of a long, noisy list is more likely a stray match than a
+  // real hours block.
+  return hits >= 5 || (hits > 0 && hits === lines.length) ? rowsFromDays(days) : null;
+}
+
 function fromOsmTags(tags) {
   if (!tags || typeof tags !== 'object') return {};
   const out = {};
@@ -563,9 +592,11 @@ async function apply(slug, b, h, { key, log }) {
   // it is the site owner's or a mapper's own word, structured, for free.
   const osm = fromOsmTags(h.osmTags);
   if (!hasRealHours(b)) {
-    const hours = (g?.resolved && g.hours) || hoursFromJsonLd(h.jsonld) || osm.hours;
+    const crawlHours = hoursFromCrawlText(h.hours);
+    const hours = (g?.resolved && g.hours) || hoursFromJsonLd(h.jsonld) || osm.hours || crawlHours;
     if (hours && hours.some((r) => r.schema)) {
-      b.hours = hours; applied.hours = g?.hours ? 'google' : h.jsonld?.openingHoursSpecification ? 'jsonld' : 'osm';
+      b.hours = hours;
+      applied.hours = g?.hours ? 'google' : h.jsonld?.openingHoursSpecification ? 'jsonld' : osm.hours ? 'osm' : 'crawl';
     }
   }
   if (!hasReviews(b) && g?.resolved && g.reviews?.length) { b.reviews = g.reviews.slice(0, 3); applied.reviews = 'google'; }
@@ -654,7 +685,7 @@ async function research(slug, { apply: doApply = false, fresh = false, noCrawl =
 const CRAWL_KEYS = ['harvestedAt', 'from', 'namesBusiness', 'pagesRead', 'emails', 'phones', 'hours', 'people', 'prices', 'social', 'headings', 'quotes', 'pageText'];
 const pickCrawl = (h) => Object.fromEntries(CRAWL_KEYS.filter((k) => h[k] !== undefined).map((k) => [k, h[k]]));
 
-module.exports = { research, openSlugs, decideSiteKind, namesBusiness, jsonLd, hoursFromGoogle, hoursFromJsonLd, pickReviews, scoreCandidate, similar, hoursFromOsm, fromOsmTags, extractCslbNumber, domainAge };
+module.exports = { research, openSlugs, decideSiteKind, namesBusiness, jsonLd, hoursFromGoogle, hoursFromJsonLd, pickReviews, scoreCandidate, similar, hoursFromOsm, fromOsmTags, extractCslbNumber, domainAge, hoursFromCrawlText };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

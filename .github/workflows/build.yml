@@ -1,0 +1,68 @@
+# A page is built when someone is interested — not before.
+#
+# Tapping "Replied" or "Won" on the dashboard commits business.json to main
+# through the GitHub API (worker.js). That push lands here: ./cc build only
+# builds clients whose status is replied or won, the dashboard is rebuilt,
+# and the commit goes back. Cloudflare deploys it a minute later, so the
+# page is live before the caller has finished the next dial. The commit
+# this job makes uses the Actions token, which never re-triggers a
+# workflow, so it cannot loop.
+
+name: Build pages for interested leads
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'clients/*/business.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build pages for the interested
+        run: ./cc build | tee build.log
+
+      - name: Rebuild the dashboard
+        run: ./cc dashboard || true
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Build — $(date -u '+%d %b %Y %H:%M')"
+            echo
+            echo '```'
+            cat build.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f build.log
+          git add clients/ dashboard/
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "Build pages for interested leads $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin "$GITHUB_REF_NAME" || exit 1
+              sleep $((i * 3))
+            done
+          fi

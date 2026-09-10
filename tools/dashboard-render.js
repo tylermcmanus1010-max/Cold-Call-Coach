@@ -57,6 +57,7 @@ function actsHtml(slug, kind) {
     : [['tried', 'No answer'], ['sent', 'Sent'], ['dead', 'Not interested'], ['note', 'Note…']];
   return `<div class="acts" data-slug="${esc(slug)}">
     ${btns.map(([a, label]) => `<button type="button" data-a="${a}">${esc(label)}</button>`).join('')}
+    <button type="button" data-a="archive" data-note="archived from the dashboard" class="quiet">Archive</button>
     <span class="saved" hidden></span>
   </div>`;
 }
@@ -347,6 +348,7 @@ function render(d) {
   .acts button[data-a="won"]{background:var(--good-soft);border-color:var(--good);color:var(--good)}
   .acts button[data-a="dead"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
   .acts button[disabled]{opacity:.5;cursor:default}
+  .acts button.quiet{border-style:dashed;color:var(--muted);margin-left:auto}
   .acts .saved{font-size:11.5px;font-weight:600;color:var(--muted)}
   .acts .saved.ok{color:var(--good)}
   .acts .saved.err{color:var(--bad);cursor:pointer;text-decoration:underline}
@@ -479,7 +481,7 @@ function render(d) {
     var cards = [].slice.call(panels[current].querySelectorAll('.card'));
     var shown = 0;
     cards.forEach(function(c){
-      var ok = matches(c, filter[current]) && (!term || c.dataset.name.indexOf(term) !== -1);
+      var ok = c.dataset.archived !== '1' && matches(c, filter[current]) && (!term || c.dataset.name.indexOf(term) !== -1);
       c.hidden = !ok;
       if (ok) shown++;
     });
@@ -601,6 +603,7 @@ function render(d) {
           noteEl.textContent = res.body.patch.lastNote;
         }
         if (card && (action === 'dead' || (action === 'sent' && card.classList.contains('polar')))) card.style.opacity = '.62';
+        if (card && action === 'archive') { card.hidden = true; card.dataset.archived = '1'; apply(); }
 
         setTimeout(function(){ if (saved.className.indexOf('ok') !== -1) saved.hidden = true; }, 2200);
       })

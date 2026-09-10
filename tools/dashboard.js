@@ -223,6 +223,10 @@ async function build({ limit = 50, offline = false } = {}) {
   const rows = board.build();
   const byRowSlug = new Map(rows.filter((r) => r.source === 'pipeline').map((r) => [r.slug, r]));
 
+  // Archived from the dashboard: gone from every tab now, moved out of
+  // clients/ by ./cc archive on the next build.
+  const archived = new Set(fs.readdirSync(CLIENTS).filter((s) => { const b = loadClient(s); return b && b.archived; }));
+
   const contacted = [];
   const contactedSlugs = new Set();
   let builtPages = 0;
@@ -231,7 +235,7 @@ async function build({ limit = 50, offline = false } = {}) {
   for (const slug of fs.readdirSync(CLIENTS).sort()) {
     if (slug.startsWith('example-')) continue;
     const b = loadClient(slug);
-    if (!b || b.status === 'spec') continue;
+    if (!b || b.status === 'spec' || b.archived) continue;
     const built = fs.existsSync(path.join(CLIENTS, slug, 'index.html'));
     if (built) builtPages++;
 
@@ -292,7 +296,7 @@ async function build({ limit = 50, offline = false } = {}) {
   const setAside = {};
   const candidates = [];
   for (const r of rows) {
-    if (r.source === 'pipeline' && contactedSlugs.has(r.slug)) continue;
+    if (r.source === 'pipeline' && (contactedSlugs.has(r.slug) || archived.has(r.slug))) continue;
     if (r.status !== 'new') continue;
     if (r.blocked) { setAside[r.blocked] = (setAside[r.blocked] || 0) + 1; continue; }
     if (suppress.isSuppressed({ email: r.email, domain: domainOf(r.site), phone: r.phone })) {
@@ -361,7 +365,7 @@ async function build({ limit = 50, offline = false } = {}) {
     for (const slug of consider) {
       if (polarSeen.has(slug)) continue;
       const b = loadClient(slug);
-      if (!b || ['dead', 'won', 'spec'].includes(b.status)) continue;
+      if (!b || ['dead', 'won', 'spec'].includes(b.status) || b.archived) continue;
       const row = byRowSlug.get(slug);
       // "URL may not be theirs" is a reason to verify, not a reason to skip.
       if (row && row.blocked && !(type === 'verify' && NOT_THEIRS.test(row.blocked))) continue;

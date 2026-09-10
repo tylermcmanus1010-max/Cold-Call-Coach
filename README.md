@@ -329,6 +329,24 @@ Polar and a Copy button; the buttons underneath record what came back in
 one tap — *Confirmed theirs* / *Not their site* / *Sent* / *CAPTCHA — skip* —
 as a dated note in `business.json`, same as every other tap.
 
+**Pages are built for interest, not on spec.** Decided 10 September, after
+87 pages produced no sales: a lead earns a page when they say they are
+interested on the phone, or an owner's email comes out of the call — tap
+**Replied** (or **Won**) on the dashboard, or `./cc status <slug> replied`.
+`build.yml` sees the commit, builds that page and only that page, and
+Cloudflare has it live a minute later. `./cc build` with no slug builds
+only the interested and says how many it left alone; `./cc build <slug>`
+by hand still builds anything. Scouting and importing still create the
+*record* (`business.json`) so calls can be logged against it — they never
+create the page.
+
+**Archive.** Every card has an **Archive** button: one tap hides the
+business from every tab, and `./cc archive` (run by the morning build)
+moves the folder to `archive/clients/`, where git still has all of it.
+Status is untouched — archiving is not closing out. To bring one back,
+`git mv archive/clients/<slug> clients/<slug>` and delete the `archived`
+field.
+
 ## 10. Bringing leads in from Polar — `./cc import`
 
 ```bash

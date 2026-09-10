@@ -6,6 +6,7 @@
 //   ./cc brief              the morning call plan, ordered by who can answer
 //   ./cc dashboard          contacted on one tab, the next 25–50 on the other (rebuilt every morning)
 //   ./cc import <file>      leads found by Polar (CSV or JSON) → scaffolded clients, unmeasured, unbuilt
+//   ./cc archive [slug]     move a client (or everything tapped Archive on the dashboard) to archive/
 //   ./cc forms              find the contact form on each lead's own site
 //   ./cc outreach           build the send-at-work queue from those forms
 //   ./cc trade              paper-trading journal: size, open, close, stats, watch
@@ -381,9 +382,23 @@ Next:
   3. ./cc build ${slug}`);
 }
 
+// Pages are built for interest, not on spec (10 Sep decision, after 87
+// pages produced 0 sales): a lead earns a page when they say so on the
+// phone or an owner's email comes out of the call — status replied or won.
+// A slug given by hand still builds anything; the bulk build touches only
+// the interested, and says how many it left alone.
+const INTERESTED = (b, s) => ['replied', 'won', 'spec'].includes(b.status) || s.startsWith('example-');
+
 function cmdBuild(slug) {
-  const list = slug ? [slug] : all();
+  let list = slug ? [slug] : all();
   if (!list.length) die('No clients yet. Run: ./cc scout --make 10   or   ./cc new <slug>');
+  if (!slug) {
+    const before = list.length;
+    list = list.filter((s) => { try { return INTERESTED(load(s), s); } catch { return false; } });
+    const left = before - list.length;
+    if (left) console.log(`\n  ${left} left unbuilt — not yet interested (status new, sent or dead). A page is built once they are: ./cc status <slug> replied, or ./cc build <slug> by hand.\n`);
+    if (!list.length) return;
+  }
   const skipped = [], generic = [], unharvested = [];
   for (const s of list) {
     const b = load(s);
@@ -774,6 +789,39 @@ function cmdHost(slug, flags) {
   console.log('  approval there, and only then touch their DNS.\n');
 }
 
+// Archive: out of clients/ and out of every list, into archive/clients/,
+// where git still has all of it. A tap on the dashboard flags the record;
+// this moves it, and the morning build runs it so a tap becomes a move by
+// the next day. Reversible — git mv it back.
+function cmdArchive(argv) {
+  const slug = argv[0] && !argv[0].startsWith('--') ? argv[0] : null;
+  const note = slug ? argv.slice(1).join(' ') : '';
+  const ARCHIVE = path.join(ROOT, 'archive', 'clients');
+  const today = new Date().toISOString().slice(0, 10);
+  const moveOne = (s) => {
+    fs.mkdirSync(ARCHIVE, { recursive: true });
+    const to = path.join(ARCHIVE, s);
+    if (fs.existsSync(to)) die(`archive/clients/${s} already exists — merge or rename it first`);
+    fs.renameSync(dir(s), to);
+  };
+  if (slug) {
+    const b = load(slug);
+    b.archived = b.archived || today;
+    b.callNotes = [...(b.callNotes || []), `${today}: archived${note ? ' — ' + note : ''}`];
+    save(slug, b);
+    moveOne(slug);
+    console.log(`✓ ${slug} → archive/clients/${slug}`);
+    return;
+  }
+  const moved = [];
+  for (const s of all()) {
+    let b;
+    try { b = JSON.parse(fs.readFileSync(path.join(dir(s), 'business.json'), 'utf8')); } catch { continue; }
+    if (b.archived) { moveOne(s); moved.push(s); }
+  }
+  console.log(moved.length ? `\n  ${moved.length} archived: ${moved.join(', ')}\n` : '\n  nothing flagged for archive\n');
+}
+
 // Leads found by hand or by Polar — a CSV or JSON list — become scaffolded
 // clients: unmeasured and unbuilt, for reaudit.yml to look at before anyone
 // pitches them. On main, committing the file to leads/polar/ runs all of that.
@@ -883,6 +931,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'board': cmdBoard(); break;
     case 'dashboard': await cmdDashboard(args); break;
     case 'import': cmdImport(args); break;
+    case 'archive': cmdArchive(args); break;
     case 'brief': cmdBrief(args); break;
     case 'forms': await cmdForms(args); break;
     case 'outreach': cmdOutreach(args); break;

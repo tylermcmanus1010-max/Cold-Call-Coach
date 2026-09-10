@@ -28,6 +28,12 @@ confidence beats sixty he has to check himself.
 5. **Cull, hard** — see below. `siteKind` does the first pass for you.
 6. **Report.** Short, phone-readable, ranked.
 
+**Scouting creates a record, never a page.** Since 10 September a page is
+built only when a lead is interested — they said so on the phone, or an
+owner's email came out of the call — which the caller records on the
+dashboard (Replied / Won). `./cc build` refuses the rest on its own. Do
+not build pages for the leads you find; find leads worth a call.
+
 ## What is not a lead
 
 Kill these without hesitation. Each one has already cost a wasted call:

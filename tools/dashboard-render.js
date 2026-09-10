@@ -45,6 +45,21 @@ function gapsHtml(gaps) {
   return `<p class="gaps">Page still needs: ${gaps.map((g) => `<b>${esc(g)}</b>`).join(' ')}</p>`;
 }
 
+// Tap-to-log: every button here is one write to clients/<slug>/business.json
+// through the Worker's /dash/log endpoint — the same fields ./cc tried and
+// ./cc status write, so a tap here and a command in the terminal never
+// disagree. Only a scaffolded client (a real business.json to patch) gets
+// the buttons; a raw lead that has not been built yet has nothing to write to.
+function actsHtml(slug, kind) {
+  const btns = kind === 'contacted'
+    ? [['tried', 'No answer'], ['replied', 'Replied'], ['won', 'Won'], ['dead', 'Not interested'], ['callback', 'Callback…'], ['note', 'Note…']]
+    : [['tried', 'No answer'], ['sent', 'Sent'], ['dead', 'Not interested'], ['note', 'Note…']];
+  return `<div class="acts" data-slug="${esc(slug)}">
+    ${btns.map(([a, label]) => `<button type="button" data-a="${a}">${esc(label)}</button>`).join('')}
+    <span class="saved" hidden></span>
+  </div>`;
+}
+
 function contactedCard(c) {
   const o = c.outcome;
   const reach = [];
@@ -74,7 +89,8 @@ function contactedCard(c) {
   <div class="reach">${reach.join('')}</div>
   <div class="reach pages">${pageLink(c)}${siteLink(c)}</div>
   ${gapsHtml(c.gaps)}
-  ${c.lastNote ? `<details><summary>Last note</summary><p class="note">${esc(c.lastNote)}</p></details>` : ''}
+  <p class="note" data-note ${c.lastNote ? '' : 'hidden'}>${esc(c.lastNote || '')}</p>
+  ${actsHtml(c.slug, 'contacted')}
 </article>`;
 }
 
@@ -109,6 +125,10 @@ function nextCard(n) {
   <div class="reach pages">${pageLink(n)}${siteLink(n)}</div>
   ${gapsHtml(n.gaps)}
   <p class="win"><b>${esc(w.name === 'business' ? 'Best time' : w.name[0].toUpperCase() + w.name.slice(1))}:</b> ${esc(w.text)} their time — ${esc(w.why)}.</p>
+  <p class="note" data-note hidden></p>
+  ${n.source === 'pipeline'
+    ? actsHtml(n.slug, 'next')
+    : '<p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>'}
 </article>`;
 }
 
@@ -261,7 +281,19 @@ function render(d) {
   .gaps{font-size:12.5px;color:var(--warn);margin:0}
   .gaps b{font-weight:600;background:var(--warn-soft);padding:1px 6px;border-radius:4px;margin-right:2px;white-space:nowrap}
   details summary{cursor:pointer;font-size:12px;color:var(--muted)}
-  .note{font-size:13px;color:var(--ink-2);margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+  .note{font-size:12.5px;color:var(--ink-2);margin:0;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--sunk);border-radius:6px;padding:6px 8px}
+  .soft-note{font-size:12px;color:var(--muted);font-style:italic;margin:0}
+
+  .acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:2px}
+  .acts button{font:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .acts button:hover{border-color:var(--accent);color:var(--accent)}
+  .acts button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .acts button[data-a="won"]{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+  .acts button[data-a="dead"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+  .acts button[disabled]{opacity:.5;cursor:default}
+  .acts .saved{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .acts .saved.ok{color:var(--good)}
+  .acts .saved.err{color:var(--bad);cursor:pointer;text-decoration:underline}
 
   .aside{margin-top:22px;font-size:12.5px;color:var(--muted);max-width:76ch}
   .aside b{color:var(--ink-2);font-weight:600}
@@ -423,6 +455,90 @@ function render(d) {
   show(want);
   setInterval(tick, 60000);
   window.addEventListener('hashchange', function(){ var h = location.hash.replace('#', ''); if (panels[h] && h !== current) show(h); });
+
+  // Tap-to-log. Writes straight to clients/<slug>/business.json through the
+  // Worker (see worker.js /dash/log) — real the moment someone taps it, not
+  // tomorrow's rebuild. The card is patched in place; it does not move
+  // between Contacted and Up next until the next scheduled build reads the
+  // change, so a freshly-logged card in Up next says so rather than
+  // pretending to have moved.
+  var CHIP = {
+    tried:    function(p){ return { label: 'no answer · ' + p.attempts + (p.attempts === 1 ? ' try' : ' tries'), tone: 'warn' }; },
+    sent:     function(){ return { label: 'sent today', tone: 'accent' }; },
+    replied:  function(){ return { label: 'replied', tone: 'good' }; },
+    won:      function(){ return { label: 'won', tone: 'good' }; },
+    dead:     function(){ return { label: 'closed out', tone: 'muted' }; },
+  };
+  var LABEL = { tried: 'No answer', sent: 'Sent', replied: 'Replied', won: 'Won', dead: 'Not interested', callback: 'Callback booked', note: 'Note saved' };
+
+  function setSaved(el, state, text){
+    el.hidden = false;
+    el.className = 'saved' + (state ? ' ' + state : '');
+    el.textContent = text;
+  }
+
+  function logAction(bar, btn){
+    var slug = bar.dataset.slug, action = btn.dataset.a;
+    var note = '', at = '';
+    if (action === 'note') {
+      note = (prompt('Note for this call — a line or two:') || '').trim();
+      if (!note) return;
+    }
+    if (action === 'callback') {
+      at = (prompt('Callback when? e.g. 2026-09-15 14:00') || '').trim();
+      if (!at) return;
+      note = (prompt('Anything to note about the callback? (optional)') || '').trim();
+    }
+
+    var saved = bar.querySelector('.saved');
+    var buttons = [].slice.call(bar.querySelectorAll('button'));
+    buttons.forEach(function(b){ b.disabled = true; });
+    setSaved(saved, '', 'Saving…');
+
+    fetch('/dash/log', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug: slug, action: action, note: note, at: at }),
+    }).then(function(r){ return r.json().then(function(body){ return { ok: r.ok && body.ok, body: body }; }); })
+      .then(function(res){
+        buttons.forEach(function(b){ b.disabled = false; });
+        if (!res.ok) { setSaved(saved, 'err', (res.body && res.body.error) || 'Not saved — tap to retry'); return; }
+        setSaved(saved, 'ok', LABEL[action] || 'Saved');
+
+        var card = bar.closest('.card');
+        var chipMaker = CHIP[action];
+        if (chipMaker && card) {
+          var chip = card.querySelector('.chip');
+          if (chip && chip.classList.contains('now') === false) {
+            var c = chipMaker(res.body.patch);
+            chip.className = 'chip ' + c.tone;
+            chip.textContent = c.label;
+          }
+        }
+        var noteEl = card && card.querySelector('[data-note]');
+        if (noteEl && res.body.patch && res.body.patch.lastNote) {
+          noteEl.hidden = false;
+          noteEl.textContent = res.body.patch.lastNote;
+        }
+        if (card && action === 'dead') card.style.opacity = '.62';
+
+        setTimeout(function(){ if (saved.className.indexOf('ok') !== -1) saved.hidden = true; }, 2200);
+      })
+      .catch(function(){
+        buttons.forEach(function(b){ b.disabled = false; });
+        setSaved(saved, 'err', 'Network error — tap to retry');
+      });
+  }
+
+  document.addEventListener('click', function(ev){
+    var errChip = ev.target.closest('.saved.err');
+    if (errChip) { var bar = errChip.closest('.acts'); var last = bar && bar.dataset.lastBtn; if (last) logAction(bar, bar.querySelector('[data-a="' + last + '"]')); return; }
+    var btn = ev.target.closest('.acts button[data-a]');
+    if (!btn) return;
+    var bar = btn.closest('.acts');
+    bar.dataset.lastBtn = btn.dataset.a;
+    logAction(bar, btn);
+  });
 })();
 </script>`;
 

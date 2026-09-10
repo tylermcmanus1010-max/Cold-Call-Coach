@@ -297,6 +297,28 @@ secret once in the Worker's settings (Variables and Secrets), then open
 `/dash/?key=<the key>` once — a cookie keeps it open after that. With no
 secret set, `/dash/` is a 404, not a page.
 
+**Tap-to-log — for you or someone calling on your behalf.** Every card has
+buttons: No answer, Sent, Replied, Won, Not interested, Callback…, Note….
+Each tap writes straight to `clients/<slug>/business.json` through the
+GitHub API — real the moment it's tapped, the same fields `./cc tried` and
+`./cc status` write, so a tap and a terminal command never disagree. The
+card updates itself in place; it does not jump to the other tab until the
+next 6:30am rebuild reads the change, so a just-logged card in "Up next"
+says so rather than pretending to have moved.
+
+This needs a second secret, `GH_TOKEN`: a **fine-grained** personal access
+token scoped to **only this repository**, with **Contents: Read and write**
+permission and nothing else. Create it at GitHub → Settings → Developer
+settings → Fine-grained tokens, then set it with
+`npx wrangler secret put GH_TOKEN` (run that yourself — don't paste the
+token into chat). Without `GH_TOKEN`, `/dash/` still works for reading;
+the buttons just answer "not set up yet" instead of saving.
+
+Anyone with the `/dash/?key=` link can log calls under this scheme — there
+is no per-caller identity yet. Fine for one trusted employee; if you add
+more than one, say so and it's worth giving each their own key so you can
+tell who logged what and revoke one without touching the others.
+
 ---
 
 ## Making the call

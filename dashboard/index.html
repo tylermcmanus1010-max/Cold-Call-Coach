@@ -138,7 +138,19 @@
   .gaps{font-size:12.5px;color:var(--warn);margin:0}
   .gaps b{font-weight:600;background:var(--warn-soft);padding:1px 6px;border-radius:4px;margin-right:2px;white-space:nowrap}
   details summary{cursor:pointer;font-size:12px;color:var(--muted)}
-  .note{font-size:13px;color:var(--ink-2);margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+  .note{font-size:12.5px;color:var(--ink-2);margin:0;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--sunk);border-radius:6px;padding:6px 8px}
+  .soft-note{font-size:12px;color:var(--muted);font-style:italic;margin:0}
+
+  .acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:2px}
+  .acts button{font:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);cursor:pointer;-webkit-appearance:none;appearance:none}
+  .acts button:hover{border-color:var(--accent);color:var(--accent)}
+  .acts button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .acts button[data-a="won"]{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+  .acts button[data-a="dead"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+  .acts button[disabled]{opacity:.5;cursor:default}
+  .acts .saved{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .acts .saved.ok{color:var(--good)}
+  .acts .saved.err{color:var(--bad);cursor:pointer;text-decoration:underline}
 
   .aside{margin-top:22px;font-size:12.5px;color:var(--muted);max-width:76ch}
   .aside b{color:var(--ink-2);font-weight:600}
@@ -155,7 +167,7 @@
       <h1>Cold Call Pipeline</h1>
       <p class="sub">Everyone we have reached, and the 50 worth reaching next. Rebuilt every morning from <code>clients/</code>, the send log and the lead files — a state marked <code>*</code> was read off the area code.</p>
     </div>
-    <div class="stamp">2026-09-09<br>McManus Web Co.</div>
+    <div class="stamp">2026-09-10<br>McManus Web Co.</div>
   </header>
 
   <div class="tiles">
@@ -194,19 +206,19 @@
   <a class="btn call" href="tel:+16194661292">(619) 466-1292</a>
   <div>
     <a class="who" href="#c-el-cajon-family-dental">El Cajon Family Dental</a>
-    <span class="why">emailed 9 days ago, no reply — call, do not re-send — <b>was due 9 Sep</b></span>
+    <span class="why">emailed 10 days ago, no reply — call, do not re-send — <b>was due 10 Sep</b></span>
   </div>
 </li><li class="overdue">
   <a class="btn call" href="tel:+18585131747">(858) 513-1747</a>
   <div>
     <a class="who" href="#c-pearl-cosmetic-dds">Pearl Cosmetic &amp; Family Dentistry</a>
-    <span class="why">emailed 9 days ago, no reply — call, do not re-send — <b>was due 9 Sep</b></span>
+    <span class="why">emailed 10 days ago, no reply — call, do not re-send — <b>was due 10 Sep</b></span>
   </div>
 </li><li class="overdue">
   <a class="btn call" href="tel:+16194476675">(619) 447-6675</a>
   <div>
     <a class="who" href="#c-helix-mechanical-inc">Helix Mechanical, Inc.</a>
-    <span class="why">emailed 13 days ago, no reply — call, do not re-send — <b>was due 9 Sep</b></span>
+    <span class="why">emailed 14 days ago, no reply — call, do not re-send — <b>was due 10 Sep</b></span>
   </div>
 </li></ul>
     </div>
@@ -233,7 +245,11 @@
   <div class="reach"><a class="btn call" href="tel:+18582774878">(858) 277-4878</a><span class="btn stop" title="hard bounce — address not found (550), sent twice 12 minutes apart before being caught">do not contact</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/david-cravens-insurance-services/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://davidcravens.myhomehq.biz/" target="_blank" rel="noopener noreferrer">Their site <span class="host">davidcravens.myhomehq.biz</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-09-09: davidcravens@mailfence.com hard-bounced twice (8/31, 12 min apart) — suppressed. Their real site (own, siteKind=own) is untouched by this — a genuinely different, real address could still be found there, just not this one.</p></details>
+  <p class="note" data-note >2026-09-09: davidcravens@mailfence.com hard-bounced twice (8/31, 12 min apart) — suppressed. Their real site (own, siteKind=own) is untouched by this — a genuinely different, real address could still be found there, just not this one.</p>
+  <div class="acts" data-slug="david-cravens-insurance-services">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-estrella-dental-implant-and-cosmetic-center" data-k="bounced" data-name="estrella dental implant &amp; cosmetic center dentist chula vista, ca ">
   <div class="head">
@@ -248,7 +264,11 @@
   <div class="reach"><a class="btn call" href="tel:+16193974111">(619) 397-4111</a><span class="btn stop" title="hard bounce — recipient server did not accept our mail (permanent failure)">do not contact</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/estrella-dental-implant-and-cosmetic-center/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.hugedomains.com/domain_profile.cfm?d=estrelladental.com" target="_blank" rel="noopener noreferrer">Their site <span class="host">hugedomains.com/domain_profile.cfm?d=estrelladental.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-09-09: info@estrelladental.com hard-bounced (3 failure notices, 8/31-9/3) — suppressed. Site is also parked (domain marketplace). Dead unless a real contact surfaces.</p></details>
+  <p class="note" data-note >2026-09-09: info@estrelladental.com hard-bounced (3 failure notices, 8/31-9/3) — suppressed. Site is also parked (domain marketplace). Dead unless a real contact surfaces.</p>
+  <div class="acts" data-slug="estrella-dental-implant-and-cosmetic-center">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-eversun" data-k="waiting" data-name="eversun beauty san diego, ca experience@eversunwellness.com">
   <div class="head">
@@ -256,14 +276,18 @@
       <h3>EverSun</h3>
       <p class="meta">beauty · San Diego, CA</p>
     </div>
-    <span class="chip warn">no reply · 9d</span>
+    <span class="chip warn">no reply · 10d</span>
   </div>
   
   <p class="line">Emailed 31 Aug → experience@eversunwellness.com</p>
   <div class="reach"><a class="btn call" href="tel:+18584510588">(858) 451-0588</a><a class="btn" href="mailto:experience@eversunwellness.com">experience@eversunwellness.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/eversun/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&amp;y=ipr:20.118.214.98:1787878245.533" target="_blank" rel="noopener noreferrer">Their site <span class="host">eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&amp;y=ipr:20.118.214.98:1787878245.533</span></a></div>
   <p class="gaps">Page still needs: <b>site behind a bot check</b> <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-09-09: reconciled against Gmail — this was actually sent 2026-08-31 to experience@eversunwellness.com (old attachment-era send, predates outreach/sent-log.jsonl). No bounce, no reply seen since. Status corrected from new to sent so it is not pitched twice.</p></details>
+  <p class="note" data-note >2026-09-09: reconciled against Gmail — this was actually sent 2026-08-31 to experience@eversunwellness.com (old attachment-era send, predates outreach/sent-log.jsonl). No bounce, no reply seen since. Status corrected from new to sent so it is not pitched twice.</p>
+  <div class="acts" data-slug="eversun">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-salted-barber" data-k="bounced" data-name="salted barber hairdresser san diego, ca ">
   <div class="head">
@@ -278,7 +302,11 @@
   <div class="reach"><span class="none">no number</span><span class="btn stop" title="hard bounce — address not found (550 5.1.1)">do not contact</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/salted-barber/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.saltedbarber.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878432.840" target="_blank" rel="noopener noreferrer">Their site <span class="host">saltedbarber.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878432.840</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-09-09: hello@saltedbarber.com hard-bounced immediately (550 5.1.1) — suppressed. Their site sits behind a bot challenge we have never actually seen — no basis to recontact until that changes.</p></details>
+  <p class="note" data-note >2026-09-09: hello@saltedbarber.com hard-bounced immediately (550 5.1.1) — suppressed. Their site sits behind a bot challenge we have never actually seen — no basis to recontact until that changes.</p>
+  <div class="acts" data-slug="salted-barber">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-because-we-care-dog-and-cat-grooming" data-k="waiting" data-name="because we care dog and cat grooming pet grooming san diego, ca bwcdncgroomingca@gmail.com">
   <div class="head">
@@ -286,14 +314,18 @@
       <h3>Because We Care Dog and Cat Grooming</h3>
       <p class="meta">pet grooming · San Diego, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → bwcdncgroomingca@gmail.com</p>
   <div class="reach"><a class="btn call" href="tel:+18585381015">(858) 538-1015</a><a class="btn" href="mailto:bwcdncgroomingca@gmail.com">bwcdncgroomingca@gmail.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a08226ade5c5661" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/because-we-care-dog-and-cat-grooming/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.becausewecarepetgrooming.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">becausewecarepetgrooming.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="because-we-care-dog-and-cat-grooming">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-cupcakes-a-la-yola" data-k="waiting" data-name="cupcakes a la yola bakery poway, ca cupcakesalayola@gmail.com">
   <div class="head">
@@ -301,14 +333,18 @@
       <h3>cupCAKES a la Yola</h3>
       <p class="meta">bakery · Poway, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → cupcakesalayola@gmail.com</p>
   <div class="reach"><a class="btn call" href="tel:+18586687234">(858) 668-7234</a><a class="btn" href="mailto:cupcakesalayola@gmail.com">cupcakesalayola@gmail.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a08240dc0c75bac" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/cupcakes-a-la-yola/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://cupcakesalayola.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">cupcakesalayola.com</span></a></div>
   <p class="gaps">Page still needs: <b>site unreachable</b> <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="cupcakes-a-la-yola">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-darshan" data-k="waiting" data-name="darshan bakery del mar, ca casey@darshanbakery.com">
   <div class="head">
@@ -316,14 +352,18 @@
       <h3>Darshan</h3>
       <p class="meta">bakery · Del Mar, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → casey@darshanbakery.com</p>
   <div class="reach"><span class="none">no number</span><a class="btn" href="mailto:casey@darshanbakery.com">casey@darshanbakery.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a08226a47bca3e1" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/darshan/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.darshanbakery.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">darshanbakery.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="darshan">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-eichman-insurance-agency" data-k="waiting" data-name="eichman insurance agency insurance rancho santa fe, ca suellen@eichmaninsurance.com">
   <div class="head">
@@ -331,14 +371,18 @@
       <h3>Eichman Insurance Agency</h3>
       <p class="meta">insurance · Rancho Santa Fe, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → suellen@eichmaninsurance.com</p>
   <div class="reach"><a class="btn call" href="tel:+17602306157">(760) 230-6157</a><a class="btn" href="mailto:suellen@eichmaninsurance.com">suellen@eichmaninsurance.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a082223880419e2" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/eichman-insurance-agency/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.eichmaninsurance.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">eichmaninsurance.com</span></a></div>
   <p class="gaps">Page still needs: <b>on a managed platform</b> <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="eichman-insurance-agency">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-house-of-stemms" data-k="waiting" data-name="house of stemms florist san diego, ca deluxeflorist@hotmail.com">
   <div class="head">
@@ -346,14 +390,18 @@
       <h3>House of Stemms</h3>
       <p class="meta">Florist · San Diego, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → deluxeflorist@hotmail.com · Called ×1, last 26 Aug</p>
   <div class="reach"><a class="btn call" href="tel:+16192378842">(619) 237-8842</a><a class="btn" href="mailto:deluxeflorist@hotmail.com">deluxeflorist@hotmail.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a082224594cc3a5" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/house-of-stemms/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://deluxeflorist.com/san-diego-florist-flower-delivery" target="_blank" rel="noopener noreferrer">Their site <span class="host">deluxeflorist.com/san-diego-florist-flower-delivery</span></a></div>
   <p class="gaps">Page still needs: <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-26: no answer, after hours</p></details>
+  <p class="note" data-note >2026-08-26: no answer, after hours</p>
+  <div class="acts" data-slug="house-of-stemms">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-lashbar" data-k="waiting" data-name="lashbar beauty san diego, ca lashbarcarlsbad@gmail.com">
   <div class="head">
@@ -361,14 +409,18 @@
       <h3>Lashbar</h3>
       <p class="meta">beauty · San Diego, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → lashbarcarlsbad@gmail.com</p>
   <div class="reach"><a class="btn call" href="tel:+18587699591">(858) 769-9591</a><a class="btn" href="mailto:lashbarcarlsbad@gmail.com">lashbarcarlsbad@gmail.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a082268a7f6aebe" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/lashbar/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.lashbar.com/delsur" target="_blank" rel="noopener noreferrer">Their site <span class="host">lashbar.com/delsur</span></a></div>
   <p class="gaps">Page still needs: <b>on a managed platform</b> <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="lashbar">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-love-and-bake" data-k="waiting" data-name="love &amp; bake bakery san diego, ca amaya@loveandbake.com">
   <div class="head">
@@ -376,14 +428,18 @@
       <h3>Love &amp; Bake</h3>
       <p class="meta">bakery · San Diego, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → amaya@loveandbake.com</p>
   <div class="reach"><a class="btn call" href="tel:+16194154259">(619) 415-4259</a><a class="btn" href="mailto:amaya@loveandbake.com">amaya@loveandbake.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a0822695fc26423" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/love-and-bake/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://loveandbake.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">loveandbake.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="love-and-bake">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-lumiere-salon" data-k="bounced" data-name="lumiere salon hairdresser san diego, ca team@lumieresalonrb.com">
   <div class="head">
@@ -398,7 +454,11 @@
   <div class="reach"><a class="btn call" href="tel:+18585246132">(858) 524-6132</a><span class="btn stop" title="hard bounce — address not found (permanent failure)">do not contact</span><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a082224aa564f37" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/lumiere-salon/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://lumieresalonrb.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">lumieresalonrb.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">team@lumieresalonrb.com hard-bounced (address not found) on the 2026-09-08 send — whole domain suppressed. If a real number/address turns up later (call list, Google listing), this is worth a phone call instead of email.</p></details>
+  <p class="note" data-note >team@lumieresalonrb.com hard-bounced (address not found) on the 2026-09-08 send — whole domain suppressed. If a real number/address turns up later (call list, Google listing), this is worth a phone call instead of email.</p>
+  <div class="acts" data-slug="lumiere-salon">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-portal-salon" data-k="waiting" data-name="portal salon hairdresser san diego, ca hello@theportalsalon.com">
   <div class="head">
@@ -406,14 +466,18 @@
       <h3>Portal Salon</h3>
       <p class="meta">hairdresser · San Diego, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → hello@theportalsalon.com</p>
   <div class="reach"><a class="btn call" href="tel:+16193545411">(619) 354-5411</a><a class="btn" href="mailto:hello@theportalsalon.com">hello@theportalsalon.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a082269c3afc87a" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/portal-salon/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://theportalsalon.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">theportalsalon.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="portal-salon">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-west-coast-air-conditioning-co" data-k="waiting" data-name="west coast air conditioning co hvac el cajon, ca hvacemployment@wcac.com">
   <div class="head">
@@ -421,14 +485,18 @@
       <h3>West Coast Air Conditioning Co</h3>
       <p class="meta">hvac · El Cajon, CA</p>
     </div>
-    <span class="chip accent">no reply · 1d</span>
+    <span class="chip accent">no reply · 2d</span>
   </div>
   
   <p class="line">Emailed 8 Sep → hvacemployment@wcac.com</p>
   <div class="reach"><a class="btn call" href="tel:+16195618000">(619) 561-8000</a><a class="btn" href="mailto:hvacemployment@wcac.com">hvacemployment@wcac.com</a><a class="btn" href="https://mail.google.com/mail/u/0/#all/1a08240e5710c632" target="_blank" rel="noopener noreferrer">Gmail thread</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/west-coast-air-conditioning-co/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.wcac.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">wcac.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="west-coast-air-conditioning-co">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-el-cajon-family-dental" data-k="waiting" data-name="el cajon family dental dental practice el cajon, ca ">
   <div class="head">
@@ -436,14 +504,18 @@
       <h3>El Cajon Family Dental</h3>
       <p class="meta">Dental practice · El Cajon, CA</p>
     </div>
-    <span class="chip warn">no reply · 15d</span>
+    <span class="chip warn">no reply · 16d</span>
   </div>
-  <div class="tags"><span class="tag stop">overdue · emailed 9 days ago, no reply — call, do not re-send</span></div>
+  <div class="tags"><span class="tag stop">overdue · emailed 10 days ago, no reply — call, do not re-send</span></div>
   <p class="line">Emailed 25 Aug · Called ×6, last 31 Aug</p>
   <div class="reach"><a class="btn call" href="tel:+16194661292">(619) 466-1292</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/el-cajon-family-dental/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://elcajonfamilydental.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">elcajonfamilydental.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-31: receptionist — Dr Mechael not in, &quot;probably isn't interested&quot;. That is a gatekeeper guessing, not the dentist deciding. Attempt 6.</p></details>
+  <p class="note" data-note >2026-08-31: receptionist — Dr Mechael not in, &quot;probably isn't interested&quot;. That is a gatekeeper guessing, not the dentist deciding. Attempt 6.</p>
+  <div class="acts" data-slug="el-cajon-family-dental">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-impression-dental-group" data-k="noanswer" data-name="impression dental group dental practice san diego, ca impressiondentalgroup@yahoo.com">
   <div class="head">
@@ -458,7 +530,11 @@
   <div class="reach"><a class="btn call" href="tel:+18585784677">(858) 578-4677</a><a class="btn" href="mailto:Impressiondentalgroup@yahoo.com">Impressiondentalgroup@yahoo.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/impression-dental-group/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.impressiondentalgroup.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">impressiondentalgroup.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-31: status corrected to new. It was marked sent on 26 Aug but the email field was empty, so nothing was ever delivered. This is FIRST contact — do not open with &quot;did my email come through&quot;.</p></details>
+  <p class="note" data-note >2026-08-31: status corrected to new. It was marked sent on 26 Aug but the email field was empty, so nothing was ever delivered. This is FIRST contact — do not open with &quot;did my email come through&quot;.</p>
+  <div class="acts" data-slug="impression-dental-group">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-le-parfait-paris" data-k="waiting" data-name="le parfait paris french bakery &amp; patisserie san diego, ca downtown@leparfaitparis.com">
   <div class="head">
@@ -466,14 +542,18 @@
       <h3>Le Parfait Paris</h3>
       <p class="meta">French bakery &amp; patisserie · San Diego, CA</p>
     </div>
-    <span class="chip warn">no reply · 15d</span>
+    <span class="chip warn">no reply · 16d</span>
   </div>
   <div class="tags"><span class="tag stop">overdue · callback they asked for</span></div>
   <p class="line">Emailed 25 Aug → Downtown@leparfaitparis.com · Called ×5, last 31 Aug</p>
   <div class="reach"><a class="btn call" href="tel:+16192454457">(619) 245-4457</a><a class="btn" href="mailto:Downtown@leparfaitparis.com">Downtown@leparfaitparis.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/le-parfait-paris/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://www.leparfaitparis.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">leparfaitparis.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-31: manager is Leon. Call back 3:00pm today.</p></details>
+  <p class="note" data-note >2026-08-31: manager is Leon. Call back 3:00pm today.</p>
+  <div class="acts" data-slug="le-parfait-paris">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-pearl-cosmetic-dds" data-k="waiting" data-name="pearl cosmetic &amp; family dentistry cosmetic and family dentistry san diego, ca cs@pearlcosmeticdds.com">
   <div class="head">
@@ -481,14 +561,18 @@
       <h3>Pearl Cosmetic &amp; Family Dentistry</h3>
       <p class="meta">Cosmetic and family dentistry · San Diego, CA</p>
     </div>
-    <span class="chip warn">no reply · 9d</span>
+    <span class="chip warn">no reply · 10d</span>
   </div>
-  <div class="tags"><span class="tag hot">warm — hand-written pitch on file</span><span class="tag stop">overdue · emailed 9 days ago, no reply — call, do not re-send</span></div>
+  <div class="tags"><span class="tag hot">warm — hand-written pitch on file</span><span class="tag stop">overdue · emailed 10 days ago, no reply — call, do not re-send</span></div>
   <p class="line">Emailed 31 Aug → CS@PearlCosmeticDDS.com</p>
   <div class="reach"><a class="btn call" href="tel:+18585131747">(858) 513-1747</a><a class="btn" href="mailto:CS@PearlCosmeticDDS.com">CS@PearlCosmeticDDS.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/pearl-cosmetic-dds/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://pearlcosmeticdds.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">pearlcosmeticdds.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-31: pitch emailed to CS@PearlCosmeticDDS.com. Page built entirely from their own site — Solea laser as the headline. 12/12 on our checks.</p></details>
+  <p class="note" data-note >2026-08-31: pitch emailed to CS@PearlCosmeticDDS.com. Page built entirely from their own site — Solea laser as the headline. 12/12 on our checks.</p>
+  <div class="acts" data-slug="pearl-cosmetic-dds">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-rt-roofing-specialist-inc" data-k="replied" data-name="rt roofing specialist roofing contractor poway, ca ">
   <div class="head">
@@ -503,7 +587,11 @@
   <div class="reach"><a class="btn call" href="tel:+18584864977">(858) 486-4977</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/rt-roofing-specialist-inc/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.rtroofingspecialist.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">rtroofingspecialist.com</span></a></div>
   <p class="gaps">Page still needs: <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-31: email bounced — domain rtroofingspecial.com does not exist. His real domain is rtroofingspecialist.com (verified, we audited it). The address was missing &quot;ist&quot;. DO NOT guess the corrected address — text him on (858) 486-4977 and ask.</p></details>
+  <p class="note" data-note >2026-08-31: email bounced — domain rtroofingspecial.com does not exist. His real domain is rtroofingspecialist.com (verified, we audited it). The address was missing &quot;ist&quot;. DO NOT guess the corrected address — text him on (858) 486-4977 and ask.</p>
+  <div class="acts" data-slug="rt-roofing-specialist-inc">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-windowtinting-inc" data-k="stopped" data-name="windowtinting, inc window construction el cajon, ca ">
   <div class="head">
@@ -518,7 +606,11 @@
   <div class="reach"><a class="btn call" href="tel:+18005807953">(800) 580-7953</a><span class="btn stop" title="explicit stop request — threatened escalation if contacted again">do not contact</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/windowtinting-inc/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.windowtinting.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878446.404" target="_blank" rel="noopener noreferrer">Their site <span class="host">windowtinting.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878446.404</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">Already pitched (info@windowtinting.com, 2026-08-31) and told explicitly to stop contacting. Never re-send — also hard-blocked in config/suppression.json.</p></details>
+  <p class="note" data-note >Already pitched (info@windowtinting.com, 2026-08-31) and told explicitly to stop contacting. Never re-send — also hard-blocked in config/suppression.json.</p>
+  <div class="acts" data-slug="windowtinting-inc">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-alexander-s-upholstering" data-k="noanswer" data-name="alexander's upholstering upholsterer san diego, ca ">
   <div class="head">
@@ -533,7 +625,11 @@
   <div class="reach"><a class="btn call" href="tel:+16192221345">(619) 222-1345</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/alexander-s-upholstering/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://alexandersupholstering.com/lander" target="_blank" rel="noopener noreferrer">Their site <span class="host">alexandersupholstering.com/lander</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-28: went to voicemail, 5pm Thu — no message left</p></details>
+  <p class="note" data-note >2026-08-28: went to voicemail, 5pm Thu — no message left</p>
+  <div class="acts" data-slug="alexander-s-upholstering">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-point-loma-village-florist" data-k="closed" data-name="point loma village florist florist san diego, ca ">
   <div class="head">
@@ -548,7 +644,11 @@
   <div class="reach"><a class="btn call" href="tel:+16192227646">(619) 222-7646</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/point-loma-village-florist/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://pointlomaflorist.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">pointlomaflorist.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-28: dropped — Tyler opened it himself on day 2 and found hours on the page and a tappable number. Our scan returned 0KB, which means it got nothing, not that the page is empty.</p></details>
+  <p class="note" data-note >2026-08-28: dropped — Tyler opened it himself on day 2 and found hours on the page and a tappable number. Our scan returned 0KB, which means it got nothing, not that the page is empty.</p>
+  <div class="acts" data-slug="point-loma-village-florist">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-revive-lash-and-nail" data-k="noanswer" data-name="revive lash &amp; nail lash &amp; nail studio san diego, ca ">
   <div class="head">
@@ -563,7 +663,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194666854">(619) 466-6854</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/revive-lash-and-nail/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://revivelashandnail.com/lander" target="_blank" rel="noopener noreferrer">Their site <span class="host">revivelashandnail.com/lander</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-28: went to voicemail, 5pm Thu — no message left</p></details>
+  <p class="note" data-note >2026-08-28: went to voicemail, 5pm Thu — no message left</p>
+  <div class="acts" data-slug="revive-lash-and-nail">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-san-diego-training-systems" data-k="noanswer" data-name="san diego training systems fitness centre san diego, ca ">
   <div class="head">
@@ -578,7 +682,11 @@
   <div class="reach"><a class="btn call" href="tel:+18589453695">(858) 945-3695</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/san-diego-training-systems/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878190.028" target="_blank" rel="noopener noreferrer">Their site <span class="host">sandiegotrainingsystems.com/.well-known/sgcaptcha/?r=%2F&amp;y=ipr:20.118.214.98:1787878190.028</span></a></div>
   <p class="gaps">Page still needs: <b>site behind a bot check</b> <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-28: no answer, 5pm Thu</p></details>
+  <p class="note" data-note >2026-08-28: no answer, 5pm Thu</p>
+  <div class="acts" data-slug="san-diego-training-systems">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-apollo-spa" data-k="closed" data-name="apollo spa massage el cajon, ca ">
   <div class="head">
@@ -593,7 +701,11 @@
   <div class="reach"><a class="btn call" href="tel:+16193897773">(619) 389-7773</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/apollo-spa/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.google.com/?zx=1787878215012" target="_blank" rel="noopener noreferrer">Their site <span class="host">google.com/?zx=1787878215012</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="apollo-spa">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-big-kahuna-s" data-k="closed" data-name="big kahuna's caterer imperial beach, ca ">
   <div class="head">
@@ -608,7 +720,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194295224">(619) 429-5224</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/big-kahuna-s/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://bigkahunasib.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">bigkahunasib.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: not a lead — we audited bigkahunasib.com, an old domain. Their real site is bigkahunaca.com and it is responsive, has a menu, ordering, catering and social links. Verified on a phone.</p></details>
+  <p class="note" data-note >2026-08-27: not a lead — we audited bigkahunasib.com, an old domain. Their real site is bigkahunaca.com and it is responsive, has a menu, ordering, catering and social links. Verified on a phone.</p>
+  <div class="acts" data-slug="big-kahuna-s">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-emerald-sportswear" data-k="closed" data-name="emerald sportswear custom apparel &amp; alterations spring valley, ca ">
   <div class="head">
@@ -623,7 +739,11 @@
   <div class="reach"><a class="btn call" href="tel:+16197417335">(619) 741-7335</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/emerald-sportswear/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.companycasuals.com/emsports/start.jsp" target="_blank" rel="noopener noreferrer">Their site <span class="host">companycasuals.com/emsports/start.jsp</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="emerald-sportswear">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-helix-mechanical-inc" data-k="waiting" data-name="helix mechanical, inc. hvac, plumbing &amp; general contracting el cajon, ca service@helixmechanical.com">
   <div class="head">
@@ -631,14 +751,18 @@
       <h3>Helix Mechanical, Inc.</h3>
       <p class="meta">HVAC, plumbing &amp; general contracting · El Cajon, CA</p>
     </div>
-    <span class="chip warn">no reply · 14d</span>
+    <span class="chip warn">no reply · 15d</span>
   </div>
-  <div class="tags"><span class="tag stop">overdue · emailed 13 days ago, no reply — call, do not re-send</span></div>
+  <div class="tags"><span class="tag stop">overdue · emailed 14 days ago, no reply — call, do not re-send</span></div>
   <p class="line">Emailed 26 Aug → service@helixmechanical.com</p>
   <div class="reach"><a class="btn call" href="tel:+16194476675">(619) 447-6675</a><a class="btn" href="mailto:service@helixmechanical.com">service@helixmechanical.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/helix-mechanical-inc/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://helixmechanical.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">helixmechanical.com</span></a></div>
   <p class="gaps">Page still needs: <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply.</p></details>
+  <p class="note" data-note >2026-08-27: re-checked in a browser — their site is better than we claimed when we emailed. Do not repeat those claims if they reply.</p>
+  <div class="acts" data-slug="helix-mechanical-inc">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-hue-salon" data-k="closed" data-name="hue salon hair salon san diego, ca ">
   <div class="head">
@@ -653,7 +777,11 @@
   <div class="reach"><a class="btn call" href="tel:+16195207077">(619) 520-7077</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/hue-salon/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://www.huesalonsandiego.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">huesalonsandiego.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="hue-salon">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-kingston-and-kingston" data-k="closed" data-name="kingston and kingston attorneys san diego, ca ">
   <div class="head">
@@ -668,7 +796,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194211133">(619) 421-1133</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/kingston-and-kingston/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.kingstonandkingston.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">kingstonandkingston.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="kingston-and-kingston">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-la-jolla-colony-dental" data-k="closed" data-name="la jolla colony dental dental practice san diego, ca ">
   <div class="head">
@@ -683,7 +815,11 @@
   <div class="reach"><a class="btn call" href="tel:+18585468600">(858) 546-8600</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/la-jolla-colony-dental/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://lajollacolonydental.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">lajollacolonydental.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="la-jolla-colony-dental">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-orton-endodontics" data-k="closed" data-name="orton endodontics endodontist — root canal specialist san diego, ca ">
   <div class="head">
@@ -698,7 +834,11 @@
   <div class="reach"><a class="btn call" href="tel:+18584857668">(858) 485-7668</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/orton-endodontics/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.ortonendo.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">ortonendo.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (1 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="orton-endodontics">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-paradise-nails-and-spa" data-k="closed" data-name="paradise nails and spa nail salon &amp; spa la mesa, ca contact@paradisenails.com">
   <div class="head">
@@ -713,7 +853,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194698899">(619) 469-8899</a><a class="btn" href="mailto:contact@paradisenails.com">contact@paradisenails.com</a></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/paradise-nails-and-spa/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://www.paradisenails.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">paradisenails.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (4 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="paradise-nails-and-spa">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-safety-auto-repair" data-k="closed" data-name="safety auto repair auto repair san diego, ca ">
   <div class="head">
@@ -728,7 +872,11 @@
   <div class="reach"><a class="btn call" href="tel:+16192652099">(619) 265-2099</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/safety-auto-repair/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://forsale.godaddy.com/forsale/safetyautorepair.com?utm_source=TDFS_BINNS2&amp;utm_medium=parkedpages&amp;utm_campaign=x_corp_tdfs-binns2_base&amp;traffic_type=TDFS_BINNS2&amp;traffic_id=binns2&amp;" target="_blank" rel="noopener noreferrer">Their site <span class="host">forsale.godaddy.com/forsale/safetyautorepair.com?utm_source=TDFS_BINNS2&amp;utm_medium=parkedpages&amp;utm_campaign=x_corp_tdfs-binns2_base&amp;traffic_type=TDFS_BINNS2&amp;traffic_id=binns2&amp;</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-27: dropped — site checks out in a real browser (3 provable gaps), nothing worth selling</p></details>
+  <p class="note" data-note >2026-08-27: dropped — site checks out in a real browser (3 provable gaps), nothing worth selling</p>
+  <div class="acts" data-slug="safety-auto-repair">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-valerio-s-city-bakery" data-k="noanswer" data-name="valerio's city bakery bakery national city, ca ">
   <div class="head">
@@ -743,7 +891,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194778588">(619) 477-8588</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/valerio-s-city-bakery/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://valerios.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">valerios.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
-  <details><summary>Last note</summary><p class="note">2026-08-27: site timed twice — 19.2s and 28.7s. Quote the SLOWER-BOUND honestly: &quot;about twenty seconds, and it was nearly thirty the first time I checked.&quot;</p></details>
+  <p class="note" data-note >2026-08-27: site timed twice — 19.2s and 28.7s. Quote the SLOWER-BOUND honestly: &quot;about twenty seconds, and it was nearly thirty the first time I checked.&quot;</p>
+  <div class="acts" data-slug="valerio-s-city-bakery">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-fs-cut-and-color" data-k="closed" data-name="fs cut &amp; color hair salon san diego, ca ">
   <div class="head">
@@ -758,7 +910,11 @@
   <div class="reach"><a class="btn call" href="tel:+18585309005">(858) 530-9005</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/fs-cut-and-color/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://fsmiramesa.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">fsmiramesa.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-25: franchise — corporate owns the website</p></details>
+  <p class="note" data-note >2026-08-25: franchise — corporate owns the website</p>
+  <div class="acts" data-slug="fs-cut-and-color">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-jamul-flowers" data-k="closed" data-name="jamul flowers florist spring valley, ca ">
   <div class="head">
@@ -773,7 +929,11 @@
   <div class="reach"><a class="btn call" href="tel:+16196690662">(619) 669-0662</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/jamul-flowers/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://www.jamulflowers.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">jamulflowers.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-25: number not in service / wrong number</p></details>
+  <p class="note" data-note >2026-08-25: number not in service / wrong number</p>
+  <div class="acts" data-slug="jamul-flowers">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-la-jolla-independent-bmw-service" data-k="closed" data-name="la jolla independent bmw service independent bmw specialist la jolla, ca ">
   <div class="head">
@@ -788,7 +948,11 @@
   <div class="reach"><a class="btn call" href="tel:+18584881555">(858) 488-1555</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/la-jolla-independent-bmw-service/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://www.bimmerdoc.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">bimmerdoc.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-25: not interested, hung up</p></details>
+  <p class="note" data-note >2026-08-25: not interested, hung up</p>
+  <div class="acts" data-slug="la-jolla-independent-bmw-service">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card" id="c-superior-smog-and-tune" data-k="closed" data-name="superior smog &amp; tune smog check &amp; auto repair lemon grove, ca ">
   <div class="head">
@@ -803,7 +967,11 @@
   <div class="reach"><a class="btn call" href="tel:+16194692112">(619) 469-2112</a><span class="none">no email on file</span></div>
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/superior-smog-and-tune/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="http://superiorsmog.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">superiorsmog.com</span></a></div>
   
-  <details><summary>Last note</summary><p class="note">2026-08-25: vented about previous web guy ($1800, went no-contact), hung up before pitch</p></details>
+  <p class="note" data-note >2026-08-25: vented about previous web guy ($1800, went no-contact), hung up before pitch</p>
+  <div class="acts" data-slug="superior-smog-and-tune">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="replied">Replied</button><button type="button" data-a="won">Won</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="callback">Callback…</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article></div>
     <p class="aside">Another <b>37</b> were closed out without ever being contacted — sites that checked out fine in a browser, agencies, chains, wrong domains. They are not on this page because nobody spoke to them.</p>
   </section>
@@ -841,6 +1009,11 @@
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/urban-cutz/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://placejuice.com/urban-cutz-barber-shop-pcrpmtq" target="_blank" rel="noopener noreferrer">Their site <span class="host">placejuice.com/urban-cutz-barber-shop-pcrpmtq</span></a></div>
   <p class="gaps">Page still needs: <b>no reviews</b></p>
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="urban-cutz">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="sent">Sent</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card next" id="n-balboa-florist" data-state="CA" data-built="1" data-tz="America/Los_Angeles" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="balboa florist florist san diego, ca">
   <div class="head">
@@ -865,6 +1038,11 @@
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/balboa-florist/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://balboaflorist.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">balboaflorist.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="balboa-florist">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="sent">Sent</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card next" id="n-studio-mani" data-state="CA" data-built="1" data-tz="America/Los_Angeles" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="studio mani beauty poway, ca">
   <div class="head">
@@ -889,6 +1067,11 @@
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/studio-mani/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://www.studiomanipoway.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">studiomanipoway.com</span></a></div>
   <p class="gaps">Page still needs: <b>no reviews</b></p>
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="studio-mani">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="sent">Sent</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card next" id="n-sun-valley-dental-care" data-state="CA" data-built="1" data-tz="America/Los_Angeles" data-slots="[[9,0,11,0]]" data-name="sun valley dental care dentist el cajon, ca">
   <div class="head">
@@ -913,6 +1096,11 @@
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/sun-valley-dental-care/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://sunvalleydentalcare.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">sunvalleydentalcare.com</span></a></div>
   <p class="gaps">Page still needs: <b>no hours</b> <b>no reviews</b></p>
   <p class="win"><b>Clinic:</b> 9am–11am their time — after they open, before the waiting room fills.</p>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="sun-valley-dental-care">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="sent">Sent</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card next" id="n-who-s-next-barbershop" data-state="CA" data-built="1" data-tz="America/Los_Angeles" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="who's next barbershop hairdresser la jolla, ca">
   <div class="head">
@@ -937,6 +1125,11 @@
   <div class="reach pages"><a class="btn page" href="https://cold-call-coachv3.buildscope-ai.workers.dev/who-s-next-barbershop/" target="_blank" rel="noopener noreferrer">Our page <b>live</b></a><a class="btn" href="https://whosnextlajolla.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">whosnextlajolla.com</span></a></div>
   <p class="gaps">Page still needs: <b>site unreachable</b> <b>no hours</b> <b>no reviews</b></p>
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="who-s-next-barbershop">
+    <button type="button" data-a="tried">No answer</button><button type="button" data-a="sent">Sent</button><button type="button" data-a="dead">Not interested</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
 </article>
 <article class="card next" id="n-trim" data-state="TN" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="trim hairdresser nashville, tn">
   <div class="head">
@@ -961,6 +1154,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.trimnashville.com/lander" target="_blank" rel="noopener noreferrer">Their site <span class="host">trimnashville.com/lander</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-soul-collective-mke-lp" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,16,0]]" data-name="soul collective mke, lp fitness centre milwaukee, wi">
   <div class="head">
@@ -985,6 +1180,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://soulcollectivemke.com/lander" target="_blank" rel="noopener noreferrer">Their site <span class="host">soulcollectivemke.com/lander</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-1401-hair-designs-and-massage-therapy" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="1401 hair designs &amp; massage therapy beauty wilmington, de">
   <div class="head">
@@ -1009,6 +1206,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="http://1401bell.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">1401bell.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-uniprice-cleaners" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="uniprice cleaners dry cleaning milwaukee, wi">
   <div class="head">
@@ -1033,6 +1232,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="http://uniprice-cleaners.com/brady.htm" target="_blank" rel="noopener noreferrer">Their site <span class="host">uniprice-cleaners.com/brady.htm</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-dave-page-cobbler" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="dave page cobbler shoe repair seattle, wa*">
   <div class="head">
@@ -1057,6 +1258,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://davepagecobbler.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">davepagecobbler.com</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-coastal-car-wash" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[8,0,9,30],[15,30,17,0]]" data-name="coastal car wash car wash dover, de">
   <div class="head">
@@ -1081,6 +1284,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="http://www.coastalcarwash.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">coastalcarwash.com</span></a></div>
   
   <p class="win"><b>Auto:</b> 8am–9:30am or 3:30pm–5pm their time — the shop opens at 8 and the bays are not full yet.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-brandywine-auto-body" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[8,0,9,30],[15,30,17,0]]" data-name="brandywine auto body car repair talleyville, de">
   <div class="head">
@@ -1105,6 +1310,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://brandywineautobody.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">brandywineautobody.com</span></a></div>
   
   <p class="win"><b>Auto:</b> 8am–9:30am or 3:30pm–5pm their time — the shop opens at 8 and the bays are not full yet.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-bennett-coachworks" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[8,0,9,30],[15,30,17,0]]" data-name="bennett coachworks car repair milwaukee, wi*">
   <div class="head">
@@ -1129,6 +1336,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.hotrodbuilders.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">hotrodbuilders.com</span></a></div>
   
   <p class="win"><b>Auto:</b> 8am–9:30am or 3:30pm–5pm their time — the shop opens at 8 and the bays are not full yet.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-gloss-nail-spa" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="gloss nail spa beauty milwaukee, wi*">
   <div class="head">
@@ -1153,6 +1362,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="http://www.glossnailspa.net/" target="_blank" rel="noopener noreferrer">Their site <span class="host">glossnailspa.net</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-tess-hair-and-wig-boutique" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="tess hair &amp; wig boutique beauty milwaukee, wi">
   <div class="head">
@@ -1177,6 +1388,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.bootstrapmb.com/item/12890" target="_blank" rel="noopener noreferrer">Their site <span class="host">bootstrapmb.com/item/12890</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-vitality" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,16,0]]" data-name="vitality fitness centre milwaukee, wi*">
   <div class="head">
@@ -1201,6 +1414,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://aestheticallywell.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">aestheticallywell.com</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-globe-optical" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,0]]" data-name="globe optical optician seattle, wa">
   <div class="head">
@@ -1225,6 +1440,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="http://globeoptical.qwestoffice.net/" target="_blank" rel="noopener noreferrer">Their site <span class="host">globeoptical.qwestoffice.net</span></a></div>
   
   <p class="win"><b>Clinic:</b> 9am–11am their time — after they open, before the waiting room fills.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-salon-metro" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="salon metro hairdresser seattle, wa*">
   <div class="head">
@@ -1249,6 +1466,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.salonmetroseattle.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">salonmetroseattle.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-strive-and-uplift" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[10,0,16,0]]" data-name="strive &amp; uplift fitness centre seattle, wa*">
   <div class="head">
@@ -1273,6 +1492,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.striveanduplift.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">striveanduplift.com</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-trendz-salon-and-color-bar" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="trendz salon and color bar hairdresser dover, de">
   <div class="head">
@@ -1297,6 +1518,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.trendzscb.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">trendzscb.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-fairfax-valet-cleaners" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="fairfax valet cleaners dry cleaning de">
   <div class="head">
@@ -1321,6 +1544,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.fairfaxvalet.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">fairfaxvalet.com</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-slc-services-inc" data-state="NC" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="slc services, inc. accountant charlotte, nc">
   <div class="head">
@@ -1345,6 +1570,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://slcservices.biz/" target="_blank" rel="noopener noreferrer">Their site <span class="host">slcservices.biz</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-mccormick-law-office" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="mccormick law office lawyer wi*">
   <div class="head">
@@ -1369,6 +1596,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://danmccormicklaw.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">danmccormicklaw.com</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-leavened" data-state="OH" data-built="0" data-tz="America/New_York" data-slots="[[6,0,9,0],[14,0,16,0]]" data-name="leavened bakery cleveland, oh">
   <div class="head">
@@ -1393,6 +1622,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://leavenedcle.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">leavenedcle.com</span></a></div>
   
   <p class="win"><b>Bakery:</b> 6am–9am or 2pm–4pm their time — bakers have been in for hours by 6am and are quiet before the counter opens.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-ellipse-fitness" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,16,0]]" data-name="ellipse fitness fitness centre milwaukee, wi*">
   <div class="head">
@@ -1417,6 +1648,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.ellipsefitness.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">ellipsefitness.com</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-the-shoppe" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="the shoppe hairdresser milwaukee, wi*">
   <div class="head">
@@ -1441,6 +1674,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.theshoppemke.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">theshoppemke.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-futen-dojo" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="futen dojo dojo milwaukee, wi">
   <div class="head">
@@ -1465,6 +1700,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.futendojo.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">futendojo.com</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-chic-nails" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="chic nails beauty milwaukee, wi">
   <div class="head">
@@ -1489,6 +1726,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://chicnailsmke.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">chicnailsmke.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-top-tiger-team-boxing" data-state="NC" data-built="0" data-tz="America/New_York" data-slots="[[10,0,16,0]]" data-name="top tiger team boxing fitness centre charlotte, nc">
   <div class="head">
@@ -1513,6 +1752,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://toptigerteamboxing.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">toptigerteamboxing.com</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-florida-first-insurance-group" data-state="FL" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="florida first insurance group insurance jacksonville, fl">
   <div class="head">
@@ -1537,6 +1778,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://fl1stins.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">fl1stins.com</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-great-jones" data-state="IN" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="great jones estate agent indianapolis, in">
   <div class="head">
@@ -1561,6 +1804,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.mynd.co/" target="_blank" rel="noopener noreferrer">Their site <span class="host">mynd.co</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-macrina-bakery-belltown" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[6,0,9,0],[14,0,16,0]]" data-name="macrina bakery - belltown bakery seattle, wa">
   <div class="head">
@@ -1585,6 +1830,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://macrinabakery.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">macrinabakery.com</span></a></div>
   
   <p class="win"><b>Bakery:</b> 6am–9am or 2pm–4pm their time — bakers have been in for hours by 6am and are quiet before the counter opens.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-miller-law-group" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="miller law group lawyer seattle, wa*">
   <div class="head">
@@ -1609,6 +1856,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://legalbymiller.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">legalbymiller.com</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-breathe-hot-yoga" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[10,0,16,0]]" data-name="breathe hot yoga fitness centre seattle, wa">
   <div class="head">
@@ -1633,6 +1882,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://breathehotyoga.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">breathehotyoga.com</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-posh-paws" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="posh paws pet grooming seattle, wa*">
   <div class="head">
@@ -1657,6 +1908,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://poshpawsseattle.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">poshpawsseattle.com</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-d-andrew-lewis-dds" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,0]]" data-name="d. andrew lewis, dds dentist seattle, wa*">
   <div class="head">
@@ -1681,6 +1934,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://drlewisdds.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">drlewisdds.com</span></a></div>
   
   <p class="win"><b>Clinic:</b> 9am–11am their time — after they open, before the waiting room fills.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-brown-bear-car-wash" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[8,0,9,30],[15,30,17,0]]" data-name="brown bear car wash car wash seattle, wa*">
   <div class="head">
@@ -1705,6 +1960,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://brownbear.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">brownbear.com</span></a></div>
   
   <p class="win"><b>Auto:</b> 8am–9:30am or 3:30pm–5pm their time — the shop opens at 8 and the bays are not full yet.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-14th-avenue-hair" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="14th avenue hair hairdresser seattle, wa">
   <div class="head">
@@ -1729,6 +1986,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://14thavehair.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">14thavehair.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-salon-divas" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="salon divas hairdresser seattle, wa">
   <div class="head">
@@ -1753,6 +2012,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.salondivas.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">salondivas.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-north-coast-electric" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[7,0,8,30],[16,0,17,30]]" data-name="north coast electric electrician seattle, wa">
   <div class="head">
@@ -1777,6 +2038,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.northcoast.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">northcoast.com</span></a></div>
   
   <p class="win"><b>Trades:</b> 7am–8:30am or 4pm–5:30pm their time — in the van, before the first job or after the last.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-salumi-artisan-cured-meats" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[6,0,9,0],[14,0,16,0]]" data-name="salumi artisan cured meats butcher seattle, wa">
   <div class="head">
@@ -1801,6 +2064,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://dhawansuits.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">dhawansuits.com</span></a></div>
   
   <p class="win"><b>Bakery:</b> 6am–9am or 2pm–4pm their time — bakers have been in for hours by 6am and are quiet before the counter opens.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-gairson-law" data-state="WA" data-built="0" data-tz="America/Los_Angeles" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="gairson law lawyer seattle, wa">
   <div class="head">
@@ -1825,6 +2090,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://gairson.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">gairson.com</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-monticolo-insurance-agency" data-state="NJ" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="monticolo insurance agency insurance carneys point, nj">
   <div class="head">
@@ -1849,6 +2116,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://monticoloinsurance.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">monticoloinsurance.com</span></a></div>
   
   <p class="win"><b>Office:</b> 9am–11:30am or 2pm–4:30pm their time — office hours, avoiding lunch.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-fairfax-hardware" data-state="DE" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,30],[14,0,16,30]]" data-name="fairfax hardware hardware de">
   <div class="head">
@@ -1873,6 +2142,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://fairfaxhardwarede.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">fairfaxhardwarede.com</span></a></div>
   
   <p class="win"><b>Best time:</b> 9am–11:30am or 2pm–4:30pm their time — ordinary business hours.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-la-posh-salon" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,11,30],[14,0,16,0]]" data-name="la posh salon hairdresser milwaukee, wi">
   <div class="head">
@@ -1897,6 +2168,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.laposhsalonmke.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">laposhsalonmke.com</span></a></div>
   
   <p class="win"><b>Salon:</b> 10am–11:30am or 2pm–4pm their time — between the morning and afternoon books.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-yeast-nashville" data-state="TN" data-built="0" data-tz="America/Chicago" data-slots="[[6,0,9,0],[14,0,16,0]]" data-name="yeast nashville bakery nashville, tn">
   <div class="head">
@@ -1921,6 +2194,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.yeastnashville.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">yeastnashville.com</span></a></div>
   
   <p class="win"><b>Bakery:</b> 6am–9am or 2pm–4pm their time — bakers have been in for hours by 6am and are quiet before the counter opens.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-east-nashville-family-medicine" data-state="TN" data-built="0" data-tz="America/Chicago" data-slots="[[9,0,11,0]]" data-name="east nashville family medicine doctors nashville, tn">
   <div class="head">
@@ -1945,6 +2220,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.eastnashvillefamilymed.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">eastnashvillefamilymed.com</span></a></div>
   
   <p class="win"><b>Clinic:</b> 9am–11am their time — after they open, before the waiting room fills.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-shred415" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,16,0]]" data-name="shred415 fitness centre milwaukee, wi">
   <div class="head">
@@ -1969,6 +2246,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://shred415.com/locations/" target="_blank" rel="noopener noreferrer">Their site <span class="host">shred415.com/locations</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-william-linger-dds-magd" data-state="NC" data-built="0" data-tz="America/New_York" data-slots="[[9,0,11,0]]" data-name="william linger, dds, magd dentist charlotte, nc">
   <div class="head">
@@ -1993,6 +2272,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.drlinger.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">drlinger.com</span></a></div>
   
   <p class="win"><b>Clinic:</b> 9am–11am their time — after they open, before the waiting room fills.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article>
 <article class="card next" id="n-invivo-wellness" data-state="WI" data-built="0" data-tz="America/Chicago" data-slots="[[10,0,16,0]]" data-name="invivo wellness fitness centre milwaukee, wi">
   <div class="head">
@@ -2017,6 +2298,8 @@
   <div class="reach pages"><span class="none">no page built yet</span><a class="btn" href="https://www.dot-shopping.org/articles/the-smart-wellness-products-guide-for-2026.html?psystem=PW&amp;domain=invivowellness.com&amp;oref=https%3A%2F%2Finvivowellness.com%2F&amp;trafficTarget=reseller" target="_blank" rel="noopener noreferrer">Their site <span class="host">dot-shopping.org/articles/the-smart-wellness-products-guide-for-2026.html?psystem=PW&amp;domain=invivowellness.com&amp;oref=https%3A%2F%2Finvivowellness.com%2F&amp;trafficTarget=reseller</span></a></div>
   
   <p class="win"><b>Fitness:</b> 10am–4pm their time — the owner is in between the early and evening classes.</p>
+  <p class="note" data-note hidden></p>
+  <p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>
 </article></div>
     <p class="aside">Set aside, not shown: <b>36</b> no number in the listing — Google them to recover it · <b>13</b> behind a bot check — we measured a CAPTCHA, not their site · <b>3</b> the listed domain belongs to a school or government body · <b>1</b> an institution, not an owner-run business · <b>1</b> the page never loaded — we measured a browser error · <b>1</b> toll-free — call centre · <b>1</b> has an agency.</p>
   </section>
@@ -2115,6 +2398,90 @@
   show(want);
   setInterval(tick, 60000);
   window.addEventListener('hashchange', function(){ var h = location.hash.replace('#', ''); if (panels[h] && h !== current) show(h); });
+
+  // Tap-to-log. Writes straight to clients/<slug>/business.json through the
+  // Worker (see worker.js /dash/log) — real the moment someone taps it, not
+  // tomorrow's rebuild. The card is patched in place; it does not move
+  // between Contacted and Up next until the next scheduled build reads the
+  // change, so a freshly-logged card in Up next says so rather than
+  // pretending to have moved.
+  var CHIP = {
+    tried:    function(p){ return { label: 'no answer · ' + p.attempts + (p.attempts === 1 ? ' try' : ' tries'), tone: 'warn' }; },
+    sent:     function(){ return { label: 'sent today', tone: 'accent' }; },
+    replied:  function(){ return { label: 'replied', tone: 'good' }; },
+    won:      function(){ return { label: 'won', tone: 'good' }; },
+    dead:     function(){ return { label: 'closed out', tone: 'muted' }; },
+  };
+  var LABEL = { tried: 'No answer', sent: 'Sent', replied: 'Replied', won: 'Won', dead: 'Not interested', callback: 'Callback booked', note: 'Note saved' };
+
+  function setSaved(el, state, text){
+    el.hidden = false;
+    el.className = 'saved' + (state ? ' ' + state : '');
+    el.textContent = text;
+  }
+
+  function logAction(bar, btn){
+    var slug = bar.dataset.slug, action = btn.dataset.a;
+    var note = '', at = '';
+    if (action === 'note') {
+      note = (prompt('Note for this call — a line or two:') || '').trim();
+      if (!note) return;
+    }
+    if (action === 'callback') {
+      at = (prompt('Callback when? e.g. 2026-09-15 14:00') || '').trim();
+      if (!at) return;
+      note = (prompt('Anything to note about the callback? (optional)') || '').trim();
+    }
+
+    var saved = bar.querySelector('.saved');
+    var buttons = [].slice.call(bar.querySelectorAll('button'));
+    buttons.forEach(function(b){ b.disabled = true; });
+    setSaved(saved, '', 'Saving…');
+
+    fetch('/dash/log', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug: slug, action: action, note: note, at: at }),
+    }).then(function(r){ return r.json().then(function(body){ return { ok: r.ok && body.ok, body: body }; }); })
+      .then(function(res){
+        buttons.forEach(function(b){ b.disabled = false; });
+        if (!res.ok) { setSaved(saved, 'err', (res.body && res.body.error) || 'Not saved — tap to retry'); return; }
+        setSaved(saved, 'ok', LABEL[action] || 'Saved');
+
+        var card = bar.closest('.card');
+        var chipMaker = CHIP[action];
+        if (chipMaker && card) {
+          var chip = card.querySelector('.chip');
+          if (chip && chip.classList.contains('now') === false) {
+            var c = chipMaker(res.body.patch);
+            chip.className = 'chip ' + c.tone;
+            chip.textContent = c.label;
+          }
+        }
+        var noteEl = card && card.querySelector('[data-note]');
+        if (noteEl && res.body.patch && res.body.patch.lastNote) {
+          noteEl.hidden = false;
+          noteEl.textContent = res.body.patch.lastNote;
+        }
+        if (card && action === 'dead') card.style.opacity = '.62';
+
+        setTimeout(function(){ if (saved.className.indexOf('ok') !== -1) saved.hidden = true; }, 2200);
+      })
+      .catch(function(){
+        buttons.forEach(function(b){ b.disabled = false; });
+        setSaved(saved, 'err', 'Network error — tap to retry');
+      });
+  }
+
+  document.addEventListener('click', function(ev){
+    var errChip = ev.target.closest('.saved.err');
+    if (errChip) { var bar = errChip.closest('.acts'); var last = bar && bar.dataset.lastBtn; if (last) logAction(bar, bar.querySelector('[data-a="' + last + '"]')); return; }
+    var btn = ev.target.closest('.acts button[data-a]');
+    if (!btn) return;
+    var bar = btn.closest('.acts');
+    bar.dataset.lastBtn = btn.dataset.a;
+    logAction(bar, btn);
+  });
 })();
 </script>
 </body>

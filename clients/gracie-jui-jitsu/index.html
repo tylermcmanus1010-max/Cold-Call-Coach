@@ -388,6 +388,9 @@
   .spec dt{font:500 10px/1.5 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
   .spec dd{margin:0;font:600 12.5px/1.55 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--paper)}
   .spec dd a{text-decoration:none}
+  /* an address or a set of hours reads fine in caps; an email address does
+     not — IMPRESSIONDENTALGROUP@YAHOO.COM is a wall. It keeps its own case. */
+  .spec dd a[href^="mailto:"]{text-transform:none;letter-spacing:.02em}
   .spec .hrs{display:grid;grid-template-columns:auto 1fr;gap:2px 16px}
   .links{list-style:none;margin:26px 0 0;padding:0}
   .links li{border-bottom:1px solid var(--line)}
@@ -523,7 +526,7 @@
     <div class="hero-inner">
     
     <div class="tagwrap rise" style="--i:0"><span class="eyebrow tag">fitness centre · San Diego, CA</span></div>
-    <h1 class="rise" style="--i:1">Fitness centre in San Diego.</h1>
+    <h1 class="rise" style="--i:1">Fitness center in San Diego.</h1>
     
     <div class="actions rise" style="--i:3">
       <a class="btn btn-primary" href="tel:+18585059917">Call +1-858-505-9917</a>

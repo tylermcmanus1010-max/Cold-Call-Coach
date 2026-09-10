@@ -4,6 +4,7 @@
 //   ./cc scout              build the lead list: pull businesses, audit every site
 //   ./cc board              one page of every business we have measured, ranked
 //   ./cc brief              the morning call plan, ordered by who can answer
+//   ./cc dashboard          contacted on one tab, the next 25–50 on the other (rebuilt every morning)
 //   ./cc forms              find the contact form on each lead's own site
 //   ./cc outreach           build the send-at-work queue from those forms
 //   ./cc trade              paper-trading journal: size, open, close, stats, watch
@@ -772,6 +773,36 @@ function cmdHost(slug, flags) {
   console.log('  approval there, and only then touch their DNS.\n');
 }
 
+// The morning dashboard: contacted on one tab, the next 25–50 on the other.
+// Actions rebuilds and commits it every morning (dashboard.yml); this is the
+// same build by hand. --offline skips the "is our page actually live" HEADs.
+async function cmdDashboard(argv) {
+  const o = flags(argv);
+  const { build } = require('./tools/dashboard');
+  const render = require('./tools/dashboard-render');
+
+  const d = await build({ limit: Number(o.limit || 50), offline: Boolean(o.offline) });
+  const { page } = render(d);
+
+  // The page carries its own tabs and filters; a script that will not parse
+  // is a dashboard stuck on one tab with the search dead, which is worse than
+  // a build that fails.
+  for (const [, js] of page.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)) {
+    if (!js.trim()) continue;
+    try { new Function(js); }
+    catch (e) { die(`the dashboard's own script will not parse — ${e.message}`); }
+  }
+
+  fs.mkdirSync(path.join(ROOT, 'dashboard'), { recursive: true });
+  const out = path.join(ROOT, 'dashboard', 'index.html');
+  fs.writeFileSync(out, page);
+
+  const s = d.stats;
+  console.log(`\n  ${s.contacted} contacted · ${s.waiting} awaiting a reply · ${s.due} owed today · ${s.bounced} bounced or stopped`);
+  console.log(`  ${s.next} up next of ${s.pool} callable · ${s.live}/${s.builtPages} pages confirmed live${o.offline ? ' (offline — not checked)' : ''}`);
+  console.log(`  ${out}\n`);
+}
+
 function cmdSheet() {
   const build = require('./tools/call-sheet');
   const { html, state, skipped } = build();
@@ -810,6 +841,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'list': cmdList(); break;
     case 'sheet': cmdSheet(); break;
     case 'board': cmdBoard(); break;
+    case 'dashboard': await cmdDashboard(args); break;
     case 'brief': cmdBrief(args); break;
     case 'forms': await cmdForms(args); break;
     case 'outreach': cmdOutreach(args); break;

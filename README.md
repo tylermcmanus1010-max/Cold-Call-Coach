@@ -268,6 +268,57 @@ owes you a reply, and who is dead. It is the same file that gets published as th
 dashboard, and tapping its buttons writes back to `clients/`, so the two never
 disagree.
 
+## 9. The morning dashboard
+
+```bash
+./cc dashboard                       # dashboard/index.html — two tabs
+./cc dashboard --limit 30 --offline  # fewer on "Up next"; skip the is-it-live checks
+```
+
+One page, rebuilt and committed every morning at 6:30 Pacific by
+`dashboard.yml`, so the phone never shows yesterday's numbers:
+
+| Tab | What is on it |
+|---|---|
+| **Contacted** | Every business we have actually emailed, called or texted — number, email, the Gmail thread, our page (and whether it is really live), their site, what came back, the last note. Anything owed (a callback they asked for, three days of silence after an email, Seth's revisit date) sits at the top. |
+| **Up next** | The 25–50 we have *not* reached, pages already built first, then the board's order. Each card says the one provable flaw, whether they are answering the phone right now in their own time zone, and what the page still needs before `./cc campaign` would send it. |
+
+"Contacted" means a real attempt left the building: a line in
+`outreach/sent-log.jsonl`, `./cc tried`, a bounce, a booked callback, or a
+name on the suppression list. Nothing on the page is a new source of truth —
+it reads `clients/`, `leads/`, the send log and `config/suppression.json`,
+and reuses `board.js`, `campaign.js` and `brief.js` for every judgement.
+
+**Seeing it on your phone.** The dashboard lists every prospect, so it is
+exactly what `tools/publish.js` keeps off the public site. It is served
+anyway, at `https://<cloudflarePagesDomain>/dash/`, but only through
+`worker.js`, which 404s unless the request carries `DASH_KEY`. Set that
+secret once in the Worker's settings (Variables and Secrets), then open
+`/dash/?key=<the key>` once — a cookie keeps it open after that. With no
+secret set, `/dash/` is a 404, not a page.
+
+**Tap-to-log — for you or someone calling on your behalf.** Every card has
+buttons: No answer, Sent, Replied, Won, Not interested, Callback…, Note….
+Each tap writes straight to `clients/<slug>/business.json` through the
+GitHub API — real the moment it's tapped, the same fields `./cc tried` and
+`./cc status` write, so a tap and a terminal command never disagree. The
+card updates itself in place; it does not jump to the other tab until the
+next 6:30am rebuild reads the change, so a just-logged card in "Up next"
+says so rather than pretending to have moved.
+
+This needs a second secret, `GH_TOKEN`: a **fine-grained** personal access
+token scoped to **only this repository**, with **Contents: Read and write**
+permission and nothing else. Create it at GitHub → Settings → Developer
+settings → Fine-grained tokens, then set it with
+`npx wrangler secret put GH_TOKEN` (run that yourself — don't paste the
+token into chat). Without `GH_TOKEN`, `/dash/` still works for reading;
+the buttons just answer "not set up yet" instead of saving.
+
+Anyone with the `/dash/?key=` link can log calls under this scheme — there
+is no per-caller identity yet. Fine for one trusted employee; if you add
+more than one, say so and it's worth giving each their own key so you can
+tell who logged what and revoke one without touching the others.
+
 ---
 
 ## Making the call

@@ -308,4 +308,30 @@ async function screenshot(rawUrl, outPath, { browser, timeout = 20000 } = {}) {
   }
 }
 
-module.exports = { auditRendered, chromium, EXEC, namesBusiness, screenshot };
+// A launched Chromium can still be unable to reach the open internet — not
+// "will not launch", but "opens fine, then every page.goto() hangs to its
+// own timeout". That happened here: familyinteriors.com neither erred nor
+// loaded, it hung the full 10s. auditRendered() then classifies a timeout
+// as a VERIFIED "too slow to load" finding — exactly the false-claim shape
+// prospector.md already warns about for a 403 ("indistinguishable from a
+// site refusing us"), just showing up as a timeout instead of a status
+// code. assertOnline() (reaudit.js) does not catch this: it uses plain
+// fetch, which reaches the same hosts fine from here — this is specific to
+// Chromium's own connection, not the network as a whole. So: launch,
+// probe with THIS browser before trusting anything it reports, and let the
+// caller fall back to the plain-fetch path (which already works) rather
+// than record a page of "verified" findings that are actually the proxy.
+async function assertBrowserOnline(browser, { timeout = 8000 } = {}) {
+  const ctx = await browser.newContext();
+  try {
+    const page = await ctx.newPage();
+    await page.goto('https://example.com/', { waitUntil: 'domcontentloaded', timeout });
+    return true;
+  } catch {
+    return false;
+  } finally {
+    await ctx.close().catch(() => {});
+  }
+}
+
+module.exports = { auditRendered, chromium, EXEC, namesBusiness, screenshot, assertBrowserOnline };

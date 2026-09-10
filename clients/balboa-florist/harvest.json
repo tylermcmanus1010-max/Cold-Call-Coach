@@ -1,6 +1,6 @@
 {
-  "_readMe": "Everything research.js could find, from every source, raw. NOTHING here is verified. --apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) into business.json; services and headline still need a person to read this.",
-  "researchedAt": "2026-09-08",
+  "_readMe": "Material taken off their own website. NOTHING here is verified and nothing has been written to business.json — decide what is true and what belongs on the page yourself. Quotes are the valuable part: real testimonials with real names are the one gap our own checks always flag, and they cannot be invented.",
+  "researchedAt": "2026-09-09",
   "siteKind": "own",
   "site": {
     "url": "https://balboaflorist.com/",
@@ -16,5 +16,36 @@
   "google": {
     "skipped": "no GOOGLE_MAPS_API_KEY"
   },
-  "crawlNote": "--no-crawl"
+  "osmTags": null,
+  "harvestedAt": "2026-09-09",
+  "from": "https://balboaflorist.com/",
+  "namesBusiness": true,
+  "pagesRead": [
+    "https://balboaflorist.com/",
+    "https://balboaflorist.com/about.html",
+    "https://balboaflorist.com/contact.html"
+  ],
+  "emails": [],
+  "phones": [],
+  "hours": [],
+  "people": [],
+  "prices": [],
+  "social": [
+    "https://www.facebook.com/balboaflorist/",
+    "https://www.twitter.com/balboaflorist/",
+    "https://www.instagram.com/balboa_florist/"
+  ],
+  "headings": [
+    "Flower Delivery and pickup in San Diego",
+    "5927 Balboa Ave. San Diego CA, 92111",
+    "(858)429-8558",
+    "(858)336-6463",
+    "Email us at order@balboaflorist com"
+  ],
+  "quotes": [],
+  "pageText": {
+    "https://balboaflorist.com/": "About Us Contact Us Flower Delivery and pickup in San Diego 5927 Balboa Ave. San Diego CA, 92111 (858)429-8558 (858)336-6463 (Open 7 days. 8:30 AM - 7:30 PM) Love and Romance Sympathy Anniversary Birthday Get Well Congratulations New Baby Plants Gifts My Account Track Orders Favorites Shopping Bag Powered by Lightspeed Welcome to Balboa Florist, a family owned and operated flower shop. We have a wide range of floral products for all occasions and offer services for flower delivery in San Diego since 1992. We think you will be pleased with our beautiful arrangements. We have many kinds of arrangements to choose from in a variety of colors, flower choices and price ranges. We have birthday, anniversary and other special occasion choices but also can provide sympathy arrangements for the bereaved as well as flowers for funerals. If you need wedding flowers, or boutonnières or corsages for weddings or proms, we have some of the best you will find. We also have gift items that can be paired with our arrangements for that special touch. You will also like our beautiful green plant selection. Contact Us About Us Connect with us at Balboa Florist.",
+    "https://balboaflorist.com/about.html": "About Us Contact Us Flower Delivery and pickup in San Diego 5927 Balboa Ave. San Diego CA, 92111 (858)429-8558 (858)336-6463 Welcome to Balboa Florist, a family owned and operated flower shop. We have a wide range of floral products for all occasions and offer services for flower delivery in San Diego since 1992. We think you will be pleased with our beautiful arrangements. We have many kinds of arrangements to choose from in a variety of colors, flower choices and price ranges. We have birthday, anniversary and other special occasion choices but also can provide sympathy arrangements for the bereaved as well as flowers for funerals. If you need wedding flowers, or boutonnières or corsages for weddings or proms, we have some of the best you will find. We also have gift items that can be paired with our arrangements for that special touch. You will also like our beautiful green plant selection. We take most major credit cards plus Paypal. We offer same day delivery for flowers in San Diego. Call Balboa Florist at (858) 429-8558 or (858) 336-6463 to order. Delivery Policy Every BalboaFlorist.com bouquet is arranged by our professional designers and hand-delivered as quickly as possible. Most of our products can be delivered the same day. To assure same-day delivery, orders must be received before 12:00 pm. Orders received after 12:00 pm may be delivered the next day. We will do our best but not guarantee specific time of delivery. For major holidays, we recommend that you place your orders at least 3 days in advance. If recipient not at home, we will leave the bouquet behind the entrance (gate, door, etc ). If you have specific instructions for the delivery of your bouquet, please note them in the Special Delivery Instructions field during checkout. Occasionally, if flowers or containers are not available, they will be substituted by similar or higher value products. After you place an order, you'll receive an order confirmation e-mail. Please review and make sure all the information are correct. To show our appreciation, you'll receive a Thank You e-mail from BalboaFlorist.com.",
+    "https://balboaflorist.com/contact.html": "About Us Contact Us Flower Delivery and pickup in San Diego 5927 Balboa Ave. San Diego CA, 92111 (858)429-8558 (858)336-6463 Email us at order@balboaflorist com"
+  }
 }

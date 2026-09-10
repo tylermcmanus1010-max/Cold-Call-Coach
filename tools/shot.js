@@ -126,9 +126,14 @@ function dumpPhotos(slug, out) {
   if (!fs.existsSync(file)) return [];
   const b = JSON.parse(fs.readFileSync(file, 'utf8'));
   const photos = (b.photos || []).filter((p) => p && (typeof p === 'string' ? p : p.src));
-  if (!photos.length) return [];
+  // A photos/ folder from an earlier shot outlives the photos it held.
+  // Impression Dental's four stock banners were looked at and dropped on
+  // 8 Sep; the next day's shot still listed them as four "kind=—" photos
+  // nobody could tag, because nothing was there. Clear it before deciding,
+  // so an empty client leaves no photos.txt claiming otherwise.
   const dir = path.join(out, 'photos');
   fs.rmSync(dir, { recursive: true, force: true });
+  if (!photos.length) return [];
   fs.mkdirSync(dir, { recursive: true });
   const lines = [], files = [];
   photos.forEach((p, i) => {

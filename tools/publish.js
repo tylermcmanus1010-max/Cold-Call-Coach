@@ -7,6 +7,11 @@
 // site/<slug>/index.html, and nothing else. Point Cloudflare Pages' build
 // output directory at "site", never at the repo root.
 //
+// The one exception is site/dash/ — the morning dashboard, which lists every
+// prospect and so is exactly what must not be public. It is only ever
+// served through worker.js, which refuses it without DASH_KEY; the asset
+// layer never answers for /dash/ on its own (see wrangler.toml).
+//
 //   node tools/publish.js
 
 const fs = require('fs');
@@ -36,7 +41,14 @@ function main() {
     '<!doctype html><title>Not found</title><body style="font:16px system-ui;padding:40px">Nothing here.');
   fs.writeFileSync(path.join(OUT, '_headers'), '/*\n  X-Robots-Tag: noindex\n');
 
-  console.log(`site/ built — ${n} page${n === 1 ? '' : 's'}, nothing else.`);
+  const dash = path.join(ROOT, 'dashboard', 'index.html');
+  const withDash = fs.existsSync(dash);
+  if (withDash) {
+    fs.mkdirSync(path.join(OUT, 'dash'), { recursive: true });
+    fs.copyFileSync(dash, path.join(OUT, 'dash', 'index.html'));
+  }
+
+  console.log(`site/ built — ${n} page${n === 1 ? '' : 's'}${withDash ? ', plus the dashboard behind DASH_KEY at /dash/' : ''}, nothing else.`);
 }
 
 main();

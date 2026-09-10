@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://eversunwellness.com/.well-known/sgcaptcha/?r=%2Flocation%2Feversun-carmel-mountain&y=ipr:20.118.214.98:1787878245.533",
   "liveUrl": "",
-  "status": "new",
+  "status": "sent",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -21,7 +21,7 @@
   "tagline": "",
   "heroNote": "",
   "phone": "+1 858-451-0588",
-  "email": "",
+  "email": "experience@eversunwellness.com",
   "address": {
     "street": "11835 Carmel Mountain Road",
     "city": "San Diego",
@@ -131,5 +131,9 @@
   "_research": {
     "at": "2026-09-08",
     "applied": []
-  }
+  },
+  "callNotes": [
+    "2026-09-09: reconciled against Gmail — this was actually sent 2026-08-31 to experience@eversunwellness.com (old attachment-era send, predates outreach/sent-log.jsonl). No bounce, no reply seen since. Status corrected from new to sent so it is not pitched twice."
+  ],
+  "sentOn": "2026-08-31"
 }

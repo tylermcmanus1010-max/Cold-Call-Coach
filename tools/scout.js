@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { audit, CHECKS } = require('./audit');
-const { auditRendered, chromium, EXEC } = require('./browser-audit');
+const { auditRendered, chromium, EXEC, assertBrowserOnline } = require('./browser-audit');
 
 // Overpass instances go down and rate-limit independently; try them in turn.
 const OVERPASS_MIRRORS = (process.env.OVERPASS_MIRRORS || '').split(',').map((x) => x.trim()).filter(Boolean);
@@ -51,6 +51,10 @@ async function overpassQuery(query, label) {
           method: 'POST',
           headers: { 'content-type': 'application/x-www-form-urlencoded', 'user-agent': OSM_UA, accept: 'application/json' },
           body: new URLSearchParams({ data: query }),
+          // A mirror that accepts the connection and never answers used to hang
+          // here with no bound — the "2 attempts, 3s apart" retry logic below
+          // never got a turn because the first attempt never finished.
+          signal: AbortSignal.timeout(45000),
         });
         if (res.ok) return (await res.json()).elements || [];
 
@@ -181,6 +185,11 @@ function toLeads(elements, defaultState = 'CA') {
         city: t['addr:city'] || '', state: t['addr:state'] || defaultState, zip: t['addr:postcode'] || '',
       },
       rating: null, reviewCount: null,
+      // Overpass fetches every tag on the node ("out tags center"); kept
+      // raw here rather than discarded, so ./cc research can read
+      // opening_hours, contact:instagram, wheelchair, payment:* etc. —
+      // all free, all already fetched, none of it used until now.
+      osmTags: t,
     };
   }).filter((b) => {
     // The per-trade fallback can return the same place under two tags.
@@ -356,7 +365,25 @@ async function scout(cfg, opts) {
   let browser = null;
   try {
     browser = await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
-    process.stderr.write(`Auditing ${leads.length} websites in a real browser, ${cfg.concurrency} at a time…\n`);
+    // A launched browser is not the same as a browser that can reach real
+    // sites — in a proxied sandbox it can open fine and then hang every
+    // page.goto() to its own timeout, which auditRendered() reports as a
+    // VERIFIED "too slow to load". That is not a finding, it is the proxy;
+    // see assertBrowserOnline's comment. Caught here, once, before it can
+    // write that across every lead in the run.
+    if (!(await assertBrowserOnline(browser))) {
+      await browser.close().catch(() => {});
+      browser = null;
+      process.stderr.write(
+        `Browser launched but cannot reach real sites from here (a proxied sandbox) — every\n` +
+        `page.goto() would hang to its own timeout and read as a verified "too slow" finding,\n` +
+        `which is the network, not the site. Falling back to plain HTTP instead, which does\n` +
+        `reach the open internet from here: no JavaScript-rendered content, but no false\n` +
+        `findings either. For the real thing — the rendered audit — run this on Actions:\n` +
+        `Actions tab -> Scout leads -> Run workflow.\n`);
+    } else {
+      process.stderr.write(`Auditing ${leads.length} websites in a real browser, ${cfg.concurrency} at a time…\n`);
+    }
   } catch (e) {
     process.stderr.write(`Could not start a browser (${e.message.split('\n')[0]}).\n` +
       `Falling back to raw HTML, which cannot see JavaScript-rendered hours, phone links or layout —\n` +
@@ -463,6 +490,7 @@ function toBusinessJson(lead, tplPath) {
     audit: a.checks,
     _scout: {
       score: lead.score, gaps: a.gaps,
+      ...(lead.osmTags ? { osmTags: lead.osmTags } : {}),
       // Whether these findings were measured in a real browser. A raw-HTML run
       // cannot see JavaScript-rendered hours, phone links or layout, so its
       // findings are not safe to put in front of an owner.

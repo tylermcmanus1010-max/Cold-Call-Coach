@@ -130,7 +130,8 @@
   "emailBounced": "davidcravens@mailfence.com",
   "callNotes": [
     "2026-08-30: davidcravens@mailfence.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only.",
-    "2026-08-31: hung up during the intro, 9am Mon"
+    "2026-08-31: hung up during the intro, 9am Mon",
+    "2026-09-09: davidcravens@mailfence.com hard-bounced twice (8/31, 12 min apart) — suppressed. Their real site (own, siteKind=own) is untouched by this — a genuinely different, real address could still be found there, just not this one."
   ],
   "attempts": 1,
   "lastTried": "2026-08-31",
@@ -150,5 +151,6 @@
   "_research": {
     "at": "2026-09-08",
     "applied": []
-  }
+  },
+  "sentOn": "2026-08-31"
 }

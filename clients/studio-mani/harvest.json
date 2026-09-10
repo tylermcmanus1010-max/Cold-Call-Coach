@@ -1,6 +1,6 @@
 {
-  "_readMe": "Everything research.js could find, from every source, raw. NOTHING here is verified. --apply wrote only the structured, attributed parts (siteKind, Google hours/reviews/photos) into business.json; services and headline still need a person to read this.",
-  "researchedAt": "2026-09-08",
+  "_readMe": "Material taken off their own website. NOTHING here is verified and nothing has been written to business.json — decide what is true and what belongs on the page yourself. Quotes are the valuable part: real testimonials with real names are the one gap our own checks always flag, and they cannot be invented.",
+  "researchedAt": "2026-09-09",
   "siteKind": "own",
   "site": {
     "url": "https://www.studiomanipoway.com/",
@@ -16,5 +16,103 @@
   "google": {
     "skipped": "no GOOGLE_MAPS_API_KEY"
   },
-  "crawlNote": "--no-crawl"
+  "osmTags": null,
+  "harvestedAt": "2026-09-09",
+  "from": "https://www.studiomanipoway.com/",
+  "namesBusiness": true,
+  "pagesRead": [
+    "https://www.studiomanipoway.com/",
+    "https://www.studiomanipoway.com/services.html",
+    "https://www.studiomanipoway.com/reviews.html"
+  ],
+  "emails": [],
+  "phones": [
+    "(858) 513-3655"
+  ],
+  "hours": [
+    "Monday - 9:30 AM - 7:00 PM",
+    "Tuesday - 9:30 AM - 7:00 PM",
+    "Wednesday - 9:30 AM - 7:00 PM",
+    "Thursday - 9:30 AM - 7:00 PM",
+    "Friday - 9:30 AM - 7:00 PM",
+    "Saturday - 9:30 AM - 6:00 PM"
+  ],
+  "people": [],
+  "prices": [
+    "The nail techs ever great but charging $20 extra for gel is ridiculous",
+    "$65.00",
+    "$15.00",
+    "$10.00",
+    "$23.00",
+    "$18.00",
+    "$12.00",
+    "$25.00",
+    "$50.00",
+    "$45.00",
+    "$30.00",
+    "$55.00",
+    "$40.00",
+    "$35.00",
+    "$13.00",
+    "$20.00",
+    "$28.00"
+  ],
+  "social": [
+    "https://www.facebook.com/studiomaninails",
+    "https://www.instagram.com/studiomanipoway/",
+    "https://www.google.com/maps/search/?api=1&query=12307%20Poway%20Rd.,%20Ste%20A,%20Poway,%20CA%2092064"
+  ],
+  "headings": [
+    "Our Gallery",
+    "Beautiful Styles Starts Here",
+    "Our Services",
+    "Testimonials",
+    "What Our Clients Say",
+    "Are you absolutely sure?",
+    "Messages",
+    "StudioMani Nails & Spa",
+    "Log In",
+    "Sign Up?",
+    "Sign up to receive special discount offers for future visit?",
+    "Terms & Policies",
+    "Select a time slot",
+    "HARD GEL",
+    "WAXING",
+    "MANICURE",
+    "FILLS",
+    "FULL SET",
+    "GEL X",
+    "PEDICURE",
+    "ADD-ON",
+    "DIP",
+    "KID'S SERVICES",
+    "GEL MANICURE"
+  ],
+  "quotes": [
+    "Debrah Mayer Sept. 9, 2026, 9:14 a.m. The nail techs ever great but charging $20 extra for gel is ridiculous.",
+    "The nail techs ever great but charging $20 extra for gel is ridiculous.",
+    "Barbara Shea Sept. 7, 2026, 2:10 p.m. Always a great experience. Friendly technicians and salon is immaculate. The frequent nail treatment membership is an added plus",
+    "Always a great experience. Friendly technicians and salon is immaculate. The frequent nail treatment membership is an added plus",
+    "Ava Sept. 7, 2026, 1:43 p.m. Tracy, Cindy and Holly took their time and did a great job. Thank you!! Will be back",
+    "Tracy, Cindy and Holly took their time and did a great job. Thank you!! Will be back",
+    "Emily Kimoto Sept. 2, 2026, 6:13 p.m. Great! Looks amazing, not terrible prices. Didn’t take long at all!",
+    "Great! Looks amazing, not terrible prices. Didn’t take long at all!",
+    "Angie Gonzalez Sept. 2, 2026, 2:32 p.m. Great service 🫶",
+    "Dana Ms Aug. 11, 2026, 2:30 p.m. I’m very unhappy to spend 85$ and not like the color. 😭 I have very little time and I spent an hour and a half there with an appointment. The toes and fingers don’t match and the color is just like an ugly prom dress not water.",
+    "I’m very unhappy to spend 85$ and not like the color. 😭 I have very little time and I spent an hour and a half there with an appointment. The toes and fingers don’t match and the color is just like an ugly prom dress not water.",
+    "Jordan Briley Aug. 5, 2026, 3:09 p.m. Always a high-point every time!",
+    "Kristina Aguilera July 16, 2026, 8:01 p.m. Amazing service ALWAYS! They put so much care and attention to ensure I leave happy with my nails every time! Forever my go to spot !",
+    "Amazing service ALWAYS! They put so much care and attention to ensure I leave happy with my nails every time! Forever my go to spot !",
+    "Valerie Ms July 14, 2026, 1:39 p.m. I bring my step Mom in for regular manicures. She is wheelchair bound and everyone treats her with the greatest of care. The vibe inside the beautifully decorated salon is relaxe, music tasteful and decor lovely. We love Holly, Cindy & Studio Mani!",
+    "I bring my step Mom in for regular manicures. She is wheelchair bound and everyone treats her with the greatest of care. The vibe inside the beautifully decorated salon is relaxe, music tasteful and decor lovely. We love Holly, Cindy & Studio Mani!",
+    "Jessica Gillespie July 8, 2026, 12:12 p.m. These ladies were so amazing! I brought my girls (6&9) here and they pampered them and did such an amazing job!",
+    "These ladies were so amazing! I brought my girls (6&9) here and they pampered them and did such an amazing job!",
+    "Mamiram June 26, 2026, 6:01 p.m. Ms. Tracy did an excellent job.",
+    "Cynthia June 25, 2026, 1:13 p.m. kind and professional;l servicve. thank you"
+  ],
+  "pageText": {
+    "https://www.studiomanipoway.com/": "(858) 513-3655 Book Book an Appointment About Us At our local Salon, we understand that your nails are more than just an accessory; they're a canvas for self-expression and individual style. Nestled in the heart of Poway, California,... View all StudioMani Nails & Spa 12307 Poway Rd., Ste A, Poway, CA 92064 Business Hours Monday - 9:30 AM - 7:00 PM Tuesday - 9:30 AM - 7:00 PM Wednesday - 9:30 AM - 7:00 PM Thursday - 9:30 AM - 7:00 PM Friday - 9:30 AM - 7:00 PM Saturday - 9:30 AM - 6:00 PM Sunday - Close Book an Appointment Our Gallery Beautiful Styles Starts Here 0 0 0 0 0 0 0 0 HOLLY HUYNH 0 HOLLY HUYNH 0 HOLLY HUYNH View more Our Services HARD GEL WAXING MANICURE FILLS FULL SET GEL X PEDICURE ADD-ON DIP KID'S SERVICES GEL MANICURE More services Testimonials What Our Clients Say Debrah Mayer Sept. 9, 2026, 9:14 a.m. The nail techs ever great but charging $20 extra for gel is ridiculous. Barbara Shea Sept. 7, 2026, 2:10 p.m. Always a great experience. Friendly technicians and salon is immaculate. The frequent nail treatment membership is an added plus Ava Sept. 7, 2026, 1:43 p.m. Tracy, Cindy and Holly took their time and did a great job. Thank you!! Will be back Emily Kimoto Sept. 2, 2026, 6:13 p.m. Great! Looks amazing, not terrible prices. Didn’t take long at all! Angie Gonzalez Sept. 2, 2026, 2:32 p.m. Great service 🫶 Nan Aug. 20, 2026, 1:42 p.m. Holly Pawlicki Aug. 15, 2026, 2:40 p.m. Dana Ms Aug. 11, 2026, 2:30 p.m. I’m very unhappy to spend 85$ and not like the color. 😭 I have very little time and I spent an hour and a half there with an appointment. The toes and fingers don’t match and the color is just like an ugly prom dress not water. Jordan Briley Aug. 5, 2026, 3:09 p.m. Always a high-point every time! Janet Aug. 1, 2026, 6:47 p.m. Marcia Ms July 30, 2026, 3:32 p.m. Kristina Aguilera July 16, 2026, 8:01 p.m. Amazing service ALWAYS! They put so much care and attention to ensure I leave happy with my nails every time! Forever my go to spot ! Valerie Ms July 14, 2026, 1:39 p.m. I bring my step Mom in for regular manicures. She is wheelchair bound and everyone treats her with the greatest of care. The vibe inside the beautifully decorated salon is relaxe, music tasteful and decor lovely. We love Holly, Cindy & Studio Mani! Jessica Gillespie July 8, 2026, 12:12 p.m. These ladies were so amazing! I brought my girls (6&9) here and they pampered them and did such an amazing job! Dderek W July 1, 2026, 2:18 p.m. Mamiram June 26, 2026, 6:01 p.m. Ms. Tracy did an excellent job. Lourdes Cabrera June 26, 2026, 1:58 p.m. Cynthia June 25, 2026, 1:13 p.m. kind and professional;l servicve. thank you Arlene June 25, 2026, 8:10 a.m. Tami was very professional and caring.she has a very gentle manner.I left feeling very happy with my sunny yellow toes .Will be back again and am bringing my grand daughter in for nails. Kelly Fadich June 22, 2026, 2:53 p.m. Cindy did a GREAT job on my pedicure and I will definitely be back! Highly recommend this salon 😁 12307 Poway Rd., Ste A, Poway, CA 92064 P: (858) 513-3655 About Us About Us Appointment Terms Useful Links Services Lookbook Nail Artist/ Tech Reviews © 2025 StudioMani Nails & Spa | Privacy Policy Facebook Instagram Built with Gift card Book Message Call",
+    "https://www.studiomanipoway.com/services.html": "(858) 513-3655 Book HARD GEL HARD GEL REG. PRICE $65.00 None T A P Gel DURATION 60 minutes REG. PRICE $65.00 WAXING Eyebrows REG. PRICE $15.00 Chin REG. PRICE $15.00 Sideburns REG. PRICE $15.00 Nose REG. PRICE $10.00 Brow & Lip REG. PRICE $23.00 Lip & Chin REG. PRICE $18.00 Forehead REG. PRICE $12.00 Underarms REG. PRICE $25.00 Full Face REG. PRICE $50.00 Full Arms REG. PRICE $45.00 Half Arms REG. PRICE $30.00 Full Legs REG. PRICE $55.00 Half Legs REG. PRICE $40.00 Brazilian REG. PRICE $55.00 Bikini REG. PRICE $35.00 Full Chest REG. PRICE $40.00 Half Chest REG. PRICE $25.00 Full Back REG. PRICE $55.00 Half Back REG. PRICE $35.00 Ups Lip REG. PRICE $13.00 MANICURE Basic Manicure DURATION 20 minutes REG. PRICE $20.00 Our basic Manicure includes a hand soak, cuticle care, nail clipping, warm lotion hand massage, CHOICE OF CLEAR OR POLISH IF REQUESTED. Soft Hands Manicure DURATION 25 minutes REG. PRICE $28.00 SUGAR SCRUB TREATMENT & 5 MIN LOTION MASSAGE Deluxe Manicure DURATION 35 minutes REG. PRICE $35.00 Sugar Scrub & Paraffin treatment StudioMani Manicure DURATION 45 minutes REG. PRICE $43.00 Sugar Scrub , Peppermint Masque & Paraffin Treatment Ultimate Volcano Manicure DURATION 50 minutes REG. PRICE $50.00 Exfoliating Sugar Scrub, Cream Masque, Massage Lotion, Paraffin Treatment & Extra 15-min Lotion massage. Gel Manicure REG. PRICE $40.00 None Polish Change Hands REG. PRICE $13.00 Cuticle Trim DURATION 10 minutes REG. PRICE $7.00 Remove excess dry skin and hangnails from around the nail bed. Cuticle trimming can help your nails look neat and polished, and can also help your manicure last longer. FILLS Acrylic REG. PRICE $50.00 Pink & White Fill REG. PRICE $55.00 IBD hard Gel w/Gel Polish Fill REG. PRICE $55.00 Tap Gel Fill DURATION 60 minutes REG. PRICE $55.00 FULL SET Pink & White FS REG. PRICE $65.00 Ombre Acrylic FS REG. PRICE $65.00 Nail Shape DURATION 0 minutes REG. PRICE $5.00 Ombré DURATION 10 minutes REG. PRICE $12.00 Acrylic DURATION 60 minutes REG. PRICE $60.00 GEL X Gel -X DURATION 60 minutes REG. PRICE $65.00 PEDICURE Basic Pedicure DURATION 30 minutes REG. PRICE $33.00 Our pedicure includes: A foot Soak, Cuticle Care, NAIL Clipping, Sugar shrub , Warm lotion massage & Choice of Polish or Clear if requested. Soft Heels Pedicure DURATION 45 minutes REG. PRICE $43.00 Sugar Scrub Exfoliation & Callus Treatment Deluxe Pedicure DURATION 50 minutes REG. PRICE $53.00 Callus Treatment, Sugar Scrub Exfoliation, Peppermint Masque, Lotion & Massage StudioMani Pedicure DURATION 60 minutes REG. PRICE $63.00 Purifying foot soak, Exfoliating sugar scrub, Callus treatment, Detox masque, Paraffin treatment, Hydrating massage butter, Extra 10-min with hot stone massage Ultimate Volcano Pedicure DURATION 60 minutes REG. PRICE $73.00 5-Step Volcano Pedicure Spa Treatment Includes: Detox Volcano Crystals, Detox Volcano Activator, EXFOLIATING SUGAR SCRUB, CALLUS TREATMENT, PARAFFIN TREATMENT, COLLAGEN CREAM MASKE, COLLAGEN MASSAGE LOTION, HOT CANDLE, EXTRA 15-MIN COLLAGEN LOTION & HOT STONE MASSAGE Polish Change On Feet REG. PRICE $15.00 Gel Pedicure DURATION 50 minutes REG. PRICE $53.00 ADD-ON Callus Treatment DURATION 5 minutes REG. PRICE $10.00 Peppermint Masque DURATION 5 minutes REG. PRICE $7.00 Paraffin DURATION 5 minutes REG. PRICE $10.00 Gel to Mani & Pedi DURATION 20 minutes REG. PRICE $20.00 Gel Polish Hands Change REG. PRICE $30.00 Acrylic Polish Change REG. PRICE $35.00 Acrylic/Dip/Gel Take-off REG. PRICE $15.00 Acrylic Take-off w/New Set REG. PRICE $10.00 Gel Take-off with Reg Mani/Pedi REG. PRICE $8.00 Gel Polish Change (Hands/Feet) REG. PRICE $30.00 Long Nails REG. PRICE $5.00 French (Lacquer/Gel/Dip/Acrylic) REG. PRICE $8.00 Cured French REG. PRICE $10.00 Chrome REG. PRICE $10.00 Cat-eye REG. PRICE $10.00 Extra Color REG. PRICE $5.00 Nail Design REG. PRICE $8.00 Nail Trimming REG. PRICE $10.00 Buff Shine REG. PRICE $8.00 Broken Nail Repair REG. PRICE $5.00 Extra Massage REG. PRICE $1.00 DIP Dip Powder (Natural Nails) REG. PRICE $50.00 Dip Powder w/Tips REG. PRICE $60.00 KID'S SERVICES Child Manicure REG. PRICE $15.00 Child Pedicure REG. PRICE $23.00 Add Gel to Child Mani or Pedi REG. PRICE $15.00 Child Polish Change Hands REG. PRICE $10.00 Child 2 Nail Design REG. PRICE $5.00 Polish Change Feet REG. PRICE $13.00 GEL MANICURE Gel Manicure DURATION 60 minutes REG. PRICE $40.00 GEL MANICURE DURATION 60 minutes REG. PRICE $40.00 Gift card Book Message Call",
+    "https://www.studiomanipoway.com/reviews.html": "(858) 513-3655 Book Gift card Book Message Call"
+  }
 }

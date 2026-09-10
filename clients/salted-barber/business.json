@@ -6,7 +6,7 @@
   "owner": "",
   "currentSite": "https://www.saltedbarber.com/.well-known/sgcaptcha/?r=%2F&y=ipr:20.118.214.98:1787878432.840",
   "liveUrl": "",
-  "status": "new",
+  "status": "dead",
   "tier": "onepage",
   "_liveUrl": "The address it will be served from. Setting it adds the canonical link, og:url and schema URL — without it Google has to guess which address is the real one. ./cc host requires it.",
   "_confirmed": "What the OWNER has signed off, not what you think is right. ./cc host refuses to write a deployable folder until all four are true, because a price we picked is one they have to honour and an email we guessed swallows enquiries silently.",
@@ -129,11 +129,13 @@
   },
   "emailBounced": "hello@saltedbarber.com",
   "callNotes": [
-    "2026-08-30: hello@saltedbarber.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only."
+    "2026-08-30: hello@saltedbarber.com hard-bounced (550 5.1.1). Address was guessed, not given — we never had one on file. Do not retry. Contact by phone only.",
+    "2026-09-09: hello@saltedbarber.com hard-bounced immediately (550 5.1.1) — suppressed. Their site sits behind a bot challenge we have never actually seen — no basis to recontact until that changes."
   ],
   "siteKind": "challenge",
   "_research": {
     "at": "2026-09-08",
     "applied": []
-  }
+  },
+  "sentOn": "2026-08-31"
 }

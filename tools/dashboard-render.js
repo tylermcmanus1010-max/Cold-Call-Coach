@@ -18,6 +18,7 @@ const where = (r) => [r.city, r.state ? r.state + (r.stateDerived ? '*' : '') : 
 
 function lamps(row) {
   if (row.parked) return HARD.map((c) => `<i class="lamp na" title="${esc(c.label)}: not measured — the domain is parked"></i>`).join('');
+  if (row.measured === false) return HARD.map((c) => `<i class="lamp na" title="${esc(c.label)}: not measured yet"></i>`).join('');
   return HARD.map((c) => {
     const ok = row.audit && row.audit[c.key] === true;
     return `<i class="lamp ${ok ? 'on' : 'off'}" title="${esc(c.label)}: ${ok ? 'passes' : 'fails'}"></i>`;
@@ -113,10 +114,12 @@ function nextCard(n) {
   </div>
   <div class="score">
     <span class="lampstrip">${lamps(n)}</span>
-    <span class="num">${n.parked ? 'no site' : `${n.passed}<span class="of">/${n.of}</span>`}</span>
-    ${flaw ? `<span class="flabel">${esc(flaw.label)}</span>` : '<span class="flabel ok">nothing provable to sell</span>'}
+    <span class="num">${n.parked ? 'no site' : n.measured === false ? '—' : `${n.passed}<span class="of">/${n.of}</span>`}</span>
+    ${n.measured === false
+      ? '<span class="flabel warn">not measured yet — imported, Re-audit first</span>'
+      : flaw ? `<span class="flabel">${esc(flaw.label)}</span>` : '<span class="flabel ok">nothing provable to sell</span>'}
   </div>
-  ${flaw ? `<p class="fwhy">${esc(flaw.why)}</p>` : ''}
+  ${flaw && n.measured !== false ? `<p class="fwhy">${esc(flaw.why)}</p>` : ''}
   ${tags.length ? `<div class="tags">${tags.join('')}</div>` : ''}
   <div class="reach">
     ${n.phone ? `<a class="btn call" href="${tel(n.phone)}">${esc(n.phone)}</a>` : '<span class="none">no number</span>'}
@@ -129,6 +132,59 @@ function nextCard(n) {
   ${n.source === 'pipeline'
     ? actsHtml(n.slug, 'next')
     : '<p class="soft-note">Not scaffolded yet — ask me to build this one before logging a call on it.</p>'}
+</article>`;
+}
+
+const POLAR_LABEL = { verify: 'Verify the URL', read: 'Read their site', form: 'Contact form' };
+const POLAR_TONE = { verify: 'warn', read: 'accent', form: 'good' };
+
+// A Polar task is a prompt to paste and a way to record what came back —
+// through the same /dash/log actions as every other card, with the note
+// text preset so the answer lands in business.json in one tap.
+function polarActs(t) {
+  const btn = (a, label, note) => `<button type="button" data-a="${a}"${note ? ` data-note="${esc(note)}"` : ''}>${esc(label)}</button>`;
+  const acts = t.type === 'verify' ? [
+    btn('note', 'Confirmed theirs', 'Polar check: the page names the business — URL confirmed'),
+    btn('dead', 'Not their site', 'Polar check: the page does not name the business — not their site, dropped'),
+    btn('note', 'Note…'),
+  ] : t.type === 'read' ? [
+    btn('note', 'Log what Polar found…'),
+  ] : [
+    btn('sent', 'Sent', 'contact form submitted via Polar, checked by hand before sending'),
+    btn('note', 'CAPTCHA — skip', 'contact form has a CAPTCHA — skipped, not automated'),
+    btn('note', 'Note…'),
+  ];
+  return `<div class="acts" data-slug="${esc(t.slug)}">
+    <button type="button" class="copy">Copy prompt</button>
+    ${acts.join('')}
+    <span class="saved" hidden></span>
+  </div>`;
+}
+
+function polarCard(t, i) {
+  const late = t.type === 'form' && t.formIndex >= 10;
+  return `
+<article class="card polar" id="p-${esc(t.slug)}" data-type="${esc(t.type)}" data-name="${esc((t.name + ' ' + t.category + ' ' + where(t)).toLowerCase())}">
+  <div class="head">
+    <div class="rank">${i + 1}</div>
+    <div class="grow">
+      <h3>${esc(t.name)}</h3>
+      <p class="meta">${esc(t.category || 'business')}${where(t) ? ' · ' + esc(where(t)) : ''}</p>
+    </div>
+    <span class="chip ${POLAR_TONE[t.type]}">${esc(POLAR_LABEL[t.type])}</span>
+  </div>
+  <p class="why">${esc(t.why)}${late ? ' · <b>after today\'s ten</b>' : ''}</p>
+  <div class="reach">
+    ${t.phone ? `<a class="btn call" href="${tel(t.phone)}">${esc(t.phone)}</a>` : ''}
+    ${t.site ? `<a class="btn" href="${esc(t.site)}" target="_blank" rel="noopener noreferrer">Their site <span class="host">${esc(host(t.site))}</span></a>` : ''}
+    ${t.formUrl ? `<a class="btn" href="${esc(t.formUrl)}" target="_blank" rel="noopener noreferrer">The form</a>` : ''}
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>${esc(t.prompt)}</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  ${polarActs(t)}
 </article>`;
 }
 
@@ -294,6 +350,15 @@ function render(d) {
   .acts .saved{font-size:11.5px;font-weight:600;color:var(--muted)}
   .acts .saved.ok{color:var(--good)}
   .acts .saved.err{color:var(--bad);cursor:pointer;text-decoration:underline}
+  .acts button.copy{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+  .card.polar[data-type="verify"]{border-left-color:var(--warn)}
+  .card.polar[data-type="read"]{border-left-color:var(--accent)}
+  .card.polar[data-type="form"]{border-left-color:var(--good)}
+  .why{font-size:12.5px;color:var(--ink-2);margin:0}
+  .why b{color:var(--warn);font-weight:600}
+  .flabel.warn{color:var(--warn)}
+  .prompt{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 var(--mono);background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:8px 10px;max-height:260px;overflow:auto}
 
   .aside{margin-top:22px;font-size:12.5px;color:var(--muted);max-width:76ch}
   .aside b{color:var(--ink-2);font-weight:600}
@@ -325,6 +390,7 @@ function render(d) {
   <div class="tabs" role="tablist" aria-label="Pipeline">
     <button role="tab" id="tab-contacted" aria-controls="panel-contacted" aria-selected="true">Contacted<em>${s.contacted}</em></button>
     <button role="tab" id="tab-next" aria-controls="panel-next" aria-selected="false">Up next<em>${s.next}</em></button>
+    <button role="tab" id="tab-polar" aria-controls="panel-polar" aria-selected="false">Polar<em>${s.polar}</em></button>
     <input type="search" id="q" placeholder="Search name, trade, town…" aria-label="Search this tab">
     <span class="count" id="count"></span>
   </div>
@@ -361,16 +427,29 @@ function render(d) {
     ${d.setAside.length ? `<p class="aside">Set aside, not shown: ${d.setAside.map(([why, n]) => `<b>${n}</b> ${esc(why)}`).join(' · ')}.</p>` : ''}
   </section>
 
+  <section id="panel-polar" role="tabpanel" aria-labelledby="tab-polar" hidden>
+    <p class="lede">What needs a person with a browser. Polar is the hands; this is the brief. <b>Verify a URL</b> before anything is pitched in writing — six were wrong in one week. <b>Read their site</b> for what a scan cannot prove. <b>Contact forms</b>: ten a day, one message per business ever, a CAPTCHA means no, and it shows you the form before submitting. Copy the prompt, paste it in, then tap what happened so it lands in the record.</p>
+    <div class="filters" data-for="polar">
+      <button class="fchip" data-f="all" aria-pressed="true">All</button>
+      <button class="fchip" data-f="verify" aria-pressed="false">Verify the URL · ${s.polarByType.verify}</button>
+      <button class="fchip" data-f="read" aria-pressed="false">Read their site · ${s.polarByType.read}</button>
+      <button class="fchip" data-f="form" aria-pressed="false">Contact form · ${s.polarByType.form}</button>
+    </div>
+    <h2 class="sec">Polar — ${s.polar} task${s.polar === 1 ? '' : 's'}</h2>
+    ${s.polar ? `<div class="grid">${d.polar.map(polarCard).join('')}</div>` : '<p class="aside">Nothing needs a browser right now.</p>'}
+    <p class="aside">Found a business Polar should add? Put its name, phone, city and website in a CSV, commit it to <code>leads/polar/</code>, and it is measured, researched and on this page by the next build — <code>./cc import</code> by hand does the same.</p>
+  </section>
+
   <footer>Built by <code>./cc dashboard</code>. Statuses come from <code>clients/&lt;slug&gt;/business.json</code>; <code>./cc tried</code>, <code>./cc sent</code> and <code>./cc status</code> change them, and the next morning's build shows it. No email address on this page was guessed.</footer>
 </div>
 
 <script>
 (function(){
   var tabs = [].slice.call(document.querySelectorAll('[role=tab]'));
-  var panels = { contacted: document.getElementById('panel-contacted'), next: document.getElementById('panel-next') };
+  var panels = { contacted: document.getElementById('panel-contacted'), next: document.getElementById('panel-next'), polar: document.getElementById('panel-polar') };
   var q = document.getElementById('q');
   var count = document.getElementById('count');
-  var filter = { contacted: 'all', next: 'all' };
+  var filter = { contacted: 'all', next: 'all', polar: 'all' };
   var current = 'contacted';
 
   function store(k, v){ try { localStorage.setItem('pipeline.' + k, v); } catch (e) {} }
@@ -388,6 +467,7 @@ function render(d) {
   function matches(card, f){
     if (f === 'all') return true;
     if (current === 'contacted') return f.split(',').indexOf(card.dataset.k) !== -1;
+    if (current === 'polar') return card.dataset.type === f;
     if (f === 'built') return card.dataset.built === '1';
     if (f === 'now') { var c = card.querySelector('.chip.now'); return c && c.dataset.now === 'open'; }
     if (f.indexOf('st:') === 0) return card.dataset.state === f.slice(3);
@@ -479,8 +559,8 @@ function render(d) {
 
   function logAction(bar, btn){
     var slug = bar.dataset.slug, action = btn.dataset.a;
-    var note = '', at = '';
-    if (action === 'note') {
+    var note = btn.dataset.note || '', at = '';
+    if (action === 'note' && !note) {
       note = (prompt('Note for this call — a line or two:') || '').trim();
       if (!note) return;
     }
@@ -520,7 +600,7 @@ function render(d) {
           noteEl.hidden = false;
           noteEl.textContent = res.body.patch.lastNote;
         }
-        if (card && action === 'dead') card.style.opacity = '.62';
+        if (card && (action === 'dead' || (action === 'sent' && card.classList.contains('polar')))) card.style.opacity = '.62';
 
         setTimeout(function(){ if (saved.className.indexOf('ok') !== -1) saved.hidden = true; }, 2200);
       })
@@ -530,7 +610,25 @@ function render(d) {
       });
   }
 
+  function copyText(t){
+    try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); } catch (e) {}
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.top = '-1000px';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+      document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (e) {}
+    return Promise.resolve();
+  }
+
   document.addEventListener('click', function(ev){
+    var copy = ev.target.closest('button.copy');
+    if (copy) {
+      var pre = copy.closest('.card').querySelector('[data-prompt]');
+      if (pre) { copyText(pre.textContent); var was = copy.textContent; copy.textContent = 'Copied'; setTimeout(function(){ copy.textContent = was; }, 1500); }
+      return;
+    }
     var errChip = ev.target.closest('.saved.err');
     if (errChip) { var bar = errChip.closest('.acts'); var last = bar && bar.dataset.lastBtn; if (last) logAction(bar, bar.querySelector('[data-a="' + last + '"]')); return; }
     var btn = ev.target.closest('.acts button[data-a]');

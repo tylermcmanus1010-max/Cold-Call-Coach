@@ -151,6 +151,15 @@
   .acts .saved{font-size:11.5px;font-weight:600;color:var(--muted)}
   .acts .saved.ok{color:var(--good)}
   .acts .saved.err{color:var(--bad);cursor:pointer;text-decoration:underline}
+  .acts button.copy{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+  .card.polar[data-type="verify"]{border-left-color:var(--warn)}
+  .card.polar[data-type="read"]{border-left-color:var(--accent)}
+  .card.polar[data-type="form"]{border-left-color:var(--good)}
+  .why{font-size:12.5px;color:var(--ink-2);margin:0}
+  .why b{color:var(--warn);font-weight:600}
+  .flabel.warn{color:var(--warn)}
+  .prompt{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 var(--mono);background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:8px 10px;max-height:260px;overflow:auto}
 
   .aside{margin-top:22px;font-size:12.5px;color:var(--muted);max-width:76ch}
   .aside b{color:var(--ink-2);font-weight:600}
@@ -182,6 +191,7 @@
   <div class="tabs" role="tablist" aria-label="Pipeline">
     <button role="tab" id="tab-contacted" aria-controls="panel-contacted" aria-selected="true">Contacted<em>40</em></button>
     <button role="tab" id="tab-next" aria-controls="panel-next" aria-selected="false">Up next<em>50</em></button>
+    <button role="tab" id="tab-polar" aria-controls="panel-polar" aria-selected="false">Polar<em>15</em></button>
     <input type="search" id="q" placeholder="Search name, trade, town…" aria-label="Search this tab">
     <span class="count" id="count"></span>
   </div>
@@ -2329,16 +2339,536 @@
     <p class="aside">Set aside, not shown: <b>36</b> no number in the listing — Google them to recover it · <b>13</b> behind a bot check — we measured a CAPTCHA, not their site · <b>3</b> the listed domain belongs to a school or government body · <b>1</b> an institution, not an owner-run business · <b>1</b> the page never loaded — we measured a browser error · <b>1</b> toll-free — call centre · <b>1</b> has an agency.</p>
   </section>
 
+  <section id="panel-polar" role="tabpanel" aria-labelledby="tab-polar" hidden>
+    <p class="lede">What needs a person with a browser. Polar is the hands; this is the brief. <b>Verify a URL</b> before anything is pitched in writing — six were wrong in one week. <b>Read their site</b> for what a scan cannot prove. <b>Contact forms</b>: ten a day, one message per business ever, a CAPTCHA means no, and it shows you the form before submitting. Copy the prompt, paste it in, then tap what happened so it lands in the record.</p>
+    <div class="filters" data-for="polar">
+      <button class="fchip" data-f="all" aria-pressed="true">All</button>
+      <button class="fchip" data-f="verify" aria-pressed="false">Verify the URL · 3</button>
+      <button class="fchip" data-f="read" aria-pressed="false">Read their site · 12</button>
+      <button class="fchip" data-f="form" aria-pressed="false">Contact form · 0</button>
+    </div>
+    <h2 class="sec">Polar — 15 tasks</h2>
+    <div class="grid">
+<article class="card polar" id="p-urban-cutz" data-type="verify" data-name="urban cutz hairdresser san diego, ca">
+  <div class="head">
+    <div class="rank">1</div>
+    <div class="grow">
+      <h3>Urban Cutz</h3>
+      <p class="meta">hairdresser · San Diego, CA</p>
+    </div>
+    <span class="chip warn">Verify the URL</span>
+  </div>
+  <p class="why">the page may not be theirs — a wrong URL pitched in writing is permanent</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16198668710">(619) 866-8710</a>
+    <a class="btn" href="https://placejuice.com/urban-cutz-barber-shop-pcrpmtq" target="_blank" rel="noopener noreferrer">Their site <span class="host">placejuice.com/urban-cutz-barber-shop-pcrpmtq</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://placejuice.com/urban-cutz-barber-shop-pcrpmtq
+
+Tell me, in this order:
+1. Does this page name &quot;Urban Cutz&quot; anywhere — yes or no, and quote where.
+2. Is it that business's own website, or a parked / for-sale / placeholder / directory / someone else's page?
+3. If it is theirs: copy the opening hours, the list of services, and up to three customer reviews with the reviewer's name, exactly as written on the page. Say &quot;not shown&quot; for anything you cannot see.
+
+Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="urban-cutz">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note" data-note="Polar check: the page names the business — URL confirmed">Confirmed theirs</button><button type="button" data-a="dead" data-note="Polar check: the page does not name the business — not their site, dropped">Not their site</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-house-of-stemms" data-type="verify" data-name="house of stemms florist san diego, ca">
+  <div class="head">
+    <div class="rank">2</div>
+    <div class="grow">
+      <h3>House of Stemms</h3>
+      <p class="meta">Florist · San Diego, CA</p>
+    </div>
+    <span class="chip warn">Verify the URL</span>
+  </div>
+  <p class="why">the page may not be theirs — a wrong URL pitched in writing is permanent</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16192378842">(619) 237-8842</a>
+    <a class="btn" href="https://deluxeflorist.com/san-diego-florist-flower-delivery" target="_blank" rel="noopener noreferrer">Their site <span class="host">deluxeflorist.com/san-diego-florist-flower-delivery</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://deluxeflorist.com/san-diego-florist-flower-delivery
+
+Tell me, in this order:
+1. Does this page name &quot;House of Stemms&quot; anywhere — yes or no, and quote where.
+2. Is it that business's own website, or a parked / for-sale / placeholder / directory / someone else's page?
+3. If it is theirs: copy the opening hours, the list of services, and up to three customer reviews with the reviewer's name, exactly as written on the page. Say &quot;not shown&quot; for anything you cannot see.
+
+Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="house-of-stemms">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note" data-note="Polar check: the page names the business — URL confirmed">Confirmed theirs</button><button type="button" data-a="dead" data-note="Polar check: the page does not name the business — not their site, dropped">Not their site</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-west-coast-air-conditioning-co" data-type="verify" data-name="west coast air conditioning co hvac el cajon, ca">
+  <div class="head">
+    <div class="rank">3</div>
+    <div class="grow">
+      <h3>West Coast Air Conditioning Co</h3>
+      <p class="meta">hvac · El Cajon, CA</p>
+    </div>
+    <span class="chip warn">Verify the URL</span>
+  </div>
+  <p class="why">the page may not be theirs — a wrong URL pitched in writing is permanent</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16195618000">(619) 561-8000</a>
+    <a class="btn" href="https://www.wcac.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">wcac.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.wcac.com/
+
+Tell me, in this order:
+1. Does this page name &quot;West Coast Air Conditioning Co&quot; anywhere — yes or no, and quote where.
+2. Is it that business's own website, or a parked / for-sale / placeholder / directory / someone else's page?
+3. If it is theirs: copy the opening hours, the list of services, and up to three customer reviews with the reviewer's name, exactly as written on the page. Say &quot;not shown&quot; for anything you cannot see.
+
+Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="west-coast-air-conditioning-co">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note" data-note="Polar check: the page names the business — URL confirmed">Confirmed theirs</button><button type="button" data-a="dead" data-note="Polar check: the page does not name the business — not their site, dropped">Not their site</button><button type="button" data-a="note">Note…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-balboa-florist" data-type="read" data-name="balboa florist florist san diego, ca">
+  <div class="head">
+    <div class="rank">4</div>
+    <div class="grow">
+      <h3>Balboa Florist</h3>
+      <p class="meta">florist · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18584298558">(858) 429-8558</a>
+    <a class="btn" href="https://balboaflorist.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">balboaflorist.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://balboaflorist.com/ — the website of Balboa Florist.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="balboa-florist">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-studio-mani" data-type="read" data-name="studio mani beauty poway, ca">
+  <div class="head">
+    <div class="rank">5</div>
+    <div class="grow">
+      <h3>Studio Mani</h3>
+      <p class="meta">beauty · Poway, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18585133655">(858) 513-3655</a>
+    <a class="btn" href="https://www.studiomanipoway.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">studiomanipoway.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.studiomanipoway.com/ — the website of Studio Mani.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="studio-mani">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-sun-valley-dental-care" data-type="read" data-name="sun valley dental care dentist el cajon, ca">
+  <div class="head">
+    <div class="rank">6</div>
+    <div class="grow">
+      <h3>Sun Valley Dental Care</h3>
+      <p class="meta">dentist · El Cajon, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16194131121">(619) 413-1121</a>
+    <a class="btn" href="https://sunvalleydentalcare.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">sunvalleydentalcare.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://sunvalleydentalcare.com/ — the website of Sun Valley Dental Care.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="sun-valley-dental-care">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-david-cravens-insurance-services" data-type="read" data-name="david cravens insurance services insurance san diego, ca">
+  <div class="head">
+    <div class="rank">7</div>
+    <div class="grow">
+      <h3>David Cravens Insurance Services</h3>
+      <p class="meta">insurance · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18582774878">(858) 277-4878</a>
+    <a class="btn" href="https://davidcravens.myhomehq.biz/" target="_blank" rel="noopener noreferrer">Their site <span class="host">davidcravens.myhomehq.biz</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://davidcravens.myhomehq.biz/ — the website of David Cravens Insurance Services.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="david-cravens-insurance-services">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-because-we-care-dog-and-cat-grooming" data-type="read" data-name="because we care dog and cat grooming pet grooming san diego, ca">
+  <div class="head">
+    <div class="rank">8</div>
+    <div class="grow">
+      <h3>Because We Care Dog and Cat Grooming</h3>
+      <p class="meta">pet grooming · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18585381015">(858) 538-1015</a>
+    <a class="btn" href="https://www.becausewecarepetgrooming.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">becausewecarepetgrooming.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.becausewecarepetgrooming.com/ — the website of Because We Care Dog and Cat Grooming.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="because-we-care-dog-and-cat-grooming">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-darshan" data-type="read" data-name="darshan bakery del mar, ca">
+  <div class="head">
+    <div class="rank">9</div>
+    <div class="grow">
+      <h3>Darshan</h3>
+      <p class="meta">bakery · Del Mar, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    
+    <a class="btn" href="https://www.darshanbakery.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">darshanbakery.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.darshanbakery.com/ — the website of Darshan.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="darshan">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-love-and-bake" data-type="read" data-name="love &amp; bake bakery san diego, ca">
+  <div class="head">
+    <div class="rank">10</div>
+    <div class="grow">
+      <h3>Love &amp; Bake</h3>
+      <p class="meta">bakery · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16194154259">(619) 415-4259</a>
+    <a class="btn" href="https://loveandbake.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">loveandbake.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://loveandbake.com/ — the website of Love &amp; Bake.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="love-and-bake">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-portal-salon" data-type="read" data-name="portal salon hairdresser san diego, ca">
+  <div class="head">
+    <div class="rank">11</div>
+    <div class="grow">
+      <h3>Portal Salon</h3>
+      <p class="meta">hairdresser · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16193545411">(619) 354-5411</a>
+    <a class="btn" href="https://theportalsalon.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">theportalsalon.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://theportalsalon.com/ — the website of Portal Salon.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="portal-salon">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-impression-dental-group" data-type="read" data-name="impression dental group dental practice san diego, ca">
+  <div class="head">
+    <div class="rank">12</div>
+    <div class="grow">
+      <h3>Impression Dental Group</h3>
+      <p class="meta">Dental practice · San Diego, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18585784677">(858) 578-4677</a>
+    <a class="btn" href="https://www.impressiondentalgroup.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">impressiondentalgroup.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.impressiondentalgroup.com/ — the website of Impression Dental Group.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="impression-dental-group">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-rt-roofing-specialist-inc" data-type="read" data-name="rt roofing specialist roofing contractor poway, ca">
+  <div class="head">
+    <div class="rank">13</div>
+    <div class="grow">
+      <h3>RT Roofing Specialist</h3>
+      <p class="meta">Roofing contractor · Poway, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+18584864977">(858) 486-4977</a>
+    <a class="btn" href="https://www.rtroofingspecialist.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">rtroofingspecialist.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://www.rtroofingspecialist.com/ — the website of RT Roofing Specialist.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="rt-roofing-specialist-inc">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-helix-mechanical-inc" data-type="read" data-name="helix mechanical, inc. hvac, plumbing &amp; general contracting el cajon, ca">
+  <div class="head">
+    <div class="rank">14</div>
+    <div class="grow">
+      <h3>Helix Mechanical, Inc.</h3>
+      <p class="meta">HVAC, plumbing &amp; general contracting · El Cajon, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16194476675">(619) 447-6675</a>
+    <a class="btn" href="https://helixmechanical.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">helixmechanical.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://helixmechanical.com/ — the website of Helix Mechanical, Inc..
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="helix-mechanical-inc">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article>
+<article class="card polar" id="p-valerio-s-city-bakery" data-type="read" data-name="valerio's city bakery bakery national city, ca">
+  <div class="head">
+    <div class="rank">15</div>
+    <div class="grow">
+      <h3>Valerio's City Bakery</h3>
+      <p class="meta">bakery · National City, CA</p>
+    </div>
+    <span class="chip accent">Read their site</span>
+  </div>
+  <p class="why">page still needs no hours and no reviews — a scan cannot prove them, a person looking can</p>
+  <div class="reach">
+    <a class="btn call" href="tel:+16194778588">(619) 477-8588</a>
+    <a class="btn" href="https://valerios.com/" target="_blank" rel="noopener noreferrer">Their site <span class="host">valerios.com</span></a>
+    
+  </div>
+  <details>
+    <summary>The prompt — paste it into Polar as written</summary>
+    <pre class="prompt" data-prompt>Open https://valerios.com/ — the website of Valerio's City Bakery.
+
+Copy, exactly as written on the page (check the contact, about and services pages too):
+- opening hours
+- the list of services, with prices only if a price is printed
+- up to three customer reviews, each with the reviewer's name
+- any email address printed on the site
+
+Say &quot;not shown&quot; for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.</pre>
+  </details>
+  <p class="note" data-note hidden></p>
+  <div class="acts" data-slug="valerio-s-city-bakery">
+    <button type="button" class="copy">Copy prompt</button>
+    <button type="button" data-a="note">Log what Polar found…</button>
+    <span class="saved" hidden></span>
+  </div>
+</article></div>
+    <p class="aside">Found a business Polar should add? Put its name, phone, city and website in a CSV, commit it to <code>leads/polar/</code>, and it is measured, researched and on this page by the next build — <code>./cc import</code> by hand does the same.</p>
+  </section>
+
   <footer>Built by <code>./cc dashboard</code>. Statuses come from <code>clients/&lt;slug&gt;/business.json</code>; <code>./cc tried</code>, <code>./cc sent</code> and <code>./cc status</code> change them, and the next morning's build shows it. No email address on this page was guessed.</footer>
 </div>
 
 <script>
 (function(){
   var tabs = [].slice.call(document.querySelectorAll('[role=tab]'));
-  var panels = { contacted: document.getElementById('panel-contacted'), next: document.getElementById('panel-next') };
+  var panels = { contacted: document.getElementById('panel-contacted'), next: document.getElementById('panel-next'), polar: document.getElementById('panel-polar') };
   var q = document.getElementById('q');
   var count = document.getElementById('count');
-  var filter = { contacted: 'all', next: 'all' };
+  var filter = { contacted: 'all', next: 'all', polar: 'all' };
   var current = 'contacted';
 
   function store(k, v){ try { localStorage.setItem('pipeline.' + k, v); } catch (e) {} }
@@ -2356,6 +2886,7 @@
   function matches(card, f){
     if (f === 'all') return true;
     if (current === 'contacted') return f.split(',').indexOf(card.dataset.k) !== -1;
+    if (current === 'polar') return card.dataset.type === f;
     if (f === 'built') return card.dataset.built === '1';
     if (f === 'now') { var c = card.querySelector('.chip.now'); return c && c.dataset.now === 'open'; }
     if (f.indexOf('st:') === 0) return card.dataset.state === f.slice(3);
@@ -2447,8 +2978,8 @@
 
   function logAction(bar, btn){
     var slug = bar.dataset.slug, action = btn.dataset.a;
-    var note = '', at = '';
-    if (action === 'note') {
+    var note = btn.dataset.note || '', at = '';
+    if (action === 'note' && !note) {
       note = (prompt('Note for this call — a line or two:') || '').trim();
       if (!note) return;
     }
@@ -2488,7 +3019,7 @@
           noteEl.hidden = false;
           noteEl.textContent = res.body.patch.lastNote;
         }
-        if (card && action === 'dead') card.style.opacity = '.62';
+        if (card && (action === 'dead' || (action === 'sent' && card.classList.contains('polar')))) card.style.opacity = '.62';
 
         setTimeout(function(){ if (saved.className.indexOf('ok') !== -1) saved.hidden = true; }, 2200);
       })
@@ -2498,7 +3029,25 @@
       });
   }
 
+  function copyText(t){
+    try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); } catch (e) {}
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.top = '-1000px';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+      document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (e) {}
+    return Promise.resolve();
+  }
+
   document.addEventListener('click', function(ev){
+    var copy = ev.target.closest('button.copy');
+    if (copy) {
+      var pre = copy.closest('.card').querySelector('[data-prompt]');
+      if (pre) { copyText(pre.textContent); var was = copy.textContent; copy.textContent = 'Copied'; setTimeout(function(){ copy.textContent = was; }, 1500); }
+      return;
+    }
     var errChip = ev.target.closest('.saved.err');
     if (errChip) { var bar = errChip.closest('.acts'); var last = bar && bar.dataset.lastBtn; if (last) logAction(bar, bar.querySelector('[data-a="' + last + '"]')); return; }
     var btn = ev.target.closest('.acts button[data-a]');

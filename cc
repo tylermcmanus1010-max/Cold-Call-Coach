@@ -5,6 +5,7 @@
 //   ./cc board              one page of every business we have measured, ranked
 //   ./cc brief              the morning call plan, ordered by who can answer
 //   ./cc dashboard          contacted on one tab, the next 25–50 on the other (rebuilt every morning)
+//   ./cc import <file>      leads found by Polar (CSV or JSON) → scaffolded clients, unmeasured, unbuilt
 //   ./cc forms              find the contact form on each lead's own site
 //   ./cc outreach           build the send-at-work queue from those forms
 //   ./cc trade              paper-trading journal: size, open, close, stats, watch
@@ -773,6 +774,45 @@ function cmdHost(slug, flags) {
   console.log('  approval there, and only then touch their DNS.\n');
 }
 
+// Leads found by hand or by Polar — a CSV or JSON list — become scaffolded
+// clients: unmeasured and unbuilt, for reaudit.yml to look at before anyone
+// pitches them. On main, committing the file to leads/polar/ runs all of that.
+function cmdImport(argv) {
+  let file = null, source = 'polar', dryRun = false, asJson = false;
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--source') source = argv[++i] || source;
+    else if (a === '--dry-run') dryRun = true;
+    else if (a === '--json') asJson = true;
+    else if (!a.startsWith('--')) file = a;
+  }
+  if (!file) die('Usage: ./cc import <leads.csv|leads.json|->  [--source polar] [--dry-run] [--json]\n  A header row with name, phone, website, city, state, category — or a JSON array of the same.');
+  let text;
+  try { text = fs.readFileSync(file === '-' ? 0 : file, 'utf8'); }
+  catch (e) { die(`cannot read ${file}: ${e.message}`); }
+
+  const { importLeads } = require('./tools/import');
+  let r;
+  try { r = importLeads(text, { source, file: file === '-' ? '' : file, dryRun }); }
+  catch (e) { die(`could not read ${file}: ${e.message}`); }
+
+  if (asJson) { process.stdout.write(JSON.stringify(r) + '\n'); return; }
+  const n = r.created.length;
+  console.log(`\n  ${r.total} row${r.total === 1 ? '' : 's'} → ${n} new lead${n === 1 ? '' : 's'}${dryRun ? ' (dry run — nothing written)' : ''}`);
+  for (const c of r.created) {
+    console.log(`  + ${c.slug.padEnd(40)} ${(c.phone || 'no phone').padEnd(16)} ${c.website || 'no website'}${c.email ? `   email seen: ${c.email} (kept under _import, not set)` : ''}`);
+  }
+  if (r.skipped.length) {
+    console.log(`\n  ${r.skipped.length} skipped:`);
+    for (const s of r.skipped) console.log(`  · ${s.name} — ${s.why}`);
+  }
+  if (n && !dryRun) {
+    console.log('\n  Nothing is measured yet, so nothing is claimed and no page is built.');
+    console.log('  Next: Actions → Re-audit leads (blank slug), then Research a business.');
+    console.log('  On main, committing the file to leads/polar/ does all of that (import.yml).\n');
+  }
+}
+
 // The morning dashboard: contacted on one tab, the next 25–50 on the other.
 // Actions rebuilds and commits it every morning (dashboard.yml); this is the
 // same build by hand. --offline skips the "is our page actually live" HEADs.
@@ -842,6 +882,7 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'sheet': cmdSheet(); break;
     case 'board': cmdBoard(); break;
     case 'dashboard': await cmdDashboard(args); break;
+    case 'import': cmdImport(args); break;
     case 'brief': cmdBrief(args); break;
     case 'forms': await cmdForms(args); break;
     case 'outreach': cmdOutreach(args); break;

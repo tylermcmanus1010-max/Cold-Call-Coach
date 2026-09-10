@@ -1,0 +1,115 @@
+# Leads found by Polar (or by hand) come in as a CSV. Commit one to
+# leads/polar/ — from the GitHub app on a phone is fine — and this turns it
+# into scaffolded clients, measures each one in a real browser, researches
+# what is actually at the URL, and rebuilds the dashboard, so an overnight
+# Polar run is on the caller's list by morning.
+#
+# Nothing is built or pitched here. Audit first, build second: an imported
+# lead earns a page only after reaudit has looked and research has decided.
+# Processed files move to leads/polar/done/ so the inbox reads as an inbox.
+
+name: Import leads
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'leads/polar/*.csv'
+      - 'leads/polar/*.json'
+  workflow_dispatch:
+    inputs:
+      folder:
+        description: 'Folder of CSV / JSON files to import'
+        required: false
+        default: 'leads/polar'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Import
+        id: import
+        run: |
+          FOLDER="${{ inputs.folder || 'leads/polar' }}"
+          : > created.txt
+          : > import.log
+          shopt -s nullglob
+          for f in "$FOLDER"/*.csv "$FOLDER"/*.json; do
+            echo "== $f" | tee -a import.log
+            ./cc import "$f" --source polar --json > import.json
+            node -e '
+              const r = JSON.parse(require("fs").readFileSync("import.json", "utf8"));
+              for (const c of r.created) console.log(c.slug);
+            ' >> created.txt
+            node -e '
+              const r = JSON.parse(require("fs").readFileSync("import.json", "utf8"));
+              console.log(`  ${r.total} rows -> ${r.created.length} new`);
+              for (const c of r.created) console.log(`  + ${c.slug}  ${c.phone || "no phone"}  ${c.website || "no website"}`);
+              for (const s of r.skipped) console.log(`  · ${s.name} — ${s.why}`);
+            ' | tee -a import.log
+            mkdir -p "$FOLDER/done"
+            git mv "$f" "$FOLDER/done/$(basename "$f")"
+          done
+          echo "count=$(grep -c . created.txt || true)" >> "$GITHUB_OUTPUT"
+
+      - name: Measure each new lead in a real browser
+        if: steps.import.outputs.count != '0'
+        run: |
+          while read -r s; do
+            [ -n "$s" ] && (./cc reaudit "$s" || true)
+          done < created.txt
+
+      - name: Research what is at each URL
+        if: steps.import.outputs.count != '0'
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: |
+          while read -r s; do
+            [ -n "$s" ] && (./cc research "$s" --apply || true)
+          done < created.txt
+
+      - name: Rebuild the dashboard
+        run: ./cc dashboard || true
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Import — $(date -u '+%d %b %Y')"
+            echo
+            echo '```'
+            cat import.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f created.txt import.json import.log
+          git add clients/ dashboard/ leads/polar/
+          if git diff --cached --quiet; then
+            echo "nothing new"
+          else
+            git commit -m "Import leads $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin "$GITHUB_REF_NAME" || exit 1
+              sleep $((i * 3))
+            done
+          fi

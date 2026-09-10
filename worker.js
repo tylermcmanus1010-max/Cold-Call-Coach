@@ -23,7 +23,7 @@
 const COOKIE = 'dash';
 const REPO = 'tylermcmanus1010-max/Cold-Call-Coach';
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,80})$/;
-const ACTIONS = new Set(['tried', 'sent', 'replied', 'won', 'dead', 'note', 'callback']);
+const ACTIONS = new Set(['tried', 'sent', 'replied', 'won', 'dead', 'note', 'callback', 'archive']);
 
 function cookieValue(request, name) {
   const raw = request.headers.get('cookie') || '';
@@ -127,6 +127,10 @@ async function handleLog(request, env) {
     else if (action === 'dead') { b.status = 'dead'; if (note) stamp(note); }
     else if (action === 'note') { stamp(note); }
     else if (action === 'callback') { b.callbackAt = at; if (note) stamp(note); }
+    // Archive hides it from every list now and ./cc archive moves the folder
+    // to archive/ on the next build. Status is untouched: archiving a lead
+    // is not the same as closing it out.
+    else if (action === 'archive') { b.archived = today; stamp(note || 'archived from the dashboard'); }
     b.callNotes = notes;
 
     const putRes = await ghFetch(env, `/contents/${path}`, {

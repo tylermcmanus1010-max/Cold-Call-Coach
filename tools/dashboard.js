@@ -27,6 +27,21 @@ const { windowFor, TZ } = require('./brief');
 const ROOT = path.join(__dirname, '..');
 const CLIENTS = path.join(ROOT, 'clients');
 const hosting = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/hosting.json'), 'utf8'));
+const pricing = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/pricing.json'), 'utf8'));
+
+const loadJson = (rel) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8')); } catch { return null; } };
+const nameKey = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// The exact wording Polar is given, per POLAR.md: read, never infer; a
+// CAPTCHA means stop; nothing is submitted without a person looking first.
+const PROMPT = {
+  verify: (name, site) =>
+    `Open ${site}\n\nTell me, in this order:\n1. Does this page name "${name}" anywhere — yes or no, and quote where.\n2. Is it that business's own website, or a parked / for-sale / placeholder / directory / someone else's page?\n3. If it is theirs: copy the opening hours, the list of services, and up to three customer reviews with the reviewer's name, exactly as written on the page. Say "not shown" for anything you cannot see.\n\nDo not infer, summarise or fill gaps. Do not submit or click anything that sends a message.`,
+  read: (name, site) =>
+    `Open ${site} — the website of ${name}.\n\nCopy, exactly as written on the page (check the contact, about and services pages too):\n- opening hours\n- the list of services, with prices only if a price is printed\n- up to three customer reviews, each with the reviewer's name\n- any email address printed on the site\n\nSay "not shown" for anything you cannot find. Do not infer, summarise or fill gaps. Do not submit or click anything that sends a message.`,
+  form: (formUrl, message) =>
+    `Open ${formUrl}\n\nFind the contact form. Fill it in with: name ${pricing.from.name}, email ${pricing.from.email}, phone ${pricing.from.phone}, and this exact message in the message box:\n\n${message}\n\nDo not change the wording. If the form has a CAPTCHA, stop and tell me instead of trying to complete it. When it is filled in, show me the form before submitting.`,
+};
 
 const today = () => new Date().toISOString().slice(0, 10);
 const day = (s) => (s ? String(s).slice(0, 10) : '');
@@ -208,6 +223,10 @@ async function build({ limit = 50, offline = false } = {}) {
   const rows = board.build();
   const byRowSlug = new Map(rows.filter((r) => r.source === 'pipeline').map((r) => [r.slug, r]));
 
+  // Archived from the dashboard: gone from every tab now, moved out of
+  // clients/ by ./cc archive on the next build.
+  const archived = new Set(fs.readdirSync(CLIENTS).filter((s) => { const b = loadClient(s); return b && b.archived; }));
+
   const contacted = [];
   const contactedSlugs = new Set();
   let builtPages = 0;
@@ -216,7 +235,7 @@ async function build({ limit = 50, offline = false } = {}) {
   for (const slug of fs.readdirSync(CLIENTS).sort()) {
     if (slug.startsWith('example-')) continue;
     const b = loadClient(slug);
-    if (!b || b.status === 'spec') continue;
+    if (!b || b.status === 'spec' || b.archived) continue;
     const built = fs.existsSync(path.join(CLIENTS, slug, 'index.html'));
     if (built) builtPages++;
 
@@ -277,7 +296,7 @@ async function build({ limit = 50, offline = false } = {}) {
   const setAside = {};
   const candidates = [];
   for (const r of rows) {
-    if (r.source === 'pipeline' && contactedSlugs.has(r.slug)) continue;
+    if (r.source === 'pipeline' && (contactedSlugs.has(r.slug) || archived.has(r.slug))) continue;
     if (r.status !== 'new') continue;
     if (r.blocked) { setAside[r.blocked] = (setAside[r.blocked] || 0) + 1; continue; }
     if (suppress.isSuppressed({ email: r.email, domain: domainOf(r.site), phone: r.phone })) {
@@ -306,6 +325,7 @@ async function build({ limit = 50, offline = false } = {}) {
       passed: r.passed,
       of: r.of,
       audit: r.audit,
+      measured: Boolean(r.audit && Object.keys(r.audit).length),
       rendered: r.rendered,
       flaw: r.flaw,
       checkUrl: r.checkUrl,
@@ -316,6 +336,69 @@ async function build({ limit = 50, offline = false } = {}) {
       window: timeWindow(r.category, r.state),
     };
   });
+
+  // Polar tasks: what needs a person with a browser, per POLAR.md. Verifying
+  // a URL first (six wrong in one week), then reading what a scan cannot
+  // prove off their own site, then the contact forms — ten a day, one per
+  // business, a CAPTCHA means no. Only pipeline leads with a business.json
+  // to write the answer back into; a raw lead has nowhere to record it.
+  const formSites = new Map(((loadJson('outreach/forms.json') || {}).sites || []).map((s) => [s.slug, s]));
+  const queueByName = new Map(((loadJson('outreach/queue.json') || {}).batch || []).map((q) => [nameKey(q.name), q]));
+  const polar = [];
+  const polarSeen = new Set();
+  // Every open client, not just the ones on the other two tabs: the leads the
+  // board set aside as "URL may not be theirs" are precisely the ones to
+  // verify, and a scaffolded lead past the Up-next cap still has a form.
+  const openSlugs = fs.readdirSync(CLIENTS).filter((s) => !s.startsWith('example-') && fs.existsSync(path.join(CLIENTS, s, 'business.json')));
+  const consider = [...new Set([
+    ...next.filter((n) => n.source === 'pipeline').map((n) => n.slug),
+    ...contacted.map((c) => c.slug),
+    ...openSlugs.sort(),
+  ])];
+  const NOT_THEIRS = /URL may not be theirs/;
+  const base = (slug, b, row, type, extra) => ({
+    type, slug, name: b.name || slug, category: b.category || '',
+    city: b.address?.city || '', state: b.address?.state || (row ? row.state : ''),
+    phone: row ? row.phone : board.prettyPhone(b.phone), site: b.currentSite || '', ...extra,
+  });
+  for (const type of ['verify', 'read', 'form']) {
+    for (const slug of consider) {
+      if (polarSeen.has(slug)) continue;
+      const b = loadClient(slug);
+      if (!b || ['dead', 'won', 'spec'].includes(b.status) || b.archived) continue;
+      const row = byRowSlug.get(slug);
+      // "URL may not be theirs" is a reason to verify, not a reason to skip.
+      if (row && row.blocked && !(type === 'verify' && NOT_THEIRS.test(row.blocked))) continue;
+      if (type === 'verify' && row && (row.checkUrl || row.namesBusiness === false) && b.currentSite) {
+        polar.push(base(slug, b, row, type, {
+          why: 'the page may not be theirs — a wrong URL pitched in writing is permanent',
+          prompt: PROMPT.verify(b.name, b.currentSite),
+        }));
+        polarSeen.add(slug);
+      } else if (type === 'read' && b.currentSite && (b.siteKind === 'own' || !b.siteKind) && !(row && row.parked)) {
+        const gaps = shortGaps(b).filter((g) => g === 'no hours' || g === 'no reviews');
+        if (!gaps.length) continue;
+        polar.push(base(slug, b, row, type, {
+          why: `page still needs ${gaps.join(' and ')} — a scan cannot prove them, a person looking can`,
+          prompt: PROMPT.read(b.name, b.currentSite),
+        }));
+        polarSeen.add(slug);
+      } else if (type === 'form' && !b.email && !contactedSlugs.has(slug) && (b.status || 'new') === 'new') {
+        const f = formSites.get(slug);
+        const q = queueByName.get(nameKey(b.name));
+        if (!f || !f.form || f.captcha || f.noSolicit || !q || !q.message) continue;
+        polar.push(base(slug, b, row, type, {
+          why: 'no email on file; their own contact form is their published inbox',
+          formUrl: q.formUrl || f.url,
+          formIndex: polar.filter((t) => t.type === 'form').length,   // ten a day — the eleventh onward says so
+          prompt: PROMPT.form(q.formUrl || f.url, q.message),
+        }));
+        polarSeen.add(slug);
+      }
+    }
+  }
+  const polarByType = { verify: 0, read: 0, form: 0 };
+  for (const t of polar) polarByType[t.type]++;
 
   if (!offline) {
     const urls = [...contacted, ...next].map((c) => c.pageUrl).filter(Boolean);
@@ -346,10 +429,13 @@ async function build({ limit = 50, offline = false } = {}) {
       live: [...contacted, ...next].filter((c) => c.live === true).length,
       sentThisWeek: sends.filter((s) => day(s.at) >= weekAgo).length,
       closedUnreached,
+      polar: polar.length,
+      polarByType,
     },
     contacted,
     followUps,
     next,
+    polar,
     setAside: Object.entries(setAside).sort((a, b) => b[1] - a[1]),
   };
 }

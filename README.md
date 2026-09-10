@@ -319,6 +319,60 @@ is no per-caller identity yet. Fine for one trusted employee; if you add
 more than one, say so and it's worth giving each their own key so you can
 tell who logged what and revoke one without touching the others.
 
+**The Polar tab.** The third tab is the brief for a person with a browser
+(see `POLAR.md`): leads whose URL may not be theirs (**verify** before
+anything is pitched in writing), pages still missing hours or reviews
+(**read** their own site — a scan cannot prove those, eyes can), and
+contact forms with no CAPTCHA (**ten a day, one per business, show me
+before submitting**). Each card carries the exact prompt to paste into
+Polar and a Copy button; the buttons underneath record what came back in
+one tap — *Confirmed theirs* / *Not their site* / *Sent* / *CAPTCHA — skip* —
+as a dated note in `business.json`, same as every other tap.
+
+**Pages are built for interest, not on spec.** Decided 10 September, after
+87 pages produced no sales: a lead earns a page when they say they are
+interested on the phone, or an owner's email comes out of the call — tap
+**Replied** (or **Won**) on the dashboard, or `./cc status <slug> replied`.
+`build.yml` sees the commit, builds that page and only that page, and
+Cloudflare has it live a minute later. `./cc build` with no slug builds
+only the interested and says how many it left alone; `./cc build <slug>`
+by hand still builds anything. Scouting and importing still create the
+*record* (`business.json`) so calls can be logged against it — they never
+create the page.
+
+**Archive.** Every card has an **Archive** button: one tap hides the
+business from every tab, and `./cc archive` (run by the morning build)
+moves the folder to `archive/clients/`, where git still has all of it.
+Status is untouched — archiving is not closing out. To bring one back,
+`git mv archive/clients/<slug> clients/<slug>` and delete the `archived`
+field.
+
+## 10. Bringing leads in from Polar — `./cc import`
+
+```bash
+./cc import leads.csv                # or leads.json, or - for stdin
+./cc import leads.csv --dry-run      # say what would happen, write nothing
+```
+
+Polar can go where no API reaches — Yelp results, Thumbtack and Angi
+contractor lists, Nextdoor, Facebook pages — and what it hands back is a
+list. A CSV with a header row (`name, phone, website, city, state,
+category`; column names are matched loosely, so *Business* / *Tel* / *URL*
+/ *Town* all work) or a JSON array of the same becomes
+`clients/<slug>/business.json`, **unmeasured and unbuilt**: `audit` is
+empty, `_scout.rendered` is false, no page exists. Audit first, build
+second. Anything without a name, without both a phone and a website,
+toll-free, already in the pipeline, or on the do-not-contact list is
+skipped and says why. An email Polar read off a page is kept under
+`_import`, never written to `email` — a person sets that deliberately.
+
+From a phone: put the CSV at `leads/polar/<anything>.csv` with the GitHub
+app and commit it to `main`. `import.yml` imports it, measures each new
+lead in a real browser (`reaudit`), decides what is actually at the URL
+(`research`), rebuilds the dashboard and moves the file to
+`leads/polar/done/`. An overnight Polar run is on the caller's list by
+morning.
+
 ---
 
 ## Making the call

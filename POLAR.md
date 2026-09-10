@@ -38,6 +38,18 @@ The order of value for a desk job, highest first:
 - **Read every message before it goes.** Not because the copy is bad, but
   because our data has been wrong about a URL six times in one week.
 
+## Where the work list lives now
+
+The **Polar tab** on the dashboard (`/dash/`, see the README) is the brief:
+URLs to verify, sites to read for what a scan cannot prove, and the
+contact forms that have no CAPTCHA — each with the exact prompt below
+already written and a Copy button, and one-tap buttons to record what came
+back. Work down that tab rather than the raw queue.
+
+Going the other way — Polar *finding* businesses on Yelp, Thumbtack,
+Nextdoor — its list goes in as a CSV: `./cc import`, or commit it to
+`leads/polar/` and `import.yml` does the rest.
+
 ## What to actually tell Polar
 
 Open `outreach/index.html` — the send queue — alongside it, then give it one

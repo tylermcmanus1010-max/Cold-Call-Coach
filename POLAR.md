@@ -48,7 +48,8 @@ back. Work down that tab rather than the raw queue.
 
 Going the other way — Polar *finding* businesses on Yelp, Thumbtack,
 Nextdoor — its list goes in as a CSV: `./cc import`, or commit it to
-`leads/polar/` and `import.yml` does the rest.
+`leads/polar/` and `import.yml` does the rest. `AGENT-REACH.md` is the
+same loop for Facebook and Instagram, through Agent Reach on the Mac.
 
 ## What to actually tell Polar
 

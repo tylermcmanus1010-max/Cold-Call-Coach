@@ -1,0 +1,26 @@
+{
+  "slug": "gilman-visual-media",
+  "name": "Gilman Visual Media",
+  "url": "https://gilmanvisualmedia.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-09-15T17:22:30.300Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 3444,
+      "kb": 106,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": true,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

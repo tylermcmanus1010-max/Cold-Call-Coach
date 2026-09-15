@@ -340,6 +340,12 @@ by hand still builds anything. Scouting and importing still create the
 *record* (`business.json`) so calls can be logged against it — they never
 create the page.
 
+A page designed by hand for one client — the flagship kind, like
+`clients/gilman-visual-media/` — lives beside its record as `page.js`,
+exporting `render(b)`. The build uses it in place of the house renderer, so
+the record stays the source of truth for photos and prices and a rebuild
+never puts a template over a designed page.
+
 **Archive.** Every card has an **Archive** button: one tap hides the
 business from every tab, and `./cc archive` (run by the morning build)
 moves the folder to `archive/clients/`, where git still has all of it.

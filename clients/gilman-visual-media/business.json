@@ -104,8 +104,8 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
+    "https": true,
+    "mobile": true,
     "speed": false,
     "phoneTap": false,
     "hours": false,
@@ -113,16 +113,20 @@
     "services": false,
     "reviews": false,
     "cta": false,
-    "seo": false,
+    "seo": true,
     "meta": false,
-    "social": false
+    "social": true
   },
   "callNotes": [
     "2026-09-15: told Tyler they are interested in his services. This is the flagship redesign — every fact on the page comes from their own site or from them, nothing invented."
   ],
   "_scout": {
     "source": "tyler",
-    "rendered": false,
-    "currentSiteStatus": "behind a Cloudflare JS challenge from the sandbox — read it with Actions Chrome"
+    "rendered": true,
+    "currentSiteStatus": "live",
+    "gaps": 8,
+    "namesBusiness": true,
+    "loadMs": 2639,
+    "pageKb": 106
   }
 }

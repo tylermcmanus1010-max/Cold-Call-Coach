@@ -25,7 +25,6 @@ const MESSAGE = 'https://ig.me/m/gilmanvisualmedia';
 const SITE = 'https://www.gilmanvisualmedia.com/';
 const FORM = SITE + 'contact/';
 const PORTFOLIO = SITE + 'portfolio/';
-const OG_IMAGE = 'https://images-pw.pixieset.com/site/gmEO9J/36qJ08/DSC_5040-a6339237-1500.jpg';
 
 function render(b) {
   const photos = b.photos || [];
@@ -95,7 +94,6 @@ function render(b) {
     url: SITE,
     sameAs: [INSTAGRAM],
     description: b.subhead,
-    image: OG_IMAGE,
     makesOffer: services.map((s) => {
       const low = Number((String(s.price).match(/\$([\d,]+)/) || [])[1]?.replace(/,/g, ''));
       return { '@type': 'Offer', name: s.name, category: s.group,
@@ -117,8 +115,7 @@ function render(b) {
 <meta property="og:title" content="Gilman Visual Media">
 <meta property="og:description" content="${esc(b.tagline)}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="${OG_IMAGE}">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#1b1816">
 <link rel="icon" href="${favicon}">
 <script type="application/ld+json">

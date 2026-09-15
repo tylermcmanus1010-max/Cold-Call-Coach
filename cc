@@ -388,7 +388,9 @@ Next:
 // phone or an owner's email comes out of the call — status replied or won.
 // A slug given by hand still builds anything; the bulk build touches only
 // the interested, and says how many it left alone.
-const INTERESTED = (b, s) => ['replied', 'won', 'spec'].includes(b.status) || s.startsWith('example-');
+// A `hold` on the record keeps the bulk build off it — for a page being
+// designed by hand, where an automatic build would put a placeholder live.
+const INTERESTED = (b, s) => !b.hold && (['replied', 'won', 'spec'].includes(b.status) || s.startsWith('example-'));
 
 function cmdBuild(slug) {
   let list = slug ? [slug] : all();

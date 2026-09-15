@@ -356,7 +356,10 @@ field.
 
 Polar can go where no API reaches — Yelp results, Thumbtack and Angi
 contractor lists, Nextdoor, Facebook pages — and what it hands back is a
-list. A CSV with a header row (`name, phone, website, city, state,
+list. So can Agent Reach on the Mac, for Facebook and Instagram
+specifically: `AGENT-REACH.md` has the setup, the rules and the exact job
+to give it. `leads/polar-template.csv` is the header row either one
+should produce. A CSV with a header row (`name, phone, website, city, state,
 category`; column names are matched loosely, so *Business* / *Tel* / *URL*
 / *Town* all work) or a JSON array of the same becomes
 `clients/<slug>/business.json`, **unmeasured and unbuilt**: `audit` is

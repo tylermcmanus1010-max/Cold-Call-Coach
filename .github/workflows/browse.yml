@@ -1,0 +1,77 @@
+# Read a business's site in a real Chrome and write down what it says.
+#
+# The sandbox cannot get past a "Just a moment…" challenge and neither can
+# a plain fetch; a real browser on a real network usually can. This reads
+# the home page and up to six inner pages (about, services, work, contact…)
+# and commits clients/<slug>/browse.json plus phone and desktop screenshots
+# — raw material for whoever designs the page, never a claim on it.
+
+name: Browse a site
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Client slug (clients/<slug>/)'
+        required: true
+      url:
+        description: 'Override the URL (blank = currentSite in business.json)'
+        required: false
+        default: ''
+      pages:
+        description: 'How many inner pages to read'
+        required: false
+        default: '6'
+
+permissions:
+  contents: write
+
+jobs:
+  browse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Find the runner's Chrome
+        run: echo "CHROMIUM_PATH=$(command -v google-chrome || command -v chromium)" >> "$GITHUB_ENV"
+
+      - name: Browse
+        run: |
+          ARGS="${{ inputs.slug }} --pages=${{ inputs.pages || '6' }}"
+          [ -n "${{ inputs.url }}" ] && ARGS="$ARGS --url=${{ inputs.url }}"
+          ./cc browse $ARGS | tee browse.log
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Browse — ${{ inputs.slug }}"
+            echo
+            echo '```'
+            cat browse.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f browse.log
+          git add "clients/${{ inputs.slug }}/browse.json" "clients/${{ inputs.slug }}/browse/" || true
+          if git diff --cached --quiet; then
+            echo "nothing new"
+          else
+            git commit -m "Browse ${{ inputs.slug }} $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git push && break
+              git pull --rebase --autostash origin "$GITHUB_REF_NAME" || exit 1
+              sleep $((i * 3))
+            done
+          fi

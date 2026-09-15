@@ -7,6 +7,7 @@
 //   ./cc dashboard          contacted on one tab, the next 25–50 on the other (rebuilt every morning)
 //   ./cc import <file>      leads found by Polar (CSV or JSON) → scaffolded clients, unmeasured, unbuilt
 //   ./cc archive [slug]     move a client (or everything tapped Archive on the dashboard) to archive/
+//   ./cc browse <slug>      read their site in a real Chrome (past a bot challenge) → browse.json + screenshots
 //   ./cc forms              find the contact form on each lead's own site
 //   ./cc outreach           build the send-at-work queue from those forms
 //   ./cc trade              paper-trading journal: size, open, close, stats, watch
@@ -387,7 +388,9 @@ Next:
 // phone or an owner's email comes out of the call — status replied or won.
 // A slug given by hand still builds anything; the bulk build touches only
 // the interested, and says how many it left alone.
-const INTERESTED = (b, s) => ['replied', 'won', 'spec'].includes(b.status) || s.startsWith('example-');
+// A `hold` on the record keeps the bulk build off it — for a page being
+// designed by hand, where an automatic build would put a placeholder live.
+const INTERESTED = (b, s) => !b.hold && (['replied', 'won', 'spec'].includes(b.status) || s.startsWith('example-'));
 
 function cmdBuild(slug) {
   let list = slug ? [slug] : all();
@@ -932,6 +935,17 @@ const [cmd, ...args] = process.argv.slice(2);
     case 'dashboard': await cmdDashboard(args); break;
     case 'import': cmdImport(args); break;
     case 'archive': cmdArchive(args); break;
+    case 'browse': {
+      const { browse } = require('./tools/browse');
+      const slug = args.find((a) => !a.startsWith('--'));
+      if (!slug) die('Usage: ./cc browse <slug> [--url=https://…] [--pages=6]   (needs a Chrome that can reach the internet — browse.yml on Actions)');
+      const url = (args.find((a) => a.startsWith('--url=')) || '').slice(6) || undefined;
+      const pages = Number((args.find((a) => a.startsWith('--pages=')) || '').slice(8)) || 6;
+      const o = await browse(slug, { url, pages });
+      console.log(`\n  ${o.pages.length} page${o.pages.length === 1 ? '' : 's'} read · ${o.imageInventory.length} images · socials: ${o.socials.length} · emails: ${o.emails.join(', ') || 'none printed'} · phones: ${o.phones.join(', ') || 'none printed'}`);
+      console.log(`  clients/${slug}/browse.json + browse/desktop.jpg, phone.jpg\n`);
+      break;
+    }
     case 'brief': cmdBrief(args); break;
     case 'forms': await cmdForms(args); break;
     case 'outreach': cmdOutreach(args); break;

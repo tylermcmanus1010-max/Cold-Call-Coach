@@ -109,7 +109,7 @@ function probe() {
   };
 }
 
-async function auditRendered(rawUrl, { timeout = 25000, browser, expectName } = {}) {
+async function auditRendered(rawUrl, { timeout = 25000, browser, expectName, raw = false } = {}) {
   const bare = String(rawUrl).replace(/^https?:\/\//i, '').replace(/\/+$/, '');
   const own = !browser;
   const b = browser || await chromium.launch({ executablePath: EXEC, args: ['--no-sandbox'] });
@@ -214,13 +214,15 @@ async function auditRendered(rawUrl, { timeout = 25000, browser, expectName } = 
     const agency = credit && !platformCredit ? credit.trim() : null;
 
     const managed = MANAGED.find(([re]) => re.test(platformHtml));
-    if (agency) {
+    // Our own pages carry our own credit line. The self-check asks for the
+    // real verdict (raw), or every page we ship would pass unread.
+    if (agency && !raw) {
       return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
                managed: 'an agency — ' + agency, ms, kb: Math.round(p.bytes / 1024),
                reason: `credited to ${agency} — already maintained`,
                checks: Object.fromEntries(CHECKS.map((c) => [c.key, true])), gaps: 0, info: {} };
     }
-    if (managed) {
+    if (managed && !raw) {
       return { url: bare, finalUrl, reachable: true, verified: true, rendered: true,
                managed: managed[1], ms, kb: Math.round(p.bytes / 1024),
                reason: `built on ${managed[1]} — already maintained`,

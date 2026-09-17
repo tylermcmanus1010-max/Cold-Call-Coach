@@ -22,6 +22,14 @@ far apart, the headline in the accent, photos as physical objects, numbered
 paired labels, brackets over rounded cards, whitespace as a decision. The
 file says what each of those means under our constraints.
 
+**Rule zero, from the same file:** the reference sets the quality bar, not
+the look. A client who has said yes gets their own concept — the object
+native to their trade as the hero, their real services inside it, a
+palette from their materials, colour that encodes categories — built by
+hand in `clients/<slug>/page.js`, which the build uses in place of the
+template. No two clients share a concept. `clients/gilman-visual-media/`
+is the worked example.
+
 ## The constraints, which are not negotiable
 
 These are promises made in writing to paying clients. Breaking one is worse

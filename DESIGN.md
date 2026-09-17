@@ -10,6 +10,33 @@ should not.
 
 ---
 
+## Rule zero: every client gets their own concept
+
+The reference sets the **quality** bar, not the look. Before designing,
+name the drawing, document or object native to this client's trade — the
+site plan, the work order, the price board, the ticket rail, the contact
+sheet — and make that the hero. Their real services live inside it. The
+palette comes from their materials, and colour encodes categories rather
+than decorating them. No two clients share a concept. The five constraints
+below do not move.
+
+The worked example is `clients/gilman-visual-media/`: a photographer, so
+the concept is *prints on the table* — their photographs as physical
+prints laid out on an ink ground, the work as strips of same-height prints
+from one lab, the rates as index cards with corner brackets, the ask as a
+paper card on the ink. Read `page.js` there for how a concept becomes a
+page. When a landscaping client is built, its site plan will be the second
+example.
+
+How this sits with the builder: `tools/render.js` is the house renderer,
+and it makes the *proposal* — the page built before a call, when nobody
+has looked at the business for longer than an audit. A client who says yes
+gets a `page.js` beside their record, built by hand to their own concept,
+and the build uses it in place of the template from then on. The template
+is the floor. Rule zero is the ceiling, and it is where the work is.
+
+---
+
 ## What it does
 
 Look at `design/reference/` in order. Eight frames, phone width unless noted.

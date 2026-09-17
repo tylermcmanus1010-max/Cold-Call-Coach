@@ -1,5 +1,12 @@
 // The page for Gilman Visual Media, built by hand against DESIGN.md.
 //
+// Concept (DESIGN.md, rule zero): prints on the table. A photographer, so
+// the native object is the print — their photographs as physical prints
+// laid out on an ink ground, the work as strips of same-height prints from
+// one lab, the rates as index cards with corner brackets, the ask as a
+// paper card on the ink. The palette is the materials: ink, print paper,
+// their brown, one warm accent.
+//
 // Everything on it is theirs: the about text, the price list, the four
 // reasons to choose them, the Proust line, the get-in-touch paragraph, and
 // sixteen of their own photographs — all read off gilmanvisualmedia.com

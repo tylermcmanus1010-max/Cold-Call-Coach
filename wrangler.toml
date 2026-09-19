@@ -17,6 +17,9 @@ routes = [
   { pattern = "mcmanuswebco.com", custom_domain = true },
   { pattern = "www.mcmanuswebco.com", custom_domain = true },
 ]
+# wrangler turns the workers.dev address off by default once routes exist.
+# Keep it: pitch links already sent and the /dash/ bookmark use it.
+workers_dev = true
 
 [assets]
 directory = "./site"

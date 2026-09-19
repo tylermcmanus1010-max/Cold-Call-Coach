@@ -1,4 +1,4 @@
 {
   "_howto": "cloudflarePagesDomain: the Cloudflare Workers domain serving site/ (built by tools/publish.js). Required — tools/campaign.js reads it on every run and refuses to send without it, because the only alternative was serving pages straight out of a PUBLIC repo, which exposes pricing, the suppression list and every other prospect. No code change needed when this is updated.",
-  "cloudflarePagesDomain": "cold-call-coachv3.buildscope-ai.workers.dev"
+  "cloudflarePagesDomain": "mcmanuswebco.com"
 }

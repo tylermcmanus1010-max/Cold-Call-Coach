@@ -12,7 +12,7 @@ async function selfCheck(dirs, root) {
   for (const slug of dirs) {
     const file = path.join(root, 'clients', slug, 'index.html');
     if (!fs.existsSync(file)) continue;
-    const r = await auditRendered('file://' + file, { timeout: 20000, browser });
+    const r = await auditRendered('file://' + file, { timeout: 20000, browser, raw: true });
     // HTTPS is a property of where it gets hosted, not of the page itself.
     r.checks.https = true;
     const failed = CHECKS.filter((c) => !r.checks[c.key]);

@@ -435,7 +435,12 @@ function cmdBuild(slug) {
     const unknown = Object.keys(b.audit || {}).filter((k) => !checks.some((c) => c.key === k));
     if (unknown.length) console.warn(`  ! ${s}: unknown audit keys ignored: ${unknown.join(', ')}`);
     const p = pitch(b, pricing);
-    fs.writeFileSync(path.join(dir(s), 'index.html'), render(b));
+    // A page designed by hand for one client lives beside its record as
+    // page.js, exporting render(b). The build uses it in place of the house
+    // renderer, so the record stays the source of truth (photos, prices) and
+    // a rebuild never puts a template over a designed page.
+    const custom = path.join(dir(s), 'page.js');
+    fs.writeFileSync(path.join(dir(s), 'index.html'), fs.existsSync(custom) ? require(custom).render(b) : render(b));
     fs.writeFileSync(path.join(dir(s), 'pitch.md'), p.sheet);
     // Ready to paste: subject on the first line, body underneath, no markdown.
     fs.writeFileSync(path.join(dir(s), 'email.txt'),

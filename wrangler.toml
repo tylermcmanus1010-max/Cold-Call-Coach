@@ -10,6 +10,14 @@ name = "cold-call-coach"
 main = "worker.js"
 compatibility_date = "2026-01-01"
 
+# mcmanuswebco.com is registered through Cloudflare on this account, so a
+# deploy binds it here and writes the DNS records itself. The workers.dev
+# address keeps working alongside it.
+routes = [
+  { pattern = "mcmanuswebco.com", custom_domain = true },
+  { pattern = "www.mcmanuswebco.com", custom_domain = true },
+]
+
 [assets]
 directory = "./site"
 binding = "ASSETS"

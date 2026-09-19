@@ -1,4 +1,4 @@
-// Builds site/ — the ONLY folder Cloudflare Pages should be told to serve.
+// Builds site/ — the ONLY folder the Worker serves (mcmanuswebco.com).
 //
 // The repo itself has to stay private-safe: pricing, the suppression list,
 // every other prospect's audit data, git history of past pitches. None of
@@ -35,11 +35,20 @@ function main() {
     fs.copyFileSync(path.join(CLIENTS, slug, 'index.html'), path.join(dir, 'index.html'));
     n++;
   }
-  // A bare 404 rather than Cloudflare's own — and rather than the folder
-  // listing a static host will otherwise offer at site/ itself.
-  fs.writeFileSync(path.join(OUT, 'index.html'),
+  // The root is our own site — home/index.html, self-contained like every
+  // client page — served at mcmanuswebco.com. Without it, a bare 404 rather
+  // than Cloudflare's own, and rather than a folder listing.
+  const home = path.join(ROOT, 'home', 'index.html');
+  const withHome = fs.existsSync(home);
+  if (withHome) fs.copyFileSync(home, path.join(OUT, 'index.html'));
+  else fs.writeFileSync(path.join(OUT, 'index.html'),
     '<!doctype html><title>Not found</title><body style="font:16px system-ui;padding:40px">Nothing here.');
-  fs.writeFileSync(path.join(OUT, '_headers'), '/*\n  X-Robots-Tag: noindex\n');
+
+  // Pitch pages are for one prospect each and never for search; the
+  // dashboard is private. The home page is the one thing here that should
+  // be indexed, so the noindex is per path, not /*.
+  fs.writeFileSync(path.join(OUT, '_headers'),
+    [...slugs.map((slug) => `/${slug}/*\n  X-Robots-Tag: noindex`), '/dash/*\n  X-Robots-Tag: noindex'].join('\n\n') + '\n');
 
   const dash = path.join(ROOT, 'dashboard', 'index.html');
   const withDash = fs.existsSync(dash);
@@ -48,7 +57,7 @@ function main() {
     fs.copyFileSync(dash, path.join(OUT, 'dash', 'index.html'));
   }
 
-  console.log(`site/ built — ${n} page${n === 1 ? '' : 's'}${withDash ? ', plus the dashboard behind DASH_KEY at /dash/' : ''}, nothing else.`);
+  console.log(`site/ built — ${n} page${n === 1 ? '' : 's'}${withHome ? ', the home page at /' : ''}${withDash ? ', plus the dashboard behind DASH_KEY at /dash/' : ''}, nothing else.`);
 }
 
 main();

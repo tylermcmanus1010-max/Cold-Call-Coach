@@ -289,6 +289,15 @@ name on the suppression list. Nothing on the page is a new source of truth —
 it reads `clients/`, `leads/`, the send log and `config/suppression.json`,
 and reuses `board.js`, `campaign.js` and `brief.js` for every judgement.
 
+**The root of the site is ours.** `home/index.html` is the McManus Web Co.
+page — self-contained, same rules as a client page — and `publish.js` puts
+it at `/`, so it is `https://mcmanuswebco.com/`. The domain is registered
+through Cloudflare on this account and bound in `wrangler.toml` as a custom
+domain, so a deploy attaches it and writes the DNS records itself; the
+workers.dev address keeps working alongside. Pitch pages and the dashboard
+are sent with `X-Robots-Tag: noindex`; the home page is the one thing here
+meant to be indexed.
+
 **Seeing it on your phone.** The dashboard lists every prospect, so it is
 exactly what `tools/publish.js` keeps off the public site. It is served
 anyway, at `https://<cloudflarePagesDomain>/dash/`, but only through

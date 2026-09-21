@@ -1,0 +1,26 @@
+{
+  "slug": "tinez-blendzz",
+  "name": "Tinezz Blendzz",
+  "url": "https://booksy.com/en-us/1485173_tinezz-blendzz_barber-shop_38489_norfolk",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-09-21T18:22:09.577Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 8216,
+      "kb": 709,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": true,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

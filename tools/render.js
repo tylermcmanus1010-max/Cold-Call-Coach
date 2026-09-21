@@ -759,7 +759,8 @@ ${jsonld(b)}
       : `<span class="mark">${esc((b.name || '?').trim()[0].toUpperCase())}</span>`
     }<span class="nm">${esc(b.shortName || b.name)}</span></a>
     <nav>${nav.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
-    ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>` : ''}
+    ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call <span class="label">${esc(b.phone)}</span></a>`
+      : b.booking?.url ? `<a class="btn btn-primary" href="${esc(b.booking.url)}" target="_blank" rel="noopener">Book</a>` : ''}
   </div>
 </header>
 
@@ -774,7 +775,8 @@ ${jsonld(b)}
     <h1 class="rise" style="--i:1">${esc(b.headline || b.tagline)}</h1>
     ${b.subhead ? `<p class="lede rise" style="--i:2">${esc(b.subhead)}</p>` : ''}
     <div class="actions rise" style="--i:3">
-      ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">${esc(b.cta?.primary || 'Call ' + b.phone)}</a>` : ''}
+      ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">${esc(b.cta?.primary || 'Call ' + b.phone)}</a>`
+        : b.booking?.url ? `<a class="btn btn-primary" href="${esc(b.booking.url)}" target="_blank" rel="noopener">${esc(b.cta?.primary || 'Book online')}</a>` : ''}
       ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Get directions</a>` : ''}
     </div>
     ${b.heroNote ? `<div class="hero-note rise" style="--i:4">${esc(b.heroNote)}</div>` : ''}
@@ -918,6 +920,7 @@ ${(() => {
           : b.email ? `<a class="big-mail" href="mailto:${esc(b.email)}">${esc(b.email)}</a>` : ''}
         <div class="actions">
           ${b.phone ? `<a class="btn btn-primary" href="tel:${esc(tel)}">Call now</a>`
+            : b.booking?.url ? `<a class="btn btn-primary" href="${esc(b.booking.url)}" target="_blank" rel="noopener">${esc(b.cta?.primary || 'Book online')}</a>`
             : b.email ? `<a class="btn btn-primary" href="mailto:${esc(b.email)}">Email us</a>` : ''}
           ${a.street ? `<a class="btn btn-ghost" href="${esc(mapsUrl(a))}" target="_blank" rel="noopener">Directions</a>` : ''}
         </div>

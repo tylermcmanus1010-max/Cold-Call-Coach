@@ -47,8 +47,34 @@ function main() {
   // Pitch pages are for one prospect each and never for search; the
   // dashboard is private. The home page is the one thing here that should
   // be indexed, so the noindex is per path, not /*.
-  fs.writeFileSync(path.join(OUT, '_headers'),
-    [...slugs.map((slug) => `/${slug}/*\n  X-Robots-Tag: noindex`), '/dash/*\n  X-Robots-Tag: noindex'].join('\n\n') + '\n');
+  // Security headers on every response. The pages are self-contained by
+  // design (inline CSS and JS, photos as data: URIs, no requests out), so the
+  // policy can be strict: nothing loads from anywhere but this origin, the
+  // site cannot be framed, and browsers must not sniff types. The dashboard
+  // is the one exception: it pulls two Google Fonts, so its rule swaps in a
+  // policy that allows exactly those two hosts and nothing else.
+  const csp = [
+    "default-src 'self'", "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:", "font-src 'self' data:", "media-src 'self' data:", "connect-src 'self'",
+    "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'",
+    'upgrade-insecure-requests',
+  ];
+  const dashCsp = csp.map((d) => d.startsWith('style-src') ? d + ' https://fonts.googleapis.com'
+    : d.startsWith('font-src') ? d + ' https://fonts.gstatic.com' : d);
+  const security = [
+    `Content-Security-Policy: ${csp.join('; ')}`,
+    'Strict-Transport-Security: max-age=31536000; includeSubDomains',
+    'X-Content-Type-Options: nosniff',
+    'X-Frame-Options: DENY',
+    'Referrer-Policy: strict-origin-when-cross-origin',
+    'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()',
+    'Cross-Origin-Opener-Policy: same-origin',
+  ];
+  fs.writeFileSync(path.join(OUT, '_headers'), [
+    '/*\n' + security.map((h) => '  ' + h).join('\n'),
+    ...slugs.map((slug) => `/${slug}/*\n  X-Robots-Tag: noindex`),
+    `/dash/*\n  X-Robots-Tag: noindex\n  ! Content-Security-Policy\n  Content-Security-Policy: ${dashCsp.join('; ')}`,
+  ].join('\n\n') + '\n');
 
   const dash = path.join(ROOT, 'dashboard', 'index.html');
   const withDash = fs.existsSync(dash);

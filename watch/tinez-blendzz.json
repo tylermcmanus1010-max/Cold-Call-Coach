@@ -345,6 +345,24 @@
         "social": true
       },
       "parked": false
+    },
+    {
+      "at": "2026-10-10T17:30:51.811Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 9298,
+      "kb": 711,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": true,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
     }
   ]
 }

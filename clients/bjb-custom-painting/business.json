@@ -108,10 +108,13 @@
     "social": true
   },
   "shortName": "BJB Painting",
-  "_status": "INBOUND. He approached Tyler asking him to run an ad, and asked how many leads could be guaranteed. Not a cold lead — the only one in the pipeline who came to us. Google listing is strong: 5.0 on 10 reviews, owner replies to every review, real job photos (interior, exterior, decks, epoxy garage floors). Tyler says the website and its URL are poor; URL not yet recorded. Delaware (302). Deal shape being worked out — see callNotes.",
+  "_status": "INBOUND, Delaware. Technically his site is FINE: 6 of 7 provable checks pass, only load time fails (6.5s, 65KB). Do NOT pitch it as broken. The real finding is in the harvest, and anyone can verify it by reading the page: the three testimonials on his homepage are template placeholders — \"John Smith\", \"Emily Johnson\", \"Michael Brown\" — while his Google listing has real five-star reviews from named customers. The copy is agency SEO template (\"the leading Painting Contractor in Sussex County, DE\" repeated, city-stuffed pages for Middletown and Sussex County, a Mission/Vision/Why Choose Us block). And the site shows a different phone number from his Google listing. Sell the landing page on CONTENT and on ad economics, not on brokenness. See callNotes.",
   "callNotes": [
     "2026-10-23: INBOUND via Instagram. Wants Tyler to run an ad; asked for a guaranteed lead count. Tyler wants a performance deal rather than promising numbers. Website URL still needed so it can be audited — Tyler says it is bad.",
-    "2026-10-23: URL is bjbcustompaintingllc.com. Re-audit queued."
+    "2026-10-23: URL is bjbcustompaintingllc.com. Re-audit queued.",
+    "2026-10-23: BROWSER AUDIT — 6/7 provable checks PASS. Only failure: load 6.5s. Mobile, HTTPS, tap-to-call, schema, meta, OG preview all fine. This is NOT a broken-site rebuild. Price it like RT Roofing: the honest sale is the landing page as part of the ad package, not a replacement for a site that works.",
+    "2026-10-23: HARVEST — homepage testimonials are FAKE template placeholders: John Smith, Emily Johnson, Michael Brown. His real Google reviews (Jay Hudson — whole interior plus epoxy garage floor; Jocelyne Firmin; Emilda Perez) are better and are not on the site. Copy is agency SEO template. No owner name, no hours, no prices on the site. Services on site: interior, exterior, color consultation, drywall install, drywall repair, cabinet painting. Google photos add: decks, epoxy garage floors, commercial. Area: Sussex County DE and Middletown DE.",
+    "2026-10-23: PHONE MISMATCH — site shows (302) 614-3928; Google listing and the number painted on his yard signs is (302) 864-5485. Ask him which rings. If 614-3928 is an old agency tracking number still on his site, that is leaking calls and must be fixed before any new ad. Two gmail addresses printed on the site, one with a stray leading i — likely a typo on their end."
   ],
   "_scout": {
     "gaps": 4,

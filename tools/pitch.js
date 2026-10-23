@@ -66,7 +66,13 @@ module.exports = function pitch(b, pricing) {
   const audit = b.audit || {};
   // Findings never measured in a browser must not become claims. A raw-HTML
   // run cannot see JavaScript-rendered hours, phone links or layout.
-  const unverified = b._scout && b._scout.rendered === false;
+  // Anything not positively measured in a real browser is unverified. The old
+  // test was rendered === false, which let a lead that had never been audited
+  // at all (rendered undefined) through as verified — and the scaffold's
+  // default audit values are all false, so BJB Custom Painting got a pitch
+  // sheet claiming all seven checks fail before a browser had ever opened
+  // his site.
+  const unverified = !(b._scout && b._scout.rendered === true);
   const scored = checks.map((c) => ({ ...c, pass: audit[c.key] === true }));
   // Never claim a text-derived finding. Those are for your eyes, not the owner's.
   // Same rule in the pitch: if the site could not be read, say that once rather

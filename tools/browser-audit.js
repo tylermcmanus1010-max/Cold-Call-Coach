@@ -170,6 +170,16 @@ async function auditRendered(rawUrl, { timeout = 25000, browser, expectName, raw
                reachable: null };
     }
 
+    // The load time is the time to the load event, full stop. It used to be
+    // stamped after the networkidle wait and the scroll walk below, so the
+    // audit's own choreography — 120ms a step down a long page, twice waiting
+    // for the network to go quiet — was billed to the site. Our own 42ms page
+    // failed its own two-second check that way, and so did every page we had
+    // ever built; on live sites it is where the 19s / 29s / 99s spread came
+    // from. The walk still happens: it is for judging content, not speed.
+    await page.waitForLoadState('load', { timeout }).catch(() => {});
+    const loadMs = Date.now() - started;
+
     // Give the page a moment to actually build itself before judging it.
     await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     // Walk the page the way a reader would, so lazy-loaded sections actually exist
@@ -184,7 +194,7 @@ async function auditRendered(rawUrl, { timeout = 25000, browser, expectName, raw
       await new Promise((r) => setTimeout(r, 250));
     }).catch(() => {});
     await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-    const ms = Date.now() - started;
+    const ms = loadMs;
     const p = await page.evaluate(probe);
     const finalUrl = page.url();
     const linkCount = await page.evaluate(() => document.querySelectorAll('a[href]').length);

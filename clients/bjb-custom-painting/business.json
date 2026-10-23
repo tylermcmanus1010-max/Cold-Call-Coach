@@ -94,23 +94,31 @@
     "heroImage": ""
   },
   "audit": {
-    "mobile": false,
-    "https": false,
+    "https": true,
+    "mobile": true,
     "speed": false,
-    "phoneTap": false,
+    "phoneTap": true,
     "hours": false,
-    "address": false,
+    "address": true,
     "services": false,
     "reviews": false,
-    "cta": false,
-    "seo": false,
-    "meta": false,
-    "social": false
+    "cta": true,
+    "seo": true,
+    "meta": true,
+    "social": true
   },
   "shortName": "BJB Painting",
   "_status": "INBOUND. He approached Tyler asking him to run an ad, and asked how many leads could be guaranteed. Not a cold lead — the only one in the pipeline who came to us. Google listing is strong: 5.0 on 10 reviews, owner replies to every review, real job photos (interior, exterior, decks, epoxy garage floors). Tyler says the website and its URL are poor; URL not yet recorded. Delaware (302). Deal shape being worked out — see callNotes.",
   "callNotes": [
     "2026-10-23: INBOUND via Instagram. Wants Tyler to run an ad; asked for a guaranteed lead count. Tyler wants a performance deal rather than promising numbers. Website URL still needed so it can be audited — Tyler says it is bad.",
     "2026-10-23: URL is bjbcustompaintingllc.com. Re-audit queued."
-  ]
+  ],
+  "_scout": {
+    "gaps": 4,
+    "rendered": true,
+    "namesBusiness": true,
+    "currentSiteStatus": "live",
+    "loadMs": 6468,
+    "pageKb": 65
+  }
 }

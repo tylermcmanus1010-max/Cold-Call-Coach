@@ -2,10 +2,15 @@
 
 **Current site:** https://booksy.com/en-us/1485173_tinezz-blendzz_barber-shop_38489_norfolk
 **Rebuilt page:** `index.html` (in this folder — attach it or host it)
-**Score:** 7/12
+**Score:** 7/12 — UNVERIFIED, read the warning below
 **Price to quote:** $750 — One-page rebuild, then $60/month for hosting and updates
 
 ---
+
+> **Do not send yet.** These findings come from the served HTML, not a rendered page.
+> If this site builds itself with JavaScript, its hours, phone link and mobile layout may all be
+> there and simply invisible to that check. Re-run the scout with a browser, or open the site
+> yourself, before claiming any of this to the owner.
 
 ## What's wrong with the site they have
 

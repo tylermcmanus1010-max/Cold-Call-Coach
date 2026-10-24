@@ -1,0 +1,26 @@
+{
+  "slug": "bjb-custom-painting",
+  "name": "BJB Custom Painting",
+  "url": "https://bjbcustompaintingllc.com/",
+  "paying": false,
+  "snapshots": [
+    {
+      "at": "2026-10-24T16:19:43.142Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 3459,
+      "kb": 65,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": true,
+        "seo": true,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
+    }
+  ]
+}

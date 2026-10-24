@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <script>
+      (function() {
+        // Capture host references before any artifact code runs: Window.parent
+        // is [Replaceable] (a top-level `var parent` in artifact code would
+        // replace the accessor with a data property), and a top-level
+        // `const crypto` would shadow the global — either would otherwise
+        // silently break the bridge for artifacts that worked before.
+        const realParent = window.parent;
+        const cryptoObj = window.crypto;
+        const RealURL = URL;
+        const realDecodeURIComponent = decodeURIComponent;
+        const RealTextEncoder = TextEncoder;
+        const realAtob = atob;
+        const RealString = String;
+        // html-to-image is only used by takeScreenshot: fetched on first use, not as a
+        // parser-blocking tag. Native fetch, captured before the proxy override below.
+        const realFetch = typeof window.fetch === 'function' ? window.fetch.bind(window) : null;
+        const HTML_TO_IMAGE_SRC = "https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js";
+        const HTML_TO_IMAGE_INTEGRITY = "sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==";
+        let htmlToImageLoad = null;
+        const loadHtmlToImage = () => {
+          if (!htmlToImageLoad) {
+            htmlToImageLoad = (realFetch
+              ? realFetch(HTML_TO_IMAGE_SRC, { integrity: HTML_TO_IMAGE_INTEGRITY, credentials: 'omit', referrerPolicy: 'no-referrer' })
+              : Promise.reject(new Error('fetch unavailable'))
+            )
+              .then((res) => {
+                if (!res.ok) throw new Error('html-to-image failed to load (' + res.status + ')');
+                return res.text();
+              })
+              .then((source) => {
+                // UMD bundle: hide the artifact's AMD/CommonJS globals so it takes the
+                // window-global branch; inline script text runs synchronously on insert.
+                const hidden = ['define', 'module', 'exports'].map((k) => {
+                  const entry = { k, own: Object.prototype.hasOwnProperty.call(window, k), v: window[k] };
+                  try { window[k] = undefined; } catch (e) {}
+                  return entry;
+                });
+                try {
+                  const el = document.createElement('script');
+                  el.text = source;
+                  (document.head || document.documentElement).appendChild(el);
+                } finally {
+                  hidden.forEach(({ k, own, v }) => {
+                    try { if (own) { window[k] = v; } else { delete window[k]; } } catch (e) {}
+                  });
+                }
+                if (!window.htmlToImage) throw new Error('html-to-image unavailable after load');
+                return window.htmlToImage;
+              });
+            // A failed load may be transient; let the next screenshot retry.
+            htmlToImageLoad.catch(() => { htmlToImageLoad = null; });
+          }
+          return htmlToImageLoad;
+        };
+        // crypto.randomUUID exists only in Secure Contexts; fall back to a
+        // unique non-crypto id elsewhere (http://LAN-IP dev flows) —
+        // uniqueness is what the bridge needs, unpredictability is
+        // defense-in-depth on top of the source guards.
+        const newRequestId =
+          cryptoObj && typeof cryptoObj.randomUUID === "function"
+            ? function () { return cryptoObj.randomUUID(); }
+            : function () { return Date.now() + "-" + Math.random(); };
+
+        // Bridge request ids are crypto-random (not sequential) so they
+        // cannot be predicted by other frames in the tab.
+        let callbacksMap = new Map();
+        let streamControllers = new Map();
+        
+        window.claude = {
+          complete: (prompt) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
+            });
+          }
+        };
+
+        // storage.get and .list calls not yet answered, read by the parent at this frame's 'load' (an answer may restyle the page); counted
+        // here, not there, because WebKit can run this frame's 'load' in the parent before a message posted while parsing has arrived.
+        let storageReadsOut = 0;
+        try { Object.defineProperty(window, '__storageReadsOut', { configurable: true, get: () => storageReadsOut }); } catch (e) {}
+        window.storage = {
+          get: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageGet', id, key, shared }, '*');
+              storageReadsOut += 1;
+            });
+          },
+          set: (key, value, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
+            });
+          },
+          delete: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
+            });
+          },
+          list: (prefix, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
+              storageReadsOut += 1;
+            });
+          }
+        };
+
+        let pendingBlobs = new Map();
+        URL.createObjectURL = (blob) => {
+          // Store the blob and create an ID and URL for it
+          const blobId = `blob-${Date.now()}-${Math.random()}`;
+          pendingBlobs.set(blobId, blob);
+          return `blob-request://${blobId}`;
+        };
+
+        URL.revokeObjectURL = (url) => {
+          // Remove the blob from our store
+          const blobId = url.replace("blob-request://", "");
+          pendingBlobs.delete(blobId);
+        };
+
+        const getBlobFromURL = (url) => {
+          const blobId = url.replace("blob-request://", "");
+          return pendingBlobs.get(blobId);
+        };
+
+        // Override global fetch with streaming support
+        window.fetch = (url, init = {}) => {
+          return new Promise((resolve, reject) => {
+            const id = newRequestId();
+            const channelId = `fetch-${id}-${Date.now()}`;
+            
+            callbacksMap.set(id, { 
+              resolve: (response) => {
+                // Null-body statuses: Response(stream, {status: 204}) throws
+                // per the Fetch spec, which would escape this resolver and
+                // hang the artifact's await forever.
+                if (response.status === 204 || response.status === 205 || response.status === 304) {
+                  try {
+                    resolve(new Response(null, {
+                      status: response.status,
+                      statusText: response.statusText,
+                      headers: response.headers
+                    }));
+                  } catch (err) {
+                    // Invalid statusText/header bytes can throw here too.
+                    reject(new TypeError(
+                      'Bridge fetch: unconstructable response (status ' + response.status + ')'
+                    ));
+                  }
+                  return;
+                }
+                // Create a ReadableStream for the response body
+                const stream = new ReadableStream({
+                  start(controller) {
+                    streamControllers.set(channelId, controller);
+                  },
+                  cancel() {
+                    streamControllers.delete(channelId);
+                  }
+                });
+                
+                // Create and return the Response with the stream. Response()
+                // requires status in [200, 599]; an opaque/no-cors fetch
+                // forwards status 0, which would throw here and escape the
+                // resolver, hanging the artifact's await. Surface it as a
+                // network-error-shaped rejection instead.
+                try {
+                  resolve(new Response(stream, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: response.headers
+                  }));
+                } catch (err) {
+                  streamControllers.delete(channelId);
+                  reject(new TypeError(
+                    'Bridge fetch: unconstructable response (status ' + response.status + ')'
+                  ));
+                }
+              },
+              reject,
+              channelId
+            });
+            
+            realParent.postMessage({
+              type: 'proxyFetch',
+              id,
+              url,
+              init,
+              channelId
+            }, '*');
+          });
+        };
+
+        window.addEventListener('message', async (event) => {
+          // Only the embedding parent may drive the bridge — sibling and
+          // nested frames can also postMessage into this window.
+          if (event.source !== realParent) return;
+          if (event.data.type === 'takeScreenshot') {
+            // Echo the request's nonce so the requester can correlate the
+            // reply to ITS request — a reply without the expected nonce
+            // (e.g. from a stale pre-remount artifact) is ignored upstream.
+            const screenshotNonce = event.data.nonce;
+            const rootElement = document.getElementById('artifacts-component-root-html');
+            if (!rootElement) {
+              realParent.postMessage({
+                type: 'screenshotError',
+                nonce: screenshotNonce,
+                error: new Error('Root element not found'),
+              }, '*');
+              return;
+            }
+            // Catch CDN load failures and toPng errors so the parent always
+            // gets a response instead of hanging forever.
+            try {
+              const htmlToImage = await loadHtmlToImage();
+              const screenshot = await htmlToImage.toPng(rootElement, {
+                imagePlaceholder:
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
+              });
+              realParent.postMessage({
+                type: 'screenshotData',
+                nonce: screenshotNonce,
+                data: screenshot,
+              }, '*');
+            } catch (err) {
+              realParent.postMessage({
+                type: 'screenshotError',
+                nonce: screenshotNonce,
+                error: err instanceof Error ? err : new Error(String(err)),
+              }, '*');
+            }
+          } else if (event.data.type === 'claudeComplete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.completion);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'proxyFetchResponse') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+              callbacksMap.delete(event.data.id);
+            } else {
+              // Initial response with headers, status, etc.
+              callback.resolve({
+                status: event.data.status,
+                statusText: event.data.statusText,
+                headers: event.data.headers
+              });
+              // Don't delete the callback yet if streaming
+              if (!event.data.body) {
+                callbacksMap.delete(event.data.id);
+              }
+            }
+          } else if (event.data.type === 'proxyFetchStream') {
+            // Handle streaming data chunks
+            const controller = streamControllers.get(event.data.channelId);
+            if (controller) {
+              if (event.data.error) {
+                controller.error(new Error(event.data.error));
+                streamControllers.delete(event.data.channelId);
+              } else if (event.data.done) {
+                controller.close();
+                streamControllers.delete(event.data.channelId);
+                // Clean up the callback
+                const callback = Array.from(callbacksMap.entries()).find(
+                  ([_, value]) => value.channelId === event.data.channelId
+                );
+                if (callback) {
+                  callbacksMap.delete(callback[0]);
+                }
+              } else if (event.data.chunk) {
+                controller.enqueue(new Uint8Array(event.data.chunk));
+              }
+            }
+          } else if (event.data.type === 'storageGet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            storageReadsOut -= 1;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageSet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageDelete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageList') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            storageReadsOut -= 1;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          }
+        });
+
+        // An SVG <a> exposes href as an SVGAnimatedString; its baseVal is the attribute
+        // as written, so resolve it against the base URL as the browser does for an HTML <a>.
+        const resolvedHref = (linkEl) => {
+          if (typeof linkEl.href === "string") return linkEl.href;
+          const written = linkEl.href?.baseVal;
+          // A same-document SVG link, such as one that begins an animation, stays with the browser.
+          if (!written || written.trim().startsWith("#")) return "";
+          try {
+            return new RealURL(written, linkEl.baseURI).href;
+          } catch (error) {
+            return written;
+          }
+        };
+
+        // This frame's URL is about:srcdoc, so the browser resolves "#id" against the renderer
+        // page and would load that page in the frame instead of scrolling.
+        const sameDocumentFragment = (linkEl) => {
+          const written = linkEl.getAttribute("href")?.trim();
+          if (!written?.startsWith("#") || document.querySelector("base[href]")) return null;
+          return written.slice(1);
+        };
+
+        const scrollToFragment = (fragment) => {
+          let decoded = fragment;
+          try {
+            decoded = realDecodeURIComponent(fragment);
+          } catch (error) {}
+          let target = document.getElementById(fragment) ?? document.getElementById(decoded);
+          for (const named of target ? [] : document.getElementsByName(decoded)) {
+            if (named.localName === "a") {
+              target = named;
+              break;
+            }
+          }
+          if (target) {
+            target.scrollIntoView();
+          } else if (decoded.toLowerCase() === "top") {
+            window.scrollTo(0, 0);
+          } else {
+            return false;
+          }
+          return true;
+        };
+
+        // Same decoder as dataUrlFile in app/page.tsx; change both together.
+        const hexPair = /^[0-9a-f]{2}$/i;
+        const dataUrlFile = (href) => {
+          const hash = href.indexOf("#");
+          const url = hash === -1 ? href : href.slice(0, hash);
+          const comma = url.indexOf(",");
+          if (comma === -1) return null;
+          const header = url.slice(0, comma);
+          const payload = url.slice(comma + 1);
+          const mimeMatch = header.match(/data:([^;]+)/);
+          const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+          const declaredBase64 = header
+            .split(";")
+            .slice(1)
+            .some((param) => param.trim().toLowerCase() === "base64");
+          const type = mimeMatch ? mimeMatch[1].trim().toLowerCase() : "";
+          const binaryType = type !== "" && !type.startsWith("text/");
+          if (declaredBase64 || (binaryType && !payload.includes("%"))) {
+            let binary = null;
+            try {
+              binary = realAtob(
+                payload.replace(/%([0-9a-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16))),
+              );
+            } catch (error) {
+              if (declaredBase64) return null;
+            }
+            if (binary !== null) {
+              const bytes = new Uint8Array(binary.length);
+              for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+              }
+              return { mimeType, data: bytes.buffer };
+            }
+          }
+          const input = new RealTextEncoder().encode(payload);
+          const bytes = new Uint8Array(input.length);
+          let length = 0;
+          for (let i = 0; i < input.length; i++) {
+            if (input[i] === 0x25 && i + 2 < input.length) {
+              const pair = String.fromCharCode(input[i + 1], input[i + 2]);
+              if (hexPair.test(pair)) {
+                bytes[length++] = parseInt(pair, 16);
+                i += 2;
+                continue;
+              }
+            }
+            bytes[length++] = input[i];
+          }
+          return { mimeType, data: bytes.slice(0, length).buffer };
+        };
+
+        window.addEventListener('click', (event) => {
+          // Not instanceof Element: an artifact's own top-level class Element shadows the global.
+          if (typeof event.target?.closest !== "function") return;
+    
+          const linkEl = event.target.closest("a");
+          const href = linkEl && resolvedHref(linkEl);
+          if (!href) return;
+
+          const fragment = sameDocumentFragment(linkEl);
+          if (fragment !== null) {
+            const handledByArtifact = event.defaultPrevented;
+            event.preventDefault();
+            if (handledByArtifact || fragment === "" || scrollToFragment(fragment)) return;
+            // A fragment that names nothing in the artifact may name something in the host,
+            // such as a project thread. The artifact's own listeners still see the click.
+            realParent.postMessage({ type: 'openExternal', href }, '*');
+            return;
+          }
+          const filename = linkEl.getAttribute("download") ?? "";
+    
+          event.preventDefault();
+          event.stopImmediatePropagation();
+    
+          if (href.startsWith("blob-request:")) {
+            const blob = getBlobFromURL(href);
+            if (!blob) return;
+            void blob.arrayBuffer().then((data) => {
+              realParent.postMessage({
+                type: "downloadFile",
+                filename,
+                data,
+                mimeType: blob.type || "application/octet-stream",
+              });
+            });
+          } else if (href.startsWith("data:")) {
+            const file = dataUrlFile(href);
+            if (!file) return;
+            realParent.postMessage({
+              type: "downloadFile",
+              filename,
+              data: file.data,
+              mimeType: file.mimeType,
+            });
+          } else {
+            let linkUrl;
+            try {
+              linkUrl = new URL(href);
+            } catch (error) {
+              return;
+            }
+    
+            if (linkUrl.hostname === window.location.hostname) return;
+      
+            realParent.postMessage({
+              type: 'openExternal',
+              href,
+            }, '*');
+          }
+      });
+
+        const originalOpen = window.open;
+        window.open = function (url) {
+          realParent.postMessage({
+            type: "openExternal",
+            href: url,
+          }, "*");
+        };
+
+        window.addEventListener('error', (event) => {
+          realParent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
+        });
+
+        // Last, so that a throw here leaves the bridge laid.
+        // As join(' ') words each argument, but for a Symbol or an object with no toString, at which join throws in the page's own call.
+        const worded = (arg) => {
+          try {
+            return RealString(arg ?? '');
+          } catch {
+            return '[object Object]';
+          }
+        };
+        [['log', ''], ['error', 'Error: '], ['warn', 'Warning: ']].forEach(([method, prefix]) => {
+          if (typeof window.console?.[method] !== 'function') return;
+          const native = window.console[method].bind(window.console);
+          window.console[method] = (...args) => {
+            native(...args);
+            realParent.postMessage({ type: 'console', message: prefix + args.map(worded).join(' ') }, '*');
+          };
+        });
+      })();
+    </script>
+  <style id="claude-scrollbar">@layer claude-scrollbar{*{scrollbar-width:thin}html{scrollbar-color:rgb(128 128 128 / 50%) transparent}}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angel &amp; Arturo | Landscaping, hardscaping and remodeling in Sussex and Kent County, DE</title>
+<meta name="description" content="Landscaping, hardscaping, decks, fences and remodeling in Sussex and Kent County, Delaware. Licensed and insured. Free estimates. Call Angel 302-493-2077 or Arturo 302-515-6265.">
+<meta name="theme-color" content="#163A2E">
+<script>document.documentElement.className='js'</script>
+<style>
+/* ---------------------------------------------------------------
+   Tokens. Colour is a drawing key, not decoration:
+   green = landscaping, stone = hardscaping, cedar = decking and
+   remodeling, water = additional services. Flag yellow = the ask.
+---------------------------------------------------------------- */
+:root{
+  --spruce:#163A2E;
+  --spruce-2:#1F4A3B;
+  --sheet:#F7F8F3;
+  --ground:#E9EDE2;
+  --line:#163A2E;
+  --hair:rgba(22,58,46,.22);
+  --green:#2F6B3F;
+  --stone:#4C5C66;
+  --cedar:#8A5530;
+  --water:#2B6F8F;
+  --flag:#F2B705;
+  --display:"Avenir Next Condensed","AvenirNextCondensed-Bold","HelveticaNeue-CondensedBold","Roboto Condensed","sans-serif-condensed","Bahnschrift","Arial Narrow","Liberation Sans Narrow","DejaVu Sans Condensed",sans-serif;
+  --body:"Avenir Next",Avenir,"Segoe UI",Roboto,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --gutter:clamp(18px,5vw,56px);
+  --max:1240px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--spruce);font-family:var(--body);font-size:17px;line-height:1.55;overflow-x:hidden}
+[hidden]{display:none!important}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--flag);outline-offset:3px;border-radius:2px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+.display{font-family:var(--display);font-weight:700;font-stretch:condensed;text-transform:uppercase;letter-spacing:-.012em;line-height:.9}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:52px;padding:.7em 1.25em;border-radius:4px;border:2px solid var(--spruce);background:transparent;text-decoration:none;font-weight:600;font-size:17px;line-height:1.1;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-flag{background:var(--flag);border-color:var(--flag);color:var(--spruce)}
+.btn-flag:hover{background:#FFC91F;border-color:#FFC91F}
+.btn-line:hover{background:var(--spruce);color:var(--sheet)}
+.on-dark .btn-line{border-color:rgba(247,248,243,.55);color:var(--sheet)}
+.on-dark .btn-line:hover{background:var(--sheet);color:var(--spruce);border-color:var(--sheet)}
+
+/* Header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand svg{width:44px;height:40px;flex:none}
+.brand b{display:block;font-family:var(--display);font-stretch:condensed;font-weight:700;font-size:24px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.brand span{display:block;font-size:12.5px;line-height:1.25;opacity:.75;margin-top:3px}
+.top .btn{min-height:44px;font-size:15px;padding:.5em 1em}
+@media (max-width:560px){.top .btn{display:none}}
+
+/* Hero */
+.hero{padding-top:clamp(20px,5vw,56px);padding-bottom:clamp(28px,5vw,64px)}
+.hero h1{font-size:clamp(40px,11.4vw,150px);margin-left:-.02em;white-space:nowrap}
+.hero h1 span{display:block}
+.hero-foot{display:grid;gap:22px;margin-top:clamp(20px,3vw,36px);padding-top:clamp(18px,2.4vw,28px);border-top:2px solid var(--line)}
+.hero-foot p{font-size:clamp(18px,1.9vw,22px);line-height:1.45;max-width:34em}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.cta-row .btn{flex:1 1 0;padding-inline:.5em}
+@media (min-width:860px){
+  .hero-foot{grid-template-columns:1.25fr 1fr;align-items:end;gap:48px}
+  .cta-row{justify-content:flex-end}
+  .cta-row .btn{flex:0 0 auto;padding-inline:1.25em}
+}
+
+/* Plan + key */
+.plan-sec{padding-bottom:clamp(48px,8vw,112px)}
+.plan-grid{display:grid;gap:clamp(28px,4vw,56px)}
+.sheet{background:var(--sheet);border:2px solid var(--line);position:relative}
+.sheet::after{content:"";position:absolute;inset:6px;border:1px solid var(--hair);pointer-events:none}
+.sheet svg.plan{width:100%;height:auto;padding:12px 12px 0}
+.titleblock{display:grid;grid-template-columns:1fr auto;border-top:2px solid var(--line);margin-top:10px;position:relative;z-index:1;background:var(--sheet)}
+.titleblock > div{padding:10px 14px;font-size:13px;line-height:1.3}
+.titleblock .readout{min-height:58px;display:flex;align-items:center;gap:12px;font-size:16px}
+.titleblock .meta{border-left:1px solid var(--line);text-align:right;display:flex;flex-direction:column;justify-content:center;opacity:.8;white-space:nowrap}
+.readout .chip{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:var(--spruce)}
+.readout b{display:block;font-family:var(--display);font-stretch:condensed;text-transform:uppercase;font-size:21px;line-height:1;letter-spacing:.005em}
+.readout small{display:block;font-size:12.5px;opacity:.75;margin-top:3px}
+
+.key h2{font-size:clamp(40px,6.4vw,76px);margin-bottom:.35em}
+.key > p{max-width:32em;margin-bottom:clamp(22px,3vw,34px)}
+.group{border-top:2px solid var(--line);padding-top:12px;margin-bottom:26px}
+.group h3{display:flex;align-items:center;gap:10px;font-family:var(--display);font-stretch:condensed;font-weight:700;text-transform:uppercase;font-size:24px;line-height:1;letter-spacing:.01em;margin-bottom:6px}
+.group h3 i{width:22px;height:12px;border:1.5px solid var(--line);flex:none}
+.g-green h3 i{background:#C6DDB9}.g-stone h3 i{background:#C5CFD4}.g-cedar h3 i{background:#DDB88E}.g-water h3 i{background:#CFE6F0}
+.svc{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--hair);padding:11px 6px 11px 0;cursor:pointer;border-radius:0}
+.group li:last-child .svc{border-bottom:0}
+.svc .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13.5px;margin-top:1px}
+.g-green .num{background:var(--green)}.g-stone .num{background:var(--stone)}.g-cedar .num{background:var(--cedar)}.g-water .num{background:var(--water)}
+.svc .name{display:block;font-weight:600;font-size:17.5px;line-height:1.25}
+.svc .desc{display:block;font-size:15px;line-height:1.4;opacity:.78;margin-top:2px}
+.svc:hover .name{text-decoration:underline;text-underline-offset:3px}
+.svc.is-active{background:var(--sheet);box-shadow:-10px 0 0 var(--sheet),10px 0 0 var(--sheet)}
+.svc.is-active .num{box-shadow:0 0 0 3px var(--flag)}
+@media (min-width:620px){.groups{display:grid;grid-template-columns:1fr 1fr;column-gap:36px}}
+@media (min-width:980px){
+  .plan-grid{grid-template-columns:minmax(0,470px) minmax(0,1fr);align-items:start}
+  .sheet-col{position:sticky;top:20px}
+}
+
+/* Plan drawing states */
+.plan .z,.plan .mk{transition:opacity .2s ease}
+.plan.has-active .z{opacity:.22}
+.plan.has-active .z.is-active{opacity:1}
+.plan.has-active .mk{opacity:.25}
+.plan.has-active .mk.is-active{opacity:1}
+.plan .mk{cursor:pointer}
+.plan .mk circle.dot{stroke:#fff;stroke-width:2}
+.plan .mk.is-active circle.dot{stroke:var(--flag);stroke-width:3}
+.plan .mk text{font-family:var(--body);font-weight:700;font-size:10px;fill:#fff;text-anchor:middle;pointer-events:none}
+.plan .lbl{font-family:var(--body);font-size:8.5px;fill:var(--spruce);opacity:.6;letter-spacing:.04em}
+.mk.c-green .dot{fill:var(--green)}.mk.c-stone .dot{fill:var(--stone)}.mk.c-cedar .dot{fill:var(--cedar)}.mk.c-water .dot{fill:var(--water)}
+
+/* One load moment: the plan is laid down in drawing order. Only with JS, only with motion allowed. */
+@media (prefers-reduced-motion:no-preference){
+  .js .plan .lay{animation:lay .5s ease backwards}
+  .js .plan .lay.l1{animation-delay:.05s}.js .plan .lay.l2{animation-delay:.3s}
+  .js .plan .lay.l3{animation-delay:.55s}.js .plan .lay.l4{animation-delay:.8s}
+  .js .plan .lay.l5{animation-delay:1.1s}
+  @keyframes lay{from{opacity:0}}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.plan .z,.plan .mk{transition:none}}
+
+/* Facts band */
+.facts{border-block:2px solid var(--line);background:var(--sheet)}
+.facts .wrap{display:grid}
+.fact{padding:clamp(26px,4vw,48px) 0}
+.fact + .fact{border-top:1px solid var(--line)}
+.fact b{display:block;font-size:clamp(44px,8vw,104px)}
+.fact p{margin-top:10px;max-width:26em}
+@media (min-width:760px){
+  .facts .wrap{grid-template-columns:1fr 1fr}
+  .fact + .fact{border-top:0;border-left:1px solid var(--line);padding-left:clamp(24px,4vw,56px)}
+}
+
+/* Area */
+.area{padding-block:clamp(56px,9vw,128px)}
+.area-grid{display:grid;gap:36px;align-items:center}
+.area h2{font-size:clamp(48px,9vw,124px)}
+.area h2 span{display:block}
+.area p{margin-top:18px;max-width:30em}
+.towns{margin-top:22px;columns:2;column-gap:28px;max-width:26em;font-size:16px}
+.towns li{padding:6px 0;border-bottom:1px solid var(--hair);break-inside:avoid}
+.de{width:min(250px,62vw);margin-inline:auto}
+.de text{font-family:var(--body);font-size:7.5px;fill:var(--spruce)}
+.de .co{font-family:var(--display);font-stretch:condensed;font-weight:700;font-size:12px;text-transform:uppercase;fill:#fff;letter-spacing:.04em}
+@media (min-width:820px){.area-grid{grid-template-columns:1.3fr .7fr;gap:64px}.de{width:min(300px,100%)}}
+
+/* Contact */
+.contact{background:var(--spruce);color:var(--sheet);padding-block:clamp(56px,9vw,120px)}
+.contact h2{font-size:clamp(56px,13vw,176px);margin-left:-.04em}
+.contact > .wrap > p{margin-top:16px;max-width:30em;font-size:clamp(18px,1.9vw,21px);opacity:.9}
+.people{display:grid;gap:0;margin-top:clamp(28px,4vw,52px);border-top:1px solid rgba(247,248,243,.35)}
+.person{padding:26px 0;border-bottom:1px solid rgba(247,248,243,.35)}
+.person h3{font-size:clamp(34px,5vw,56px)}
+.person .tel{display:block;font-family:var(--display);font-stretch:condensed;font-weight:700;font-size:clamp(40px,8.6vw,84px);line-height:1;letter-spacing:.005em;text-decoration:none;color:var(--flag);margin:6px 0 18px;white-space:nowrap}
+.person .cta-row{justify-content:flex-start}
+.person .tel:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:3px}
+@media (min-width:820px){
+  .people{grid-template-columns:1fr 1fr}
+  .person{padding:34px 24px 34px 0}
+  .person .tel{font-size:clamp(36px,4.6vw,66px)}
+  .person + .person{padding-left:clamp(24px,4vw,56px);border-left:1px solid rgba(247,248,243,.35)}
+}
+
+footer{background:var(--spruce);color:var(--sheet);border-top:1px solid rgba(247,248,243,.2)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:space-between;padding-block:22px;font-size:14px;opacity:.85}
+
+/* Phone call bar */
+.callbar{position:fixed;inset:auto 0 0 0;z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--spruce);border-top:2px solid var(--flag)}
+.callbar .btn{min-height:50px;font-size:16px;padding:.4em .6em}
+.js .callbar{transform:translateY(110%);transition:transform .25s ease}
+.js .callbar.show{transform:none}
+@media (prefers-reduced-motion:reduce){.js .callbar{transition:none}}
+@media (max-width:859px){footer .wrap{padding-bottom:96px}}
+@media (min-width:860px){.callbar{display:none}}
+</style>
+</head>
+<body id="artifacts-component-root-html">
+
+<header class="wrap top">
+  <a class="brand" href="#top" aria-label="Angel and Arturo, home">
+    <svg viewBox="0 0 88 80" aria-hidden="true" fill="none" stroke="#163A2E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 40a36 36 0 0 1 68 0"/>
+      <path d="M44 70V16"/>
+      <path d="M44 56c-9-8-11-26 0-42 11 16 9 34 0 42Z" fill="#2F6B3F"/>
+      <path d="M40 68C26 70 12 60 8 44c16-1 29 9 32 24Z" fill="#2F6B3F"/>
+      <path d="M48 68c14 2 28-8 32-24-16-1-29 9-32 24Z" fill="#2F6B3F"/>
+    </svg>
+    <div><b>Angel &amp; Arturo</b><span>Landscaping, hardscaping, remodeling</span></div>
+  </a>
+  <a class="btn btn-line" href="#estimate">Get a free estimate</a>
+</header>
+
+<main id="top">
+
+<section class="wrap hero">
+  <h1 class="display"><span>Everything</span><span>on the lot.</span></h1>
+  <div class="hero-foot">
+    <p>Landscaping, hardscaping, decks, fences and remodeling across Sussex and Kent County, Delaware. Licensed and insured. Estimates are free.</p>
+    <div class="cta-row">
+      <a class="btn btn-flag" href="tel:+13024932077"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.3.2 2.5.57 3.6a1 1 0 0 1-.25 1Z"/></svg>Call Angel</a>
+      <a class="btn btn-flag" href="tel:+13025156265"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.3.2 2.5.57 3.6a1 1 0 0 1-.25 1Z"/></svg>Call Arturo</a>
+    </div>
+  </div>
+</section>
+
+<section class="wrap plan-sec" id="services">
+  <div class="plan-grid">
+
+    <div class="sheet-col">
+      <div class="sheet" id="sheet">
+        <svg class="plan" id="plan" viewBox="0 0 360 540" role="group" aria-label="Plan drawing of a house lot. Fifteen numbered markers show where each service happens on a property.">
+          <defs>
+            <pattern id="p-lawn" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#CFE3C4"/><rect width="10" height="20" fill="#C2DAB5"/></pattern>
+            <pattern id="p-mulch" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#B98A63"/><circle cx="2" cy="2" r=".9" fill="#7A4E32"/><circle cx="5.5" cy="5" r=".8" fill="#8E603F"/></pattern>
+            <pattern id="p-paver" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#C9D2D6"/><path d="M0 0h16M0 8h16M0 0v8M8 8v8M16 0v8" stroke="#7F9099" stroke-width="1" fill="none"/></pattern>
+            <pattern id="p-deck" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#DDB88E"/><path d="M0 0v7" stroke="#A9794C" stroke-width="1"/></pattern>
+            <pattern id="p-brush" width="14" height="12" patternUnits="userSpaceOnUse"><rect width="14" height="12" fill="#D6D9B4"/><path d="M2 9l2-5 2 5M9 6l1.5-4L12 6" stroke="#6F7A3C" stroke-width="1" fill="none" stroke-linecap="round"/></pattern>
+            <pattern id="p-found" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#E4E5DF"/><path d="M0 0v6" stroke="#7F9099" stroke-width="1.2"/></pattern>
+          </defs>
+
+          <!-- street and public sidewalk -->
+          <g class="lay l1">
+            <rect x="0" y="484" width="360" height="56" fill="#8C979C"/>
+            <path d="M0 512h360" stroke="#F7F8F3" stroke-width="2" stroke-dasharray="14 12"/>
+            <text class="lbl" x="22" y="504" style="fill:#fff;opacity:.85">Your street</text>
+          </g>
+
+          <!-- lot and lawn -->
+          <g class="lay l1">
+            <rect class="z z2" x="20" y="20" width="320" height="442" fill="url(#p-lawn)"/>
+            <rect x="20" y="20" width="320" height="442" fill="none" stroke="#163A2E" stroke-width="1" stroke-dasharray="10 3 2 3"/>
+          </g>
+
+          <!-- concrete: sidewalk, driveway, front walk -->
+          <g class="lay l2 z z9 z15">
+            <rect x="0" y="464" width="360" height="18" fill="#E4E5DF" stroke="#7F9099" stroke-width="1"/>
+            <path d="M40 464v18M80 464v18M120 464v18M160 464v18M200 464v18M240 464v18M328 464v18" stroke="#7F9099" stroke-width=".8"/>
+            <rect x="252" y="300" width="64" height="184" fill="#E4E5DF" stroke="#7F9099" stroke-width="1"/>
+            <path d="M252 346h64M252 392h64M252 438h64M284 300v184" stroke="#7F9099" stroke-width=".8"/>
+          </g>
+          <g class="lay l2 z z9 z14">
+            <path d="M143 366h14v31h95v14H143Z" fill="#E4E5DF" stroke="#7F9099" stroke-width="1"/>
+          </g>
+
+          <!-- lot clearing -->
+          <g class="lay l2 z z7">
+            <path d="M258 28h74v92c-10 6-20-4-30 2s-22 2-30-4-14-14-14-24Z" fill="url(#p-brush)" stroke="#6F7A3C" stroke-width="1.2" stroke-dasharray="5 3"/>
+          </g>
+
+          <!-- foundation for a new structure -->
+          <g class="lay l2 z z10">
+            <rect x="34" y="150" width="60" height="56" fill="url(#p-found)" stroke="#4C5C66" stroke-width="2"/>
+            <rect x="40" y="156" width="48" height="44" fill="none" stroke="#4C5C66" stroke-width="1"/>
+          </g>
+
+          <!-- patio pavers -->
+          <g class="lay l2 z z6">
+            <rect x="206" y="154" width="96" height="78" fill="url(#p-paver)" stroke="#4C5C66" stroke-width="1.5"/>
+          </g>
+
+          <!-- deck -->
+          <g class="lay l3 z z12">
+            <rect x="108" y="184" width="94" height="52" fill="url(#p-deck)" stroke="#8A5530" stroke-width="1.5"/>
+            <path d="M186 184h16v-14h-16" fill="url(#p-deck)" stroke="#8A5530" stroke-width="1.2"/>
+          </g>
+
+          <!-- house -->
+          <g class="lay l3 z">
+            <path d="M64 236h260v64h-80v66H64Z" fill="#F7F8F3"/>
+            <text class="lbl" x="150" y="332">House</text>
+            <text class="lbl" x="268" y="284">Garage</text>
+          </g>
+          <g class="lay l3 z z13">
+            <rect x="64" y="236" width="56" height="50" fill="#EAD9C5" stroke="#8A5530" stroke-width="1" stroke-dasharray="3 2"/>
+            <rect x="69" y="241" width="16" height="34" rx="6" fill="#fff" stroke="#8A5530" stroke-width="1"/>
+            <circle cx="108" cy="246" r="4.5" fill="#fff" stroke="#8A5530" stroke-width="1"/>
+          </g>
+          <g class="lay l3 z z11">
+            <path d="M64 236h260v64h-80v66H64Z" fill="none" stroke="#163A2E" stroke-width="3.2" stroke-linejoin="miter"/>
+            <path d="M143 366h14" stroke="#F7F8F3" stroke-width="3.6"/>
+          </g>
+
+          <!-- fence -->
+          <g class="lay l3 z z12">
+            <path d="M64 240H28V28h304v208h-8" fill="none" stroke="#8A5530" stroke-width="1.6"/>
+            <path d="M64 240H28V28h304v208h-8" fill="none" stroke="#8A5530" stroke-width="5" stroke-dasharray="1.6 17.4"/>
+          </g>
+
+          <!-- mulch beds -->
+          <g class="lay l4 z z1">
+            <rect x="66" y="368" width="75" height="16" fill="url(#p-mulch)" stroke="#7A4E32" stroke-width="1"/>
+            <rect x="159" y="368" width="84" height="16" fill="url(#p-mulch)" stroke="#7A4E32" stroke-width="1"/>
+            <circle cx="74" cy="80" r="38" fill="url(#p-mulch)" stroke="#7A4E32" stroke-width="1"/>
+            <circle cx="146" cy="56" r="24" fill="url(#p-mulch)" stroke="#7A4E32" stroke-width="1"/>
+            <circle cx="70" cy="428" r="25" fill="url(#p-mulch)" stroke="#7A4E32" stroke-width="1"/>
+            <g fill="#4F8F58" stroke="#2F6B3F" stroke-width="1"><circle cx="126" cy="376" r="5.5"/><circle cx="174" cy="376" r="5.5"/><circle cx="192" cy="376" r="5.5"/><circle cx="230" cy="376" r="5.5"/></g>
+          </g>
+
+          <!-- trees that stay -->
+          <g class="lay l4 z" fill="#5E9A63" fill-opacity=".9" stroke="#2F6B3F" stroke-width="1.3">
+            <circle cx="74" cy="80" r="30"/><circle cx="146" cy="56" r="18"/><circle cx="70" cy="428" r="19"/>
+            <g fill="#2F6B3F" stroke="none"><circle cx="74" cy="80" r="2.2"/><circle cx="146" cy="56" r="2"/><circle cx="70" cy="428" r="2"/></g>
+          </g>
+
+          <!-- tree removal -->
+          <g class="lay l4 z z3">
+            <circle cx="214" cy="72" r="23" fill="#B9C9A6" fill-opacity=".7" stroke="#2F6B3F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <path d="M199 57l30 30M229 57l-30 30" stroke="#2F6B3F" stroke-width="1.4"/>
+          </g>
+
+          <!-- stump -->
+          <g class="lay l4 z z5">
+            <circle cx="170" cy="116" r="8" fill="#C9A77F" stroke="#7A4E32" stroke-width="1.3"/>
+            <circle cx="170" cy="116" r="4.6" fill="none" stroke="#7A4E32" stroke-width=".9"/>
+            <circle cx="170" cy="116" r="1.6" fill="#7A4E32"/>
+          </g>
+
+          <!-- seasonal cleanup: leaves raked to a pile -->
+          <g class="lay l4 z z4">
+            <g fill="#C98A2B" stroke="#8A5A12" stroke-width=".6">
+              <ellipse cx="102" cy="126" rx="4" ry="2.2" transform="rotate(-30 102 126)"/>
+              <ellipse cx="110" cy="134" rx="4" ry="2.2" transform="rotate(20 110 134)"/>
+              <ellipse cx="96" cy="137" rx="4" ry="2.2" transform="rotate(60 96 137)"/>
+              <ellipse cx="121" cy="128" rx="4" ry="2.2" transform="rotate(-60 121 128)"/>
+              <ellipse cx="128" cy="140" rx="4" ry="2.2" transform="rotate(10 128 140)"/>
+              <ellipse cx="114" cy="146" rx="4" ry="2.2" transform="rotate(-15 114 146)"/>
+              <ellipse cx="88" cy="126" rx="3.4" ry="2" transform="rotate(40 88 126)"/>
+              <ellipse cx="136" cy="126" rx="3.4" ry="2" transform="rotate(75 136 126)"/>
+            </g>
+          </g>
+
+          <!-- irrigation -->
+          <g class="lay l4 z z8" fill="none" stroke="#2B6F8F">
+            <path d="M232 132 136 172 46 222l18 14" stroke-width="1.2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>
+            <g stroke-width="1" stroke-dasharray="2 2.6"><circle cx="232" cy="132" r="17"/><circle cx="136" cy="172" r="17"/><circle cx="46" cy="222" r="13"/></g>
+            <g fill="#2B6F8F" stroke="#fff" stroke-width="1"><circle cx="232" cy="132" r="3"/><circle cx="136" cy="172" r="3"/><circle cx="46" cy="222" r="3"/></g>
+          </g>
+
+          <!-- powerwashing: a clean pass across the front walk -->
+          <g class="lay l4 z z14">
+            <path d="M160 399h58v10h-58Z" fill="#fff"/>
+            <path d="M222 404l12-6M222 404l13 0M222 404l12 6" stroke="#2B6F8F" stroke-width="1.3" stroke-linecap="round"/>
+          </g>
+
+          <!-- snow removal: banks pushed to the driveway edges -->
+          <g class="lay l4 z z15" fill="#fff" stroke="#2B6F8F" stroke-width="1">
+            <path d="M246 352c-7 2-7 10-2 13-5 5-2 13 4 14-3 7 2 13 8 12V350c-3-2-7-1-10 2Z"/>
+            <path d="M322 352c7 2 7 10 2 13 5 5 2 13-4 14 3 7-2 13-8 12V350c3-2 7-1 10 2Z"/>
+          </g>
+
+          <!-- north arrow -->
+          <g class="lay l5" transform="translate(314 500)" fill="none" stroke="#fff" stroke-width="1.4">
+            <circle r="13"/><path d="M0 9V-9M-5-3l5-7 5 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+
+          <!-- markers -->
+          <g class="lay l5" id="markers">
+            <g class="mk c-green" data-s="1"  tabindex="0" role="button" aria-label="1, Mulch installation" transform="translate(100 376)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">1</text></g>
+            <g class="mk c-green" data-s="2"  tabindex="0" role="button" aria-label="2, Grass cutting" transform="translate(166 440)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">2</text></g>
+            <g class="mk c-green" data-s="3"  tabindex="0" role="button" aria-label="3, Tree removal" transform="translate(214 72)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">3</text></g>
+            <g class="mk c-green" data-s="4"  tabindex="0" role="button" aria-label="4, Seasonal cleanup" transform="translate(112 136)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">4</text></g>
+            <g class="mk c-green" data-s="5"  tabindex="0" role="button" aria-label="5, Stump grinding" transform="translate(187 102)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">5</text></g>
+            <g class="mk c-stone" data-s="6"  tabindex="0" role="button" aria-label="6, Paving" transform="translate(262 198)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">6</text></g>
+            <g class="mk c-stone" data-s="7"  tabindex="0" role="button" aria-label="7, Lot clearing" transform="translate(298 70)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">7</text></g>
+            <g class="mk c-stone" data-s="8"  tabindex="0" role="button" aria-label="8, Irrigation systems" transform="translate(152 156)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">8</text></g>
+            <g class="mk c-stone" data-s="9"  tabindex="0" role="button" aria-label="9, Concrete driveways and sidewalks" transform="translate(284 446)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">9</text></g>
+            <g class="mk c-stone" data-s="10" tabindex="0" role="button" aria-label="10, Foundations" transform="translate(64 178)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">10</text></g>
+            <g class="mk c-cedar" data-s="11" tabindex="0" role="button" aria-label="11, Siding and trim" transform="translate(64 322)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">11</text></g>
+            <g class="mk c-cedar" data-s="12" tabindex="0" role="button" aria-label="12, Decks and fences" transform="translate(152 212)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">12</text></g>
+            <g class="mk c-cedar" data-s="12" tabindex="-1" aria-hidden="true" transform="translate(332 180)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">12</text></g>
+            <g class="mk c-cedar" data-s="13" tabindex="0" role="button" aria-label="13, Bathroom remodeling" transform="translate(100 264)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">13</text></g>
+            <g class="mk c-water" data-s="14" tabindex="0" role="button" aria-label="14, Powerwashing" transform="translate(190 404)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">14</text></g>
+            <g class="mk c-water" data-s="15" tabindex="0" role="button" aria-label="15, Snow removal" transform="translate(284 370)"><circle r="15" fill="transparent"/><circle class="dot" r="9.5"/><text y="3.6">15</text></g>
+          </g>
+        </svg>
+
+        <div class="titleblock">
+          <div class="readout" id="readout" aria-live="polite">
+            <span class="chip" id="ro-chip" hidden></span>
+            <span><b id="ro-name">Tap any number</b><small id="ro-cat">Each one matches a service in the list.</small></span>
+          </div>
+          <div class="meta"><span>Typical lot</span><span>Not to scale</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key">
+      <h2 class="display">What we do</h2>
+      <p>Most properties need more than one trade. This one crew covers the yard, the hard surfaces, the outside of the house and the bathroom inside it.</p>
+
+      <div class="groups">
+        <div class="group g-green">
+          <h3><i></i>Landscaping</h3>
+          <ul>
+            <li><button class="svc" data-s="1" data-cat="Landscaping"><span class="num">1</span><span><span class="name">Mulch installation</span><span class="desc">Fresh mulch in beds and around trees.</span></span></button></li>
+            <li><button class="svc" data-s="2" data-cat="Landscaping"><span class="num">2</span><span><span class="name">Grass cutting</span><span class="desc">Regular mowing, front and back.</span></span></button></li>
+            <li><button class="svc" data-s="3" data-cat="Landscaping"><span class="num">3</span><span><span class="name">Tree removal</span><span class="desc">Dead or unwanted trees taken down.</span></span></button></li>
+            <li><button class="svc" data-s="4" data-cat="Landscaping"><span class="num">4</span><span><span class="name">Seasonal cleanup</span><span class="desc">Leaves, sticks and beds, spring and fall.</span></span></button></li>
+            <li><button class="svc" data-s="5" data-cat="Landscaping"><span class="num">5</span><span><span class="name">Stump grinding</span><span class="desc">Old stumps ground down below the grass.</span></span></button></li>
+          </ul>
+        </div>
+
+        <div class="group g-stone">
+          <h3><i></i>Hardscaping</h3>
+          <ul>
+            <li><button class="svc" data-s="6" data-cat="Hardscaping"><span class="num">6</span><span><span class="name">Paving</span><span class="desc">Patios, walks and driveways.</span></span></button></li>
+            <li><button class="svc" data-s="7" data-cat="Hardscaping"><span class="num">7</span><span><span class="name">Lot clearing</span><span class="desc">Brush and overgrowth cleared so you can build or plant.</span></span></button></li>
+            <li><button class="svc" data-s="8" data-cat="Hardscaping"><span class="num">8</span><span><span class="name">Irrigation systems</span><span class="desc">Sprinklers for lawns and beds.</span></span></button></li>
+            <li><button class="svc" data-s="9" data-cat="Hardscaping"><span class="num">9</span><span><span class="name">Concrete driveways and sidewalks</span><span class="desc">Poured driveways, walks and pads.</span></span></button></li>
+            <li><button class="svc" data-s="10" data-cat="Hardscaping"><span class="num">10</span><span><span class="name">Foundations</span><span class="desc">Footings and foundations for new structures.</span></span></button></li>
+          </ul>
+        </div>
+
+        <div class="group g-cedar">
+          <h3><i></i>Decking and remodeling</h3>
+          <ul>
+            <li><button class="svc" data-s="11" data-cat="Decking and remodeling"><span class="num">11</span><span><span class="name">Siding and trim</span><span class="desc">Siding and exterior trim, new or replaced.</span></span></button></li>
+            <li><button class="svc" data-s="12" data-cat="Decking and remodeling"><span class="num">12</span><span><span class="name">Decks and fences</span><span class="desc">Built new or rebuilt.</span></span></button></li>
+            <li><button class="svc" data-s="13" data-cat="Decking and remodeling"><span class="num">13</span><span><span class="name">Bathroom remodeling</span><span class="desc">The one job on this list that happens indoors.</span></span></button></li>
+          </ul>
+        </div>
+
+        <div class="group g-water">
+          <h3><i></i>Additional services</h3>
+          <ul>
+            <li><button class="svc" data-s="14" data-cat="Additional services"><span class="num">14</span><span><span class="name">Powerwashing</span><span class="desc">Driveways, walks, siding and decks washed clean.</span></span></button></li>
+            <li><button class="svc" data-s="15" data-cat="Additional services"><span class="num">15</span><span><span class="name">Snow removal</span><span class="desc">Driveways and walks cleared after a storm.</span></span></button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="facts" aria-label="Licensed, insured, free estimates">
+  <div class="wrap">
+    <div class="fact"><b class="display">Licensed &amp; insured</b><p>You are covered while we are on your property.</p></div>
+    <div class="fact"><b class="display">Free estimates</b><p>Call or text, tell us what you need done, and get a price before any work starts.</p></div>
+  </div>
+</section>
+
+<section class="wrap area" id="area">
+  <div class="area-grid">
+    <div>
+      <h2 class="display"><span>Sussex &amp;</span><span>Kent County</span></h2>
+      <p>We work across the two lower counties of Delaware, from the Dover area down to the beaches and the Maryland line.</p>
+      <ul class="towns" aria-label="Towns in Sussex and Kent County">
+        <li>Dover</li><li>Smyrna</li><li>Camden</li><li>Milford</li><li>Harrington</li>
+        <li>Georgetown</li><li>Lewes</li><li>Rehoboth Beach</li><li>Millsboro</li><li>Seaford</li>
+      </ul>
+    </div>
+    <svg class="de" viewBox="-10 -4 164 292" role="img" aria-label="Map of Delaware with Kent and Sussex counties filled in">
+      <path d="M1.6 26C5 17 10 12 15.5 10 22 5 30 2 37.3 2c6 0 12 3 17.1 6l6.2 2C56 17 50 24 45 30c-3 5-6 10-7.7 16-2 5-4 9-4.7 14 1 6 3 12 4.700 18 2 7 5 14 7.700 20L6.7 110Z" fill="#F7F8F3" stroke="#163A2E" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M6.7 110 30 104l15-6c5 8 12 15 17 22 1 13 1 26 0 38 4 8 9 15 14 22l-18.500 8-45 16Z" fill="#2F6B3F" stroke="#163A2E" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M12.500 204l45-16 18.500-8c6 6 12 11 18.800 16 5 5 10 9 15.200 14 2 13 3 27 3.400 40 1 10 2 20 3.200 30H17Z" fill="#1F4A3B" stroke="#163A2E" stroke-width="1.2" stroke-linejoin="round"/>
+      <text x="20" y="62" style="opacity:.6">New Castle</text>
+      <text class="co" x="16" y="166">Kent</text>
+      <text class="co" x="52" y="272">Sussex</text>
+      <g fill="#F2B705" stroke="#163A2E" stroke-width=".8"><circle cx="43.500" cy="138" r="2.6"/><circle cx="57.500" cy="188" r="2.6"/><circle cx="63.700" cy="232" r="2.6"/><circle cx="102.600" cy="216" r="2.6"/><circle cx="29.500" cy="242" r="2.6"/></g>
+      <g style="fill:#fff"><text x="48" y="134" style="fill:#fff">Dover</text><text x="28" y="184" style="fill:#fff">Milford</text><text x="68" y="236" style="fill:#fff">Georgetown</text><text x="84" y="209" style="fill:#fff">Lewes</text><text x="24" y="253" style="fill:#fff">Seaford</text></g>
+    </svg>
+  </div>
+</section>
+
+<section class="contact on-dark" id="estimate">
+  <div class="wrap">
+    <h2 class="display">Get a free estimate</h2>
+    <p>Call or text either one of us. Tell us what you need done and where the property is.</p>
+    <div class="people">
+      <div class="person">
+        <h3 class="display">Angel</h3>
+        <a class="tel" href="tel:+13024932077">302-493-2077</a>
+        <div class="cta-row"><a class="btn btn-flag" href="tel:+13024932077">Call Angel</a><a class="btn btn-line" href="sms:+13024932077">Text Angel</a></div>
+      </div>
+      <div class="person">
+        <h3 class="display">Arturo</h3>
+        <a class="tel" href="tel:+13025156265">302-515-6265</a>
+        <div class="cta-row"><a class="btn btn-flag" href="tel:+13025156265">Call Arturo</a><a class="btn btn-line" href="sms:+13025156265">Text Arturo</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap"><span>Angel &amp; Arturo. Landscaping, hardscaping, decking and remodeling.</span><span>Licensed and insured. Servicing Sussex and Kent County, Delaware.</span></div>
+</footer>
+
+<nav class="callbar" aria-label="Call for a free estimate">
+  <a class="btn btn-flag" href="tel:+13024932077">Call Angel</a>
+  <a class="btn btn-flag" href="tel:+13025156265">Call Arturo</a>
+</nav>
+
+<script>
+(function(){
+  /* Headline runs the full width of the column whatever condensed face the device has. */
+  var h1=document.querySelector('.hero h1');
+  function fit(){
+    if(!h1)return;h1.style.fontSize='100px';
+    var w=0;[].forEach.call(h1.children,function(s){s.style.display='inline-block';w=Math.max(w,s.getBoundingClientRect().width);s.style.display='';});
+    var box=h1.parentNode.getBoundingClientRect().width-parseFloat(getComputedStyle(h1.parentNode).paddingLeft)*2;
+    h1.style.fontSize=Math.min(230,Math.floor(100*box/w*0.995))+'px';
+  }
+  fit();addEventListener('resize',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  /* Call bar only when no other call button is on screen. */
+  var bar=document.querySelector('.callbar');
+  if(bar&&'IntersectionObserver' in window){
+    var seen=new Set(),io=new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?seen.add(e.target):seen.delete(e.target);});bar.classList.toggle('show',seen.size===0);});
+    [].forEach.call(document.querySelectorAll('.hero .cta-row, #estimate .people'),function(el){io.observe(el);});
+  }else if(bar){bar.classList.add('show');}
+})();
+(function(){
+  var plan=document.getElementById('plan'),sheet=document.getElementById('sheet');
+  if(!plan)return;
+  var chip=document.getElementById('ro-chip'),nm=document.getElementById('ro-name'),cat=document.getElementById('ro-cat');
+  var idleName=nm.textContent,idleCat=cat.textContent,active=null;
+  var colors={'Landscaping':'#2F6B3F','Hardscaping':'#4C5C66','Decking and remodeling':'#8A5530','Additional services':'#2B6F8F'};
+  function all(sel){return Array.prototype.slice.call(document.querySelectorAll(sel));}
+  function set(n,fromList){
+    all('.is-active').forEach(function(el){el.classList.remove('is-active');});
+    if(n===null||n===active){active=null;plan.classList.remove('has-active');chip.hidden=true;nm.textContent=idleName;cat.textContent=idleCat;return;}
+    active=n;plan.classList.add('has-active');
+    all('.plan .z'+n+', .plan .mk[data-s="'+n+'"], .svc[data-s="'+n+'"]').forEach(function(el){el.classList.add('is-active');});
+    var b=document.querySelector('.svc[data-s="'+n+'"]');
+    chip.hidden=false;chip.textContent=n;chip.style.background=colors[b.dataset.cat];
+    nm.textContent=b.querySelector('.name').textContent;cat.textContent=b.dataset.cat;
+    if(fromList){var r=sheet.getBoundingClientRect();if(r.bottom<120||r.top>window.innerHeight-120){sheet.scrollIntoView({block:'start'});}}
+  }
+  all('.plan .mk').forEach(function(m){
+    m.addEventListener('click',function(){set(m.dataset.s,false);});
+    m.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();set(m.dataset.s,false);}});
+  });
+  all('.svc').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.s,true);});});
+  plan.addEventListener('click',function(e){if(!e.target.closest('.mk'))set(null);});
+})();
+</script>
+</body>
+</html>

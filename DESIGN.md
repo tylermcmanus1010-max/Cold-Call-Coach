@@ -25,8 +25,39 @@ the concept is *prints on the table* — their photographs as physical
 prints laid out on an ink ground, the work as strips of same-height prints
 from one lab, the rates as index cards with corner brackets, the ask as a
 paper card on the ink. Read `page.js` there for how a concept becomes a
-page. When a landscaping client is built, its site plan will be the second
-example.
+page.
+
+**The second example, and the one Tyler named as the creative standard, is
+Angel & Arturo** — `design/reference/angel-arturo/` (built in a claude.ai
+chat, kept here so the bar outlives the session). Landscapers, so the
+native drawing is the *site plan*: a hand-drawn lot — house, garage, deck,
+patio, beds, fence, irrigation — with fifteen numbered markers, each one a
+service. Tap a number on the plan and the zone, the marker and the list
+entry light up together; tap the list and the plan answers. It has what
+Tinezz and the first BJB page did not, and it is worth being precise about
+what that is, because "more personality" is not a brief:
+
+1. **The trade's own drawing, drawn.** Not photographed, not iconed —
+   illustrated, with hatching, pavers and fence posts. A page can have real
+   photos (BJB does, and should keep them) and still have no drawing; the
+   drawing is where the personality lives.
+2. **The services live inside the drawing**, numbered, and the number is a
+   button. The list is the same numbers. One idea, two views, wired
+   together. Keyboard reaches every marker.
+3. **A headline that is a voice, not a list.** "Everything on the lot."
+   makes a claim and fills the column edge to edge. "Walls, trim, decks &
+   drywall." names products. Say what they are *for*.
+4. **One loud accent, used with nerve** — the flag yellow is on every call
+   button and nowhere else.
+5. **Named humans with their own numbers.** Angel and Arturo each get a
+   Call and a Text. Where a business does not publish a person's name, this
+   one is not available; do not invent one.
+6. **The place, drawn too.** Their two counties as a map with pins, and the
+   towns as a grid. Area is a fact worth a picture.
+
+The lot plan is roughly 3KB of script and no external requests. Read
+`design/reference/angel-arturo/index.html` for the `set(n)` sync pattern
+and the fit-to-width headline.
 
 How this sits with the builder: `tools/render.js` is the house renderer,
 and it makes the *proposal* — the page built before a call, when nobody

@@ -777,6 +777,24 @@
         "social": true
       },
       "parked": false
+    },
+    {
+      "at": "2026-10-28T18:33:44.043Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 894,
+      "kb": 114,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": true,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
     }
   ]
 }

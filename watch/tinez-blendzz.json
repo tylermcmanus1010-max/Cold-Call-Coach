@@ -885,6 +885,24 @@
         "social": true
       },
       "parked": false
+    },
+    {
+      "at": "2026-11-09T22:46:35.171Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 9045,
+      "kb": 714,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": false,
+        "phoneTap": false,
+        "seo": true,
+        "meta": true,
+        "social": true
+      },
+      "parked": false
     }
   ]
 }

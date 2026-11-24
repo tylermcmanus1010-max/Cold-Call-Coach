@@ -5,24 +5,6 @@
   "paying": false,
   "snapshots": [
     {
-      "at": "2026-09-24T17:37:29.166Z",
-      "reachable": true,
-      "blocked": false,
-      "reason": null,
-      "ms": 15744,
-      "kb": 113,
-      "checks": {
-        "mobile": true,
-        "https": true,
-        "speed": false,
-        "phoneTap": false,
-        "seo": true,
-        "meta": false,
-        "social": true
-      },
-      "parked": false
-    },
-    {
       "at": "2026-09-25T17:36:35.048Z",
       "reachable": true,
       "blocked": false,
@@ -1072,6 +1054,24 @@
       "blocked": false,
       "reason": null,
       "ms": 754,
+      "kb": 115,
+      "checks": {
+        "mobile": true,
+        "https": true,
+        "speed": true,
+        "phoneTap": false,
+        "seo": true,
+        "meta": false,
+        "social": true
+      },
+      "parked": false
+    },
+    {
+      "at": "2026-11-24T00:28:00.922Z",
+      "reachable": true,
+      "blocked": false,
+      "reason": null,
+      "ms": 1038,
       "kb": 115,
       "checks": {
         "mobile": true,
